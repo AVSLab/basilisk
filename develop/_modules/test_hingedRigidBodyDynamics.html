@@ -1,0 +1,445 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_hingedRigidBodyDynamics &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_hingedRigidBodyDynamics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_hingedRigidBodyDynamics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Conservation and analytical response checks for a spacecraft with two hinged panels."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span><span class="p">,</span> <span class="n">gravityEffector</span><span class="p">,</span> <span class="n">hingedRigidBodyStateEffector</span><span class="p">,</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_spacecraft</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span> <span class="n">spring_constant</span><span class="p">,</span> <span class="n">damping</span><span class="p">,</span> <span class="n">planar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the historical two-panel geometry using the regular spacecraft module."""</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"testProcess"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time_step</span><span class="p">)))</span>
+
+    <span class="n">body</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spacecraftBody"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">planar</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+    <span class="n">hinge_positions</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">hinge_frames</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">planar</span><span class="p">:</span>
+        <span class="n">hinge_positions</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">hinge_frames</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]],</span>
+            <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+    <span class="n">panels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">hinge_logs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"panel</span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mf">1.5</span>  <span class="c1"># [m]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">spring_constant</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">damping</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="n">hinge_positions</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hinge_frames</span><span class="p">[</span><span class="n">index</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">panel</span><span class="p">)</span>
+        <span class="n">panels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+        <span class="n">hinge_log</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">hinge_log</span><span class="p">)</span>
+        <span class="n">hinge_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hinge_log</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_hinge_recording</span><span class="p">(</span><span class="n">hinge_log</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">time_step</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject missing samples and non-finite hinge states before comparing dynamics."""</span>
+    <span class="n">sample_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">stop_time</span> <span class="o">/</span> <span class="n">time_step</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">expected_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">hinge_log</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="p">(</span><span class="n">hinge_log</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">hinge_log</span><span class="o">.</span><span class="n">thetaDot</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">sample_count</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">"Hinge trajectory contains non-finite values"</span>
+    <span class="k">return</span> <span class="n">hinge_log</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">hinge_log</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">hinge_log</span><span class="o">.</span><span class="n">thetaDot</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_assert_conserved</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check every sample using the initial magnitude to normalize vector or scalar errors."""</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">history</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> contains non-finite values"</span>
+    <span class="n">initial_magnitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">initial_magnitude</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have a nonzero initial reference"</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">history</span> <span class="o">-</span> <span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initial_magnitude</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not conserved"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_hinged_body_conservation">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/HingedRigidBodies/_UnitTest/test_hingedRigidBodyDynamics.html#test_hingedRigidBodyDynamics.test_hinged_body_conservation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"gravity"</span><span class="p">,</span> <span class="s2">"no_gravity"</span><span class="p">,</span> <span class="s2">"damping"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hinged_body_conservation</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check energy and momentum histories with gravity, in free flight, and with damping.</span>
+
+<span class="sd">    Both undamped cases conserve orbital and rotational energy and angular momentum.</span>
+<span class="sd">    The damped case conserves orbital energy and both angular momenta, while the loss</span>
+<span class="sd">    of rotational energy agrees with the integral of hinge damping power.</span>
+<span class="sd">    """</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># [s]</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="mf">2.5</span>  <span class="c1"># [s]</span>
+    <span class="n">spring_constant</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [N m/rad]</span>
+    <span class="n">damping</span> <span class="o">=</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"damping"</span> <span class="k">else</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [N m s/rad]</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span> <span class="o">=</span> <span class="n">_make_spacecraft</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span> <span class="n">spring_constant</span><span class="p">,</span> <span class="n">damping</span><span class="p">)</span>
+    <span class="n">panels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"gravity"</span><span class="p">:</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">,</span> <span class="mf">7490566.741852513</span><span class="p">,</span> <span class="mf">5248299.211589362</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">,</span> <span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">,</span> <span class="mf">1041.576797498721</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+        <span class="n">earth</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"earth"</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earth</span><span class="p">])</span>
+
+    <span class="n">quantities</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"totOrbEnergy"</span><span class="p">,</span> <span class="s2">"totOrbAngMomPntN_N"</span><span class="p">,</span> <span class="s2">"totRotAngMomPntC_N"</span><span class="p">,</span> <span class="s2">"totRotEnergy"</span><span class="p">]</span>
+    <span class="n">energy_momentum_log</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">quantities</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">energy_momentum_log</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stop_time</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">hinge_log</span> <span class="ow">in</span> <span class="n">hinge_logs</span><span class="p">:</span>
+        <span class="n">_check_hinge_recording</span><span class="p">(</span><span class="n">hinge_log</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">energy_momentum_log</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">hinge_log</span><span class="o">.</span><span class="n">times</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">hinge_log</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-4</span>  <span class="c1"># [rad] Both panels must participate in the motion.</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">quantities</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
+        <span class="n">_assert_conserved</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">energy_momentum_log</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">rotational_energy</span> <span class="o">=</span> <span class="n">energy_momentum_log</span><span class="o">.</span><span class="n">totRotEnergy</span>
+    <span class="k">if</span> <span class="n">case</span> <span class="o">!=</span> <span class="s2">"damping"</span><span class="p">:</span>
+        <span class="n">_assert_conserved</span><span class="p">(</span><span class="n">rotational_energy</span><span class="p">,</span> <span class="s2">"totRotEnergy"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">rotational_energy</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">energy_tolerance</span> <span class="o">=</span> <span class="mf">1e-10</span>  <span class="c1"># [J]</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">rotational_energy</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">energy_tolerance</span><span class="p">)</span>
+        <span class="n">energy_loss</span> <span class="o">=</span> <span class="n">rotational_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotational_energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">energy_loss</span> <span class="o">&gt;</span> <span class="n">energy_tolerance</span>
+        <span class="n">damping_power</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">*</span> <span class="n">log</span><span class="o">.</span><span class="n">thetaDot</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">panel</span><span class="p">,</span> <span class="n">log</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span><span class="p">))</span>
+        <span class="n">dissipated_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">damping_power</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">damping_power</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">energy_loss</span><span class="p">,</span> <span class="n">dissipated_energy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">energy_tolerance</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_forced_spacecraft</span><span class="p">(</span><span class="n">spring_constant</span><span class="p">,</span> <span class="n">damping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Apply a constant force to a symmetric, initially stationary planar spacecraft."""</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [s]</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [N]</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span> <span class="o">=</span> <span class="n">_make_spacecraft</span><span class="p">(</span>
+        <span class="n">time_step</span><span class="p">,</span> <span class="n">spring_constant</span><span class="p">,</span> <span class="p">(</span><span class="n">damping</span><span class="p">,</span> <span class="n">damping</span><span class="p">),</span> <span class="n">planar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">external_force</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">external_force</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"externalForce"</span>
+    <span class="n">external_force</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [N]</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">external_force</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">,</span> <span class="n">external_force</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span><span class="p">,</span> <span class="n">external_force</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">force</span>
+
+
+<div class="viewcode-block" id="test_hinged_body_steady_state_deflection">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/HingedRigidBodies/_UnitTest/test_hingedRigidBodyDynamics.html#test_hingedRigidBodyDynamics.test_hinged_body_steady_state_deflection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hinged_body_steady_state_deflection</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Compare both damped hinge angles with the nonlinear static torque balance.</span>
+
+<span class="sd">    Under constant force :math:`F`, the system acceleration is :math:`F/M` and each</span>
+<span class="sd">    hinge satisfies :math:`k\theta + m d (F/M)\cos\theta = 0`. Check the complete</span>
+<span class="sd">    final settling window, including hinge rates, rather than a single endpoint.</span>
+<span class="sd">    """</span>
+    <span class="n">spring_constant</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [N m/rad]</span>
+    <span class="n">damping</span> <span class="o">=</span> <span class="mf">75.0</span>  <span class="c1"># [N m s/rad]</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="mf">60.0</span>  <span class="c1"># [s]</span>
+    <span class="n">settling_window</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [s]</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span><span class="p">,</span> <span class="n">external_force</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="n">_make_forced_spacecraft</span><span class="p">(</span>
+        <span class="n">spring_constant</span><span class="p">,</span> <span class="n">damping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stop_time</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">total_mass</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">)</span>
+    <span class="n">inertial_torque</span> <span class="o">=</span> <span class="n">panels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">panels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">d</span> <span class="o">*</span> <span class="n">force</span> <span class="o">/</span> <span class="n">total_mass</span>
+    <span class="c1"># The small-angle solution and zero bracket the unique negative root.</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="o">-</span><span class="n">inertial_torque</span> <span class="o">/</span> <span class="n">spring_constant</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+        <span class="n">midpoint</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower</span> <span class="o">+</span> <span class="n">upper</span><span class="p">)</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">spring_constant</span> <span class="o">*</span> <span class="n">midpoint</span> <span class="o">+</span> <span class="n">inertial_torque</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">residual</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">midpoint</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">midpoint</span>
+    <span class="n">expected_angle</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower</span> <span class="o">+</span> <span class="n">upper</span><span class="p">)</span>
+    <span class="n">angle_tolerance</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># [rad]</span>
+    <span class="n">rate_tolerance</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="k">for</span> <span class="n">hinge_log</span> <span class="ow">in</span> <span class="n">hinge_logs</span><span class="p">:</span>
+        <span class="n">times</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">rates</span> <span class="o">=</span> <span class="n">_check_hinge_recording</span><span class="p">(</span><span class="n">hinge_log</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+        <span class="n">settled</span> <span class="o">=</span> <span class="n">times</span> <span class="o">&gt;=</span> <span class="n">stop_time</span> <span class="o">-</span> <span class="n">settling_window</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">angles</span><span class="p">[</span><span class="n">settled</span><span class="p">],</span> <span class="n">expected_angle</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rates</span><span class="p">[</span><span class="n">settled</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">rate_tolerance</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_hinged_body_frequency_and_amplitude">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/HingedRigidBodies/_UnitTest/test_hingedRigidBodyDynamics.html#test_hingedRigidBodyDynamics.test_hinged_body_frequency_and_amplitude">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hinged_body_frequency_and_amplitude</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Measure Basilisk hinge periods and amplitudes before and after thrust removal.</span>
+
+<span class="sd">    For symmetric panel motion the small-angle equations reduce to</span>
+<span class="sd">    :math:`J_{\mathrm{eff}}\ddot\theta + k\theta = -m d F/M`, where</span>
+<span class="sd">    :math:`J_{\mathrm{eff}} = I_{yy} + m d^2 - 2 (m d)^2/M`.</span>
+<span class="sd">    This gives the frequency, forced peak deflection, and free amplitude after a</span>
+<span class="sd">    known thrust duration independently of either simulated trajectory. All</span>
+<span class="sd">    measured peaks and periods come from Basilisk's hinge output messages. Check</span>
+<span class="sd">    every extremum, require enough cycles for each phase duration, and compare</span>
+<span class="sd">    the full angle and rate histories so a stalled final partial cycle also fails.</span>
+<span class="sd">    """</span>
+    <span class="n">spring_constant</span> <span class="o">=</span> <span class="mf">300.0</span>  <span class="c1"># [N m/rad]</span>
+    <span class="n">damping</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [N m s/rad]</span>
+    <span class="n">force_off_time</span> <span class="o">=</span> <span class="mf">29.0</span>  <span class="c1"># [s]</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="mf">58.0</span>  <span class="c1"># [s]</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">panels</span><span class="p">,</span> <span class="n">hinge_logs</span><span class="p">,</span> <span class="n">external_force</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="n">_make_forced_spacecraft</span><span class="p">(</span>
+        <span class="n">spring_constant</span><span class="p">,</span> <span class="n">damping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">total_mass</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">)</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">panels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">effective_inertia</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">panel</span><span class="o">.</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">panel</span><span class="o">.</span><span class="n">d</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">total_mass</span>
+    <span class="n">natural_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">spring_constant</span> <span class="o">/</span> <span class="n">effective_inertia</span><span class="p">)</span>
+    <span class="n">expected_period</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">natural_rate</span>
+    <span class="n">equilibrium_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">*</span> <span class="n">force</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_mass</span> <span class="o">*</span> <span class="n">spring_constant</span><span class="p">)</span>
+    <span class="n">release_angle</span> <span class="o">=</span> <span class="n">equilibrium_angle</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">natural_rate</span> <span class="o">*</span> <span class="n">force_off_time</span><span class="p">))</span>
+    <span class="n">release_rate</span> <span class="o">=</span> <span class="n">equilibrium_angle</span> <span class="o">*</span> <span class="n">natural_rate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">natural_rate</span> <span class="o">*</span> <span class="n">force_off_time</span><span class="p">)</span>
+    <span class="n">expected_free_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">release_angle</span><span class="p">,</span> <span class="n">release_rate</span> <span class="o">/</span> <span class="n">natural_rate</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">force_off_time</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">external_force</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [N]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stop_time</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">hinge_log</span> <span class="ow">in</span> <span class="n">hinge_logs</span><span class="p">:</span>
+        <span class="n">times</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">rates</span> <span class="o">=</span> <span class="n">_check_hinge_recording</span><span class="p">(</span><span class="n">hinge_log</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+        <span class="n">forced</span> <span class="o">=</span> <span class="n">times</span> <span class="o">&lt;=</span> <span class="n">force_off_time</span>
+        <span class="n">free</span> <span class="o">=</span> <span class="n">times</span> <span class="o">&gt;</span> <span class="n">force_off_time</span>
+        <span class="n">reference_angles</span> <span class="o">=</span> <span class="n">equilibrium_angle</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">natural_rate</span> <span class="o">*</span> <span class="n">times</span><span class="p">))</span>
+        <span class="n">reference_rates</span> <span class="o">=</span> <span class="n">equilibrium_angle</span> <span class="o">*</span> <span class="n">natural_rate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">natural_rate</span> <span class="o">*</span> <span class="n">times</span><span class="p">)</span>
+        <span class="n">free_phase</span> <span class="o">=</span> <span class="n">natural_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">free</span><span class="p">]</span> <span class="o">-</span> <span class="n">force_off_time</span><span class="p">)</span>
+        <span class="n">reference_angles</span><span class="p">[</span><span class="n">free</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">release_angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">free_phase</span><span class="p">)</span> <span class="o">+</span> <span class="n">release_rate</span> <span class="o">/</span> <span class="n">natural_rate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">free_phase</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">reference_rates</span><span class="p">[</span><span class="n">free</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">release_angle</span> <span class="o">*</span> <span class="n">natural_rate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">free_phase</span><span class="p">)</span> <span class="o">+</span> <span class="n">release_rate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">free_phase</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">free_equilibrium</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+        <span class="k">for</span> <span class="n">phase</span><span class="p">,</span> <span class="n">equilibrium</span><span class="p">,</span> <span class="n">amplitude</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">forced</span><span class="p">,</span> <span class="n">equilibrium_angle</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">equilibrium_angle</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">free</span><span class="p">,</span> <span class="n">free_equilibrium</span><span class="p">,</span> <span class="n">expected_free_amplitude</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="n">phase_times</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span>
+            <span class="n">phase_angles</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span>
+            <span class="n">angle_tolerance</span> <span class="o">=</span> <span class="mf">5e-3</span> <span class="o">*</span> <span class="n">amplitude</span>
+            <span class="n">rate_tolerance</span> <span class="o">=</span> <span class="n">angle_tolerance</span> <span class="o">*</span> <span class="n">natural_rate</span>
+            <span class="c1"># Include every sample, including the final partial cycle of each phase.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+                <span class="n">phase_angles</span><span class="p">,</span> <span class="n">reference_angles</span><span class="p">[</span><span class="n">phase</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">angle_tolerance</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+                <span class="n">rates</span><span class="p">[</span><span class="n">phase</span><span class="p">],</span> <span class="n">reference_rates</span><span class="p">[</span><span class="n">phase</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">rate_tolerance</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">minimum_peaks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">phase_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">phase_times</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">expected_period</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">signed_angles</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">*</span> <span class="n">phase_angles</span>
+                <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">signed_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">signed_angles</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">signed_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">signed_angles</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">minimum_peaks</span><span class="p">,</span> <span class="s2">"Oscillations do not cover the full phase duration"</span>
+                <span class="n">measured_periods</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase_times</span><span class="p">[</span><span class="n">peaks</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">measured_periods</span><span class="p">,</span> <span class="n">expected_period</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+                    <span class="n">phase_angles</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span> <span class="n">equilibrium</span> <span class="o">+</span> <span class="n">direction</span> <span class="o">*</span> <span class="n">amplitude</span><span class="p">,</span>
+                    <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">angle_tolerance</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">conservation_case</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"gravity"</span><span class="p">,</span> <span class="s2">"no_gravity"</span><span class="p">,</span> <span class="s2">"damping"</span><span class="p">):</span>
+        <span class="n">test_hinged_body_conservation</span><span class="p">(</span><span class="n">conservation_case</span><span class="p">)</span>
+    <span class="n">test_hinged_body_steady_state_deflection</span><span class="p">()</span>
+    <span class="n">test_hinged_body_frequency_and_amplitude</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

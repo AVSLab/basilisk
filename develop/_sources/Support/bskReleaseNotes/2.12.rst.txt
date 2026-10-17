@@ -1,0 +1,237 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.12 Release Notes
+==========================
+
+.. _bsk-release-2-12-0:
+
+Version 2.12.0 (September 21, 2026)
+-----------------------------------
+
+Compatibility and migration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Removed the deprecated ``Basilisk.architecture.cMsgCInterfacePy`` compatibility package; import C message wrappers from ``Basilisk.architecture.messaging`` instead.
+- Removed the expired ``GravBodyData.useSphericalHarmParams`` and ``GravBodyData.usePolyhedral`` setters; configure gravity models with ``useSphericalHarmonicsGravityModel()``, ``usePolyhedralGravityModel()``, or ``usePointMassGravityModel()``.
+- Fixed ``RetentionPolicy.addVariableLog()`` to retain complete direct module variables through the supported logger API and deprecated its legacy component/type arguments; nested and computed histories require an explicit ``PythonVariableLogger``.
+- Sped up low-DOF simulations by removing repeated whole-map copies and rehashing of the integrator state container on every Runge-Kutta stage. Changing the return type of ``ExtendedStateVector::operator+=`` increments the SDK extension ABI to version 2.
+- Concrete state and dynamic effector implementations are now declared ``final`` to make their existing non-extension contract explicit.  External C++ code should compose these effectors rather than inherit from them.
+- Message payload structs now reject assignment of a field name that does not already exist, raising a ``ValueError`` instead of silently creating a new Python attribute (issue #305). This gives payloads the same typo protection that SWIG-wrapped modules already have, so a mistake such as ``payload.sigm_BN = ...`` is caught immediately. Only the ``*Payload`` data classes are frozen; the message, reader, recorder, writer and vector wrapper classes are intentionally left unfrozen.
+- ExtPulsedTorque now evaluates its pulse sequence from simulation time using the new pulseInterval parameter in seconds, independent of integrator evaluations and task scheduling. Set pulseInterval to the desired duration of one count in existing configurations. Add safe defaults and configuration validation; repeated resets preserve the phase anchored at time zero.
+- Refactored MRP conversion helpers and selected attitude reads to use ``Eigen::MRPd`` directly; ``eigenMRPd2CArray()`` now takes ``const Eigen::MRPd&`` instead of ``Eigen::Vector3d&``.
+- Updated the C++ ``StateEffector`` attitude interfaces to pass ``sigma_BN`` as ``Eigen::MRPd`` for ``updateContributions()`` and ``computeDerivatives()``; custom state effectors must update matching overrides.
+- Removed deprecated Python-environment management from ``conanfile.py``. Clone-based builds now leave Python package installation to explicit pip setup steps, matching wheel and editable-install behavior.
+
+Build, installation, and CI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added an opt-in ``--strictWarnings True`` build mode that applies additional compiler diagnostics consistently across CMake generators.
+- ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``, preventing stale compiled Numba objects from surviving clean source builds.
+- Added a strict ``python conanfile.py --offline`` mode for clean and incremental builds using prepared Conan, CMake support-source, and Rust Cargo caches.
+- Fixed a benign macOS linker alignment warning when building :ref:`simpleAntenna` by compiling cfitsio with ``-fno-common`` and tracking the flag in its Conan package ID.
+- Fixed invoking ``conanfile.py`` from outside the Basilisk repository so Conan selects the correct recipe and builds in the repository's ``dist3`` folder.
+- Fixed optional wheel generation for beta versions whose Python package metadata uses canonical prerelease version spelling.
+- Added optional ``vizInterface``, ``opNav``, and ``mujoco`` capability flags to ``Basilisk.getBuildInfo()`` and the new ``Basilisk.hasBuildFeature()`` query. Scenarios and tests now use these flags to guard optional imports and skip cleanly when a capability was not built.
+- Added ``Basilisk.getBuildInfo()`` and ``Basilisk.printBuildInfo()`` to report build diagnostics and a compiled,
+  versioned C/C++ ABI descriptor for an installed Basilisk package.  The public descriptor contract is shared with
+  BSK-SDK headers, module-only builds refresh the compiled ABI metadata, and CMake uses the Python interpreter from
+  the environment that invoked the build.
+- Parallelized distribution wheel builds and added compiler and Conan caching to wheel CI.
+- Reduced clean-build time and Conan deprecation warnings by omitting unused OpenCV contrib and JPEG 2000 modules and CSPICE command-line utilities.
+- Reused Conan retry and source-backup configuration in the release container build to reduce transient external source download failures.
+- Generated Python message package imports now use the exact sorted ``*Payload.h`` inventory built by CMake, keeping split wheel builds compatible across independent runners, rejecting duplicate payload names, and pruning generated artifacts for removed or renamed payloads.
+- Prevented strict compiler warnings from being applied to generated Rust SWIG wrapper sources.
+- Improved incremental builds by inventorying wrapper sources once per package root and tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers without regenerating wrappers for unrelated source changes.
+- Made fixed-width integer and Eigen headers self-contained instead of relying on transitive includes.
+- Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.
+- Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.
+- Removed redundant source compilation from SWIG wrappers when a linked package library already owns those sources.
+- Removed redundant transitive architecture libraries from generated package and wrapper link inputs.
+- Assigned local implementations explicitly in directories containing multiple SWIG interfaces.
+- Consolidated common message-wrapper helpers into one support extension while preserving their Python names.
+- Removed the unused logging dependency from the common ``SysModel`` header.
+- Prevented header-only package groups from producing empty shared libraries and restored shared ``_GeneralModuleFiles/Custom.cmake`` hooks for built-in and external wrappers.
+- Made Conan recipe imports and version-file lookup independent of the current working directory.
+- Allowed integrated external projects to omit unused C and C++ custom-message directories.
+- Fixed nightly optional-wheel packaging failures caused by wheel build output changing the recorded source-dirty state between core and extension builds.
+- Allow optional-wheel packaging to continue when independently built inputs differ only in compiler-cache launcher diagnostics.
+- ``Basilisk.hasBuildFeature()`` now aggregates capabilities from the core artifact and compatible installed optional Basilisk distributions, allowing the same feature guards to work with monolithic and split-wheel installations.
+- Reduced clean configuration and build time by automatically using Ninja for new builds on every platform when it is available, while preserving explicit, existing, and requested IDE generator choices.
+- Clean Conan builds now remove the resolved Conan output folder rather than always removing ``dist3``, while rejecting symlink traversal and build trees owned by another CMake project.
+- Fixed Rust-enabled macOS builds mixing Xcode and Command Line Tools SDKs by removing Corrosion's hard-coded SDK library search path and respecting CMake's selected SDK.
+- macOS builds now use a shared protobuf dependency, preventing interpreter-shutdown crashes when OpenCV-backed OpNav modules and :ref:`vizInterface` are loaded in the same process.
+- Reduced ``python conanfile.py`` setup time by using one Conan dependency-and-build pass instead of repeating dependency resolution, generator creation, and environment checks across separate install and build commands.
+- Aligned the Conan build profile's C++ standard with the C++17 host profile so cached build tools such as Protocol Buffers resolve directly without unnecessary compatibility searches or remote queries.
+- Stopped fetching GoogleTest and compiling native C++ test executables during wheel builds. Direct source builds and source CI continue to build them by default through the standard ``BUILD_TESTING`` option.
+- Added compatibility with Setuptools 84's dataclass-backed extension metadata while retaining support for earlier Setuptools releases.
+
+Simulation framework and module development
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- :beta:`Native Rust Modules`: Added optional support for developing and building Basilisk modules in Rust, including generated Python and C-message interfaces, Cargo and Corrosion build integration, module templates, documentation, and CI and wheel coverage.
+- Updated the downloadable external-module example for the current Rust message-output API.
+- Updated the BSK-SDK documentation to call out-of-tree BSK-SDK wheels extensions.
+- Updated documentation on BSK-SDK extension overview, installing and writing
+- Updated the BSK-SDK release and extension-writing guides to run the complete test suites and document nightly Basilisk wheel installation.
+- C++ message and reader wrappers now provide borrowed raw header and payload addresses through ``GetPointers()``; these addresses remain valid only for the documented owner and source lifetimes.
+- Python message and reader wrappers now share common ``MessageBase`` and ``ReadFunctorBase`` types across all generated payload modules, enabling reliable cross-message ``isinstance()`` checks.
+- Fixed use-after-free paths involving Python-owned C messages (issue #1433). A C module input message (a ``Msg_C`` reader) now keeps its subscribed source alive for as long as the subscription is live, and a recorder created from a ``Msg_C`` keeps the stand-alone message or embedded-message owner alive for the recorder's lifetime. Subscription references are released on ``unsubscribe()``, on re-subscribe, or when the subscriber owner is garbage-collected; recorder references are released when the recorder is garbage-collected. This completes the message keep-alive started for the C++ reader and recorder direction in issue #676.
+- Fixed unbounded epoch-message retention in ``simHelpers.timeStringToGregorianUTCMsg()`` and its deprecated ``unitTestSupport`` wrapper. Messages are now released when their callers, subscribers, recorders, and payload views no longer retain them, preventing memory growth during repeated SPICE interface setup.
+- Python ``Message.read()`` and C++ message reader calls now return live payload views that retain their original source through a Python reference. Payloads remain valid after temporary messages leave scope or readers unsubscribe, change subscriptions, or are destroyed. Sources are released when the last owner releases them, including when Python collects a message that caches its own payload view.
+- Fixed a long-standing memory-safety bug (issue #676) where a stand-alone message that went out of scope in Python could be garbage collected while a C++ module input message (``ReadFunctor``), reader returned by ``Message.addSubscriber()``, or recorder still pointed into it, causing freed/garbage memory to be read. These C++ readers and recorders now keep the source message alive for as long as they exist, so messages created inside Python setup or helper functions no longer need to be manually retained. The reference counting is done entirely in the SWIG layer; the core ``messaging.h`` header remains free of ``<Python.h>`` so the C/C++ core still builds without the Python development headers.
+- Improved event-checking performance in ``SimulationBaseClass`` by caching the list of active events and rebuilding it only when event activity changes. Simulations that register many inactive event handlers while checking an active event frequently no longer pay an ``O(total events)`` rescan on every check cycle (issue #455).
+- Hardened the BskSim, MultiSat, OpNav, and MuJoCo example master classes against uninitialized, repeated, and failed model setup while preserving their existing getters and direct-read model access.
+- Made the Python ``BSKLogger.bskLog`` method treat messages as literal text instead of C format strings.
+- Updated ``Eigen::MRPd`` DCM and angle-axis conversions to return the equivalent short-rotation MRP set.
+- Documented that ``Eigen::MRPd::FromTwoVectors()`` returns the identity MRP when either input vector has zero or underflow-level norm.
+- Reduced heap allocation in fixed-dimension Eigen operations used by Lambert propagation, navigation models and filters, VSCMG steering, magnetic torque bars, hinged-joint controllers, coordinate conversions, and common numerical support utilities.
+- Enforced the abstract interfaces for Monte Carlo scalar and vector dispersion base classes under Python 3.
+
+Spacecraft dynamics and effectors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added support for :ref:`dualHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
+- Added support for :ref:`nHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
+- Added panel state and panel configuration log output messages to :ref:`nHingedRigidBodyStateEffector`.
+- :ref:`nHingedRigidBodyStateEffector` now rejects a massless panel and a panel chain whose panels differ in mass or length.
+- Added support for :ref:`linearTranslationNDOFStateEffector` to be the parent for dynamic effectors.
+- :ref:`linearTranslationNDOFStateEffector` now rejects a chain whose joint mass matrix is singular, an empty chain, and an invalid rotation matrix or inertia tensor.
+- :ref:`linearTranslationOneDOFStateEffector` now rejects an invalid rotation matrix or inertia tensor, matching the spinning body effectors.
+- Fixed the :ref:`linearTranslationNDOFStateEffector` translating body configuration log, which reported an attitude lagging the hub by an integrator substep.
+- :ref:`linearTranslationNDOFStateEffector` now accepts a zero body mass, which its massless joint setup documented but the setter rejected.
+- Fixed a memory leak of the per body output messages in :ref:`linearTranslationNDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`.
+- Enabled :ref:`facetDragDynamicEffector` to be attached to a branching state effector.
+- Fixed :ref:`sphericalPendulum` fuel-slosh damping which omitted the pendulum moment arm (issue #1484).
+- Added initialization validation requiring the :ref:`sphericalPendulum` damping matrix ``D`` to be symmetric positive semidefinite.
+- Fixed :ref:`FuelTank` propellant depletion when fuel slosh particles are attached. The tank and each slosh particle now drain their correct share of the mass flow regardless of how the propellant is partitioned.
+- Fixed the :ref:`FuelTank` mass-depletion torque ignoring the tank orientation (``dcm_TB``) and offset (``r_TB_B``). The depletion torque is now formed so a rotated or offset depleting tank produces the correct attitude dynamics.
+- Corrected :ref:`FuelTank` emptying-model center-of-mass and inertia derivatives away from the half-full condition, including the second derivative of the moving fuel center of mass.
+- Sped up high-DOF dynamics by giving Backsubstitution coefficient matrices a compile-time column count in the spinning, translating, and hinged state effectors.
+- Fixed the :ref:`hingedRigidBodyStateEffector` panel and hinge velocity outputs, which were wrong for a rotated spacecraft hub.
+- Fixed the :ref:`hingedRigidBodyStateEffector` published panel kinematics, which were built on a hub angular velocity a step old.
+- Fixed the :ref:`dualHingedRigidBodyStateEffector` panel velocity outputs, which were wrong for a rotated spacecraft hub.
+- Fixed the :ref:`dualHingedRigidBodyStateEffector` panel 2 angular velocity output, which used panel 1's attitude and omitted the first hinge rate.
+- Fixed the :ref:`dualHingedRigidBodyStateEffector` second hinge motor torque, which was applied without its reaction on panel 1.
+- Fixed the sign of an attached effector's upper body torque in the :ref:`spinningBodyTwoDOFStateEffector` lower body equation of motion.
+- Fixed the :ref:`linearTranslationOneDOFStateEffector` inertial velocity and angular velocity properties, which were wrong for attached effectors.
+- Fixed state effector identifier reuse that could give two live effectors colliding state names.
+- Branching parents now publish their attachment frame kinematics at the current integrator substep rather than once per task step.
+- Attached dynamic effectors' inertial-frame force is now applied by every state effector that can act as a parent.
+- Tightened ``eigenIsValidInertiaMatrix`` in ``avsEigenSupport`` so an inertia tensor must also be finite, have at most one zero principal inertia, and its principal inertias must satisfy the triangle inequality.
+- Added support for :ref:`facetSRPDynamicEffector` to be attached to a branching state effector.
+- :ref:`facetSRPDynamicEffector` now rejects a facet count that does not match the facets added.
+- Fixed :ref:`facetSRPDynamicEffector` applying one facet's articulation angle to another when only some articulation messages had been written.
+- Fixed :ref:`simIncludeThruster` defaulting ``addToSpacecraftSubcomponent()`` to a segment that every parent effector rejects.
+- Documented the branching setup in each effector that supports it, which previously appeared only on the dynamic effector side.
+- Reorganized the effector branching compatibility table in :ref:`bskPrinciples-11` into lists of supported parents, supported children, and effectors not supported for branching.
+- Configuration validation for affected state and dynamic effectors now runs during spacecraft initialization as well as ``Reset()``, so attached-only effectors reject invalid setups without requiring separate task scheduling.
+- Concrete effector API documentation now includes complete Doxygen parameter descriptions, with matching declaration and definition names so parameter tables render consistently.
+- Added :ref:`writingEffectors` with guidance on dynamics callbacks, attachment and task scheduling, configuration initialization, and testing; the branching guide now links to the shared initialization guidance.
+- ConstraintDynamicEffector now recomputes derived gains from updated alpha and beta on reset or attachment initialization while preserving explicit individual-gain overrides. Gain setters reject non-finite values, and derived-gain overflow fails before replacing active gains. Document the physical gain units and shared numerical tuning convention.
+- Guard effector dimensions before native accesses: validate magnetic torque bar counts, thruster initial-state vectors, faceted SRP message vectors, radiation-pressure lookup tables, and wheel/thruster command and output capacities. Invalid configurations now raise ``BasiliskError``; larger thruster sets remain supported with no array command input connected.
+- Reject state-thruster and reaction-wheel count changes after state registration, including direct configuration-vector edits before dynamics access. Reaction wheels also preserve each wheel's jitter-angle state allocation. Add all devices and select their models before ``InitializeSimulation()``; ``Reset()`` preserves the registered state dimensions.
+- Spinning-body, translation, and hub validators now reject non-finite configured values, including during point-mass spacecraft initialization. Point-mass mode preserves finite zero or singular inertia support and enforces an exactly zero center offset. Spin and translation axes normalize safely at large finite magnitudes, and translation validation precedes state registration while preserving existing mass bounds and integrated states.
+- Hinged-body, prescribed-motion, and slosh effectors now reject negative or non-finite configured masses before state registration and from ``Reset()`` while preserving supported zero-mass configurations and integrated states. Hinged-body effectors also validate hinge-frame rotation matrices, dual-hinged bodies require positive finite combined mass, and N-hinged chains require finite positive uniform panel masses and finite uniform distances. Prescribed-motion mass setters preserve the prior value on invalid input, and spherical-pendulum damping validation now also runs from ``Reset()``.
+- Initialize all :ref:`extForceTorque` command buffers to zero at construction so attached effectors can safely evaluate loads before scheduled reset or input processing. Document static-load, command-sampling, and repeated-reset behavior for hub and appendage attachment.
+- :ref:`vscmgStateEffector` now validates and initializes its configuration through spacecraft attachment as well as ``Reset()``, including axes, frame consistency, mass constraints, basic inertias, message capacity, and finite motor settings; zero-mass balanced and simple jitter devices retain finite mass fractions.
+- :ref:`vscmgStateEffector` now rejects invalid coupled dynamics divisors and non-finite torque commands, guards linear friction divisors, and uses the gimbal's own smoothing ratio for gimbal friction.
+- Fixed wheel-angle output indexing in :ref:`vscmgStateEffector` arrays that mix balanced and jitter models.
+- Fixed out-of-bounds lock and motor torque command reads in :ref:`spinningBodyNDOFStateEffector` by rejecting chains larger than ``MAX_EFF_CNT`` when either array input is linked, including subscriptions added after initialization.
+- Clarified lock and motor torque array indexing within spinning-body modules, documented independent lock messages for separate instances and the current NDOF command-array capacity limit, and corrected the OneDOF, TwoDOF, and NDOF setup examples.
+- Added optional performance benchmarks for Eigen versus ``linearAlgebra`` and dynamics effectors, with smoke tests to keep benchmark entry points fresh.
+- Improved selected dynamics effector performance by replacing hot-path skew-matrix vector products with equivalent Eigen ``cross()`` operations.
+- Added point mass and single rigid body modes to spacecraft to speed up dynamics evaluation
+- Added a series of example scenarios comparing the Backsubstitution :ref:`spacecraft` dynamics engine against the MuJoCo-based :ref:`MJScene<MJScene>` engine on equivalent problems of increasing complexity: :ref:`scenarioCompareOrbit`, :ref:`scenarioCompareTorque`, :ref:`scenarioCompareRwPanels`, :ref:`scenarioCompareFlexPanels`, :ref:`scenarioCompareOrbitMultibody`, and :ref:`scenarioCompareVariableMass`.
+- Added accuracy-versus-runtime Pareto (work-precision) studies that sweep integrators and time steps or tolerances for both dynamics engines: :ref:`scenarioCompareParetoRwPanels` and :ref:`scenarioCompareParetoFlexPanels`.
+- Corrected :ref:`spacecraft` center-of-mass derivatives and allowed :ref:`FuelTank` update-only depletion to report retained mass-property derivatives while excluding depletion-dependent rate terms from the equations of motion.
+- Made :ref:`FuelTank` allocate flow from current integration-stage masses before reporting tank and slosh retained mass-property derivatives.
+- Documented that state effectors using dynamics-rate overrides require direct attachment to :ref:`spacecraft` and reject unsupported nested prescribed-motion configurations.
+- Corrected the :ref:`spacecraft` coupled-depletion center-of-mass rate, which divided its mass-rate term by total mass twice.
+- Added :ref:`twoHingeDamper` to apply isotropic Cartesian bob damping as generalized torques for a two-hinge spherical pendulum.
+
+Environment, gravity, and ephemerides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed the documented Mars spherical-harmonics configuration in :ref:`scenarioBasicOrbit` to use a packaged zonal :math:`J_2` field instead of requesting an unsupported gravity-field degree.
+- Corrected :ref:`scenarioDragRendezvous` to load a zonal-only gravity field when ``useJ2=True``, avoiding orientation-dependent tesseral terms when planet rotation is not configured.
+- Added ``gravBodyFactory.addBodiesTo()`` support for configuring gravity sources and targets on MuJoCo scenes.
+- Added ``zeroBase`` support to :ref:`planetEphemeris` for expressing all outputs relative to a body propagated by the same module instance.
+- Added :ref:`scenarioMJEarthMoonGravity`, a MuJoCo Earth-Moon gravity tutorial with selectable SPICE or :ref:`planetEphemeris` planet states.
+- Added opt-in ephemeris **reconstruction** to :ref:`spiceInterface`: each planet's position and orientation channels can independently reconstruct their state from a coarse grid of cached SPICE samples (or be disabled) instead of querying SPICE at the exact time on every call, cutting SPICE evaluations to roughly ``horizon / knotStep`` per channel. The default behavior is unchanged and bit-for-bit identical.
+- Added ``getPlanetSpiceQueryCount`` to :ref:`spiceInterface`, returning the ``{position, orientation}`` SPICE query counts accumulated over a run.
+- Added :ref:`scenarioSpiceReconstruction`, a lunar-flyby tutorial that trades SPICE queries for accuracy on the Moon's position and shows the region below the integrator error where the trade is free.
+- Added :ref:`scenarioVestaOrientation`, showing that a constant-rate spinner's orientation can be reconstructed exactly from a single SPICE query.
+- Added the :ref:`spiceReconstruction` guide covering when SPICE is a bottleneck and how to tune the reconstruction knobs.
+
+Sensors and flight software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- :ref:`coarsesunsensor` now produces white measurement noise by default when ``senNoiseStd`` is set, while explicit propagation matrices still support correlated noise and bounded random walks; its Python ``setAMatrix()`` and ``getAMatrix()`` bindings are now usable without an opaque-object memory-leak warning.
+- Reseeding the ``GaussMarkov`` utility now clears cached normal variates, and secondary sensor-noise streams use deterministic seeds that remain distinct when ``RNGSeed`` is zero.
+- The :ref:`imuSensor` accelerometer and gyro now both produce white Gaussian noise by default when their ``PMatrix`` is configured, and use distinct repeatable random streams for every ``RNGSeed`` value, including zero. Correlated and bounded-random-walk propagation remains available through the explicit ``AMatrix`` and error-bound setters.
+- The :ref:`magnetometer` now produces white Gaussian noise by default when ``senNoiseStd`` is configured, supports explicit correlated and bounded-random-walk propagation through ``setAMatrix()``, and honors ``RNGSeed`` during reset.
+- The :ref:`starTracker` now produces white Gaussian attitude errors by default when ``PMatrix`` is configured. Correlated and bounded-random-walk propagation remains available through explicit ``setAMatrix()`` and ``setWalkBounds()`` calls.
+- The :ref:`tempMeasurement` module now produces white Gaussian noise by default when ``senNoiseStd`` is configured, supports explicit correlated and bounded-random-walk propagation through ``setAMatrix()``, and uses separately seeded repeatable streams for measurement noise and spike faults.
+- Corrected the :ref:`sunlineEKF`, :ref:`okeefeEKF`, and :ref:`sunlineSEKF` state-update unit tests, which injected measurement noise using ``qObsVal`` (a variance) as the standard deviation and so exercised the filters at a fraction of the intended measurement noise. The tests now draw noise with ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate tolerance (issue #1461).
+- Added optional desired-time bounds to :ref:`simpleInstrumentController` for constraining when an image may be captured.
+- Corrected :ref:`horizonOpNav` to use a planet's polar radius along its polar axis instead of applying the equatorial radius to all three axes.
+- Added configurable joint-angle wrapping and opt-in shortest-path joint profiling to :ref:`jointArrayRefProfiler`.
+- Enhanced :ref:`jointThrAllocation` to evaluate all successful optimizer seeds and select the minimum-cost solution.
+- Added optional current-joint-state motion penalties to :ref:`jointThrAllocation` allocations.
+- Improved :ref:`hingedRigidBodyMotor` documentation, gain and torque-limit configuration, parameter validation, and unit-test coverage.
+- Added the Python-accessible ``elapsedTime`` state to :ref:`simpleInstrumentController` for duration-based imaging attempts.
+
+MuJoCo and stochastic integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- MuJoCo support is now generally available. Removed its beta labels and preliminary-use warnings from the documentation.
+- Upgraded the bundled MuJoCo dependency from 3.7.0 to 3.11.0.
+- Fixed :ref:`MJScene<MJScene>` reporting a body's position pinned at the model reference pose when its mass changed (for example a depleting fuel tank); the integrator state is now restored after the per-step ``mj_setConst`` refresh.
+- Sped up :ref:`MJScene<MJScene>` equations-of-motion evaluation by caching the ``mjModel``/``mjData`` pointers for the duration of the call instead of re-fetching them through the recompile-checking accessor on every access.
+- Corrected :ref:`MJSystemCoM` to report the time derivative of its center-of-mass position when MuJoCo body masses change.
+- :beta:`Stochastic Integration`: Added a pluggable Gaussian noise-generator abstraction (``GaussianNoiseGenerator``) with a random Mersenne-Twister source for production and a prescribed-replay source for tests, shared by all stochastic integrators through the ``StochasticRKIntegratorBase`` base class.
+- :beta:`Stochastic Integration`: Added the Roessler strong-order-1.5 stochastic Runge-Kutta integrators :ref:`svStochasticIntegratorSRIW1` and :ref:`svStochasticIntegratorSOSRI` (diagonal/scalar-noise Ito), and :ref:`svStochasticIntegratorSRA1` and :ref:`svStochasticIntegratorSOSRA` (additive-noise Ito). The stability-optimized ``SOSRI``/``SOSRA`` are the recommended strong-order methods.
+- :beta:`Stochastic Integration`: Added the strong-order Stratonovich :ref:`svStochasticIntegratorEulerHeun` (Euler-Heun) and the derivative-free strong-order-1.0 :ref:`svStochasticIntegratorRKMil` (Runge-Kutta Milstein, diagonal/scalar noise).
+- :beta:`Stochastic Integration`: Added the weak-order-2 Ito integrators :ref:`svStochasticIntegratorDRI1` and its non-mixing variant ``svStochasticIntegratorDRI1NM`` (Debrabant-Roessler), the Roessler ``RI1``/``RI3``/``RI5``/``RI6`` family, and the Tocino & Vigo-Aguiar ``SIEA``/``SMEA``/``SIEB``/``SMEB`` family; plus the weak-order-1 ``svStochasticIntegratorRDI1WM``. ``DRI1`` is the recommended general-purpose weak-order solver and handles non-commutative noise.
+- :beta:`Stochastic Integration`: Added the weak-order-2 Stratonovich integrators ``svStochasticIntegratorRS1`` and ``svStochasticIntegratorRS2`` (Roessler), for non-commutative Stratonovich noise.
+- :beta:`Stochastic Integration`: Re-implemented :ref:`svStochasticIntegratorW2Ito1` and :ref:`svStochasticIntegratorW2Ito2` (Tang & Xiao weak-order-2) onto the shared noise-generator architecture so they support non-commutative noise and are checked for numerical equivalence against reference trajectories.
+- :beta:`Stochastic Integration`: Added the :ref:`bskPrinciples-12` guide explaining what stochastic integration is, the supported methods, and how to choose one (weak vs. strong order, Itô vs Stratonovich, noise structure, and stiffness resilience).
+- :beta:`Stochastic Integration`: Added :ref:`inhomogeneousGeometricBrownianMotion`, a MuJoCo dynamics-task base class (importable as ``MJInhomogeneousGeometricBrownianMotion`` for Python subclassing) that models a mean-reverting process with multiplicative noise (IGBM), configured in stationary form (mean, time constant, stationary standard deviation) like :ref:`meanRevertingNoise`. The exact process is positive; it is integrated as written, so consumers that need positivity clamp the derived quantity downstream.
+- :beta:`Stochastic Integration`: Added :ref:`igbmAtmDensity` (``MJIgbmAtmDensity``), the multiplicative-noise counterpart to :ref:`stochasticAtmDensity`: it scales atmospheric density by the IGBM factor and clamps the corrected density to be non-negative.
+- :beta:`Stochastic Integration`: Added :ref:`igbmNoiseStateEffector`, the multiplicative-noise counterpart to :ref:`meanRevertingNoiseStateEffector`: it propagates an IGBM ``(1 + x)`` density-correction factor for ``spacecraft.Spacecraft`` dynamics, compatible with ``DragDynamicEffector``'s ``densityCorrectionStateName``.
+- :beta:`Stochastic Integration`: :ref:`dragDynamicEffector` now clamps its optional density correction so the density used for drag is never negative (a multiplicative correction state can, under an explicit integrator, momentarily make ``1 + correction`` negative).
+- :beta:`Stochastic Integration`: The :ref:`scenarioStochasticDrag` and :ref:`scenarioStochasticDragSpacecraft` examples take a ``useIgbm`` option to model the stochastic density with the multiplicative IGBM process instead of the additive Ornstein-Uhlenbeck correction.
+- Stochastic effector setters now reject non-finite parameters and state values without replacing prior values. Drift and diffusion calculations avoid intermediate overflow and report non-finite results through ``BasiliskError`` before storing them.
+
+Visualization and data handling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Prevented signed integer overflow when storage units integrate or directly add very large data quantities, while preserving exact 64-bit Python integer inputs.
+- Ensured that simple storage units evaluate each data node against the current storage level without exceeding capacity.
+- Fixed :ref:`vizInterface` leaking its protobuffer message when a frame did not reach a successful save-file write, including live-stream-only, broadcast-only, and camera-image early-return paths.
+- Fixed :ref:`vizInterface` leaking the serialized protobuffer buffer on broadcast-only frames and orphaning it when the message was re-serialized after its settings block was removed.
+- Fixed :ref:`vizInterface` leaking the copied synchronization-settings broadcast buffer and a heap allocation for every Vizard event reply.
+- :ref:`vizInterface` no longer calls ``google::protobuf::ShutdownProtobufLibrary()`` after qualifying successful save-file frames, which released protobuf's internal state while the module was still running.
+- :ref:`vizInterface` now owns and closes its protobuf output stream, preventing file-handle leaks and Windows cleanup failures after saving Vizard data.
+
+Documentation, examples, and validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Improved BSK documentation readability and navigation with refined light and dark styling, a searchable module catalog, and easier access to module guides, tests, and example scenarios.
+- Added ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` GoogleTest assertions with operand diagnostics, explicit zero-reference behavior, and rejection of non-finite values and invalid tolerances. Shared scalar test comparators now reject invalid inputs as well.
+- Updated the BSK and BSK-SDK release guides.
+- Added a Sphinx single-page documentation build mode for targeted local HTML previews.
+- Updated the BSK and BSK-SDK release guide pages.
+- Clarified contributor guidance for unit comments, release-note snippets, and known-issue updates.
+- Preserved unchanged generated documentation sources and cached Doxygen XML by module so Sphinx can reuse them during incremental HTML builds.
+- Made XML cache reuse account for transitive local includes even with ``SEARCH_INCLUDES=NO``, honor Sphinx configuration overrides, bypass reuse for environment-dependent settings, and recover safely after interrupted cache updates.
+- Made ``make.bat clean`` remove all generated documentation artifacts, including the Doxygen cache, on Windows.
+- Kept XML caches inside the selected build directory so cleaning an alternate ``BUILDDIR`` also removes its cache.
+- Resolved relative Doxygen input settings from the Sphinx configuration directory and tracked headers found there for cache invalidation, while keeping XML output in cache staging directories.
+- Preserved Doxygen configuration option order and prevented stale XML when bibliography settings, documentation commands, or aliases reference external files, even with preprocessing disabled.
+- Preserved XML dependency tracking across parallel Sphinx workers and refreshed older saved environments to prevent stale API pages after header edits.
+- Removed the obsolete Python 2-to-3 migration guide now that Basilisk supports Python 3 exclusively.
+- Removed the obsolete Basilisk 1.x-to-2.x user and module migration guides.
+- Added daily PyPI and GitHub usage-metrics collection with durable CSV history, a generated summary, and a live documentation plot sourced from the ``usage-metrics`` branch.
+- Protected retained usage history against restore failures, preserved independent source observations during outages with explicit freshness reporting, filtered identifiable non-distribution PyPI requests, and required complete seven-day windows for usage plots.
+- Retried interrupted usage-metrics HTTP response reads and preserved healthy-source data when those retries are exhausted.

@@ -1,0 +1,465 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioOrbitFromOmm &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioOrbitFromOmm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioOrbitFromOmm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">Initialize two Basilisk spacecraft from an Orbit Mean-Elements Message (OMM)</span>
+<span class="sd">file, then propagate them with point-mass Earth gravity. The bundled</span>
+<span class="sd">``dataForExamples/ommExample.kvn`` contains **synthetic teaching data**, not</span>
+<span class="sd">observations or predictions for real satellites. One orbit is nearly circular</span>
+<span class="sd">and inclined; the other is eccentric and near-polar. Both use fictitious</span>
+<span class="sd">nine-digit catalog numbers and the same UTC epoch.</span>
+
+<span class="sd">Run from the repository root with an installed Basilisk build::</span>
+
+<span class="sd">    python examples/scenarioOrbitFromOmm.py</span>
+
+<span class="sd">The sample path is resolved relative to this script, so running from another</span>
+<span class="sd">working directory also works. Keep ``dataForExamples/ommExample.kvn`` alongside</span>
+<span class="sd">the script when copying the example. No network downloads, SPICE kernels,</span>
+<span class="sd">gravity coefficient files, or Vizard installation are needed.</span>
+
+<span class="sd">Read the file and inspect its metadata</span>
+<span class="sd">--------------------------------------</span>
+
+<span class="sd">:py:func:`Basilisk.utilities.ommHandling.satOmm2elem` detects KVN, XML, JSON,</span>
+<span class="sd">or CSV from the file contents; the same call handles all four encodings:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from pathlib import Path</span>
+<span class="sd">    from Basilisk.utilities import ommHandling</span>
+
+<span class="sd">    path = Path(__file__).resolve().parent / "dataForExamples" / "ommExample.kvn"</span>
+<span class="sd">    records = ommHandling.satOmm2elem(str(path))</span>
+<span class="sd">    record = records[0]</span>
+<span class="sd">    print(record.satName, record.noradID, record.ommEpoch)</span>
+
+<span class="sd">Catalog IDs are strings, preserving nine-digit IDs and leading zeros.</span>
+<span class="sd">``ommEpoch`` is a UTC datetime without a timezone object. ``meanMotion`` retains</span>
+<span class="sd">the input mean motion in revolutions per day. The supported profile is</span>
+<span class="sd">Earth-centered, TEME, UTC, and SGP4. The sample declares this profile and the</span>
+<span class="sd">physical units explicitly. Malformed or unsupported records produce a warning</span>
+<span class="sd">and are skipped, so check the returned list before selecting a satellite.</span>
+<span class="sd">Unrecoverable file-level errors raise an exception.</span>
+
+<span class="sd">Use the converted elements to initialize a spacecraft</span>
+<span class="sd">-----------------------------------------------------</span>
+
+<span class="sd">OMM contains SGP4 **mean** elements. The reader initializes SGP4, evaluates the</span>
+<span class="sd">state at the record epoch, converts TEME to the Basilisk inertial frame, and</span>
+<span class="sd">derives **osculating** classical elements in ``record.oe``. Use these elements</span>
+<span class="sd">for initialization:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from Basilisk.utilities import orbitalMotion</span>
+
+<span class="sd">    r_N, v_N = orbitalMotion.elem2rv(earth.mu, record.oe)</span>
+<span class="sd">    vehicle.hub.r_CN_NInit = r_N  # [m]</span>
+<span class="sd">    vehicle.hub.v_CN_NInit = v_N  # [m/s]</span>
+
+<span class="sd">Here ``earth`` is the Earth gravity body and ``vehicle`` is a Spacecraft, as</span>
+<span class="sd">created in :py:func:`run`. The returned semi-major axis is in meters; inclination,</span>
+<span class="sd">ascending node, argument of periapsis, and true anomaly are in radians.</span>
+<span class="sd">Eccentricity is dimensionless. Do not apply another degrees-to-radians</span>
+<span class="sd">conversion, interpret the input mean anomaly as true anomaly, or apply another</span>
+<span class="sd">TEME rotation to ``record.oe``.</span>
+
+<span class="sd">Simulation time zero represents the common OMM epoch. This example rejects</span>
+<span class="sd">records with different epochs: a catalog's states must first be propagated to</span>
+<span class="sd">a common epoch before they can describe simultaneous initial conditions.</span>
+<span class="sd">Static point-mass Earth gravity does not need a separate UTC clock or SPICE</span>
+<span class="sd">interface; models with time-dependent ephemerides would also need that setup.</span>
+
+<span class="sd">Interpret the results</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">The first figure shows the orbital planes, initial positions, and imported</span>
+<span class="sd">osculating elements. The Earth sphere and the axes share the same length scale.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioOrbitFromOmmOrbits.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :alt: Two imported orbital planes around Earth with their osculating elements.</span>
+
+<span class="sd">The second figure covers two periods of the slower spacecraft. The eccentric</span>
+<span class="sd">spacecraft moves fastest near perigee and slowest near apogee. Dashed altitude</span>
+<span class="sd">guides come from :math:`a(1-e)-R_E` and :math:`a(1+e)-R_E` using the imported</span>
+<span class="sd">osculating elements. Altitude here means distance from Earth's center minus</span>
+<span class="sd">its equatorial radius, not height above an ellipsoid or terrain.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioOrbitFromOmmAltitudeSpeed.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :alt: Altitude and inertial speed histories for circular and eccentric orbits.</span>
+
+<span class="sd">SGP4 supplies the initial state only. Subsequent motion in this example uses</span>
+<span class="sd">Basilisk's two-body dynamics, which omit Earth's oblateness, atmospheric drag,</span>
+<span class="sd">and other perturbations. The retained ``bStar``, ``nDot``, and ``nDotDot`` fields</span>
+<span class="sd">do not configure Basilisk force models. These curves therefore illustrate the</span>
+<span class="sd">handoff to a simulation, rather than continued SGP4 predictions or a validation</span>
+<span class="sd">of the frame-conversion mathematics.</span>
+
+<span class="sd">Try another file</span>
+<span class="sd">----------------</span>
+
+<span class="sd">From Python in the examples directory:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    import scenarioOrbitFromOmm</span>
+
+<span class="sd">    results, figures = scenarioOrbitFromOmm.run(False, omm_path="my_catalog.json")</span>
+<span class="sd">    figures["scenarioOrbitFromOmmOrbits"].savefig("imported-orbits.svg")</span>
+
+<span class="sd">Use records at a common epoch with bound orbits that remain above Earth.</span>
+<span class="sd">``results`` contains the epoch, gravitational parameter, reference Earth</span>
+<span class="sd">radius, and each satellite's imported record and sampled Cartesian states.</span>
+<span class="sd">Figures remain available for saving when interactive display is disabled.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimulationBaseClass</span><span class="p">,</span>
+    <span class="n">macros</span><span class="p">,</span>
+    <span class="n">ommHandling</span><span class="p">,</span>
+    <span class="n">orbitalMotion</span><span class="p">,</span>
+    <span class="n">simIncludeGravBody</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioOrbitFromOmm.html#scenarioOrbitFromOmm.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">omm_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Import a common-epoch catalog and simulate two periods of its slowest orbit.</span>
+
+<span class="sd">    :param show_plots: whether to display the Matplotlib figures</span>
+<span class="sd">    :param omm_path: optional path to a KVN, XML, JSON, or CSV OMM file</span>
+<span class="sd">    :return: results dictionary and a dictionary of named Matplotlib figures</span>
+<span class="sd">    :raises ValueError: if no usable records remain, epochs differ, or an imported</span>
+<span class="sd">                       orbit is unbound or intersects the reference Earth sphere</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">omm_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">omm_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"dataForExamples"</span> <span class="o">/</span> <span class="s2">"ommExample.kvn"</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">ommHandling</span><span class="o">.</span><span class="n">satOmm2elem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">omm_path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">records</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The OMM file contains no usable records."</span><span class="p">)</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">records</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ommEpoch</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">ommEpoch</span> <span class="o">!=</span> <span class="n">epoch</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"This example requires all OMM records to share a common epoch."</span><span class="p">)</span>
+
+    <span class="c1"># A static central Earth needs no downloaded ephemeris or gravity data.</span>
+    <span class="n">grav_factory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">grav_factory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">oe</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">([</span><span class="n">elements</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="p">]))</span>
+                <span class="ow">or</span> <span class="n">elements</span><span class="o">.</span><span class="n">a</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span> <span class="o">&lt;</span> <span class="mf">1.0</span>
+                <span class="ow">or</span> <span class="n">elements</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">satName</span><span class="si">}</span><span class="s2"> must have a bound osculating orbit above Earth."</span><span class="p">)</span>
+
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"orbitProcess"</span><span class="p">)</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">"orbitTask"</span>
+    <span class="n">step_seconds</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [s]</span>
+    <span class="n">step_ns</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">step_seconds</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">step_ns</span><span class="p">))</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">]</span>  <span class="c1"># [s]</span>
+    <span class="n">stop_seconds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">periods</span><span class="p">)</span><span class="o">/</span><span class="n">step_seconds</span><span class="p">)</span><span class="o">*</span><span class="n">step_seconds</span>  <span class="c1"># [s]</span>
+
+    <span class="n">vehicles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">recorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">record</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+        <span class="n">vehicle</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"ommSatellite</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">grav_factory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">vehicle</span><span class="p">)</span>
+
+        <span class="c1"># oe is already osculating and inertial, with a in meters and angles in radians.</span>
+        <span class="n">r_N</span><span class="p">,</span> <span class="n">v_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">oe</span><span class="p">)</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_N</span>  <span class="c1"># [m]</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">v_N</span>  <span class="c1"># [m/s]</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">)</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">step_ns</span><span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+        <span class="n">vehicles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vehicle</span><span class="p">)</span>
+        <span class="n">recorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recorder</span><span class="p">)</span>
+
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stop_seconds</span><span class="p">))</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">satellites</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">record</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">period</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">recorders</span><span class="p">,</span> <span class="n">periods</span><span class="p">):</span>
+        <span class="n">satellites</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"record"</span><span class="p">:</span> <span class="n">record</span><span class="p">,</span>
+            <span class="s2">"time_s"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+            <span class="s2">"position_m"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">),</span>
+            <span class="s2">"velocity_m_s"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">),</span>
+            <span class="s2">"period_s"</span><span class="p">:</span> <span class="n">period</span><span class="p">,</span>
+        <span class="p">})</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"epoch"</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span> <span class="s2">"mu"</span><span class="p">:</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="s2">"earth_radius_m"</span><span class="p">:</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span><span class="p">,</span>
+               <span class="s2">"satellites"</span><span class="p">:</span> <span class="n">satellites</span><span class="p">}</span>
+    <span class="n">figures</span> <span class="o">=</span> <span class="n">_plot_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="c1"># Close only this scenario's figures; callers can still save the returned objects.</span>
+    <span class="k">for</span> <span class="n">figure</span> <span class="ow">in</span> <span class="n">figures</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">figures</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_results</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot orbit geometry and two-body altitude/speed histories with consistent colors."""</span>
+    <span class="n">km_per_m</span> <span class="o">=</span> <span class="mf">1e-3</span>  <span class="c1"># [km/m]</span>
+    <span class="n">seconds_per_minute</span> <span class="o">=</span> <span class="mf">60.0</span>  <span class="c1"># [s/min]</span>
+    <span class="n">radius_km</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">"earth_radius_m"</span><span class="p">]</span><span class="o">*</span><span class="n">km_per_m</span>  <span class="c1"># [km]</span>
+    <span class="n">satellites</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">"satellites"</span><span class="p">]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"tab10"</span><span class="p">)(</span><span class="n">index</span> <span class="o">%</span> <span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">satellites</span><span class="p">))]</span>
+    <span class="n">epoch_label</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">"epoch"</span><span class="p">]</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" UTC"</span>
+
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">rc_context</span><span class="p">({</span><span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                         <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"svg.fonttype"</span><span class="p">:</span> <span class="s2">"none"</span><span class="p">}):</span>
+        <span class="n">orbit_figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">2.6</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">satellites</span><span class="p">))),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">orbit_figure</span><span class="o">.</span><span class="n">add_gridspec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mf">1.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">orbit_axes</span> <span class="o">=</span> <span class="n">orbit_figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+        <span class="n">details_axes</span> <span class="o">=</span> <span class="n">orbit_figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">details_axes</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+        <span class="n">orbit_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"From OMM to Basilisk: imported orbits"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Inertial frame | dots mark the record epoch"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">colatitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+            <span class="n">radius_km</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">colatitude</span><span class="p">)),</span>
+            <span class="n">radius_km</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">colatitude</span><span class="p">)),</span>
+            <span class="n">radius_km</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">colatitude</span><span class="p">)),</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"#abc7da"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">shade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">radius_km</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">radius_km</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#677f8e"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">max_radius</span> <span class="o">=</span> <span class="n">radius_km</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">satellite</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">satellites</span><span class="p">,</span> <span class="n">colors</span><span class="p">)):</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"record"</span><span class="p">]</span>
+            <span class="n">position_km</span> <span class="o">=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"position_m"</span><span class="p">]</span><span class="o">*</span><span class="n">km_per_m</span>  <span class="c1"># [km]</span>
+            <span class="n">first_orbit</span> <span class="o">=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"time_s"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"period_s"</span><span class="p">]</span>
+            <span class="n">orbit_axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">position_km</span><span class="p">[</span><span class="n">first_orbit</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">orbit_axes</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">position_km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">depthshade</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">max_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_radius</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">position_km</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">oe</span>
+            <span class="n">detail</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">satName</span><span class="si">}</span><span class="se">\n</span><span class="s2">Catalog ID: </span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">noradID</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                      <span class="sa">f</span><span class="s2">"Input mean motion: </span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">meanMotion</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> rev/day</span><span class="se">\n</span><span class="s2">"</span>
+                      <span class="sa">f</span><span class="s2">"a = </span><span class="si">{</span><span class="n">elements</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="n">km_per_m</span><span class="si">:</span><span class="s2">,.1f</span><span class="si">}</span><span class="s2"> km   e = </span><span class="si">{</span><span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                      <span class="sa">f</span><span class="s2">"i = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">elements</span><span class="o">.</span><span class="n">i</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> deg</span><span class="se">\n</span><span class="s2">"</span>
+                      <span class="sa">f</span><span class="s2">"Two-body period: </span><span class="si">{</span><span class="n">satellite</span><span class="p">[</span><span class="s1">'period_s'</span><span class="p">]</span><span class="o">/</span><span class="n">seconds_per_minute</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> min"</span><span class="p">)</span>
+            <span class="n">details_axes</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.88</span><span class="o">-</span><span class="n">index</span><span class="o">*</span><span class="mf">0.76</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">satellites</span><span class="p">),</span> <span class="n">detail</span><span class="p">,</span>
+                              <span class="n">transform</span><span class="o">=</span><span class="n">details_axes</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">"top"</span><span class="p">,</span> <span class="n">linespacing</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span>
+                              <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="p">{</span><span class="s2">"facecolor"</span><span class="p">:</span> <span class="s2">"#f5f7fa"</span><span class="p">,</span> <span class="s2">"edgecolor"</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span>
+                                                 <span class="s2">"boxstyle"</span><span class="p">:</span> <span class="s2">"round,pad=0.8"</span><span class="p">})</span>
+        <span class="n">details_axes</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Osculating elements at</span><span class="se">\n</span><span class="si">{</span><span class="n">epoch_label</span><span class="si">}</span><span class="se">\n</span><span class="s2">Point-mass Earth propagation"</span><span class="p">,</span>
+                          <span class="n">transform</span><span class="o">=</span><span class="n">details_axes</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">linespacing</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mf">1.08</span><span class="o">*</span><span class="n">max_radius</span>  <span class="c1"># [km]</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">,</span> <span class="n">limit</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">,</span> <span class="n">limit</span><span class="p">),</span> <span class="n">zlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">,</span> <span class="n">limit</span><span class="p">),</span>
+                       <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Inertial x [km]"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Inertial y [km]"</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">"Inertial z [km]"</span><span class="p">)</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">orbit_axes</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>  <span class="c1"># [deg] view both orbital planes obliquely</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="n">orbit_axes</span><span class="o">.</span><span class="n">xaxis</span><span class="p">,</span> <span class="n">orbit_axes</span><span class="o">.</span><span class="n">yaxis</span><span class="p">,</span> <span class="n">orbit_axes</span><span class="o">.</span><span class="n">zaxis</span><span class="p">):</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">prune</span><span class="o">=</span><span class="s2">"both"</span><span class="p">))</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">fill</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">history_figure</span><span class="p">,</span> <span class="n">history_axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+        <span class="n">history_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"After import: Basilisk two-body propagation"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">history_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Simulation time zero = </span><span class="si">{</span><span class="n">epoch_label</span><span class="si">}</span><span class="se">\n</span><span class="s2">Dashed altitude guides: imported perigee / apogee"</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">satellite</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">satellites</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"record"</span><span class="p">]</span>
+            <span class="n">time_minutes</span> <span class="o">=</span> <span class="n">satellite</span><span class="p">[</span><span class="s2">"time_s"</span><span class="p">]</span><span class="o">/</span><span class="n">seconds_per_minute</span>  <span class="c1"># [min]</span>
+            <span class="n">altitude_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">satellite</span><span class="p">[</span><span class="s2">"position_m"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">km_per_m</span><span class="o">-</span><span class="n">radius_km</span>  <span class="c1"># [km]</span>
+            <span class="n">speed_km_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">satellite</span><span class="p">[</span><span class="s2">"velocity_m_s"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">km_per_m</span>  <span class="c1"># [km/s]</span>
+            <span class="n">history_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_minutes</span><span class="p">,</span> <span class="n">altitude_km</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">satName</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">history_axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_minutes</span><span class="p">,</span> <span class="n">speed_km_s</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">apsis_km</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">sign</span><span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span><span class="o">*</span><span class="n">km_per_m</span><span class="o">-</span><span class="n">radius_km</span>  <span class="c1"># [km]</span>
+                <span class="n">history_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">apsis_km</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">history_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Spherical altitude [km]"</span><span class="p">)</span>
+        <span class="n">history_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">history_axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">"Inertial speed [km/s]"</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Time since OMM epoch [min]"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">axes</span> <span class="ow">in</span> <span class="n">history_axes</span><span class="p">:</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"scenarioOrbitFromOmmOrbits"</span><span class="p">:</span> <span class="n">orbit_figure</span><span class="p">,</span>
+            <span class="s2">"scenarioOrbitFromOmmAltitudeSpeed"</span><span class="p">:</span> <span class="n">history_figure</span><span class="p">}</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+Core FSW binding experiment
+===========================
+
+Measurements taken on 2026-10-01 with the core FSW prototype applied to
+Basilisk commit ``b355572568fd1d53e42f8d1da51659ebf63eb66c``.
+Timings, module counts, and validation results describe that prototype snapshot.
+
+See the accompanying `raw measurements <macos-arm64-2026-10-01.json>`_.
+
+Implementation
+--------------
+
+The prototype combines 101 core C/C++ bindings into one native library. Each binding retains its original
+Python names and initialization entry point. Generated private-module shims
+load individual bindings on demand. Three OpenCV bindings and the Rust
+binding remain separate.
+
+Results
+-------
+
+.. list-table:: Full core group, seconds
+   :header-rows: 1
+
+   * - Measurement
+     - Separate
+     - Combined
+   * - Cold import, median of three
+     - 12.544
+     - 0.770
+   * - Warm import, median of three
+     - 0.260
+     - 0.129
+   * - FSW rebuild, median of three
+     - 30.670
+     - 29.383
+
+Trial ranges:
+
+- separate, cold: 10.439 to 13.411 seconds.
+- separate, warm: 0.249 to 0.289 seconds.
+- separate, build: 29.140 to 30.838 seconds.
+- combined, cold: 0.736 to 0.953 seconds.
+- combined, warm: 0.093 to 0.131 seconds.
+- combined, build: 28.875 to 31.568 seconds.
+
+Build measurements regenerate all 101 SWIG wrappers, compile 201 objects,
+and link the complete core FSW group. Shared Basilisk libraries are already
+built, including the shared implementation used by ``dvAttEffect``. Both layouts
+compile the same 201 objects. Separate mode links 101 native files; combined
+mode links one. Build-time ranges overlap; there is no clear clean-build
+penalty in these trials. An unchanged build compiles nothing.
+
+FSW native file size: 32.65 MiB separate; 16.63 MiB combined.
+
+Incremental builds
+------------------
+
+.. list-table:: Median of three, seconds including build-system overhead
+   :header-rows: 1
+
+   * - Edit
+     - Separate
+     - Combined
+   * - One mrpFeedback C source
+     - 2.343
+     - 2.884
+   * - One mrpFeedback SWIG interface
+     - 4.221
+     - 4.287
+
+Every one-source edit compiled exactly one object and relinked its library.
+A SWIG interface edit also regenerated exactly one wrapper. A separate
+integration check confirmed these properties and checked shared includes,
+messaging, Rust wrappers, and unchanged builds.
+
+A single-module import sample after relinking was 0.133 seconds separate
+versus 0.173 seconds combined (warm: 0.005 versus 0.008 seconds). This is
+one sample per layout. A sparse script can pay more to open the larger
+library even though unrelated Python bindings are not initialized.
+
+Pytest collection
+-----------------
+
+.. list-table:: One A/B pair with 16 workers, seconds until collection completes
+   :header-rows: 1
+
+   * - State
+     - Separate
+     - Combined
+   * - All project native libraries freshly relinked
+     - 41.244
+     - 27.963
+   * - Subsequent warm run
+     - 18.654
+     - 17.506
+
+The profiler collected the CI-selected suite and cleared its items before
+execution. Exit code 5 is expected for these collection-only measurements.
+The same 98 FSW native modules were initialized in both layouts: 94 core
+bindings and four optional bindings. Distinct loaded FSW files decreased
+from 98 to five; all loaded Basilisk extension files decreased from 248
+to 155. Seven additional core bindings are grouped but were not loaded
+during collection. Across the entire build graph, 271 native linker outputs
+became 171, exactly the reduction from grouping 101 files into one.
+
+OS cache state and scheduling affect these results. For worker gw0, time
+inside FSW native initialization decreased from 6.681 to 0.680 seconds,
+while simulation native initialization also varied from 14.049 to 8.392
+seconds. The complete 13.3-second collection improvement cannot be assigned
+solely to the FSW change from this one pair. The repeated, isolated FSW
+imports above provide stronger evidence of the loading improvement.
+
+Validation
+----------
+
+- CI-selected Python suite: 8,394 passed, two skipped (tool discovery prerequisites).
+- Native C/C++ suite: 270 passed.
+- Rust workspace: 95 passed.
+- Both layout switches passed compatibility and representative mrpFeedback tests.
+- Original Python imports, private native imports, module identity, recorder
+  creation, and on-demand initialization passed dedicated tests.
+- Extended incremental-build integration test passed all checks.
+- Updated developer documentation parsed successfully with docutils.
+- Built and repaired a wheel, installed it outside the checkout, and passed six
+  installed-package tests, including all 101 imports and message recorders.
+
+Method and limits
+-----------------
+
+macOS 27.2 arm64; Python 3.14.6; CMake 4.3.2 with Ninja; AppleClang 21;
+Release; strict warnings and OpenCV, MuJoCo, visualization, and Rust enabled.
+Build parallelism: 12. Timing work ran sequentially. Dense-import timing
+began after importing Basilisk to isolate FSW loading. Fresh processes were
+used for cold and warm imports. No reboot or disk-cache flush was performed.
+Cold denotes newly built or relinked native files, matching the post-build
+question. Linux and Windows were not executed in this experiment.
+
+The incremental and single-module import samples came from an earlier run
+that built targets for the 94 core modules discovered through pytest. The
+combined library already contained all 101 bindings. Each representative
+edit affected one object, so these incremental comparisons remain applicable.
+All dense-import, complete-group build, and size measurements above use the
+full 101-module group.
+
+The collection profiler also timed Python imports and subprocess calls.
+Instrumentation adds overhead, and collection times should be compared
+within this experiment. The portable benchmark now supplied in the repository
+records native initialization and collection readiness only.
+
+The archived JSON includes all complete-group trials, representative incremental
+and single-import samples, per-worker collection readiness, and native-loading
+counts and times for worker gw0. Timing labels ending in ``-0`` and ``-1``
+in the archived import samples mean first and subsequent processes, respectively;
+all times are in seconds and native sizes are in bytes. The portable command
+uses explicit ``-cold`` and ``-warm`` labels for new runs. Local log paths,
+process identifiers, and unrelated discarded timing attempts are omitted.
+
+This comparison used an earlier benchmark that could switch layouts. Current
+measurement instructions are in the repository's
+``docs/source/Support/Developer/performanceBenchmarks.rst``; the supported tool
+measures the grouped layout only.

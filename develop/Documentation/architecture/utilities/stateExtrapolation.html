@@ -1,0 +1,655 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stateExtrapolation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="svd" href="svd.html" />
+    <link rel="prev" title="simDefinitions" href="simDefinitions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rust/index.html">rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="brightnessTemperatureSolarSystem.html">brightnessTemperatureSolarSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskAbiDescriptor.html">bskAbiDescriptor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haslamBackgroundRadiation.html">haslamBackgroundRadiation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ItuRefAtmosphere.html">ItuRefAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">stateExtrapolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="utcTime.html">utcTime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">stateExtrapolation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/stateExtrapolation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="stateextrapolation">
+<span id="id1"></span><h1>stateExtrapolation<a class="headerlink" href="#stateextrapolation" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv410planetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE">
+<span id="_CPPv310planetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE"></span><span id="_CPPv210planetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE"></span><span id="planetSpin__Eigen::Matrix3dCR.Eigen::Matrix3dCR"></span><span class="target" id="state_extrapolation_8h_1a0f0e3eeb501db69f5c6e52c7598eb187"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410PlanetSpin" title="PlanetSpin"><span class="n"><span class="pre">PlanetSpin</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetSpin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcm_NPfix</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcm_NPfix_dot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410planetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Extract the inertial angular velocity of a planet-fixed frame from its orientation and derivative. </p>
+<p><code class="docutils literal notranslate"><span class="pre">dcm_NPfix_dot</span> <span class="pre">=</span> <span class="pre">[omega_N</span> <span class="pre">x]</span> <span class="pre">dcm_NPfix</span></code>, hence <code class="docutils literal notranslate"><span class="pre">[omega_N</span> <span class="pre">x]</span> <span class="pre">=</span> <span class="pre">dcm_NPfix_dot</span> <span class="pre">*</span> <span class="pre">dcm_NPfix^T</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dcm_NPfix</strong> – [-] [NP] orientation of the inertial frame relative to the planet-fixed frame, which maps planet-fixed components to inertial components </p></li>
+<li><p><strong>dcm_NPfix_dot</strong> – [1/s] time derivative of dcm_NPfix </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the planet spin, with <code class="docutils literal notranslate"><span class="pre">isZero</span></code> set if the derivative is zero </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv410advanceDcmRKN5Eigen8Matrix3dERK10PlanetSpind">
+<span id="_CPPv310advanceDcmRKN5Eigen8Matrix3dERK10PlanetSpind"></span><span id="_CPPv210advanceDcmRKN5Eigen8Matrix3dERK10PlanetSpind"></span><span id="advanceDcm__Eigen::Matrix3dCR.PlanetSpinCR.double"></span><span class="target" id="state_extrapolation_8h_1ade9ca2d9853913d9eb06a74dd3fa582e"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">advanceDcm</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcm_NPfix</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410PlanetSpin" title="PlanetSpin"><span class="n"><span class="pre">PlanetSpin</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spin</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410advanceDcmRKN5Eigen8Matrix3dERK10PlanetSpind" title="Link to this definition"></a><br /></dt>
+<dd><p>Advance a planet-fixed orientation matrix by a time offset with a precomputed planet spin. </p>
+<p>The orientation is rotated about the planet angular velocity by <code class="docutils literal notranslate"><span class="pre">|omega|</span> <span class="pre">dt</span></code>, with the Rodrigues formula, so the result stays orthonormal. No orientation or rate is recomputed, only the rotation for the given time offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dcm_NPfix</strong> – [-] [NP] orientation to advance </p></li>
+<li><p><strong>spin</strong> – planet spin from planetSpin() of the same orientation and its derivative </p></li>
+<li><p><strong>dt</strong> – [s] signed time offset to advance the orientation by </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the advanced orientation matrix, or dcm_NPfix if the spin or the offset is zero </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413advanceDcmDotRK10PlanetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE">
+<span id="_CPPv313advanceDcmDotRK10PlanetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE"></span><span id="_CPPv213advanceDcmDotRK10PlanetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE"></span><span id="advanceDcmDot__PlanetSpinCR.Eigen::Matrix3dCR.Eigen::Matrix3dCR"></span><span class="target" id="state_extrapolation_8h_1a76d0dbac402c864be7127c0520dff740"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">advanceDcmDot</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410PlanetSpin" title="PlanetSpin"><span class="n"><span class="pre">PlanetSpin</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spin</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcmAdvanced_NPfix</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcm_NPfix_dot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413advanceDcmDotRK10PlanetSpinRKN5Eigen8Matrix3dERKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Advance the time derivative of a planet-fixed orientation with a precomputed planet spin. </p>
+<p>With a constant inertial angular velocity, <code class="docutils literal notranslate"><span class="pre">dcm_NPfix_dot</span> <span class="pre">=</span> <span class="pre">[omega_N</span> <span class="pre">x]</span> <span class="pre">dcm_NPfix</span></code> holds at every epoch, so the derivative at the advanced epoch is <code class="docutils literal notranslate"><span class="pre">[omega_N</span> <span class="pre">x]</span> <span class="pre">dcmAdvanced_NPfix</span></code>. This assumes a consistent orientation and rate pair, for which <code class="docutils literal notranslate"><span class="pre">dcm_NPfix_dot</span> <span class="pre">*</span> <span class="pre">dcm_NPfix^T</span></code> is skew-symmetric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spin</strong> – planet spin from planetSpin() </p></li>
+<li><p><strong>dcmAdvanced_NPfix</strong> – [-] [NP] orientation after the advance, from advanceDcm() </p></li>
+<li><p><strong>dcm_NPfix_dot</strong> – [1/s] time derivative before the advance, returned if the spin is zero </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[1/s] the derivative at the advanced epoch </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416isStepLagMessage8uint64_t8uint64_t8uint64_t">
+<span id="_CPPv316isStepLagMessage8uint64_t8uint64_t8uint64_t"></span><span id="_CPPv216isStepLagMessage8uint64_t8uint64_t8uint64_t"></span><span id="isStepLagMessage__uint64_t.uint64_t.uint64_t"></span><span class="target" id="state_extrapolation_8h_1a155c74b4345ae433401ed87d174f5551"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isStepLagMessage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416isStepLagMessage8uint64_t8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns true if a spacecraft state message is the output of the previous update of the environment module. </p>
+<p>The message-age based extrapolation is only valid if the spacecraft message was written at the previous update of the environment module. Then the age of the message is exactly the update interval of the module, and half of the age is the middle of that interval. This holds if the module and the spacecraft are updated with the same task period. A message written at any other earlier time is either stale (for example a state written once at the start of the simulation), or the spacecraft is updated at a different task period than the environment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>timeWrittenNanos</strong> – [ns] time the spacecraft state message was written </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if the message is older than the current time and was written at the previous module update </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432extrapolateScStateToStepMidpointRK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t">
+<span id="_CPPv332extrapolateScStateToStepMidpointRK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="_CPPv232extrapolateScStateToStepMidpointRK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="extrapolateScStateToStepMidpoint__SCStatesMsgPayloadCR.uint64_t.uint64_t.uint64_t"></span><span class="target" id="state_extrapolation_8h_1afbc3c2bfcb6b0befcee0f7668e94c1e6"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extrapolateScStateToStepMidpoint</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scState</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432extrapolateScStateToStepMidpointRK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Extrapolate a spacecraft state message to the middle of the interval the next spacecraft update integrates. </p>
+<p>Environment modules (atmosphere, wind, magnetic field, eclipse, solar flux) run before the spacecraft within a task, so the state they read was written at the end of the previous step. The spacecraft update at the current time integrates the interval between that message time and the current time, so the best estimate of where the spacecraft is while the environment output acts is the state advanced by half of the message age. The position is advanced with the message velocity.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The requirement concerns the task period, not the integrator. The environment module must be updated with the same task period as the spacecraft, so that the message written by the spacecraft at the previous module update is exactly one update interval old. The internal substeps of a variable-step integrator do not matter: they still cover the update interval requested of the spacecraft. The state is returned unchanged if the message was written at the current time, or if it was not written at the previous update of the environment module. The latter is either a stale message (written once at the start of the simulation), or a spacecraft that runs faster or slower than the environment module, for which half of the message age is not the middle of the module interval. <a class="reference internal" href="#class_sc_state_extrapolation"><span class="std std-ref">ScStateExtrapolation</span></a> additionally waits until the spacecraft period has been observed.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scState</strong> – spacecraft state message payload as read from the message </p></li>
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>timeWrittenNanos</strong> – [ns] time the spacecraft state message was written </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>copy of the payload with <code class="docutils literal notranslate"><span class="pre">r_BN_N</span></code> and <code class="docutils literal notranslate"><span class="pre">r_CN_N</span></code> advanced by <code class="docutils literal notranslate"><span class="pre">v</span> <span class="pre">*</span> <span class="pre">0.5</span> <span class="pre">*</span> <span class="pre">(currentSimNanos</span> <span class="pre">-</span> <span class="pre">timeWrittenNanos)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429extrapolatePlanetStateToEpochRK26SpicePlanetStateMsgPayload8uint64_t8uint64_t">
+<span id="_CPPv329extrapolatePlanetStateToEpochRK26SpicePlanetStateMsgPayload8uint64_t8uint64_t"></span><span id="_CPPv229extrapolatePlanetStateToEpochRK26SpicePlanetStateMsgPayload8uint64_t8uint64_t"></span><span id="extrapolatePlanetStateToEpoch__SpicePlanetStateMsgPayloadCR.uint64_t.uint64_t"></span><span class="target" id="state_extrapolation_8h_1a396985a33ed795d84a81b62ef035ffcf"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extrapolatePlanetStateToEpoch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">planetState</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">targetNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429extrapolatePlanetStateToEpochRK26SpicePlanetStateMsgPayload8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Move a planet state message to the epoch the spacecraft state was extrapolated to. </p>
+<p>The relative position of the spacecraft with respect to a planet is only meaningful if both are evaluated at the same epoch. The position is advanced with the planet velocity, and the planet-fixed orientation is advanced with planetSpin() and advanceDcm(). The offset is signed: it is negative if the planet message is newer than the target epoch.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An all-zero orientation, as left by a message that only sets position and velocity, is treated as the identity like in GravBodyData, so the returned orientation is always a valid rotation matrix. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As in GravBodyData::computeGravityInertial(), the planet is advanced by the time between the message write and the target epoch, with no check on the age of the message. A message written once with a non-zero velocity is projected forward over the whole simulation. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetState</strong> – planet state message payload as read from the message </p></li>
+<li><p><strong>targetNanos</strong> – [ns] epoch to evaluate the planet at </p></li>
+<li><p><strong>timeWrittenNanos</strong> – [ns] time the planet state message was written </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>copy of the payload with the position and the orientation advanced to the target epoch </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410PlanetSpin">
+<span id="_CPPv310PlanetSpin"></span><span id="_CPPv210PlanetSpin"></span><span id="PlanetSpin"></span><span class="target" id="struct_planet_spin"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PlanetSpin</span></span></span><a class="headerlink" href="#_CPPv410PlanetSpin" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateExtrapolation.h&gt;</em></div>
+<p>Angular velocity of a planet-fixed frame, derived once from an orientation and its derivative. </p>
+<p>The planet angular velocity is constant while an orientation is extrapolated, so a caller that advances the same orientation repeatedly (for example at every integrator stage) computes it once with planetSpin() and reuses it with advanceDcm() and advanceDcmDot(). </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetSpin12omegaTilde_NE">
+<span id="_CPPv3N10PlanetSpin12omegaTilde_NE"></span><span id="_CPPv2N10PlanetSpin12omegaTilde_NE"></span><span id="PlanetSpin::omegaTilde_N__Eigen::Matrix3d"></span><span class="target" id="struct_planet_spin_1a726d7a72986e305bf1fddfcbb98776c3"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N10PlanetSpin12omegaTilde_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[1/s] <code class="docutils literal notranslate"><span class="pre">dcm_NPfix_dot</span> <span class="pre">*</span> <span class="pre">dcm_NPfix^T</span></code>, <code class="docutils literal notranslate"><span class="pre">[</span><a class="reference internal" href="#struct_planet_spin_1af94213ec584f7bef7f04090f03b606ca"><span class="std std-ref"><span class="pre">omega_N</span></span></a> <span class="pre">x]</span></code></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetSpin7omega_NE">
+<span id="_CPPv3N10PlanetSpin7omega_NE"></span><span id="_CPPv2N10PlanetSpin7omega_NE"></span><span id="PlanetSpin::omega_N__Eigen::Vector3d"></span><span class="target" id="struct_planet_spin_1af94213ec584f7bef7f04090f03b606ca"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N10PlanetSpin7omega_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] inertial angular velocity of the planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetSpin6isZeroE">
+<span id="_CPPv3N10PlanetSpin6isZeroE"></span><span id="_CPPv2N10PlanetSpin6isZeroE"></span><span id="PlanetSpin::isZero__b"></span><span class="target" id="struct_planet_spin_1abb698386325f520e8673f7506f55b33f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isZero</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N10PlanetSpin6isZeroE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if the orientation derivative is zero </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv420ScStateExtrapolation">
+<span id="_CPPv320ScStateExtrapolation"></span><span id="_CPPv220ScStateExtrapolation"></span><span id="ScStateExtrapolation"></span><span class="target" id="class_sc_state_extrapolation"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ScStateExtrapolation</span></span></span><a class="headerlink" href="#_CPPv420ScStateExtrapolation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateExtrapolation.h&gt;</em></div>
+<p>Opt-in switch and rate-mismatch monitor for the spacecraft state extrapolation of an environment module. </p>
+<p>The extrapolation is disabled by default, in which case the state message is used as written. When enabled, the module calls <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> once per update with the write times of all its spacecraft state messages. The spacecraft states are extrapolated with extrapolateScStateToStepMidpoint() and the planets with extrapolatePlanetStateToEpoch() only if all spacecraft messages were written at the previous module update and two successive write times were observed with an interval equal to the module update interval. The extrapolation is therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If any spacecraft state message does not satisfy these conditions, no spacecraft is extrapolated, and a warning is logged once if a spacecraft message was not written at the previous module update, which is typically a task period mismatch. While no spacecraft state is extrapolated but all were written at the previous module update, the planets are moved back to that epoch, so the relative geometry stays consistent during the startup and under a period mismatch. A mismatch is not always detectable: a message written at the current module update (for example by a faster spacecraft that runs before the module) is used as written and gives no warning. No message that is not the output of the previous module update is ever extrapolated. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation10setEnabledEb">
+<span id="_CPPv3N20ScStateExtrapolation10setEnabledEb"></span><span id="_CPPv2N20ScStateExtrapolation10setEnabledEb"></span><span id="ScStateExtrapolation::setEnabled__b"></span><span class="target" id="class_sc_state_extrapolation_1aa4f7b3410397ed09fe57ba3100670ef1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setEnabled</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">enable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation10setEnabledEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable or disable the extrapolation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> – true to extrapolate the spacecraft state to the step midpoint </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation9isEnabledEv">
+<span id="_CPPv3NK20ScStateExtrapolation9isEnabledEv"></span><span id="_CPPv2NK20ScStateExtrapolation9isEnabledEv"></span><span id="ScStateExtrapolation::isEnabledC"></span><span class="target" id="class_sc_state_extrapolation_1afbe5fe8efb9bf22bbea8ac636ac6d0a3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isEnabled</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation9isEnabledEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns whether the extrapolation is enabled. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if the spacecraft state is extrapolated </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation16mismatchDetectedEv">
+<span id="_CPPv3NK20ScStateExtrapolation16mismatchDetectedEv"></span><span id="_CPPv2NK20ScStateExtrapolation16mismatchDetectedEv"></span><span id="ScStateExtrapolation::mismatchDetectedC"></span><span class="target" id="class_sc_state_extrapolation_1a93ec65fe69b708c69eca1a7023d6f312"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mismatchDetected</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation16mismatchDetectedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns whether the warning that a spacecraft message was not written at the previous module update was logged, which is typically a task period mismatch between the module and the spacecraft. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if the warning was logged since the last reset </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation16writeTimesBufferEv">
+<span id="_CPPv3N20ScStateExtrapolation16writeTimesBufferEv"></span><span id="_CPPv2N20ScStateExtrapolation16writeTimesBufferEv"></span><span id="ScStateExtrapolation::writeTimesBuffer"></span><span class="target" id="class_sc_state_extrapolation_1aea46f0ba18f771dda74560d892c156ab"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">writeTimesBuffer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation16writeTimesBufferEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns an empty reusable buffer for the write times passed to <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a>, which avoids an allocation at every module update. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>empty vector, valid until the next call </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation5resetEv">
+<span id="_CPPv3N20ScStateExtrapolation5resetEv"></span><span id="_CPPv2N20ScStateExtrapolation5resetEv"></span><span id="ScStateExtrapolation::reset"></span><span class="target" id="class_sc_state_extrapolation_1a47c4822f7b338736600ebb0c17297031"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reset</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation5resetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Clear the observed message history and re-arm the warning. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation7prepareE8uint64_t8uint64_tRKNSt6vectorI8uint64_tEER9BSKLogger">
+<span id="_CPPv3N20ScStateExtrapolation7prepareE8uint64_t8uint64_tRKNSt6vectorI8uint64_tEER9BSKLogger"></span><span id="_CPPv2N20ScStateExtrapolation7prepareE8uint64_t8uint64_tRKNSt6vectorI8uint64_tEER9BSKLogger"></span><span id="ScStateExtrapolation::prepare__uint64_t.uint64_t.std::vector:uint64_t:CR.BSKLoggerR"></span><span class="target" id="class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prepare</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">timesWrittenNanos</span></span>, <span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">logger</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation7prepareE8uint64_t8uint64_tRKNSt6vectorI8uint64_tEER9BSKLogger" title="Link to this definition"></a><br /></dt>
+<dd><p>Decide once per module update whether the extrapolation applies to all spacecraft and the planets. </p>
+<p>The planet state messages are shared by all spacecraft of a module, so the decision cannot be made per spacecraft: a planet moved to the step midpoint is inconsistent with a spacecraft left at the message epoch, and the other way around. The extrapolation is therefore applied to every spacecraft and to the planets only if all spacecraft state messages were written at the previous module update (see isStepLagMessage()). If one of them was not, no spacecraft is extrapolated and a warning is logged once. The planets are still moved to the common epoch of the spacecraft messages if all of them were written at the previous module update.</p>
+<p>Must be called once per update, before <a class="reference internal" href="#class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"><span class="std std-ref">apply()</span></a> and <a class="reference internal" href="#class_sc_state_extrapolation_1accad127af39f35a9c438266d21f43658"><span class="std std-ref">applyPlanet()</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+<li><p><strong>timesWrittenNanos</strong> – [ns] write time of each spacecraft state message, in the order of the <a class="reference internal" href="#class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"><span class="std std-ref">apply()</span></a> indexes </p></li>
+<li><p><strong>logger</strong> – logger of the calling module </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN20ScStateExtrapolation19prepareFromMessagesEv8uint64_t8uint64_tR8MessagesR9BSKLogger">
+<span id="_CPPv3I0EN20ScStateExtrapolation19prepareFromMessagesE8uint64_t8uint64_tR8MessagesR9BSKLogger"></span><span id="_CPPv2I0EN20ScStateExtrapolation19prepareFromMessagesE8uint64_t8uint64_tR8MessagesR9BSKLogger"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Messages</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_sc_state_extrapolation_1a29dca8e8d6f3b595944a2310dee2318d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prepareFromMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span>, <a class="reference internal" href="#_CPPv4I0EN20ScStateExtrapolation19prepareFromMessagesEv8uint64_t8uint64_tR8MessagesR9BSKLogger" title="ScStateExtrapolation::prepareFromMessages::Messages"><span class="n"><span class="pre">Messages</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scStateInMsgs</span></span>, <span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">logger</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN20ScStateExtrapolation19prepareFromMessagesEv8uint64_t8uint64_tR8MessagesR9BSKLogger" title="Link to this definition"></a><br /></dt>
+<dd><p>Call <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> with the write times read from the spacecraft state input messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Messages</strong> – range of read functors that provide timeWritten() </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+<li><p><strong>scStateInMsgs</strong> – spacecraft state input messages, in the order of the <a class="reference internal" href="#class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"><span class="std std-ref">apply()</span></a> indexes </p></li>
+<li><p><strong>logger</strong> – logger of the calling module </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN20ScStateExtrapolation18prepareFromMessageEv8uint64_t8uint64_tR7MessageR9BSKLogger">
+<span id="_CPPv3I0EN20ScStateExtrapolation18prepareFromMessageE8uint64_t8uint64_tR7MessageR9BSKLogger"></span><span id="_CPPv2I0EN20ScStateExtrapolation18prepareFromMessageE8uint64_t8uint64_tR7MessageR9BSKLogger"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Message</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_sc_state_extrapolation_1a2aa67a3bd8436d84cfcd275faf5c17ff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prepareFromMessage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span>, <a class="reference internal" href="#_CPPv4I0EN20ScStateExtrapolation18prepareFromMessageEv8uint64_t8uint64_tR7MessageR9BSKLogger" title="ScStateExtrapolation::prepareFromMessage::Message"><span class="n"><span class="pre">Message</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scStateInMsg</span></span>, <span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">logger</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN20ScStateExtrapolation18prepareFromMessageEv8uint64_t8uint64_tR7MessageR9BSKLogger" title="Link to this definition"></a><br /></dt>
+<dd><p>Call <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> for a module with a single spacecraft state input message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Message</strong> – read functor that provides timeWritten() </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+<li><p><strong>scStateInMsg</strong> – spacecraft state input message </p></li>
+<li><p><strong>logger</strong> – logger of the calling module </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK20ScStateExtrapolation12applyMessageE18SCStatesMsgPayloadR7Message8uint64_t8uint64_t">
+<span id="_CPPv3I0ENK20ScStateExtrapolation12applyMessageER7Message8uint64_t8uint64_t"></span><span id="_CPPv2I0ENK20ScStateExtrapolation12applyMessageER7Message8uint64_t8uint64_t"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Message</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_sc_state_extrapolation_1a3d9958303d61a47a553704b3931419a4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyMessage</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK20ScStateExtrapolation12applyMessageE18SCStatesMsgPayloadR7Message8uint64_t8uint64_t" title="ScStateExtrapolation::applyMessage::Message"><span class="n"><span class="pre">Message</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scStateInMsg</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4I0ENK20ScStateExtrapolation12applyMessageE18SCStatesMsgPayloadR7Message8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Read a spacecraft state input message and <a class="reference internal" href="#class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"><span class="std std-ref">apply()</span></a> the extrapolation to it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Message</strong> – read functor that returns an SCStatesMsgPayload and provides timeWritten() </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>scStateInMsg</strong> – spacecraft state input message </p></li>
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the payload, with the position advanced to the step midpoint if the extrapolation applies </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK20ScStateExtrapolation18applyPlanetMessageE26SpicePlanetStateMsgPayloadR7Message8uint64_t8uint64_t">
+<span id="_CPPv3I0ENK20ScStateExtrapolation18applyPlanetMessageER7Message8uint64_t8uint64_t"></span><span id="_CPPv2I0ENK20ScStateExtrapolation18applyPlanetMessageER7Message8uint64_t8uint64_t"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Message</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_sc_state_extrapolation_1a080ac29a80fd92b813f8dc32f75e8352"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyPlanetMessage</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK20ScStateExtrapolation18applyPlanetMessageE26SpicePlanetStateMsgPayloadR7Message8uint64_t8uint64_t" title="ScStateExtrapolation::applyPlanetMessage::Message"><span class="n"><span class="pre">Message</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">planetInMsg</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4I0ENK20ScStateExtrapolation18applyPlanetMessageE26SpicePlanetStateMsgPayloadR7Message8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Read a planet state input message and <a class="reference internal" href="#class_sc_state_extrapolation_1accad127af39f35a9c438266d21f43658"><span class="std std-ref">applyPlanet()</span></a> the extrapolation to it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Message</strong> – read functor that returns a SpicePlanetStateMsgPayload and provides timeWritten() </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>planetInMsg</strong> – planet state input message </p></li>
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the planet payload moved to the epoch of the spacecraft states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation5applyERK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t">
+<span id="_CPPv3NK20ScStateExtrapolation5applyERK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="_CPPv2NK20ScStateExtrapolation5applyERK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="ScStateExtrapolation::apply__SCStatesMsgPayloadCR.uint64_t.uint64_t.uint64_tC"></span><span class="target" id="class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">apply</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scState</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation5applyERK18SCStatesMsgPayload8uint64_t8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the spacecraft state, extrapolated if <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> found all spacecraft consistent. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scState</strong> – spacecraft state message payload as read from the message </p></li>
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>timeWrittenNanos</strong> – [ns] time the spacecraft state message was written </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the payload, with the position advanced to the step midpoint if the extrapolation applies </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation11applyPlanetERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t">
+<span id="_CPPv3NK20ScStateExtrapolation11applyPlanetERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="_CPPv2NK20ScStateExtrapolation11applyPlanetERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="ScStateExtrapolation::applyPlanet__SpicePlanetStateMsgPayloadCR.uint64_t.uint64_t.uint64_tC"></span><span class="target" id="class_sc_state_extrapolation_1accad127af39f35a9c438266d21f43658"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyPlanet</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">planetState</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation11applyPlanetERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the planet state at the epoch the spacecraft states were extrapolated to. </p>
+<p>The planet is moved to the middle of the module update interval only if <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> found the extrapolation applicable to all spacecraft, so that the relative geometry of every spacecraft is evaluated at one epoch. If all spacecraft messages were written at the previous module update but the extrapolation does not apply (the spacecraft period is not yet known, or differs from the module period), the spacecraft states stay at that epoch and the planet is moved back to it. Otherwise the planet is returned as written. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> must be called first in every update. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetState</strong> – planet state message payload as read from the message </p></li>
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>timeWrittenNanos</strong> – [ns] time the planet state message was written </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the planet payload with the position and the orientation advanced to the step midpoint </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation20evaluationEpochNanosE8uint64_t8uint64_t">
+<span id="_CPPv3NK20ScStateExtrapolation20evaluationEpochNanosE8uint64_t8uint64_t"></span><span id="_CPPv2NK20ScStateExtrapolation20evaluationEpochNanosE8uint64_t8uint64_t"></span><span id="ScStateExtrapolation::evaluationEpochNanos__uint64_t.uint64_tC"></span><span class="target" id="class_sc_state_extrapolation_1aa1c3156937ce61ea0bd25d23f56fe4a0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluationEpochNanos</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation20evaluationEpochNanosE8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the epoch the spacecraft and planet states returned by <a class="reference internal" href="#class_sc_state_extrapolation_1a78a43a833b231049e2c96e5a3bbaa3c1"><span class="std std-ref">apply()</span></a> and <a class="reference internal" href="#class_sc_state_extrapolation_1accad127af39f35a9c438266d21f43658"><span class="std std-ref">applyPlanet()</span></a> are evaluated at. </p>
+<p>Time dependent models (for example the local solar time of an atmosphere model) must use the same epoch as the geometry. It is the middle of the module update interval if the extrapolation applies, the previous module update if all spacecraft messages were written then, and the current time otherwise. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a> must be called first in every update. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>currentSimNanos</strong> – [ns] current simulation time </p></li>
+<li><p><strong>previousUpdateNanos</strong> – [ns] time of the previous update of the calling environment module </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[ns] evaluation epoch </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20ScStateExtrapolation17movePlanetToEpochERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t">
+<span id="_CPPv3NK20ScStateExtrapolation17movePlanetToEpochERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="_CPPv2NK20ScStateExtrapolation17movePlanetToEpochERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t"></span><span id="ScStateExtrapolation::movePlanetToEpoch__SpicePlanetStateMsgPayloadCR.uint64_t.uint64_t.uint64_tC"></span><span class="target" id="class_sc_state_extrapolation_1a1a1b9562ee96214646eb6a67f8066744"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">movePlanetToEpoch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">planetState</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeWrittenNanos</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">previousUpdateNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20ScStateExtrapolation17movePlanetToEpochERK26SpicePlanetStateMsgPayload8uint64_t8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Move the planet to the epoch selected by <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a>, see <a class="reference internal" href="#class_sc_state_extrapolation_1accad127af39f35a9c438266d21f43658"><span class="std std-ref">applyPlanet()</span></a>. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation7enabledE">
+<span id="_CPPv3N20ScStateExtrapolation7enabledE"></span><span id="_CPPv2N20ScStateExtrapolation7enabledE"></span><span id="ScStateExtrapolation::enabled__b"></span><span class="target" id="class_sc_state_extrapolation_1a50cecff91502b800daf32ff1a6ecb78e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">enabled</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation7enabledE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if the spacecraft state is extrapolated </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation6warnedE">
+<span id="_CPPv3N20ScStateExtrapolation6warnedE"></span><span id="_CPPv2N20ScStateExtrapolation6warnedE"></span><span id="ScStateExtrapolation::warned__b"></span><span class="target" id="class_sc_state_extrapolation_1acc3398611ac18e83a9a52e32f810bd38"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">warned</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation6warnedE" title="Link to this definition"></a><br /></dt>
+<dd><p>true once the rate mismatch warning was logged </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation13lagConsistentE">
+<span id="_CPPv3N20ScStateExtrapolation13lagConsistentE"></span><span id="_CPPv2N20ScStateExtrapolation13lagConsistentE"></span><span id="ScStateExtrapolation::lagConsistent__b"></span><span class="target" id="class_sc_state_extrapolation_1aaaf448bf9836de1aa1271cab3f5227d5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lagConsistent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation13lagConsistentE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if all spacecraft messages were written at the previous update and their period is known </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation10allStepLagE">
+<span id="_CPPv3N20ScStateExtrapolation10allStepLagE"></span><span id="_CPPv2N20ScStateExtrapolation10allStepLagE"></span><span id="ScStateExtrapolation::allStepLag__b"></span><span class="target" id="class_sc_state_extrapolation_1a50f2683951701bd2ab1d08b022413779"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allStepLag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation10allStepLagE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if all spacecraft messages were written at the previous update </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation14lastWriteNanosE">
+<span id="_CPPv3N20ScStateExtrapolation14lastWriteNanosE"></span><span id="_CPPv2N20ScStateExtrapolation14lastWriteNanosE"></span><span id="ScStateExtrapolation::lastWriteNanos__std::vector:uint64_t:"></span><span class="target" id="class_sc_state_extrapolation_1a8de7b8892853958bb8250be30ea396b2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lastWriteNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation14lastWriteNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] last observed write time of each state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation18writeIntervalNanosE">
+<span id="_CPPv3N20ScStateExtrapolation18writeIntervalNanosE"></span><span id="_CPPv2N20ScStateExtrapolation18writeIntervalNanosE"></span><span id="ScStateExtrapolation::writeIntervalNanos__std::vector:uint64_t:"></span><span class="target" id="class_sc_state_extrapolation_1a31bd3dd70dd8a134906cf480a41160ac"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeIntervalNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation18writeIntervalNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] last observed interval between two write times, 0 if unknown </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation9rewrittenE">
+<span id="_CPPv3N20ScStateExtrapolation9rewrittenE"></span><span id="_CPPv2N20ScStateExtrapolation9rewrittenE"></span><span id="ScStateExtrapolation::rewritten__std::vector:b:"></span><span class="target" id="class_sc_state_extrapolation_1a123eff3d7b82362019e70c1fc4e5e1db"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rewritten</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation9rewrittenE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if the state message was seen with more than one write time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation11timesBufferE">
+<span id="_CPPv3N20ScStateExtrapolation11timesBufferE"></span><span id="_CPPv2N20ScStateExtrapolation11timesBufferE"></span><span id="ScStateExtrapolation::timesBuffer__std::vector:uint64_t:"></span><span class="target" id="class_sc_state_extrapolation_1a1086a47cc492aee13dfed3bd9bec56ba"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timesBuffer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation11timesBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] reusable buffer for the write times passed to <a class="reference internal" href="#class_sc_state_extrapolation_1ad08dd82efd6ac81851afb065ad23c853"><span class="std std-ref">prepare()</span></a></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ScStateExtrapolation4seenE">
+<span id="_CPPv3N20ScStateExtrapolation4seenE"></span><span id="_CPPv2N20ScStateExtrapolation4seenE"></span><span id="ScStateExtrapolation::seen__std::vector:b:"></span><span class="target" id="class_sc_state_extrapolation_1a824f8190823fc8b1542b0bc5e0551c4d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">seen</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20ScStateExtrapolation4seenE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if the state message was observed in a previous update </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simDefinitions.html" class="btn btn-neutral float-left" title="simDefinitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="svd.html" class="btn btn-neutral float-right" title="svd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

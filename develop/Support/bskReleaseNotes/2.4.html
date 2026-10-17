@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.4 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.3 Release Notes" href="2.3.html" />
+    <link rel="prev" title="Version 2.5 Release Notes" href="2.5.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.4 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.4.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-4-release-notes">
+<h1>Version 2.4 Release Notes<a class="headerlink" href="#version-2-4-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-4-0-august-23-2024">
+<span id="bsk-release-2-4-0"></span><h2>Version 2.4.0 (August 23, 2024)<a class="headerlink" href="#version-2-4-0-august-23-2024" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added a new example scenario <a class="reference internal" href="../../examples/scenarioConstrainedDynamics.html#scenarioconstraineddynamics"><span class="std std-ref">scenarioConstrainedDynamics</span></a> demonstrating post-docked spacecraft dynamics</p></li>
+<li><p>Created a <a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">C++ Module: constraintDynamicEffector</span></a> dynamics module to couple separate spacecraft motion using holonomic
+constraints.</p></li>
+<li><p>Removed the depreciated manner of creating python modules</p></li>
+<li><p>Created a new example scenario <a class="reference internal" href="../../examples/scenarioTempMeasurementAttitude.html#scenariotempmeasurementattitude"><span class="std std-ref">scenarioTempMeasurementAttitude</span></a> demonstrating the use of tempMeasurement module and generating random noise in the measurement.</p></li>
+<li><p>Uncaught exceptions raised in Python modules are now printed to <code class="docutils literal notranslate"><span class="pre">stderr</span></code> before the program is terminated.</p></li>
+<li><p>Updated Basilisk and Vizard logos and provided download links</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">News</span> <span class="pre">and</span> <span class="pre">Discussions</span></code> menu tab to be <code class="docutils literal notranslate"><span class="pre">External</span> <span class="pre">Links</span></code> to Basilisk related web sites</p></li>
+<li><p>Added a new N-axis spinning effector <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a>. This is an expansion of <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a>
+and <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">C++ Module: spinningBodyTwoDOFStateEffector</span></a> to any number of degrees of freedom.</p></li>
+<li><p>Update the Windows build to automatically include the Math library defines.  This avoids having
+to include them in BSK source code files individually.</p></li>
+<li><p>Added support for arrays and 2D arrays of 16 and 64 bit integers in message definitions</p></li>
+<li><p>Fixed bug where 2D arrays of 32 bit integers would have elements of type <code class="docutils literal notranslate"><span class="pre">float</span></code> in python.</p></li>
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">Identity()</span></code> method in avsEigenMRP library.</p></li>
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">SpiceInterface::initTimeData()</span></code> method to write epoch strings with microsecond precision instead of 0.1 second precision
+to prevent SPICE errors when epochs ending with seconds higher than 59.95 seconds got rounded up to 60.0 seconds</p></li>
+<li><p>Update <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicEffector.html#dynamiceffector"><span class="std std-ref">C++ Module: dynamicEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">C++ Module: stateEffector</span></a> classes to be able to pull the state engine names of the
+spacecraft hub object</p></li>
+<li><p>The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
+specific tank model type.</p></li>
+<li><p>Update Basilisk documentation build system to use latest version of <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> and <code class="docutils literal notranslate"><span class="pre">sphinx_rtd_theme</span></code></p></li>
+<li><p>Added time tag to <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#cssarraysensormsgpayload"><span class="std std-ref">CSSArraySensorMsgPayload</span></a></p></li>
+<li><p>updated Eigen library to 3.4.0</p></li>
+<li><p>updated OpenCV library to 4.5.5</p></li>
+<li><p>Added support for Vizard 2.2.0</p></li>
+<li><p>Added documentation on using pre-commit formatters and clang formating</p></li>
+<li><p>Added two new scenarios that use the <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a> module. <a class="reference internal" href="../../examples/scenarioRoboticArm.html#scenarioroboticarm"><span class="std std-ref">scenarioRoboticArm</span></a> simulates
+a robotic arm that changes orientation through the use of the <a class="reference internal" href="../../Documentation/simulation/deviceInterface/prescribedRotation1DOF/prescribedRotation1DOF.html#prescribedrotation1dof"><span class="std std-ref">C++ Module: prescribedRotation1DOF</span></a> profiler module.
+<a class="reference internal" href="../../examples/scenarioFlexiblePanel.html#scenarioflexiblepanel"><span class="std std-ref">scenarioFlexiblePanel</span></a> simulates a flexible panel that has torsional and bending modes, which are approximated
+though a lumped-mass approach and discretized to as many subpanels as needed.</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">protectAllClasses</span></code> method in <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.swig_common_model</span></code> so that it actually protects the classes
+in the given module (prevents code from setting unknown attributes). This might impact user code that depended on adding
+additional attributes to python classes generated by SWIG.</p></li>
+<li><p>Updated install instructions to specify python version 3.8 to 3.11 are required.  Python 3.12 does yet work.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-6.html#bskprinciples-6"><span class="std std-ref">Setting and Recording Module Variables</span></a> to discuss how to log private C++ module variables that have a getter method</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/moduleTemplates/cppModuleTemplate/cppModuleTemplate.html#cppmoduletemplate"><span class="std std-ref">C++ Module: cppModuleTemplate</span></a> to make user configurable variables private, accessed via setter and getter methods</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/utilities/makeDraftModule.html#makedraftmodule"><span class="std std-ref">makeDraftModule</span></a> to make C++ modules with private module variables using setter/getter methods</p></li>
+<li><p>Updated <a class="reference internal" href="../../Learn/makingModules/cppModules/cppModules-1.html#cppmodules-1"><span class="std std-ref">Module Header File</span></a> to discuss the new expectation that C++ modules are all private.  This enables
+graceful module variable depreciation if needed.</p></li>
+<li><p>Added support for numpy 2.0.</p></li>
+<li><p>Fixed use of spherical coordinate system in <a class="reference internal" href="../../Documentation/simulation/environment/magneticFieldWMM/magneticFieldWMM.html#magneticfieldwmm"><span class="std std-ref">C++ Module: magneticFieldWMM</span></a> model.</p></li>
+<li><p>Added ability to run the GitHub <code class="docutils literal notranslate"><span class="pre">pull_request.yml</span></code> action on a select branch</p></li>
+<li><p>Fixed mass depletion rate bug in <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> previously fixed at 100%</p></li>
+<li><p>Enhanced <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/solarArrayReference/solarArrayReference.html#solararrayreference"><span class="std std-ref">C Module: solarArrayReference</span></a> with a mode that can compute the reference for the solar arrays that maximizes SRP torque opposed to current RW net momentum.</p></li>
+<li><p>(Beta) Added PEP-517-compliant project specification, providing initial support for installation via <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code>.</p>
+<ul>
+<li><p>NOTE: This is primarily intended to support pre-compiled releases in the future. All users are recommended to continue
+using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span></code> installation for now.</p></li>
+</ul>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cmake</span></code> command now downloads large Spice data files automatically from the JPL server.</p></li>
+<li><p>Updated Conan/CMake build system to avoid unnecessary recompilations and greatly speed up rebuilds.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.5.html" class="btn btn-neutral float-left" title="Version 2.5 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.3.html" class="btn btn-neutral float-right" title="Version 2.3 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

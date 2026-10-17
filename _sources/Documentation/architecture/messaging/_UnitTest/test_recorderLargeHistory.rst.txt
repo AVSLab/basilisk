@@ -1,0 +1,15 @@
+.. _test_recorderLargeHistory:
+
+test_recorderLargeHistory
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_recorderLargeHistory
+   :members:
+   :show-inheritance:
+

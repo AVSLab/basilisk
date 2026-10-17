@@ -1,0 +1,15 @@
+.. _checkCommitMessage:
+
+checkCommitMessage
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: checkCommitMessage
+   :members:
+   :show-inheritance:
+

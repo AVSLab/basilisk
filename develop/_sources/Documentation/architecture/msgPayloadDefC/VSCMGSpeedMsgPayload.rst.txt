@@ -1,0 +1,10 @@
+.. _VSCMGSpeedMsgPayload:
+
+VSCMGSpeedMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VSCMGSpeedMsgPayload.h
+   :project: msgPayloadDefC
+

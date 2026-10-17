@@ -1,0 +1,15 @@
+.. _test_spacecraftPointing:
+
+test_spacecraftPointing
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_spacecraftPointing
+   :members:
+   :show-inheritance:
+

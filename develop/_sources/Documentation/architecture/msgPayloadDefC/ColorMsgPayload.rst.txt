@@ -1,0 +1,10 @@
+.. _ColorMsgPayload:
+
+ColorMsgPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ColorMsgPayload.h
+   :project: msgPayloadDefC
+

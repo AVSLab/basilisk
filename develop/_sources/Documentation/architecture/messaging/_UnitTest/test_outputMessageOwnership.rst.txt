@@ -1,0 +1,15 @@
+.. _test_outputMessageOwnership:
+
+test_outputMessageOwnership
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_outputMessageOwnership
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_linearTranslationBodiesOneDOF:
+
+linearTranslationBodiesOneDOF
+=============================
+
+:doc:`Module documentation <linearTranslationOneDOFStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

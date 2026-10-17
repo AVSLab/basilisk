@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_camera:
+
+camera
+======
+
+:doc:`Module documentation <camera>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,534 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_dynParamManagerRegistration &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_dynParamManagerRegistration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_dynParamManagerRegistration</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dynParamManager</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">stateArchitecture</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+
+
+<span class="n">EXPECTED_COMPATIBILITY_EXPORTS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"DynParamManager"</span><span class="p">,</span>
+        <span class="s2">"StateData"</span><span class="p">,</span>
+        <span class="s2">"MatrixShape"</span><span class="p">,</span>
+        <span class="s2">"StateSpec"</span><span class="p">,</span>
+        <span class="s2">"ErrorControlMode_WholeState"</span><span class="p">,</span>
+        <span class="s2">"ErrorControlMode_PerComponent"</span><span class="p">,</span>
+        <span class="s2">"StateUpdateKind_Euclidean"</span><span class="p">,</span>
+        <span class="s2">"StateUpdateKind_Special"</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_shape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">MatrixShape</span><span class="p">()</span>
+    <span class="n">shape</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span>
+    <span class="n">shape</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span>
+    <span class="k">return</span> <span class="n">shape</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">state_spec</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">StateSpec</span><span class="p">()</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">matrix_shape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">derivative</span> <span class="o">=</span> <span class="n">matrix_shape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">diffusionTangent</span> <span class="o">=</span> <span class="n">matrix_shape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">noiseCount</span> <span class="o">=</span> <span class="n">noise_count</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">register_reference_topology</span><span class="p">(</span><span class="n">manager</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"beta"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">finalized_manager</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">register_reference_topology</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">alpha</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]])</span>
+    <span class="n">alpha</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">([[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]])</span>
+    <span class="n">alpha</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">alpha</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">7.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">beta</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">manager</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_committed_values</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getStateDeriv</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">7.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">beta</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_finalization_and_repeated_registration_preserve_values</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+
+    <span class="c1"># Native buffer access belongs to integration code, not the Python module API.</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="s2">"getStateRegistry"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dynParamManager</span><span class="p">,</span> <span class="s2">"StateRegistry"</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+        <span class="n">stateArchitecture</span><span class="p">,</span> <span class="s2">"_dyn_param_manager_register_state"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+        <span class="n">stateArchitecture</span><span class="p">,</span> <span class="s2">"_dyn_param_manager_get_state_object"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">manager</span><span class="o">.</span><span class="n">statesAreFinalized</span><span class="p">()</span>
+
+    <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">register_reference_topology</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">alpha</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]])</span>
+    <span class="n">beta</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">manager</span><span class="o">.</span><span class="n">statesAreFinalized</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">manager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+
+    <span class="n">repeated_alpha</span><span class="p">,</span> <span class="n">repeated_beta</span> <span class="o">=</span> <span class="n">register_reference_topology</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">repeated_alpha</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]])</span>
+    <span class="n">repeated_beta</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">beta</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_registration_overloads_preserve_legacy_keyword_names</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">legacy</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">nRow</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nCol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stateName</span><span class="o">=</span><span class="s2">"legacy"</span><span class="p">)</span>
+    <span class="n">modern</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span>
+        <span class="n">stateName</span><span class="o">=</span><span class="s2">"modern"</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">legacy</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"legacy"</span>
+    <span class="k">assert</span> <span class="n">modern</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"modern"</span>
+    <span class="k">assert</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"registerState"</span>
+    <span class="k">assert</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+        <span class="s2">"DynParamManager.registerState"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_state_architecture_reexports_canonical_proxy_classes</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">set</span><span class="p">(</span><span class="n">dynParamManager</span><span class="o">.</span><span class="n">_COMPATIBILITY_EXPORTS</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">EXPECTED_COMPATIBILITY_EXPORTS</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">EXPECTED_COMPATIBILITY_EXPORTS</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateArchitecture</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">dynParamManager</span><span class="p">,</span> <span class="n">name</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_uses_canonical_state_proxy_classes</span><span class="p">():</span>
+    <span class="n">dynamic_object</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">dynamic_object</span><span class="o">.</span><span class="n">dynManager</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">EXPECTED_COMPATIBILITY_EXPORTS</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">spacecraft</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynParamManager</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">DynParamManager</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">)</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"modules"</span><span class="p">,</span>
+    <span class="p">(</span>
+        <span class="p">(),</span>
+        <span class="p">(</span><span class="s2">"stateArchitecture"</span><span class="p">,),</span>
+        <span class="p">(</span><span class="s2">"spacecraft"</span><span class="p">,),</span>
+        <span class="p">(</span><span class="s2">"StatefulSysModel"</span><span class="p">,),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_canonical_proxy_protection_is_import_order_independent</span><span class="p">(</span><span class="n">modules</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">"StatefulSysModel"</span> <span class="ow">in</span> <span class="n">modules</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">):</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">"Requires Basilisk built with --mujoco True"</span><span class="p">)</span>
+    <span class="n">worker</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">import importlib</span>
+<span class="s2">import sys</span>
+
+<span class="s2">for module_name in sys.argv[1:]:</span>
+<span class="s2">    importlib.import_module(f"Basilisk.simulation.</span><span class="si">{module_name}</span><span class="s2">")</span>
+
+<span class="s2">from Basilisk.simulation import dynParamManager</span>
+
+<span class="s2">shape = dynParamManager.MatrixShape()</span>
+<span class="s2">try:</span>
+<span class="s2">    shape.unregistered_attribute = 1</span>
+<span class="s2">except ValueError:</span>
+<span class="s2">    pass</span>
+<span class="s2">else:</span>
+<span class="s2">    raise AssertionError("canonical proxy unexpectedly accepted a new attribute")</span>
+
+<span class="s2">assert (</span>
+<span class="s2">    dynParamManager.MatrixShape.__setattr__.__module__</span>
+<span class="s2">    == "Basilisk.architecture.swig_common_model"</span>
+<span class="s2">)</span>
+<span class="s2">"""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="o">*</span><span class="n">modules</span><span class="p">],</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module"</span><span class="p">,</span> <span class="p">[</span><span class="n">dynParamManager</span><span class="p">,</span> <span class="n">stateArchitecture</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_state_data_legacy_properties_forward_to_current_api</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span>
+        <span class="s2">"legacyProperties"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">stateDeriv</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]]</span>
+
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">stateDeriv</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">stateName</span> <span class="o">==</span> <span class="s2">"legacyProperties"</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">perComponentErrorControl</span> <span class="ow">is</span> <span class="kc">False</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">stateDiffusion</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]]</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">stateDiffusion</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">[[</span><span class="mf">7.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]],</span>
+        <span class="p">[[</span><span class="mf">9.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">]],</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">stateDiffusion</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">stateDiffusion</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
+        <span class="p">[[</span><span class="mf">7.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]],</span>
+        <span class="p">[[</span><span class="mf">9.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">]],</span>
+    <span class="p">]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">stateDiffusion</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]])</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">stateName</span> <span class="o">=</span> <span class="s2">"renamed"</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">perComponentErrorControl</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+
+
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"accessor"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"register"</span><span class="p">,</span> <span class="s2">"lookup"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_state_proxy_keeps_manager_alive</span><span class="p">(</span><span class="n">accessor</span><span class="p">):</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">manager_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">registered</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"owned"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">registered</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">registered</span>
+        <span class="k">if</span> <span class="n">accessor</span> <span class="o">==</span> <span class="s2">"register"</span>
+        <span class="k">else</span> <span class="n">manager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="s2">"owned"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">del</span> <span class="n">registered</span>
+    <span class="k">del</span> <span class="n">manager</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">manager_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"owned"</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">]]</span>
+
+    <span class="k">del</span> <span class="n">state</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">manager_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_legacy_noise_count_registration_and_repeated_epoch</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"legacy"</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getNumNoiseSources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]]</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"cannot change finalized topology"</span><span class="p">):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">repeated</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"legacy"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">repeated</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">repeated</span><span class="o">.</span><span class="n">getNumNoiseSources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">repeated</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">repeated</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]]</span>
+
+    <span class="n">repeated</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"legacy"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"cannot change finalized topology"</span><span class="p">):</span>
+        <span class="n">repeated</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getNumNoiseSources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getStateDiffusion</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">]]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_shared_noise_rejects_state_from_another_manager</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"local"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">other</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">foreign</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span>
+        <span class="s2">"foreign"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"does not belong"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">foreign</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">local</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_shared_noise_rejects_multiple_sources_from_same_state</span><span class="p">():</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span>
+        <span class="s2">"duplicateEndpointState"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">state</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"same state"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+
+
+
+
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_state_setters_require_exact_matrix_dimensions</span><span class="p">():</span>
+    <span class="n">manager</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">finalized_manager</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">"expected 2x1, observed 1x2"</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">11.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">]])</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">"expected 2x1, observed 1x2"</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">([[</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]])</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">"expected 2x1, observed 1x2"</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"outside its 2 noise sources"</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="mf">15.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">16.0</span><span class="p">]],</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">assert_committed_values</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="s2">"beta"</span><span class="p">))</span>
+
+
+
+
+<div class="viewcode-block" id="test_repeated_declarations_are_name_based_and_update_live_values">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_dynParamManagerRegistration.html#test_dynParamManagerRegistration.test_repeated_declarations_are_name_based_and_update_live_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_repeated_declarations_are_name_based_and_update_live_values</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Reordered and repeated declarations reuse named state handles."""</span>
+    <span class="n">manager</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">finalized_manager</span><span class="p">()</span>
+    <span class="n">repeated_beta</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"beta"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">repeated_alpha</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">repeated_alpha</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]])</span>
+    <span class="n">repeated_beta</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]])</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">beta</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]]</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">11.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">12.0</span><span class="p">]]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"Topology mismatch"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">registerStateSpec</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">noise_count</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"Cannot add state"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"newState"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_shared_noise_connections_remain_fixed_after_finalization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_dynParamManagerRegistration.html#test_dynParamManagerRegistration.test_shared_noise_connections_remain_fixed_after_finalization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_shared_noise_connections_remain_fixed_after_finalization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Reordered shared endpoints reuse the original independent process."""</span>
+    <span class="n">manager</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">finalized_manager</span><span class="p">()</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">beta</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"cannot change after finalization"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([(</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+    <span class="n">assert_committed_values</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_empty_finalization_fixes_an_empty_layout">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_dynParamManagerRegistration.html#test_dynParamManagerRegistration.test_empty_finalization_fixes_an_empty_layout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_empty_finalization_fixes_an_empty_layout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A zero-state object can finalize repeatedly without allocating states."""</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">finalizeStates</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">manager</span><span class="o">.</span><span class="n">statesAreFinalized</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"Cannot add state"</span><span class="p">):</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"lateState"</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

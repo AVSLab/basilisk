@@ -1,0 +1,10 @@
+.. _CameraConfigMsgPayload:
+
+CameraConfigMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CameraConfigMsgPayload.h
+   :project: msgPayloadDefC
+

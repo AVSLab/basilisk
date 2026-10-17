@@ -1,0 +1,10 @@
+.. _brightnessTemperatureSolarSystem:
+
+brightnessTemperatureSolarSystem
+================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: brightnessTemperatureSolarSystem.hpp
+   :project: utilities
+

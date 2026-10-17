@@ -1,0 +1,10 @@
+.. _GroundStateMsgPayload:
+
+GroundStateMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: GroundStateMsgPayload.h
+   :project: msgPayloadDefC
+

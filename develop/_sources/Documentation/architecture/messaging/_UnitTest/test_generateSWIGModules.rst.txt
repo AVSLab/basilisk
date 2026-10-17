@@ -1,0 +1,15 @@
+.. _test_generateSWIGModules:
+
+test_generateSWIGModules
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_generateSWIGModules
+   :members:
+   :show-inheritance:
+

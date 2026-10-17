@@ -1,0 +1,386 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_arcLineHoldRef &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_arcLineHoldRef</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_arcLineHoldRef</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Unit tests for the fixed arc-line-hold translation reference."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">arcLineHoldRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_configured_module</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Create a short maneuver for direct, fast boundary evaluations."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">arcLineHoldRef</span><span class="o">.</span><span class="n">ArcLineHoldRef</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setRadius</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setTCircle</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setTTransition</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setTLinear</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">module</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_assert_states_close</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compare position, velocity, and acceleration at a phase boundary."""</span>
+    <span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">)</span>  <span class="c1"># [m], [m/s], [m/s^2]</span>
+    <span class="k">for</span> <span class="n">actual_state</span><span class="p">,</span> <span class="n">expected_state</span><span class="p">,</span> <span class="n">tolerance</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">tolerances</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual_state</span><span class="p">,</span> <span class="n">expected_state</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_phase_boundary_continuity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_phase_boundary_continuity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_phase_boundary_continuity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Verify position, velocity, and acceleration join at every phase boundary.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Compare the analytic states on both sides of the arc-to-blend,</span>
+<span class="sd">    blend-to-deceleration, and deceleration-to-hold boundaries.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    Position, velocity, and acceleration references are continuous.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">_configured_module</span><span class="p">()</span>
+    <span class="n">hold</span> <span class="o">=</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">finalPosition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">boundary_states</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">circleStates</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">tCircle</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">blendStates</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">blendStates</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">tTransition</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">decelStates</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">decelStates</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">tLinear</span><span class="p">),</span> <span class="n">hold</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="ow">in</span> <span class="n">boundary_states</span><span class="p">:</span>
+        <span class="n">_assert_states_close</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_output_across_phases">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_output_across_phases">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_output_across_phases</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Verify the published reference switches phases and remains at the hold.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Evaluate the output message in each phase, at the phase boundaries, and</span>
+<span class="sd">    after the maneuver ends.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The ``TransRefMsg`` position, velocity, and acceleration fields match the</span>
+<span class="sd">    selected phase and the final stationary reference.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">_configured_module</span><span class="p">()</span>
+    <span class="n">arc_end</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">tCircle</span>  <span class="c1"># [s]</span>
+    <span class="n">blend_end</span> <span class="o">=</span> <span class="n">arc_end</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">tTransition</span>  <span class="c1"># [s]</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="n">blend_end</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">tLinear</span>  <span class="c1"># [s]</span>
+    <span class="n">hold</span> <span class="o">=</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">finalPosition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">cases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">circleStates</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">arc_end</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">circleStates</span><span class="p">(</span><span class="n">arc_end</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">arc_end</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">blendStates</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">arc_end</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">blendStates</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">blend_end</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">decelStates</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">blend_end</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">decelStates</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">stop_time</span><span class="p">,</span> <span class="n">hold</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">stop_time</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">hold</span><span class="p">),</span>  <span class="c1"># [s]</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">transRefOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">r_RN_N</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">v_RN_N</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">a_RN_N</span><span class="p">)</span>
+        <span class="n">_assert_states_close</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_phase_derivatives">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_phase_derivatives">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"phase"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"circle"</span><span class="p">,</span> <span class="s2">"blend"</span><span class="p">,</span> <span class="s2">"deceleration"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_phase_derivatives</span><span class="p">(</span><span class="n">phase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify the reported velocity and acceleration are time derivatives.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Compare analytic derivatives with centered finite differences at an</span>
+<span class="sd">    interior point of each moving phase.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    Velocity is the derivative of position, and acceleration is the</span>
+<span class="sd">    derivative of velocity.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">_configured_module</span><span class="p">()</span>
+    <span class="n">phase_states</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"circle"</span><span class="p">:</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">circleStates</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
+        <span class="s2">"blend"</span><span class="p">:</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">blendStates</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
+        <span class="s2">"deceleration"</span><span class="p">:</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">decelStates</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">states</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">phase_states</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="mf">1e-4</span>  <span class="c1"># [s]</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">states</span><span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="n">states</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">states</span><span class="p">(</span><span class="n">time</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">velocity_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">before</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">acceleration_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">before</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">velocity_difference</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">acceleration</span><span class="p">,</span> <span class="n">acceleration_difference</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_endpoints">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_invalid_endpoints">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"setter, endpoint, name"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">"setBlendEndPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"blendEndPosition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setBlendEndPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">16.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">],</span> <span class="s2">"blendEndPosition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setFinalPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"finalPosition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setFinalPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="s2">"finalPosition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setFinalPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="s2">"finalPosition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setBlendEndPosition"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"blendEndPosition"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_endpoints</span><span class="p">(</span><span class="n">setter</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject endpoints that would cause a jump or lack a finite position.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Set off-axis, malformed, and non-finite blend or final endpoints before</span>
+<span class="sd">    reset and verify that configuration fails explicitly.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    ``blendEndPosition`` and ``finalPosition`` must be finite three-component</span>
+<span class="sd">    vectors with zero inertial x and z components.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">arcLineHoldRef</span><span class="o">.</span><span class="n">ArcLineHoldRef</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">setter</span><span class="p">)(</span><span class="n">endpoint</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">name</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_durations">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_invalid_durations">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"setting, value"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">"setTTransition"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setTLinear"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setTCircle"</span><span class="p">,</span> <span class="o">-</span><span class="mf">3601.0</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_durations</span><span class="p">(</span><span class="n">setting</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject timing configurations that make the reference undefined.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Reset a module with a nonpositive transition or deceleration duration,</span>
+<span class="sd">    or with a nonpositive circle-plus-transition duration.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The three maneuver timing parameters must satisfy the module's reset</span>
+<span class="sd">    constraints.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">arcLineHoldRef</span><span class="o">.</span><span class="n">ArcLineHoldRef</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">setting</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"duration"</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_nonfinite_trajectory_parameters">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/_UnitTest/test_arcLineHoldRef.html#test_arcLineHoldRef.test_nonfinite_trajectory_parameters">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"setter, name"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">"setRadius"</span><span class="p">,</span> <span class="s2">"radius"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setTCircle"</span><span class="p">,</span> <span class="s2">"tCircle"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setTTransition"</span><span class="p">,</span> <span class="s2">"tTransition"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"setTLinear"</span><span class="p">,</span> <span class="s2">"tLinear"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"inf"</span><span class="p">,</span> <span class="s2">"negative_inf"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonfinite_trajectory_parameters</span><span class="p">(</span><span class="n">setter</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject non-finite radii and phase durations during reset.</span>
+
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Set each scalar trajectory parameter to NaN or either infinity and</span>
+<span class="sd">    verify that reset raises ``BasiliskError`` identifying the parameter.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    ``radius``, ``tCircle``, ``tTransition``, and ``tLinear`` must be finite</span>
+<span class="sd">    before the module computes the trajectory boundary states.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">arcLineHoldRef</span><span class="o">.</span><span class="n">ArcLineHoldRef</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">setter</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># [m] for radius; [s] for phase durations</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite"</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

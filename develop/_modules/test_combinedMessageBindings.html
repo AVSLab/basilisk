@@ -1,0 +1,422 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_combinedMessageBindings &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_combinedMessageBindings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_combinedMessageBindings</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Check native message loading without changing the public Python interfaces."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.machinery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pkgutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+
+<div class="viewcode-block" id="test_message_bindings_share_one_native_file">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_combinedMessageBindings.html#test_combinedMessageBindings.test_message_bindings_share_one_native_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_message_bindings_share_one_native_file</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""All payload modules retain their identities and share one native file."""</span>
+    <span class="n">module_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">__path__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"Payload"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">assert</span> <span class="s2">"SCStatesMsgPayload"</span> <span class="ow">in</span> <span class="n">module_names</span>
+    <span class="n">module_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"messagingSupport"</span><span class="p">)</span>
+    <span class="n">native_paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">module_names</span><span class="p">:</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">messaging</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">messaging</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">._</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">native</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">native</span><span class="o">.</span><span class="n">__spec__</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">full_name</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="ow">is</span> <span class="n">native</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">messaging</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="ow">is</span> <span class="n">native</span>
+        <span class="n">original_spec</span> <span class="o">=</span> <span class="n">native</span><span class="o">.</span><span class="n">__spec__</span>
+        <span class="k">assert</span> <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">native</span><span class="p">)</span> <span class="ow">is</span> <span class="n">native</span>
+        <span class="k">assert</span> <span class="n">native</span><span class="o">.</span><span class="n">__spec__</span> <span class="ow">is</span> <span class="n">original_spec</span>
+        <span class="k">assert</span> <span class="n">native</span><span class="o">.</span><span class="vm">__file__</span> <span class="o">==</span> <span class="n">original_spec</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">native_paths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">native</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">native_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">packaged_binaries</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">messaging</span><span class="o">.</span><span class="n">__path__</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">importlib</span><span class="o">.</span><span class="n">machinery</span><span class="o">.</span><span class="n">EXTENSION_SUFFIXES</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">assert</span> <span class="n">packaged_binaries</span> <span class="o">==</span> <span class="n">native_paths</span></div>
+
+
+
+<div class="viewcode-block" id="test_recorders_work_before_explicit_messaging_import">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_combinedMessageBindings.html#test_combinedMessageBindings.test_recorders_work_before_explicit_messaging_import">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_recorders_work_before_explicit_messaging_import</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A fresh process registers module-output recorders and preserves imports."""</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="s2">"""</span><span class="se">\</span>
+<span class="s2">        import importlib</span>
+<span class="s2">        import importlib.machinery</span>
+
+<span class="s2">        def check_shim_loading(loader, module):</span>
+<span class="s2">            assert not (loader.name.startswith('Basilisk.architecture.messaging._')</span>
+<span class="s2">                        and loader.name.endswith(('Payload', '_messagingSupport'))), loader.name</span>
+<span class="s2">            return original_exec(loader, module)</span>
+
+<span class="s2">        original_exec = importlib.machinery.SourceFileLoader.exec_module</span>
+<span class="s2">        importlib.machinery.SourceFileLoader.exec_module = check_shim_loading</span>
+<span class="s2">        from Basilisk.simulation import spacecraft</span>
+<span class="s2">        importlib.machinery.SourceFileLoader.exec_module = original_exec</span>
+<span class="s2">        sc = spacecraft.Spacecraft()</span>
+<span class="s2">        recorder = sc.scStateOutMsg.recorder()</span>
+
+<span class="s2">        from Basilisk.architecture import messaging</span>
+<span class="s2">        assert isinstance(recorder, messaging.SCStatesMsgRecorder)</span>
+<span class="s2">        payload = messaging.SCStatesMsgPayload()</span>
+<span class="s2">        payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]</span>
+<span class="s2">        write_time = 42  # [ns]</span>
+<span class="s2">        sc.scStateOutMsg.write(payload, write_time)</span>
+<span class="s2">        recorder.UpdateState(write_time)</span>
+<span class="s2">        assert recorder.times().tolist() == [write_time]</span>
+<span class="s2">        assert recorder.r_BN_N.tolist() == [[1.0, 2.0, 3.0]]  # [m]</span>
+
+<span class="s2">        native = importlib.import_module('Basilisk.architecture.messaging._SCStatesMsgPayload')</span>
+<span class="s2">        importlib.reload(messaging)</span>
+<span class="s2">        assert importlib.import_module(native.__name__) is native</span>
+<span class="s2">        assert isinstance(sc.scStateOutMsg.recorder(), messaging.SCStatesMsgRecorder)</span>
+<span class="s2">        """</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">code</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span></div>
+
+
+
+<div class="viewcode-block" id="test_concurrent_message_imports_wait_for_native_initialization">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_combinedMessageBindings.html#test_combinedMessageBindings.test_concurrent_message_imports_wait_for_native_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"first_import"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"package"</span><span class="p">,</span> <span class="s2">"private"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"second_import"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"private"</span><span class="p">,</span> <span class="s2">"other_private"</span><span class="p">,</span> <span class="s2">"package"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"fail_first"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"success"</span><span class="p">,</span> <span class="s2">"retry"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_concurrent_message_imports_wait_for_native_initialization</span><span class="p">(</span>
+        <span class="n">tmp_path</span><span class="p">,</span> <span class="n">first_import</span><span class="p">,</span> <span class="n">second_import</span><span class="p">,</span> <span class="n">fail_first</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Wait for native initialization and recover from a failed first import.</span>
+
+<span class="sd">    :param tmp_path: Directory for an isolated package used in failure-injection cases.</span>
+<span class="sd">    :param first_import: Start by importing the messaging package or its private extension.</span>
+<span class="sd">    :param second_import: Import the same binding, another binding, or the messaging package concurrently.</span>
+<span class="sd">    :param fail_first: Inject an initialization failure before testing a clean retry.</span>
+<span class="sd">    """</span>
+    <span class="n">package_name</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="n">fail_first</span><span class="p">:</span>
+        <span class="c1"># Keep injected failures inside a small package using the real loader</span>
+        <span class="c1"># and native bindings. Basilisk's top-level initializer imports messaging</span>
+        <span class="c1"># eagerly, so failing it also invalidates unrelated ancestor packages.</span>
+        <span class="n">package_name</span> <span class="o">=</span> <span class="s2">"messageImportProbe"</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="n">package_name</span>
+        <span class="n">package</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+        <span class="p">(</span><span class="n">package</span> <span class="o">/</span> <span class="s2">"__init__.py"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"__path__.append(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="si">!r}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"from ._load_messages import load_message_module</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"load_message_module('messagingSupport')</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"load_message_module('AttRefMsgPayload')</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"load_message_module('SCStatesMsgPayload')</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="s2">"""</span><span class="se">\</span>
+<span class="s2">        import importlib</span>
+<span class="s2">        import importlib.machinery</span>
+<span class="s2">        import os</span>
+<span class="s2">        import sys</span>
+<span class="s2">        import threading</span>
+
+<span class="s2">        package_name = sys.argv[4]</span>
+<span class="s2">        sys.path.insert(0, sys.argv[5])</span>
+<span class="s2">        native_name = package_name + '._AttRefMsgPayload'</span>
+<span class="s2">        public_name = package_name + '.AttRefMsgPayload'</span>
+<span class="s2">        first_name = package_name if sys.argv[1] == 'package' else native_name</span>
+<span class="s2">        second_name = {</span>
+<span class="s2">            'private': native_name,</span>
+<span class="s2">            'other_private': package_name + '._SCStatesMsgPayload',</span>
+<span class="s2">            'package': package_name,</span>
+<span class="s2">        }[sys.argv[2]]</span>
+<span class="s2">        fail_first = sys.argv[3] == 'True'</span>
+<span class="s2">        if fail_first and os.name == 'nt':</span>
+<span class="s2">            # The probe bypasses Basilisk.__init__, including its DLL setup.</span>
+<span class="s2">            # Retain the directory handle across failed imports and retries.</span>
+<span class="s2">            dll_directory = os.add_dll_directory(sys.argv[6])</span>
+<span class="s2">        timeout = 10.0  # [s]</span>
+<span class="s2">        blocking_window = 0.2  # [s]</span>
+<span class="s2">        first_ready = threading.Event()</span>
+<span class="s2">        release = threading.Event()</span>
+<span class="s2">        second_started = threading.Event()</span>
+<span class="s2">        second_done = threading.Event()</span>
+<span class="s2">        modules = </span><span class="si">{}</span>
+<span class="s2">        errors = </span><span class="si">{}</span>
+<span class="s2">        attempts = []</span>
+<span class="s2">        original_exec = importlib.machinery.ExtensionFileLoader.exec_module</span>
+
+<span class="s2">        def paused_exec(loader, module):</span>
+<span class="s2">            if loader.name == native_name:</span>
+<span class="s2">                attempts.append(module)</span>
+<span class="s2">                if len(attempts) == 1:</span>
+<span class="s2">                    first_ready.set()</span>
+<span class="s2">                    assert release.wait(timeout), 'Native initialization was never released'</span>
+<span class="s2">                    if fail_first:</span>
+<span class="s2">                        raise RuntimeError('Injected native initialization failure')</span>
+<span class="s2">            return original_exec(loader, module)</span>
+
+<span class="s2">        def import_module(label, name):</span>
+<span class="s2">            if label == 'second':</span>
+<span class="s2">                second_started.set()</span>
+<span class="s2">            try:</span>
+<span class="s2">                modules[label] = importlib.import_module(name)</span>
+<span class="s2">            except BaseException as error:</span>
+<span class="s2">                errors[label] = error</span>
+<span class="s2">            finally:</span>
+<span class="s2">                if label == 'first':</span>
+<span class="s2">                    first_ready.set()</span>
+<span class="s2">                else:</span>
+<span class="s2">                    second_done.set()</span>
+
+<span class="s2">        importlib.machinery.ExtensionFileLoader.exec_module = paused_exec</span>
+<span class="s2">        first = threading.Thread(target=import_module, args=('first', first_name), daemon=True)</span>
+<span class="s2">        second = threading.Thread(target=import_module, args=('second', second_name), daemon=True)</span>
+<span class="s2">        try:</span>
+<span class="s2">            first.start()</span>
+<span class="s2">            assert first_ready.wait(timeout), 'Native initialization did not start'</span>
+<span class="s2">            if 'first' in errors:</span>
+<span class="s2">                raise errors['first']</span>
+<span class="s2">            second.start()</span>
+<span class="s2">            assert second_started.wait(timeout), 'Concurrent import did not start'</span>
+<span class="s2">            returned_early = second_done.wait(blocking_window)</span>
+<span class="s2">        finally:</span>
+<span class="s2">            release.set()</span>
+<span class="s2">            first.join(timeout)</span>
+<span class="s2">            if second.ident is not None:</span>
+<span class="s2">                second.join(timeout)</span>
+<span class="s2">            importlib.machinery.ExtensionFileLoader.exec_module = original_exec</span>
+
+<span class="s2">        assert not first.is_alive() and not second.is_alive(), 'Import deadlock'</span>
+<span class="s2">        assert not returned_early, 'Concurrent import returned an unfinished native module'</span>
+<span class="s2">        assert second_done.is_set()</span>
+<span class="s2">        if fail_first:</span>
+<span class="s2">            assert isinstance(errors.get('first'), RuntimeError), errors</span>
+<span class="s2">            assert str(errors['first']) == 'Injected native initialization failure'</span>
+<span class="s2">            if 'second' in errors:</span>
+<span class="s2">                # A waiting import may fail with the first package import on</span>
+<span class="s2">                # some Python versions. Its next attempt must initialize cleanly.</span>
+<span class="s2">                assert isinstance(errors['second'], ImportError), errors</span>
+<span class="s2">                assert len(attempts) == 1</span>
+<span class="s2">                assert native_name not in sys.modules</span>
+<span class="s2">                assert public_name not in sys.modules</span>
+<span class="s2">                importlib.machinery.ExtensionFileLoader.exec_module = paused_exec</span>
+<span class="s2">                try:</span>
+<span class="s2">                    modules['second'] = importlib.import_module(second_name)</span>
+<span class="s2">                finally:</span>
+<span class="s2">                    importlib.machinery.ExtensionFileLoader.exec_module = original_exec</span>
+<span class="s2">                del errors['second']</span>
+<span class="s2">            assert set(errors) == {'first'}, errors</span>
+<span class="s2">            assert len(attempts) == 2</span>
+<span class="s2">        else:</span>
+<span class="s2">            assert not errors, errors</span>
+<span class="s2">            assert len(attempts) == 1</span>
+
+<span class="s2">        native = importlib.import_module(native_name)</span>
+<span class="s2">        messaging = importlib.import_module(package_name)</span>
+<span class="s2">        assert modules['second'] is importlib.import_module(second_name)</span>
+<span class="s2">        assert native is attempts[-1]</span>
+<span class="s2">        assert messaging._AttRefMsgPayload is native</span>
+<span class="s2">        assert all(not getattr(module.__spec__, '_initializing', False) for module in attempts)</span>
+<span class="s2">        # A failed package import can leave earlier native bindings cached.</span>
+<span class="s2">        # Retrying must also attach those bindings to the new package object.</span>
+<span class="s2">        for name, module in tuple(sys.modules.items()):</span>
+<span class="s2">            if name.startswith(package_name + '._') and isinstance(</span>
+<span class="s2">                    module.__loader__, importlib.machinery.ExtensionFileLoader):</span>
+<span class="s2">                assert getattr(messaging, name.rsplit('.', 1)[1]) is module</span>
+
+<span class="s2">        if fail_first:</span>
+<span class="s2">            payload = native.new_AttRefMsgPayload()</span>
+<span class="s2">            try:</span>
+<span class="s2">                assert native.AttRefMsgPayload_sigma_RN_get(payload) == [0.0, 0.0, 0.0]</span>
+<span class="s2">            finally:</span>
+<span class="s2">                native.delete_AttRefMsgPayload(payload)</span>
+<span class="s2">                payload.own(False)</span>
+<span class="s2">        else:</span>
+<span class="s2">            proxy = importlib.import_module(public_name)</span>
+<span class="s2">            assert proxy._AttRefMsgPayload is native</span>
+<span class="s2">            payload = proxy.AttRefMsgPayload()</span>
+<span class="s2">            payload.sigma_RN = [0.1, 0.2, 0.3]  # [-] MRP attitude</span>
+<span class="s2">            assert native.AttRefMsgPayload_sigma_RN_get(payload) == [0.1, 0.2, 0.3]</span>
+<span class="s2">            message = messaging.AttRefMsg().write(payload)</span>
+<span class="s2">            recorder = message.recorder()</span>
+<span class="s2">            recorder.UpdateState(0)  # [ns]</span>
+<span class="s2">            assert recorder.sigma_RN.tolist() == [[0.1, 0.2, 0.3]]</span>
+<span class="s2">        importlib.reload(messaging)</span>
+<span class="s2">        assert importlib.import_module(native_name) is native</span>
+<span class="s2">        """</span><span class="p">)</span>
+    <span class="n">subprocess_timeout</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># [s]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">first_import</span><span class="p">,</span> <span class="n">second_import</span><span class="p">,</span>
+         <span class="nb">str</span><span class="p">(</span><span class="n">fail_first</span><span class="p">),</span> <span class="n">package_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">])],</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">subprocess_timeout</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

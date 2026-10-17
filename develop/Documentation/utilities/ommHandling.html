@@ -1,0 +1,260 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ommHandling &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="orbitalMotion" href="orbitalMotion.html" />
+    <link rel="prev" title="makeDraftModule" href="makeDraftModule.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ommHandling</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematicsNumba.html">RigidBodyKinematicsNumba</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simHelpers.html">simHelpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preCommitTools/index.html">preCommitTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">ommHandling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/ommHandling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ommhandling">
+<span id="id1"></span><h1>ommHandling<a class="headerlink" href="#ommhandling" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-ommHandling">Read CCSDS Orbit Mean-Elements Message (OMM) general perturbations data and convert it to
+osculating classical orbital elements in the Basilisk inertial (J2000/ICRF) frame.</p>
+<p>OMM supports NORAD catalog numbers of up to nine digits, removing the classic numeric
+TLE field’s five-digit restriction. The U.S. Space Force (USSF) assigns catalog numbers;
+CelesTrak distributes the data. This reader supports IDs through <code class="docutils literal notranslate"><span class="pre">999999999</span></code> and
+preserves them in <code class="docutils literal notranslate"><span class="pre">OmmData.noradID</span></code>, independently of SGP4’s internal identifier. See
+<a class="reference external" href="https://celestrak.org/NORAD/documentation/gp-data-formats.php">CelesTrak’s GP format documentation</a>.</p>
+<p>All four CelesTrak encodings are accepted and auto-detected: XML, JSON, CSV and KVN.  The
+mean elements are handed to SGP4 exactly as <a class="reference internal" href="tleHandling.html#tlehandling"><span class="std std-ref">tleHandling</span></a> does for a TLE, so both paths
+produce osculating elements through the same propagation and frame conversion. Only the
+Earth-centered, TEME, UTC, SGP4 profile is supported.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ommHandling.OmmData">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ommHandling.</span></span><span class="sig-name descname"><span class="pre">OmmData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ommEpoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BSK-Sat-00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noradID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objectID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'0000-000A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Unknown'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revAtEpoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elemSetNo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meanMotion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nDot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nDotDot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bStar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centerName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EARTH'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refFrame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TEME'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meanElementTheory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SGP4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeSystem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UTC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ommHandling.html#OmmData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ommHandling.OmmData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hold the orbital elements and metadata of a single OMM record.</p>
+<p>Mirrors <code class="xref py py-class docutils literal notranslate"><span class="pre">Basilisk.utilities.tleHandling.TleData</span></code>, with the OMM-only metadata
+added and the TLE-only line-format fields dropped.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ommHandling.satOmm2elem">
+<span class="sig-prename descclassname"><span class="pre">ommHandling.</span></span><span class="sig-name descname"><span class="pre">satOmm2elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omm_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ommHandling.html#satOmm2elem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ommHandling.satOmm2elem" title="Link to this definition"></a></dt>
+<dd><p>Convert the OMM records of a constellation to osculating orbital elements for each satellite.</p>
+<p>The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
+including nine-digit OMM IDs, are preserved in <code class="docutils literal notranslate"><span class="pre">noradID</span></code> without being constrained by
+SGP4’s internal identifier storage.</p>
+<p>Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.
+Digits beyond microsecond precision are truncated consistently for <code class="docutils literal notranslate"><span class="pre">ommEpoch</span></code>,
+SGP4 initialization and propagation, and frame conversion.</p>
+<p>Only Earth-centered, TEME, UTC, SGP4 records with ephemeris type 0 (CelesTrak
+default) or 2 (SGP4) are supported. JSON and CSV records may omit
+<code class="docutils literal notranslate"><span class="pre">CENTER_NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">REF_FRAME</span></code>, <code class="docutils literal notranslate"><span class="pre">TIME_SYSTEM</span></code>, and <code class="docutils literal notranslate"><span class="pre">MEAN_ELEMENT_THEORY</span></code>;
+CelesTrak’s EARTH/TEME/UTC/SGP4 defaults then apply. XML and KVN require these
+fields explicitly. Empty or incompatible declarations cause the record to
+be skipped with a warning before SGP4 is invoked.</p>
+<p>Numeric XML/KVN unit declarations must match the CCSDS units used by SGP4:
+<code class="docutils literal notranslate"><span class="pre">deg</span></code>, <code class="docutils literal notranslate"><span class="pre">rev/day</span></code>, <code class="docutils literal notranslate"><span class="pre">rev/day**2</span></code>, <code class="docutils literal notranslate"><span class="pre">rev/day**3</span></code>, and inverse Earth radii
+(<code class="docutils literal notranslate"><span class="pre">1/ER</span></code> or <code class="docutils literal notranslate"><span class="pre">1/[Earth</span> <span class="pre">radii]</span></code>) for <code class="docutils literal notranslate"><span class="pre">BSTAR</span></code>. Dimensionless fields must
+omit units. Unsupported declarations cause the record to be skipped;
+values are not converted between units. Omitted units use these same conventions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CLASSIFICATION_TYPE</span></code> accepts <code class="docutils literal notranslate"><span class="pre">U</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, or <code class="docutils literal notranslate"><span class="pre">S</span></code> after trimming whitespace
+and normalizing case. Missing or blank values default to <code class="docutils literal notranslate"><span class="pre">U</span></code>; unsupported
+values cause the record to be skipped before SGP4 is invoked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>omm_path</strong> – path to an OMM file holding one or many satellites</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ommDataList: list of <a class="reference internal" href="#ommHandling.OmmData" title="ommHandling.OmmData"><code class="xref py py-class docutils literal notranslate"><span class="pre">OmmData</span></code></a>, one per satellite, each carrying the
+osculating orbital elements in <code class="docutils literal notranslate"><span class="pre">oe</span></code> plus the record’s metadata</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="makeDraftModule.html" class="btn btn-neutral float-left" title="makeDraftModule" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="orbitalMotion.html" class="btn btn-neutral float-right" title="orbitalMotion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

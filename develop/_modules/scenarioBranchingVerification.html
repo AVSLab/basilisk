@@ -1,0 +1,851 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioBranchingVerification &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioBranchingVerification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioBranchingVerification</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Verification of the effector-branching extension along two complementary axes. Whereas the</span>
+<span class="sd">branching scenarios exercise the capability at production scale, this script reduces it to a hub,</span>
+<span class="sd">one moving-platform host state effector, and an ``extForceTorque`` dynamic effector branched onto</span>
+<span class="sd">the host's tip segment in field-free space, where exact references exist to measure against. The</span>
+<span class="sd">effector applies a torque about the segment origin together with a force through each of the two</span>
+<span class="sd">channels a branching parent accepts, one resolved in the host segment frame and one in the inertial</span>
+<span class="sd">frame.</span>
+
+<span class="sd">The first axis checks the impulse-momentum theorems at one fixed integration step. The simulator's</span>
+<span class="sd">internally tracked angular and linear momentum about the system center of mass are compared</span>
+<span class="sd">against the integrated external impulse, and any drift away from machine precision indicates a</span>
+<span class="sd">defect in the equations of motion themselves: a wrong reference frame in the branched force or</span>
+<span class="sd">torque, a wrong moment arm, or a sign error in a Backsubstitution coupling matrix. The</span>
+<span class="sd">post-processing integrals use Simpson's 1/3 rule so the residual reports the simulator's error</span>
+<span class="sd">rather than the quadrature's.</span>
+
+<span class="sd">The second axis is the order-of-accuracy check standard in computational-physics code</span>
+<span class="sd">verification. The answer at a fixed final time is computed at successively halved step sizes, and</span>
+<span class="sd">the convergence rate of the differences is compared against the integrator's formal order, which</span>
+<span class="sd">is four for the default RK4. This detects a defect class the first axis cannot: stage</span>
+<span class="sd">inconsistency, where the branched wrench is evaluated against the wrong intermediate Runge-Kutta</span>
+<span class="sd">state, leaving each step within tolerance whereas the effective order degrades across the run.</span>
+
+<span class="sd">A correct implementation must satisfy both axes. Either alone is necessary but not sufficient.</span>
+
+<span class="sd">Three host classes span the moving-platform effectors that support branching, each a chain with</span>
+<span class="sd">the dynamic effector branched onto its tip body: ``spinningBodyNDOF`` configured as three</span>
+<span class="sd">two-degree-of-freedom segments, ``nHingedRigidBody`` as three hinged panels, and</span>
+<span class="sd">``linearTranslationNDOF`` as three translating bodies.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by::</span>
+
+<span class="sd">    python3 scenarioBranchingVerification.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The default ``run()`` invocation reproduces the configuration presented in the companion</span>
+<span class="sd">journal article (citation pending publication). The pytest wrapper in ``src/tests`` drives a</span>
+<span class="sd">shortened step ladder and horizon to keep wall time low.</span>
+
+<span class="sd">The impulse-momentum residuals show the random-walk character of pure floating-point rounding,</span>
+<span class="sd">about thirteen orders of magnitude below the momentum they bound. All three hosts are run and</span>
+<span class="sd">their peak residuals printed, and the figure shows the cascading-rotation and translating</span>
+<span class="sd">hosts. The step-size refinement places every host on a line of slope four, so all three</span>
+<span class="sd">inherit the integrator's formal order through the branched code path.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBranchingVerificationConservation.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBranchingVerificationConvergence.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">"""</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Basilisk Scenario Script</span>
+<span class="c1">#</span>
+<span class="c1">#   Purpose:            Verify the effector-branching equations of motion.</span>
+<span class="c1">#   Author:             Andrew Morell</span>
+<span class="c1">#   Creation Date:      Aug 12, 2026</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">cumulative_simpson</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">extForceTorque</span><span class="p">,</span>
+    <span class="n">linearTranslationNDOFStateEffector</span><span class="p">,</span>
+    <span class="n">nHingedRigidBodyStateEffector</span><span class="p">,</span>
+    <span class="n">spacecraft</span><span class="p">,</span>
+    <span class="n">spinningBodyNDOFStateEffector</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="HostProps">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.HostProps">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HostProps</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Information needed for the post-processing impulse computation."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">totalMass</span><span class="p">,</span> <span class="n">r_PcP_P</span><span class="p">,</span> <span class="n">logAttr</span><span class="p">,</span> <span class="n">segment</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">totalMass</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_PcP_P</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logAttr</span> <span class="o">=</span> <span class="n">logAttr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setupExtFT</span><span class="p">():</span>
+    <span class="n">extFT</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"extFT"</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">10.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>  <span class="c1"># [N]</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">extForce_N</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>  <span class="c1"># [N]</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">]]</span>  <span class="c1"># [N m]</span>
+    <span class="k">return</span> <span class="n">extFT</span>
+
+
+<div class="viewcode-block" id="setupSpinningBodyNDOF">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.setupSpinningBodyNDOF">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupSpinningBodyNDOF</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""3-segment, 2-DOF-per-segment spinning body. Tip = body 6."""</span>
+    <span class="n">sbe</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyNDOFStateEffector</span><span class="p">()</span>
+    <span class="n">sbe</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spinningBodyNDOF"</span>
+
+    <span class="n">numberOfSegments</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">massSubPanel</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="n">numberOfSegments</span>  <span class="c1"># [kg]</span>
+    <span class="n">lengthSubPanel</span> <span class="o">=</span> <span class="mf">18.0</span> <span class="o">/</span> <span class="n">numberOfSegments</span>  <span class="c1"># [m]</span>
+    <span class="n">widthSubPanel</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># [m]</span>
+    <span class="n">thicknessSubPanel</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># [m]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">sb</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBody</span><span class="p">()</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setISPntSc_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setDCM_S0P</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setR_ScS_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sb</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span> <span class="o">-</span> <span class="n">thicknessSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sb</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setSHat_S</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setThetaDotInit</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>  <span class="c1"># [N m/rad]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">8.0</span><span class="p">)</span>  <span class="c1"># [N m s/rad]</span>
+        <span class="n">sbe</span><span class="o">.</span><span class="n">addSpinningBody</span><span class="p">(</span><span class="n">sb</span><span class="p">)</span>
+
+        <span class="n">sb</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBody</span><span class="p">()</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">massSubPanel</span><span class="p">)</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setISPntSc_S</span><span class="p">([[</span><span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">lengthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thicknessSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [kg m^2]</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">widthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thicknessSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">widthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lengthSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setDCM_S0P</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setR_ScS_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setSHat_S</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setThetaDotInit</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [N m/rad]</span>
+        <span class="n">sb</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>  <span class="c1"># [N m s/rad]</span>
+        <span class="n">sbe</span><span class="o">.</span><span class="n">addSpinningBody</span><span class="p">(</span><span class="n">sb</span><span class="p">)</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="n">HostProps</span><span class="p">(</span>
+        <span class="n">totalMass</span><span class="o">=</span><span class="n">massSubPanel</span> <span class="o">*</span> <span class="n">numberOfSegments</span><span class="p">,</span>
+        <span class="n">r_PcP_P</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">lengthSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">logAttr</span><span class="o">=</span><span class="s2">"spinningBodyConfigLogOutMsgs"</span><span class="p">,</span>
+        <span class="n">segment</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sbe</span><span class="p">,</span> <span class="n">props</span></div>
+
+
+
+<div class="viewcode-block" id="setupNHingedRigidBody">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.setupNHingedRigidBody">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupNHingedRigidBody</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Three identical hinged panels in a chain. Tip = panel 3."""</span>
+    <span class="n">nhb</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">nhb</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"nHingedRigidBody"</span>
+
+    <span class="n">numberOfPanels</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">panelMass</span> <span class="o">=</span> <span class="mf">100.0</span>        <span class="c1"># [kg]</span>
+    <span class="n">panelHalfLength</span> <span class="o">=</span> <span class="mf">0.75</span>   <span class="c1"># [m]</span>
+    <span class="n">thetaInit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>      <span class="c1"># [deg]</span>
+    <span class="n">thetaDotInit</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>   <span class="c1"># [deg/s]</span>
+    <span class="n">nhb</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">nhb</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfPanels</span><span class="p">):</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">()</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">panelMass</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">panelHalfLength</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [N m/rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">0.0</span>    <span class="c1"># [N m s/rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]]</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="n">thetaInit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="n">thetaDotInit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">theta_0</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">nhb</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="n">HostProps</span><span class="p">(</span>
+        <span class="n">totalMass</span><span class="o">=</span><span class="n">panelMass</span> <span class="o">*</span> <span class="n">numberOfPanels</span><span class="p">,</span>
+        <span class="n">r_PcP_P</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">panelHalfLength</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>   <span class="c1"># panel CoM, -d along sHat1 from its hinge</span>
+        <span class="n">logAttr</span><span class="o">=</span><span class="s2">"nHingedRigidBodyConfigLogOutMsgs"</span><span class="p">,</span>
+        <span class="n">segment</span><span class="o">=</span><span class="n">numberOfPanels</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">nhb</span><span class="p">,</span> <span class="n">props</span></div>
+
+
+
+<div class="viewcode-block" id="setupLinearTranslationNDOF">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.setupLinearTranslationNDOF">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupLinearTranslationNDOF</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Three translating bodies in a chain. Tip = body 3."""</span>
+    <span class="n">ltn</span> <span class="o">=</span> <span class="n">linearTranslationNDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationNDOFStateEffector</span><span class="p">()</span>
+    <span class="n">ltn</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"linearTranslationNDOF"</span>
+
+    <span class="n">numberOfBodies</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">bodyMass</span> <span class="o">=</span> <span class="mf">20.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">rhoInit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">)</span>       <span class="c1"># [m]</span>
+    <span class="n">rhoDotInit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">fHat_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">r_FcF_F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+    <span class="n">r_F0P_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_F0B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfBodies</span><span class="p">):</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">linearTranslationNDOFStateEffector</span><span class="o">.</span><span class="n">TranslatingBody</span><span class="p">()</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">bodyMass</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>  <span class="c1"># [N/m]</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>    <span class="c1"># [N s/m]</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="n">rhoInit</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="n">rhoDotInit</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setFHat_P</span><span class="p">(</span><span class="n">fHat_P</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">(</span><span class="n">r_FcF_F</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setR_F0P_P</span><span class="p">(</span><span class="n">r_F0P_P</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">([[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]])</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setDCM_FP</span><span class="p">(</span><span class="n">dcm_F0B</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">ltn</span><span class="o">.</span><span class="n">addTranslatingBody</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="n">HostProps</span><span class="p">(</span>
+        <span class="n">totalMass</span><span class="o">=</span><span class="n">bodyMass</span> <span class="o">*</span> <span class="n">numberOfBodies</span><span class="p">,</span>
+        <span class="n">r_PcP_P</span><span class="o">=</span><span class="n">r_FcF_F</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="n">logAttr</span><span class="o">=</span><span class="s2">"translatingBodyConfigLogOutMsgs"</span><span class="p">,</span>
+        <span class="n">segment</span><span class="o">=</span><span class="n">numberOfBodies</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ltn</span><span class="p">,</span> <span class="n">props</span></div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Step-size refinement study</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="n">CONVERGENCE_DT_SWEEP</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.0125</span><span class="p">,</span> <span class="mf">0.00625</span><span class="p">,</span> <span class="mf">0.003125</span><span class="p">)</span>  <span class="c1"># [s]</span>
+<span class="n">CONVERGENCE_FINAL_TIME</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [s]</span>
+<span class="n">OBSERVABLES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"sigma_BN"</span><span class="p">,</span> <span class="s2">"omega_BN_B"</span><span class="p">,</span> <span class="s2">"r_BN_N"</span><span class="p">,</span> <span class="s2">"v_BN_N"</span><span class="p">)</span>
+
+<span class="n">HOST_SETUPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">"spinningBodyNDOF"</span><span class="p">,</span>      <span class="n">setupSpinningBodyNDOF</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"nHingedRigidBody"</span><span class="p">,</span>      <span class="n">setupNHingedRigidBody</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"linearTranslationNDOF"</span><span class="p">,</span> <span class="n">setupLinearTranslationNDOF</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">SETUP_SHORT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"spinningBodyNDOF"</span><span class="p">:</span>      <span class="s2">"spinningBodyNDOF"</span><span class="p">,</span>
+    <span class="s2">"nHingedRigidBody"</span><span class="p">:</span>      <span class="s2">"nHingedRigidBody"</span><span class="p">,</span>
+    <span class="s2">"linearTranslationNDOF"</span><span class="p">:</span> <span class="s2">"linearTranslationNDOF"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="runToFinalState">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.runToFinalState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runToFinalState</span><span class="p">(</span><span class="n">stateEffFactory</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run one field-free sim with a branched extForceTorque on the host's tip.</span>
+
+<span class="sd">    Returns the hub state at ``t = T`` extracted from ``scStateOutMsg``.</span>
+<span class="sd">    """</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"proc"</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scObject"</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [kg m^2]</span>
+                          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.10</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.08</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">stateEff</span><span class="p">,</span> <span class="n">hostProps</span> <span class="o">=</span> <span class="n">stateEffFactory</span><span class="p">()</span>
+    <span class="n">extFT</span> <span class="o">=</span> <span class="n">setupExtFT</span><span class="p">()</span>
+
+    <span class="n">sc</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEff</span><span class="p">)</span>
+    <span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFT</span><span class="p">,</span> <span class="n">hostProps</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">extFT</span><span class="p">)</span>
+
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"sigma_BN"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="s2">"omega_BN_B"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="s2">"r_BN_N"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="s2">"v_BN_N"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Convergence sweep</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runSweep</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">dtSweep</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dtSweep</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">runToFinalState</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">)</span>
+        <span class="n">wall</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  dt=</span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s2">.5g</span><span class="si">}</span><span class="s2">  |omega(T)|=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s1">'omega_BN_B'</span><span class="p">])</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  "</span>
+              <span class="sa">f</span><span class="s2">"|sigma(T)|=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s1">'sigma_BN'</span><span class="p">])</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">wall</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s)"</span><span class="p">)</span>
+        <span class="n">runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">runs</span>
+
+
+<div class="viewcode-block" id="pairResiduals">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.pairResiduals">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pairResiduals</span><span class="p">(</span><span class="n">runs</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return ‖x(dt_i) − x(dt_{i+1})‖ for each adjacent pair."""</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">runs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">runs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">runs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)])</span></div>
+
+
+
+<div class="viewcode-block" id="runConvergenceStudy">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.runConvergenceStudy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runConvergenceStudy</span><span class="p">(</span><span class="n">dtSweep</span><span class="o">=</span><span class="n">CONVERGENCE_DT_SWEEP</span><span class="p">,</span> <span class="n">finalTime</span><span class="o">=</span><span class="n">CONVERGENCE_FINAL_TIME</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the step-size refinement study and render the convergence figure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtSweep (tuple): integration steps to refine over [s], halving between entries.</span>
+<span class="sd">        finalTime (float): fixed final time at which the states are compared [s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: the convergence figure and the fitted order per host and observable.</span>
+<span class="sd">    """</span>
+    <span class="n">allRuns</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">runSweep</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">dtSweep</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">factory</span> <span class="ow">in</span> <span class="n">HOST_SETUPS</span><span class="p">}</span>
+    <span class="n">pairDts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dtSweep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Print pair-residual table for every observable, fit slopes</span>
+    <span class="n">slopes</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">--- pair-wise self-convergence residuals at t = T ---"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'setup'</span><span class="si">:</span><span class="s2">&gt;26s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">'observable'</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">  "</span> <span class="o">+</span>
+          <span class="s2">"  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dt=</span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">.5g</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pairDts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"    slope"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">allRuns</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">OBSERVABLES</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">pairResiduals</span><span class="p">(</span><span class="n">allRuns</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">obs</span><span class="p">)</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pairDts</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="s2">"  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">8.2e</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">&gt;26s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">obs</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">slopes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="p">{})[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">slope</span>
+
+    <span class="c1"># twin axes: omega on the left, v on the right</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axOmega</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">))</span>
+    <span class="n">axVel</span> <span class="o">=</span> <span class="n">axOmega</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"spinningBodyNDOF"</span><span class="p">:</span> <span class="s2">"C0"</span><span class="p">,</span>
+              <span class="s2">"nHingedRigidBody"</span><span class="p">:</span> <span class="s2">"C1"</span><span class="p">,</span>
+              <span class="s2">"linearTranslationNDOF"</span><span class="p">:</span> <span class="s2">"C2"</span><span class="p">}</span>
+
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">runs</span> <span class="ow">in</span> <span class="n">allRuns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="c1"># omega: solid + circle, left axis</span>
+        <span class="n">resOmega</span> <span class="o">=</span> <span class="n">pairResiduals</span><span class="p">(</span><span class="n">runs</span><span class="p">,</span> <span class="s2">"omega_BN_B"</span><span class="p">)</span>
+        <span class="n">slopeOmega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pairDts</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">resOmega</span><span class="p">),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hOmega</span><span class="p">,</span> <span class="o">=</span> <span class="n">axOmega</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">pairDts</span><span class="p">,</span> <span class="n">resOmega</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
+                           <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hOmega</span><span class="p">)</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"</span><span class="si">{</span><span class="n">SETUP_SHORT</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">, $\omega$  ($p=</span><span class="si">{</span><span class="n">slopeOmega</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">$)"</span><span class="p">)</span>
+        <span class="c1"># v: dashed + square, right axis</span>
+        <span class="n">resVel</span> <span class="o">=</span> <span class="n">pairResiduals</span><span class="p">(</span><span class="n">runs</span><span class="p">,</span> <span class="s2">"v_BN_N"</span><span class="p">)</span>
+        <span class="n">slopeVel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pairDts</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">resVel</span><span class="p">),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hVel</span><span class="p">,</span> <span class="o">=</span> <span class="n">axVel</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">pairDts</span><span class="p">,</span> <span class="n">resVel</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span>
+                           <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hVel</span><span class="p">)</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"</span><span class="si">{</span><span class="n">SETUP_SHORT</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">, $v$  ($p=</span><span class="si">{</span><span class="n">slopeVel</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">$)"</span><span class="p">)</span>
+
+    <span class="c1"># slope-4 reference on the omega axis; both log axes share the x-axis</span>
+    <span class="n">anchor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">pairResiduals</span><span class="p">(</span><span class="n">allRuns</span><span class="p">[</span><span class="n">lab</span><span class="p">],</span> <span class="s2">"omega_BN_B"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">HOST_SETUPS</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">anchor</span> <span class="o">*</span> <span class="p">(</span><span class="n">pairDts</span> <span class="o">/</span> <span class="n">pairDts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">4</span>
+    <span class="n">hRef</span><span class="p">,</span> <span class="o">=</span> <span class="n">axOmega</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">pairDts</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="s2">"k:"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hRef</span><span class="p">)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"slope = 4"</span><span class="p">)</span>
+
+    <span class="n">axOmega</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"integration step  $\Delta t$  [s]"</span><span class="p">)</span>
+    <span class="n">axOmega</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\|\,\omega_{B/N}^{(\Delta t)} - \omega_{B/N}^{(\Delta t/2)}\,\|$ "</span>
+                    <span class="sa">r</span><span class="s2">"at $t = T$   [rad/s]"</span><span class="p">)</span>
+    <span class="n">axVel</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\|\,v_{B/N}^{(\Delta t)} - v_{B/N}^{(\Delta t/2)}\,\|$ "</span>
+                    <span class="sa">r</span><span class="s2">"at $t = T$   [m/s]"</span><span class="p">)</span>
+    <span class="n">axOmega</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># co-align the two log axes</span>
+    <span class="n">yLo</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">pairResiduals</span><span class="p">(</span><span class="n">allRuns</span><span class="p">[</span><span class="n">lab</span><span class="p">],</span> <span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+               <span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">HOST_SETUPS</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"omega_BN_B"</span><span class="p">,</span> <span class="s2">"v_BN_N"</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.3</span>
+    <span class="n">yHi</span> <span class="o">=</span> <span class="n">anchor</span> <span class="o">*</span> <span class="mf">3.0</span>
+    <span class="n">axOmega</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">yLo</span><span class="p">,</span> <span class="n">yHi</span><span class="p">)</span>
+    <span class="n">axVel</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">yLo</span><span class="p">,</span> <span class="n">yHi</span><span class="p">)</span>
+
+    <span class="c1"># legend in the empty top-left corner</span>
+    <span class="n">axOmega</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span>
+                <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+                <span class="n">handlelength</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">columnspacing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.13</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.96</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.13</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">slopes</span></div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Impulse-momentum residual study</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="n">CONSERVATION_DT</span> <span class="o">=</span> <span class="mf">1.0e-4</span>  <span class="c1"># [s] fine enough that residuals sit at the float64 noise floor</span>
+<span class="n">CONSERVATION_FINAL_TIME</span> <span class="o">=</span> <span class="mf">4.0</span>  <span class="c1"># [s]</span>
+
+<span class="c1"># hosts whose residuals are plotted: one cascading-rotation host and one translating host</span>
+<span class="n">CONSERVATION_PLOTTED</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"spinningBodyNDOF"</span><span class="p">,</span> <span class="s2">"linearTranslationNDOF"</span><span class="p">)</span>
+
+<span class="n">PLOT_STRIDE</span> <span class="o">=</span> <span class="mi">20</span>    <span class="c1"># plot every Nth sample to keep the SVG file size in check</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runWithFullLogs</span><span class="p">(</span><span class="n">hostFactory</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"proc"</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scObject"</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [kg m^2]</span>
+                          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.10</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.08</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">stateEff</span><span class="p">,</span> <span class="n">props</span> <span class="o">=</span> <span class="n">hostFactory</span><span class="p">()</span>
+    <span class="n">extFT</span> <span class="o">=</span> <span class="n">setupExtFT</span><span class="p">()</span>
+
+    <span class="n">sc</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEff</span><span class="p">)</span>
+    <span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFT</span><span class="p">,</span> <span class="n">props</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">extFT</span><span class="p">)</span>
+
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="n">ipLog</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateEff</span><span class="p">,</span> <span class="n">props</span><span class="o">.</span><span class="n">logAttr</span><span class="p">)[</span><span class="n">props</span><span class="o">.</span><span class="n">segment</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">ipLog</span><span class="p">)</span>
+
+    <span class="n">scLog</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">"totRotAngMomPntC_N"</span><span class="p">])</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">scLog</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"datLog"</span><span class="p">:</span> <span class="n">datLog</span><span class="p">,</span>
+        <span class="s2">"ipLog"</span><span class="p">:</span> <span class="n">ipLog</span><span class="p">,</span>
+        <span class="s2">"scLog"</span><span class="p">:</span> <span class="n">scLog</span><span class="p">,</span>
+        <span class="s2">"extFT"</span><span class="p">:</span> <span class="n">extFT</span><span class="p">,</span>
+        <span class="s2">"props"</span><span class="p">:</span> <span class="n">props</span><span class="p">,</span>
+        <span class="s2">"hubMass"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">),</span>
+        <span class="s2">"dt"</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Conservation residuals (Simpson's rule, consistent indexing)</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="computeResiduals">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.computeResiduals">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">computeResiduals</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Per-component signed residual time histories.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    times : (N,) array of seconds</span>
+<span class="sd">    resH : (N, 3) signed angular momentum residual,</span>
+<span class="sd">            ``H_C(t) - H_C(0) - integral(tau_C dt')``  [N m s]</span>
+<span class="sd">    resV : (N, 3) signed accumulated DV residual,</span>
+<span class="sd">            ``v_C(t) - v_C(0) - integral(F/M dt')``  [m/s]</span>
+<span class="sd">    """</span>
+    <span class="n">rotHTruth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"scLog"</span><span class="p">]</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">accumDVTruth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"datLog"</span><span class="p">]</span><span class="o">.</span><span class="n">TotalAccumDV_CN_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">r_CN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"datLog"</span><span class="p">]</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">sigma_PN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"ipLog"</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">r_PcN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"ipLog"</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">F_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"extFT"</span><span class="p">]</span><span class="o">.</span><span class="n">extForce_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">F_ext_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"extFT"</span><span class="p">]</span><span class="o">.</span><span class="n">extForce_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">tau_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"extFT"</span><span class="p">]</span><span class="o">.</span><span class="n">extTorquePntB_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="s2">"props"</span><span class="p">]</span><span class="o">.</span><span class="n">r_PcP_P</span>
+    <span class="n">mTotal</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="s2">"hubMass"</span><span class="p">]</span> <span class="o">+</span> <span class="n">case</span><span class="p">[</span><span class="s2">"props"</span><span class="p">]</span><span class="o">.</span><span class="n">totalMass</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">sigma_PN</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">r_CN_N</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"sc log (</span><span class="si">{</span><span class="n">r_CN_N</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) and ip log (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">) lengths disagree"</span><span class="p">)</span>
+
+    <span class="n">F_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">tau_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c1"># MRP2C(sigma) returns [BN] (inertial-to-body); transpose for [NB] = [NP_j]</span>
+        <span class="n">dcm_NP</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_PN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">F_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dcm_NP</span> <span class="o">@</span> <span class="n">F_B</span> <span class="o">+</span> <span class="n">F_ext_N</span>
+        <span class="c1"># Application point P_j = panel COM (Pc) - the offset r_PcP_P expressed in N</span>
+        <span class="n">r_P_N</span> <span class="o">=</span> <span class="n">r_PcN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">dcm_NP</span> <span class="o">@</span> <span class="n">r_PcP_P</span>
+        <span class="n">momentArm</span> <span class="o">=</span> <span class="n">r_P_N</span> <span class="o">-</span> <span class="n">r_CN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">tau_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dcm_NP</span> <span class="o">@</span> <span class="n">tau_B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">momentArm</span><span class="p">,</span> <span class="n">F_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="c1"># Cumulative Simpson integral, O(dt^4)</span>
+    <span class="n">intF_N</span> <span class="o">=</span> <span class="n">cumulative_simpson</span><span class="p">(</span><span class="n">F_N</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">intTau_C</span> <span class="o">=</span> <span class="n">cumulative_simpson</span><span class="p">(</span><span class="n">tau_C</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">"ipLog"</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+
+    <span class="c1"># Truth at the same time grid</span>
+    <span class="n">deltaHTruth</span> <span class="o">=</span> <span class="n">rotHTruth</span> <span class="o">-</span> <span class="n">rotHTruth</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">deltaDVTruth</span> <span class="o">=</span> <span class="n">accumDVTruth</span> <span class="o">-</span> <span class="n">accumDVTruth</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># Signed component residuals (Allard 2018 Fig. 8 convention)</span>
+    <span class="n">resH</span> <span class="o">=</span> <span class="n">deltaHTruth</span> <span class="o">-</span> <span class="n">intTau_C</span>            <span class="c1"># (N, 3)</span>
+    <span class="n">resV</span> <span class="o">=</span> <span class="n">deltaDVTruth</span> <span class="o">-</span> <span class="n">intF_N</span> <span class="o">/</span> <span class="n">mTotal</span>   <span class="c1"># (N, 3)</span>
+    <span class="k">return</span> <span class="n">times</span><span class="p">,</span> <span class="n">resH</span><span class="p">,</span> <span class="n">resV</span></div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Main</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="runConservationStudy">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.runConservationStudy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runConservationStudy</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">CONSERVATION_DT</span><span class="p">,</span> <span class="n">finalTime</span><span class="o">=</span><span class="n">CONSERVATION_FINAL_TIME</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the impulse-momentum residual study and render the conservation figure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (float): fixed integration step [s].</span>
+<span class="sd">        finalTime (float): simulation duration [s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: the conservation figure and the peak angular and linear residual per host.</span>
+<span class="sd">    """</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">maxResiduals</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">factory</span> <span class="ow">in</span> <span class="n">HOST_SETUPS</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">case</span> <span class="o">=</span> <span class="n">runWithFullLogs</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">)</span>
+        <span class="n">times</span><span class="p">,</span> <span class="n">resH</span><span class="p">,</span> <span class="n">resV</span> <span class="o">=</span> <span class="n">computeResiduals</span><span class="p">(</span><span class="n">case</span><span class="p">)</span>
+        <span class="n">wall</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">]  dt=</span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s2">.5g</span><span class="si">}</span><span class="s2">  T=</span><span class="si">{</span><span class="n">finalTime</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">wall</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    max ||H_C residual||  = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">resH</span><span class="p">,</span><span class="w"> </span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">  N m s"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    max ||Δv_C residual|| = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">resV</span><span class="p">,</span><span class="w"> </span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">  m/s"</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">resH</span><span class="p">,</span> <span class="n">resV</span><span class="p">)</span>
+        <span class="n">maxResiduals</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"angular"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">resH</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))),</span>   <span class="c1"># [N m s]</span>
+            <span class="s2">"linear"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">resV</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))),</span>    <span class="c1"># [m/s]</span>
+        <span class="p">}</span>
+
+    <span class="n">setupShort</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"spinningBodyNDOF"</span><span class="p">:</span>      <span class="s2">"spinningBodyNDOF"</span><span class="p">,</span>
+        <span class="s2">"nHingedRigidBody"</span><span class="p">:</span>      <span class="s2">"nHingedRigidBody"</span><span class="p">,</span>
+        <span class="s2">"linearTranslationNDOF"</span><span class="p">:</span> <span class="s2">"linearTranslationNDOF"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">componentColors</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"C0"</span><span class="p">,</span> <span class="s2">"C1"</span><span class="p">,</span> <span class="s2">"C2"</span><span class="p">)</span>
+    <span class="n">componentLabels</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s2">"$\hat{\mathbf</span><span class="si">{n}</span><span class="s2">}_1$"</span><span class="p">,</span>
+                        <span class="sa">r</span><span class="s2">"$\hat{\mathbf</span><span class="si">{n}</span><span class="s2">}_2$"</span><span class="p">,</span>
+                        <span class="sa">r</span><span class="s2">"$\hat{\mathbf</span><span class="si">{n}</span><span class="s2">}_3$"</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">CONSERVATION_PLOTTED</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CONSERVATION_PLOTTED</span><span class="p">):</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">rH</span><span class="p">,</span> <span class="n">rV</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="n">axH</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">axV</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># decimate for plotting only</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">PLOT_STRIDE</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">componentColors</span><span class="p">,</span> <span class="n">componentLabels</span><span class="p">)):</span>
+            <span class="n">axH</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[::</span><span class="n">s</span><span class="p">],</span> <span class="n">rH</span><span class="p">[::</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">axV</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[::</span><span class="n">s</span><span class="p">],</span> <span class="n">rV</span><span class="p">[::</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axH</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.4"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">axV</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.4"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">axH</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"angular residual  [N$\cdot$m$\cdot$s]"</span><span class="p">)</span>
+        <span class="n">axV</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"linear residual  [m/s]"</span><span class="p">)</span>
+        <span class="n">axH</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"sci"</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                             <span class="n">useMathText</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axV</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"sci"</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                             <span class="n">useMathText</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">(</span><span class="n">axH</span><span class="p">,</span> <span class="n">axV</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">"in"</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">)</span>
+
+        <span class="c1"># Setup identifier as a small in-axes annotation, upper-right corner</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">(</span><span class="n">axH</span><span class="p">,</span> <span class="n">axV</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.985</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="n">setupShort</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+                    <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">"top"</span><span class="p">,</span>
+                    <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+                    <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">"round,pad=0.25"</span><span class="p">,</span>
+                              <span class="n">facecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"0.7"</span><span class="p">,</span>
+                              <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">axH</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$t$ [s]"</span><span class="p">)</span>
+
+    <span class="c1"># Single component legend at the top of the figure</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">componentLabels</span><span class="p">,</span>
+               <span class="n">loc</span><span class="o">=</span><span class="s2">"upper center"</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+               <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">handlelength</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">maxResiduals</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioBranchingVerification.html#scenarioBranchingVerification.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span>
+        <span class="n">dtSweep</span><span class="o">=</span><span class="n">CONVERGENCE_DT_SWEEP</span><span class="p">,</span>
+        <span class="n">convergenceFinalTime</span><span class="o">=</span><span class="n">CONVERGENCE_FINAL_TIME</span><span class="p">,</span>
+        <span class="n">conservationDt</span><span class="o">=</span><span class="n">CONSERVATION_DT</span><span class="p">,</span>
+        <span class="n">conservationFinalTime</span><span class="o">=</span><span class="n">CONSERVATION_FINAL_TIME</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run both verification studies and return their figures and metrics.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): display the figures interactively.</span>
+<span class="sd">        dtSweep (tuple): integration steps to refine over [s], halving between entries.</span>
+<span class="sd">        convergenceFinalTime (float): fixed final time for the refinement study [s].</span>
+<span class="sd">        conservationDt (float): fixed integration step for the residual study [s].</span>
+<span class="sd">        conservationFinalTime (float): duration of the residual study [s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``figureList`` keyed by figure name, and a metrics dict holding the fitted</span>
+<span class="sd">        convergence ``slopes`` and the peak impulse-momentum ``maxResiduals`` per host.</span>
+<span class="sd">    """</span>
+    <span class="n">conservationFig</span><span class="p">,</span> <span class="n">maxResiduals</span> <span class="o">=</span> <span class="n">runConservationStudy</span><span class="p">(</span><span class="n">conservationDt</span><span class="p">,</span> <span class="n">conservationFinalTime</span><span class="p">)</span>
+    <span class="n">convergenceFig</span><span class="p">,</span> <span class="n">slopes</span> <span class="o">=</span> <span class="n">runConvergenceStudy</span><span class="p">(</span><span class="n">dtSweep</span><span class="p">,</span> <span class="n">convergenceFinalTime</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">fileName</span> <span class="o">+</span> <span class="s2">"Conservation"</span><span class="p">:</span> <span class="n">conservationFig</span><span class="p">,</span>
+        <span class="n">fileName</span> <span class="o">+</span> <span class="s2">"Convergence"</span><span class="p">:</span> <span class="n">convergenceFig</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span><span class="p">,</span> <span class="p">{</span><span class="s2">"slopes"</span><span class="p">:</span> <span class="n">slopes</span><span class="p">,</span> <span class="s2">"maxResiduals"</span><span class="p">:</span> <span class="n">maxResiduals</span><span class="p">}</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

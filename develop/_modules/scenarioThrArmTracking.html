@@ -1,0 +1,539 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioThrArmTracking &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioThrArmTracking</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioThrArmTracking</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""</span>
+<span class="sd">It's recommended to review the following scenario(s) first (and any</span>
+<span class="sd">recommended scenario(s) that they may have):</span>
+
+<span class="sd">#. ``examples/mujoco/scenarioReactionWheel.py``</span>
+<span class="sd">#. ``examples/BskSim/scenario_BasicOrbit.py``</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script demonstrates tracking control of a 6-DOF spacecraft with two</span>
+<span class="sd">attached 4-DOF thruster arms using the MuJoCo physics engine within the BSK_Sim</span>
+<span class="sd">architecture.  Scenario settings, including the spacecraft model, trajectory,</span>
+<span class="sd">controller gains, and task rates, are provided by ``TrackingConfig``.</span>
+
+<span class="sd">The multi-body system is created from the MuJoCo XML file</span>
+<span class="sd">``sat_w_thruster_arms_tracking.xml``.  It consists of a central hub and two</span>
+<span class="sd">arms, each with four hinged joints, and an end-mounted</span>
+<span class="sd">thruster.  MuJoCo single-input actuators command the hinged joints and</span>
+<span class="sd">thrusters, while separate actuators can apply torque directly to the hub.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/mujoco`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioThrArmTracking.py</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">   The full 8-hour tracking simulation can take several minutes to run,</span>
+<span class="sd">   depending on the machine.</span>
+
+<span class="sd">Two simulation processes are created: one which contains dynamics modules, and</span>
+<span class="sd">one which contains the Flight Software (FSW) modules.  The Dynamics process</span>
+<span class="sd">contains a single task with the modules:</span>
+
+<span class="sd">#. ``MJScene``: the MuJoCo dynamics module that simulates the multi-body system defined in the XML file</span>
+<span class="sd">#. ``MJSystemCoM``: extracts the center of mass position and velocity of the multi-body system from the MuJoCo scene</span>
+<span class="sd">#. ``MJSystemMassMatrix``: extracts the mass matrix of the multi-body system from the MuJoCo scene</span>
+<span class="sd">#. ``MJJointReactionForces``: extracts the internal reaction forces and torques</span>
+<span class="sd">   of the multi-body system from the MuJoCo scene</span>
+
+<span class="sd">The FSW process contains four tasks: an outer-loop control task, a joint-motion</span>
+<span class="sd">task, a thruster-firing task, and an always-enabled recorder task.  The recorder</span>
+<span class="sd">task has no modules by default; scenarios can add recorders that must execute at</span>
+<span class="sd">every FSW time step.  The outer-loop control task includes:</span>
+
+<span class="sd">#. ``stateMerge`` and ``simpleNav``: provide navigation states for the controller</span>
+<span class="sd">#. ``arcLineHoldRef``: generates the fixed 45-degree out-of-plane translation reference</span>
+<span class="sd">#. ``locationPointing``: generates the target-pointing attitude reference</span>
+<span class="sd">#. ``mrpFeedback``: computes the attitude control torque</span>
+<span class="sd">#. ``inertialCartFeedback``: computes the position tracking control force</span>
+<span class="sd">#. ``jointThrAllocation``: determines the joint angles and thruster forces</span>
+<span class="sd">   needed to achieve the desired control torque and force</span>
+<span class="sd">#. ``thrFiringRound``: determines quantized thruster on-times from the allocated thruster forces</span>
+
+<span class="sd">The modules for the joint-motion task include:</span>
+
+<span class="sd">#. ``hingedJointArrayMotor``: determines the motor commands for the hinged joints of the thruster arms</span>
+<span class="sd">#. ``jointMotionCompensator``: optionally determines hub compensation torques that counter arm-motion reaction torques</span>
+<span class="sd">#. ``jointArrayRefProfiler``: optionally profiles allocated joint references before they are sent to the joint motors</span>
+
+<span class="sd">The modules for the thruster-firing task include:</span>
+
+<span class="sd">#. ``thrOnTimeToForce``: converts on time to thruster force</span>
+<span class="sd">#. ``thrJointCompensation``: determines the motor commands to hold hinged joints static during thruster firing</span>
+
+<span class="sd">The joint-motion and thruster-firing tasks are enabled and disabled using three</span>
+<span class="sd">events: joint motion, thruster firing, and coasting.  Each new allocation from</span>
+<span class="sd">the outer loop begins the event sequence.  The recorder task remains enabled</span>
+<span class="sd">through these transitions.</span>
+
+<span class="sd">- Joint Motion Event:</span>
+
+<span class="sd">    - Condition: A new allocated joint-angle and thruster-on-time command is received.</span>
+<span class="sd">    - Action: Enables joint motion for a nonzero requested pulse.  A zero-pulse</span>
+<span class="sd">      command does not begin a new thrust sequence.</span>
+
+<span class="sd">- Thruster Firing Event:</span>
+
+<span class="sd">    - Condition: The joints reach the allocated angle and rate references.</span>
+<span class="sd">    - Action: Enables the thruster-firing task and applies the cached on-time command.</span>
+
+<span class="sd">- Coasting Event:</span>
+
+<span class="sd">    - Condition: The requested firing completes, or the outer loop requests no firing.</span>
+<span class="sd">    - Action: Zeros actuator commands and allows the spacecraft to coast until the next outer-loop update.</span>
+
+<span class="sd">Control-Period Timing and Pulse Truncation</span>
+<span class="sd">------------------------------------------</span>
+
+<span class="sd">The outer control loop updates every 10 seconds (0.1 Hz).  At each update, it</span>
+<span class="sd">allocates a force to each thruster for the coming period.  Since a thruster</span>
+<span class="sd">fires at a fixed force rather than continuously varying its output,</span>
+<span class="sd">``thrFiringRound`` converts the allocated force into a requested on-time:</span>
+<span class="sd">``on-time = 10 s * allocated force / maximum thruster force``.  A request for</span>
+<span class="sd">half the maximum force therefore becomes a 5-second pulse.  The module clips</span>
+<span class="sd">the requested on-time to the 10-second period, rounds it to the configured</span>
+<span class="sd">pulse resolution, and applies the configured minimum on-time.</span>
+
+<span class="sd">This calculation uses the *full* outer-loop period; it does not account for</span>
+<span class="sd">joint motion.  For a nonzero pulse request, the arms first move to their</span>
+<span class="sd">commanded angles and settle within the position and rate tolerances.  Only</span>
+<span class="sd">then does firing begin.  The time available to fire is therefore roughly</span>
+<span class="sd">``max(0, 10 s - joint-motion time)``, and the delivered pulse cannot exceed that</span>
+<span class="sd">remaining time.  At the next outer-loop update, any unfinished pulse is</span>
+<span class="sd">stopped and discarded rather than carried into the next period.</span>
+
+<span class="sd">For example, if joint motion takes 8 seconds and the requested pulse is</span>
+<span class="sd">5 seconds, the thruster fires for only about 2 seconds; the remaining</span>
+<span class="sd">3 seconds are not delivered.  If thrusters request different pulse lengths,</span>
+<span class="sd">this cutoff can also change the ratio of their delivered impulses.  This is</span>
+<span class="sd">an intentional saturation of the available firing window, not a reduction</span>
+<span class="sd">of the on-time request itself.</span>
+<span class="sd">The controller does not make up the missing impulse within that period.</span>
+<span class="sd">At the next update, however, it computes a new command from the current</span>
+<span class="sd">spacecraft state, so the resulting control error can affect later commands.</span>
+<span class="sd">Because both the requested on-time and the available firing window depend on</span>
+<span class="sd">the 10-second period, changing the outer-loop period alone does not preserve</span>
+<span class="sd">the same impulse behavior.</span>
+
+<span class="sd">With ``useJointProfiler=True``, the commanded arm movement follows a smooth</span>
+<span class="sd">9.5-second cubic profile.  When a full move takes nearly that long, the</span>
+<span class="sd">thrusters have about 0.5 seconds (or less, if settling takes longer) before</span>
+<span class="sd">the next update.  A request for several seconds of firing can therefore</span>
+<span class="sd">deliver only a fraction of that time.  The exact start of firing depends on</span>
+<span class="sd">when the joints meet both the commanded angle and rate tolerances.</span>
+
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    showPlots = True, runTime = 8.0*3600.0, useJointProfiler = False, useMotionPenalty = False</span>
+
+<span class="sd">.. image:: ../../../../examples/mujoco/thrArmControlSupport/trackingControl_position.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: ../../../../examples/mujoco/thrArmControlSupport/trackingControl_attitude.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span><span class="p">,</span> <span class="n">vizSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">fileNameForImages</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">DEFAULT_RUN_TIME</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+<span class="n">SECONDS_PER_HOUR</span> <span class="o">=</span> <span class="mf">3600.0</span>  <span class="c1"># [s/hr]</span>
+<span class="n">CUBIC_PROFILE_DURATION</span> <span class="o">=</span> <span class="mf">9.5</span>  <span class="c1"># [s]</span>
+<span class="n">MOTION_PENALTY_WEIGHT</span> <span class="o">=</span> <span class="mf">1e-5</span>  <span class="c1"># [-]</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">"/mujocoModels"</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">"/thrArmControlSupport"</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_MujocoDynamics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_MujocoFSW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_mujocoMasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKScenario</span><span class="p">,</span> <span class="n">BSKSim</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trackingConfig</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingConfig</span>
+
+
+<div class="viewcode-block" id="ScenarioThrArmTracking">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.ScenarioThrArmTracking">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScenarioThrArmTracking</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure and run the thruster-arm tracking simulation."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">useJointProfiler</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">useMotionPenalty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">TrackingConfig</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">useJointProfiler</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">useJointProfiler</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">jointProfileType</span> <span class="o">=</span> <span class="s2">"cubic"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">jointProfileDuration</span> <span class="o">=</span> <span class="n">CUBIC_PROFILE_DURATION</span>
+        <span class="k">if</span> <span class="n">useMotionPenalty</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">useThetaAllocPenalty</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">thetaWeight</span> <span class="o">=</span> <span class="n">MOTION_PENALTY_WEIGHT</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">fswRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fswTimeStep</span><span class="p">,</span>
+            <span class="n">dynRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dynTimeStep</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"scenarioThrArmTracking"</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">posRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desPosRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrorRec</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">(</span><span class="n">BSK_MujocoDynamics</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">(</span><span class="n">BSK_MujocoFSW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ScenarioThrArmTracking.configure_initial_conditions">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.ScenarioThrArmTracking.configure_initial_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the initial hub and joint states used for the tracking case."""</span>
+        <span class="n">dynamics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">fsw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+        <span class="n">hub</span> <span class="o">=</span> <span class="n">dynamics</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">fsw</span><span class="o">.</span><span class="n">hubName</span><span class="p">)</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">setPosition</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">19.65</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">([</span><span class="mf">2.5e-3</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0e-4</span><span class="p">,</span> <span class="mf">1.75e-3</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">setAttitude</span><span class="p">([</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.54</span><span class="p">])</span>  <span class="c1"># [-]</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">([</span><span class="mf">1.0e-3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25e-3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.95e-3</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+        <span class="k">for</span> <span class="n">bodyName</span><span class="p">,</span> <span class="n">jointName</span> <span class="ow">in</span> <span class="n">fsw</span><span class="o">.</span><span class="n">jointRefs</span><span class="p">:</span>
+            <span class="n">joint</span> <span class="o">=</span> <span class="n">dynamics</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">bodyName</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+            <span class="n">joint</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+            <span class="n">joint</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [rad/s]</span></div>
+
+
+<div class="viewcode-block" id="ScenarioThrArmTracking.log_outputs">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.ScenarioThrArmTracking.log_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Record position and attitude tracking states."""</span>
+        <span class="n">dynamics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">fsw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">posRec</span> <span class="o">=</span> <span class="n">dynamics</span><span class="o">.</span><span class="n">systemCoM</span><span class="o">.</span><span class="n">comStatesOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desPosRec</span> <span class="o">=</span> <span class="n">fsw</span><span class="o">.</span><span class="n">transRef</span><span class="o">.</span><span class="n">transRefOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrorRec</span> <span class="o">=</span> <span class="n">fsw</span><span class="o">.</span><span class="n">attRef</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fsw</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">posRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fsw</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">desPosRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fsw</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrorRec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScenarioThrArmTracking.pull_outputs">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.ScenarioThrArmTracking.pull_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savePlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create position and attitude tracking figures."""</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">positionError</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posRec</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desPosRec</span><span class="o">.</span><span class="n">r_RN_N</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">sigmaError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attErrorRec</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">)</span>  <span class="c1"># [-]</span>
+
+        <span class="n">colorX</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">colorY</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">colorZ</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">figures</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">positionFigure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">positionError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorX</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">positionError</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorY</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"y"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">positionError</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorZ</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"z"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time [hr]"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Position Tracking Error [m]"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileNameForImages</span> <span class="o">+</span> <span class="s2">"_position"</span><span class="p">]</span> <span class="o">=</span> <span class="n">positionFigure</span>
+
+        <span class="n">attitudeFigure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">sigmaError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorX</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\sigma_1$"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">sigmaError</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorY</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\sigma_2$"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span> <span class="o">/</span> <span class="n">SECONDS_PER_HOUR</span><span class="p">,</span> <span class="n">sigmaError</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colorZ</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\sigma_3$"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time [hr]"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Attitude Tracking Error [$\boldsymbol{\sigma}_{B/R}$]"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileNameForImages</span> <span class="o">+</span> <span class="s2">"_attitude"</span><span class="p">]</span> <span class="o">=</span> <span class="n">attitudeFigure</span>
+
+        <span class="k">if</span> <span class="n">savePlots</span><span class="p">:</span>
+            <span class="n">supportPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"thrArmControlSupport"</span><span class="p">)</span>
+            <span class="n">positionFigure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supportPath</span><span class="p">,</span> <span class="s2">"trackingControl_position.svg"</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">attitudeFigure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supportPath</span><span class="p">,</span> <span class="s2">"trackingControl_attitude.svg"</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figures</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="runScenario">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.runScenario">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">runTime</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">showProgressBar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Initialize and execute a configured tracking scenario."""</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">dynamics</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+            <span class="n">scenario</span><span class="p">,</span>
+            <span class="n">dynamics</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span>
+            <span class="n">dynamics</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
+            <span class="c1"># saveFile=__file__,</span>
+        <span class="p">)</span>
+
+    <span class="n">scenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">runTime</span><span class="p">))</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="n">showProgressBar</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioThrArmTracking.html#scenarioThrArmTracking.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">runTime</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_RUN_TIME</span><span class="p">,</span>
+        <span class="n">showProgressBar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">savePlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">useJointProfiler</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">useMotionPenalty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The scenario can be run with the following setup parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool): Determines if the script displays plots.</span>
+<span class="sd">        runTime (float): Simulation duration in seconds.</span>
+<span class="sd">        showProgressBar (bool): Determines if Basilisk displays execution progress.</span>
+<span class="sd">        savePlots (bool): Determines if the position and attitude figures are</span>
+<span class="sd">            saved as SVG files.</span>
+<span class="sd">        useJointProfiler (bool): Determines if a 9.5-second cubic joint</span>
+<span class="sd">            reference profile is used.  This can leave little firing time</span>
+<span class="sd">            in the fixed 10-second control period; unfinished pulses are</span>
+<span class="sd">            discarded at the next outer-loop update.</span>
+<span class="sd">        useMotionPenalty (bool): Determines if a theta allocation penalty</span>
+<span class="sd">            with weight ``1e-5`` is used.</span>
+
+<span class="sd">    """</span>
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">ScenarioThrArmTracking</span><span class="p">(</span><span class="n">useJointProfiler</span><span class="p">,</span> <span class="n">useMotionPenalty</span><span class="p">)</span>
+    <span class="n">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">runTime</span><span class="p">,</span> <span class="n">showProgressBar</span><span class="p">)</span>
+    <span class="n">figures</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">pull_outputs</span><span class="p">(</span><span class="n">savePlots</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">figures</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Run scenarioThrArmTracking"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--showPlots"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Display matplotlib figures."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--savePlots"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Save the position and attitude figures as SVG files."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--runTime"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_RUN_TIME</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Simulation run time [s]."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--noProgressBar"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_false"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"showProgressBar"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Disable the Basilisk simulation progress bar."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--useJointProfiler"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Use a 9.5-second cubic joint profile; unfinished pulses are "</span>
+            <span class="s2">"discarded at the next 10-second update."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--useMotionPenalty"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Use a theta allocation penalty with weight 1e-5."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="n">showPlots</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">showPlots</span><span class="p">,</span>
+        <span class="n">savePlots</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">savePlots</span><span class="p">,</span>
+        <span class="n">runTime</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">runTime</span><span class="p">,</span>
+        <span class="n">showProgressBar</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">showProgressBar</span><span class="p">,</span>
+        <span class="n">useJointProfiler</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">useJointProfiler</span><span class="p">,</span>
+        <span class="n">useMotionPenalty</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">useMotionPenalty</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

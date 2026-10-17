@@ -1,0 +1,481 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Module: arcLineHoldRef &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="transGuidance" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">transGuidance</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">arcLineHoldRef</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">transGuidance</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-python">Python</span> Module: arcLineHoldRef</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python-module-arclineholdref">
+<span id="arclineholdref"></span><h1><span class="module-type-label module-type-python">Python</span> Module: arcLineHoldRef<a class="headerlink" href="#python-module-arclineholdref" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTest/index.html"><span class="doc">Unit tests</span></a></p></li>
+</ul>
+</aside>
+<div class="toctree-wrapper compound">
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">arcLineHoldRef</span></code> publishes a time-varying inertial translation reference for
+a specific arc-to-line-to-hold maneuver.  The reference follows a circular
+arc in a plane tilted 45 degrees out of the inertial <code class="docutils literal notranslate"><span class="pre">x-y</span></code> plane, blends
+smoothly onto the inertial <code class="docutils literal notranslate"><span class="pre">y</span></code> axis, moves along that axis to a final
+position, and then remains stationary.  The module publishes position,
+velocity, and acceleration; it does not calculate control forces or move a
+spacecraft.</p>
+<p>The radius, phase durations, blend endpoint, and final position are
+configurable.  The path topology, circle plane, line axis, and terminal hold
+are fixed.  This is not a general-purpose trajectory generator.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following diagram and table list the module output messages.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-aa6bc84b4743fd0b18dbb154b7d9bb61fd923ae3.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">ArcLineHoldRef module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>transRefOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#transrefmsgpayload"><span class="std std-ref">TransRefMsgPayload</span></a></p></td>
+<td><p>Output inertial reference position, velocity, and acceleration.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The arc satisfies <span class="math notranslate nohighlight">\(r_x=r_z\)</span>, fixing its plane at 45 degrees out of the
+inertial <code class="docutils literal notranslate"><span class="pre">x-y</span></code> plane.  The subsequent straight segment changes only
+<span class="math notranslate nohighlight">\(r_y\)</span>.  Both <code class="docutils literal notranslate"><span class="pre">blendEndPosition</span></code> and <code class="docutils literal notranslate"><span class="pre">finalPosition</span></code> must therefore
+be finite three-component vectors with <em>exactly zero</em> inertial <code class="docutils literal notranslate"><span class="pre">x</span></code> and
+<code class="docutils literal notranslate"><span class="pre">z</span></code> components.  <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> rejects incompatible endpoints with
+<code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> (a <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in Python), rather than allowing a position
+jump at the blend-to-line or line-to-hold boundary.</p>
+<p><code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">tCircle</span></code>, <code class="docutils literal notranslate"><span class="pre">tTransition</span></code>, and <code class="docutils literal notranslate"><span class="pre">tLinear</span></code> must all be finite.
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> rejects NaN and positive or negative infinity with <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>
+(a <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in Python) before computing trajectory boundary states.
+It also requires <code class="docutils literal notranslate"><span class="pre">tTransition</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">tLinear</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">tCircle</span> <span class="pre">+</span> <span class="pre">tTransition</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.  For the intended arc-then-blend sequence,
+configure a nonnegative <code class="docutils literal notranslate"><span class="pre">tCircle</span></code> and a positive radius.  The latter two
+conditions are recommendations, not additional checks performed by the
+module.</p>
+<p>The phase clock is the absolute simulation time, measured from simulation
+time zero.  Calling <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> at a later time does not restart the maneuver.
+All parameters should be set before <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>: it precomputes the blend
+boundary states, so changing configuration while the module is running can
+make adjacent segments inconsistent.</p>
+<p>The last moving segment is a quintic curve confined to the <code class="docutils literal notranslate"><span class="pre">y</span></code> axis with
+zero terminal velocity and acceleration.  For arbitrary choices of the two
+<code class="docutils literal notranslate"><span class="pre">y</span></code> endpoints and phase duration, the intermediate motion is not
+guaranteed to be monotonic or to slow down at every instant.</p>
+</section>
+<section id="mathematical-modeling">
+<h2>Mathematical Modeling<a class="headerlink" href="#mathematical-modeling" title="Link to this heading"></a></h2>
+<p>Let <span class="math notranslate nohighlight">\(R\)</span> be <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <span class="math notranslate nohighlight">\(t_c\)</span> be <code class="docutils literal notranslate"><span class="pre">tCircle</span></code>, <span class="math notranslate nohighlight">\(T_b\)</span> be
+<code class="docutils literal notranslate"><span class="pre">tTransition</span></code>, and <span class="math notranslate nohighlight">\(T_l\)</span> be <code class="docutils literal notranslate"><span class="pre">tLinear</span></code>.  The angular rate of the
+initial arc is</p>
+<div class="math notranslate nohighlight">
+\[\omega = \frac{\pi}{t_c + T_b}.\]</div>
+<p>For <span class="math notranslate nohighlight">\(0 \leq t &lt; t_c\)</span>, the inertial reference position is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boldsymbol{r}_R(t) = R
+\begin{bmatrix}
+    \sin(\omega t)/\sqrt{2} \\
+    \cos(\omega t) \\
+    \sin(\omega t)/\sqrt{2}
+\end{bmatrix}.\end{split}\]</div>
+<p>The module evaluates its analytic first and second time derivatives for the
+velocity and acceleration references.  In particular,
+<span class="math notranslate nohighlight">\(\boldsymbol{a}_R=-\omega^2\boldsymbol{r}_R\)</span> on the arc.</p>
+<p>For <span class="math notranslate nohighlight">\(t_c \leq t &lt; t_c+T_b\)</span>, a separate quintic polynomial in each
+coordinate joins the arc to the line.  At its start, position, velocity,
+and acceleration equal the arc states at <span class="math notranslate nohighlight">\(t_c\)</span>.  At its end, they are</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{r}_b = [0,\,y_b,\,0]^\mathsf{T},\qquad
+\boldsymbol{v}_b = [0,\,\omega R,\,0]^\mathsf{T},\qquad
+\boldsymbol{a}_b = \boldsymbol{0},\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_b\)</span> is the <code class="docutils literal notranslate"><span class="pre">y</span></code> component of <code class="docutils literal notranslate"><span class="pre">blendEndPosition</span></code>.  Matching
+all three states at both ends makes the reference continuous through
+acceleration at the arc-to-blend and blend-to-line boundaries.</p>
+<p>During the final moving segment, let
+<span class="math notranslate nohighlight">\(\tau=t-t_c-T_b\)</span>, <span class="math notranslate nohighlight">\(\Delta y=y_f-y_b\)</span>, and
+<span class="math notranslate nohighlight">\(v_b=\omega R\)</span>, where <span class="math notranslate nohighlight">\(y_f\)</span> is the <code class="docutils literal notranslate"><span class="pre">y</span></code> component of
+<code class="docutils literal notranslate"><span class="pre">finalPosition</span></code>.  For <span class="math notranslate nohighlight">\(0 \leq \tau &lt; T_l\)</span>, the reference has
+<span class="math notranslate nohighlight">\(r_x=r_z=0\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}y(\tau) &amp;= y_b + v_b\tau + a_3\tau^3 + a_4\tau^4 + a_5\tau^5, \\
+a_3 &amp;= \frac{10\Delta y-6v_bT_l}{T_l^3}, \\
+a_4 &amp;= \frac{-15\Delta y+8v_bT_l}{T_l^4}, \\
+a_5 &amp;= \frac{6\Delta y-3v_bT_l}{T_l^5}.\end{split}\]</div>
+<p>The velocity and acceleration are the analytic derivatives of this
+polynomial.  At <span class="math notranslate nohighlight">\(t=t_c+T_b+T_l\)</span>, the output switches to the final
+hold: <span class="math notranslate nohighlight">\(\boldsymbol{r}_R=[0,\,y_f,\,0]^\mathsf{T}\)</span> and
+<span class="math notranslate nohighlight">\(\boldsymbol{v}_R=\boldsymbol{a}_R=\boldsymbol{0}\)</span>.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup the <code class="docutils literal notranslate"><span class="pre">arcLineHoldRef</span></code> module in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">arcLineHoldRef</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">arcLineHoldRef</span><span class="o">.</span><span class="n">ArcLineHoldRef</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the arc radius and the three phase durations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setRadius</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>  <span class="c1"># [m]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setTCircle</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setTTransition</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setTLinear</span><span class="p">(</span><span class="mf">110.0</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the blend endpoint and final hold position.  Their inertial <code class="docutils literal notranslate"><span class="pre">x</span></code> and
+<code class="docutils literal notranslate"><span class="pre">z</span></code> components must be zero:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setBlendEndPosition</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setFinalPosition</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to a task at the rate needed by the reference consumer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">taskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>These example values are also the module defaults, so steps 3 and 4 can be
+omitted when those values are desired.  The arc begins at
+<span class="math notranslate nohighlight">\([0,R,0]^\mathsf{T}\)</span> at simulation time zero.
+The blend starts at <code class="docutils literal notranslate"><span class="pre">tCircle</span></code>, the straight segment starts at
+<code class="docutils literal notranslate"><span class="pre">tCircle</span> <span class="pre">+</span> <span class="pre">tTransition</span></code>, and the stationary hold starts at
+<code class="docutils literal notranslate"><span class="pre">tCircle</span> <span class="pre">+</span> <span class="pre">tTransition</span> <span class="pre">+</span> <span class="pre">tLinear</span></code>.</p>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-arcLineHoldRef">Fixed-family translation reference with an arc, line, and final hold.</p>
+<p>The reference consists of a circular arc with equal inertial <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code>
+components, producing a 45-degree out-of-plane trajectory.  A quintic segment
+connects that arc to a line, followed by a deceleration constrained to the
+inertial <code class="docutils literal notranslate"><span class="pre">y</span></code> axis and a final stationary hold.  Radius, timing, and endpoint
+values are configurable; the trajectory topology, circle orientation, and
+deceleration axis are intentionally fixed.
+The blend endpoint and final hold must both lie on the inertial <code class="docutils literal notranslate"><span class="pre">y</span></code> axis.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">arcLineHoldRef.</span></span><span class="sig-name descname"><span class="pre">ArcLineHoldRef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SysModel</span></code></p>
+<p>Generate the fixed circular-to-line tracking maneuver.</p>
+<p>The circular path uses <code class="docutils literal notranslate"><span class="pre">r_x</span> <span class="pre">=</span> <span class="pre">r_z</span></code> and is therefore fixed at 45 degrees
+out of the inertial <code class="docutils literal notranslate"><span class="pre">x-y</span></code> plane.  The final segment only changes the
+inertial <code class="docutils literal notranslate"><span class="pre">y</span></code> position.  This module is not a general-purpose trajectory
+generator: it does not support arbitrary circle planes, path topologies,
+or deceleration directions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.blendStates">
+<span class="sig-name descname"><span class="pre">blendStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elapsedTime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.blendStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.blendStates" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the quintic circle-to-line transition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>elapsedTime</strong> – Time since transition start in seconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Position, velocity, and acceleration reference vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.circleStates">
+<span class="sig-name descname"><span class="pre">circleStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">currentTime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.circleStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.circleStates" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the circular portion of the trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentTime</strong> – Elapsed trajectory time in seconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Position, velocity, and acceleration reference vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.decelStates">
+<span class="sig-name descname"><span class="pre">decelStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elapsedTime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.decelStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.decelStates" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the final inertial-<code class="docutils literal notranslate"><span class="pre">y</span></code>-axis deceleration segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>elapsedTime</strong> – Time since deceleration start in seconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Position, velocity, and acceleration reference vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setBlendEndPosition">
+<span class="sig-name descname"><span class="pre">setBlendEndPosition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blendEndPosition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setBlendEndPosition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setBlendEndPosition" title="Link to this definition"></a></dt>
+<dd><p>Set the position at the end of the circle-to-line transition.</p>
+<p>The following deceleration occurs only along the inertial <code class="docutils literal notranslate"><span class="pre">y</span></code> axis,
+so the inertial <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> components must be zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blendEndPosition</strong> – Transition end position in meters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setFinalPosition">
+<span class="sig-name descname"><span class="pre">setFinalPosition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">finalPosition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setFinalPosition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setFinalPosition" title="Link to this definition"></a></dt>
+<dd><p>Set the final stationary reference position.</p>
+<p>The inertial <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> components must be zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>finalPosition</strong> – Final position in meters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setRadius">
+<span class="sig-name descname"><span class="pre">setRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setRadius" title="Link to this definition"></a></dt>
+<dd><p>Set the radius of the fixed 45-degree out-of-plane circular arc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>radius</strong> – Circular-trajectory radius in meters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setTCircle">
+<span class="sig-name descname"><span class="pre">setTCircle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tCircle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setTCircle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setTCircle" title="Link to this definition"></a></dt>
+<dd><p>Set the circular-trajectory duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tCircle</strong> – Circular-trajectory duration in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setTLinear">
+<span class="sig-name descname"><span class="pre">setTLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tLinear</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setTLinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setTLinear" title="Link to this definition"></a></dt>
+<dd><p>Set the deceleration-segment duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tLinear</strong> – Deceleration duration in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="arcLineHoldRef.ArcLineHoldRef.setTTransition">
+<span class="sig-name descname"><span class="pre">setTTransition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tTransition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/arcLineHoldRef.html#ArcLineHoldRef.setTTransition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcLineHoldRef.ArcLineHoldRef.setTTransition" title="Link to this definition"></a></dt>
+<dd><p>Set the circle-to-line transition duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tTransition</strong> – Transition duration in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="transGuidance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

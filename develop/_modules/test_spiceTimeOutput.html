@@ -1,0 +1,317 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spiceTimeOutput &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_spiceTimeOutput</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_spiceTimeOutput</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, PIC4SeR &amp; AVS Lab, Politecnico di Torino &amp; Argotec S.R.L., University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Check the GPS time and UTC Julian date of the SPICE time output message against their definitions."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spiceInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+<span class="n">bsk_path</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">GPS_EPOCH</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1980</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># GPS epoch, 1980 January 6, 00:00:00 UTC</span>
+<span class="n">UNIX_EPOCH</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Unix epoch, 1970 January 1, 00:00:00 UTC</span>
+<span class="n">UNIX_EPOCH_JULIAN_DATE</span> <span class="o">=</span> <span class="mf">2440587.5</span>  <span class="c1"># [d] Julian date of the Unix epoch</span>
+<span class="n">SECONDS_PER_DAY</span> <span class="o">=</span> <span class="mf">86400.0</span>  <span class="c1"># [s]</span>
+<span class="n">SECONDS_PER_WEEK</span> <span class="o">=</span> <span class="mf">604800.0</span>  <span class="c1"># [s]</span>
+<span class="n">WEEKS_PER_ROLLOVER</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># GPS weeks between rollovers</span>
+
+
+<div class="viewcode-block" id="run_spice_time_output">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceTimeOutput.html#test_spiceTimeOutput.run_spice_time_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_spice_time_output</span><span class="p">(</span><span class="n">epoch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run ``spiceInterface`` for a single update at ``epoch`` and return the ``spiceTimeOutMsg`` recorder.</span>
+
+<span class="sd">    :param epoch: UTC time at which the simulation starts</span>
+<span class="sd">    :return: recorder of ``spiceTimeOutMsg``</span>
+<span class="sd">    """</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">SPICEDataPath</span> <span class="o">=</span> <span class="n">bsk_path</span> <span class="o">+</span> <span class="s2">"/supportData/EphemerisData/"</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">epoch</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y %B </span><span class="si">%d</span><span class="s2">, %H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" (UTC)"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+
+    <span class="n">time_log</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">spiceTimeOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">time_log</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">time_log</span></div>
+
+
+
+<span class="c1"># gps_utc_offset is GPS - UTC, the leap seconds introduced since the GPS epoch, i.e. TAI - UTC - 19 s [s]</span>
+<div class="viewcode-block" id="test_gps_time_and_julian_date">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceTimeOutput.html#test_spiceTimeOutput.test_gps_time_and_julian_date">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"epoch, gps_utc_offset"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">47</span><span class="p">),</span> <span class="mi">13</span><span class="p">),</span>  <span class="c1"># GPS week 1024 starts at this UTC time</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">17</span><span class="p">),</span>  <span class="c1"># just after the leap second of 2015 June 30</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">18</span><span class="p">),</span>  <span class="c1"># TDB - TT near its maximum of about +1.7 ms</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">123000</span><span class="p">),</span> <span class="mi">18</span><span class="p">),</span>  <span class="c1"># fractional UTC seconds</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">18</span><span class="p">),</span>  <span class="c1"># past GPS week 3551, where week*604800 s overflows a 32-bit int</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gps_time_and_julian_date</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">gps_utc_offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The GPS week, GPS seconds of week and UTC Julian date of ``spiceTimeOutMsg`` equal their definitions.</span>
+
+<span class="sd">    GPS time is the UTC time elapsed since the GPS epoch plus the leap seconds introduced since then, and the</span>
+<span class="sd">    Julian date is the UTC Julian date.  The epochs include a GPS week rollover, a date just after a leap second,</span>
+<span class="sd">    a date near the maximum of the periodic difference between TDB and atomic time, and a date after GPS week 3551,</span>
+<span class="sd">    where the GPS week expressed in seconds no longer fits in a signed 32-bit integer.</span>
+<span class="sd">    """</span>
+    <span class="n">time_log</span> <span class="o">=</span> <span class="n">run_spice_time_output</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+    <span class="n">gps_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="n">GPS_EPOCH</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">+</span> <span class="n">gps_utc_offset</span>  <span class="c1"># [s]</span>
+    <span class="n">julian_date</span> <span class="o">=</span> <span class="n">UNIX_EPOCH_JULIAN_DATE</span> <span class="o">+</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="n">UNIX_EPOCH</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="n">SECONDS_PER_DAY</span>  <span class="c1"># [d]</span>
+
+    <span class="n">gps_week</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_log</span><span class="o">.</span><span class="n">GPSWeek</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">WEEKS_PER_ROLLOVER</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="n">time_log</span><span class="o">.</span><span class="n">GPSRollovers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">gps_week</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">gps_time</span><span class="o">//</span><span class="n">SECONDS_PER_WEEK</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">time_log</span><span class="o">.</span><span class="n">GPSSeconds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">gps_time</span> <span class="o">%</span> <span class="n">SECONDS_PER_WEEK</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="k">assert</span> <span class="n">time_log</span><span class="o">.</span><span class="n">JulianDateCurrent</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">julian_date</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0e-9</span><span class="p">)</span>  <span class="c1"># [d]</span></div>
+
+
+
+<div class="viewcode-block" id="test_gps_time_before_gps_epoch">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceTimeOutput.html#test_spiceTimeOutput.test_gps_time_before_gps_epoch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gps_time_before_gps_epoch</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Before the GPS epoch, the GPS week, seconds and rollovers are held at zero."""</span>
+    <span class="n">time_log</span> <span class="o">=</span> <span class="n">run_spice_time_output</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1979</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_log</span><span class="o">.</span><span class="n">GPSWeek</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_log</span><span class="o">.</span><span class="n">GPSRollovers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">time_log</span><span class="o">.</span><span class="n">GPSSeconds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_time_output_across_midnight">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceTimeOutput.html#test_spiceTimeOutput.test_time_output_across_midnight">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"epoch, gps_utc_offset, has_leap_second"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1998</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># before J2000</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="mi">16</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># June leap second</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="mi">17</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># December leap second</span>
+    <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span> <span class="mi">18</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># ordinary midnight</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_time_output_across_midnight</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">gps_utc_offset</span><span class="p">,</span> <span class="n">has_leap_second</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Keep SPICE JDUTC fixed during an inserted second while GPS time advances.</span>
+
+<span class="sd">    Sample before, within and after the leap second, and also cross an ordinary</span>
+<span class="sd">    midnight to ensure fractional UTC seconds are preserved on normal days.</span>
+<span class="sd">    """</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">epoch</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" UTC"</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">midnight</span> <span class="o">=</span> <span class="n">epoch</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">midnight_julian_date</span> <span class="o">=</span> <span class="n">UNIX_EPOCH_JULIAN_DATE</span> <span class="o">+</span> <span class="p">(</span><span class="n">midnight</span> <span class="o">-</span> <span class="n">UNIX_EPOCH</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="n">SECONDS_PER_DAY</span>  <span class="c1"># [d]</span>
+    <span class="n">initial_gps_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="n">GPS_EPOCH</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">+</span> <span class="n">gps_utc_offset</span>  <span class="c1"># [s]</span>
+    <span class="n">sample_times</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.001</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.999</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.001</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">previous_julian_date</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">elapsed</span> <span class="ow">in</span> <span class="n">sample_times</span><span class="p">:</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">elapsed</span><span class="p">))</span>
+        <span class="n">time_output</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">spiceTimeOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">has_leap_second</span><span class="p">:</span>
+            <span class="n">seconds_from_midnight</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seconds_from_midnight</span> <span class="o">=</span> <span class="n">elapsed</span> <span class="o">-</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+        <span class="n">expected_julian_date</span> <span class="o">=</span> <span class="n">midnight_julian_date</span> <span class="o">+</span> <span class="n">seconds_from_midnight</span><span class="o">/</span><span class="n">SECONDS_PER_DAY</span>  <span class="c1"># [d]</span>
+        <span class="n">expected_gps_time</span> <span class="o">=</span> <span class="n">initial_gps_time</span> <span class="o">+</span> <span class="n">elapsed</span>  <span class="c1"># [s]</span>
+        <span class="n">gps_week</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_output</span><span class="o">.</span><span class="n">GPSWeek</span><span class="p">)</span> <span class="o">+</span> <span class="n">WEEKS_PER_ROLLOVER</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="n">time_output</span><span class="o">.</span><span class="n">GPSRollovers</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">JulianDateCurrent</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_julian_date</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0e-9</span><span class="p">)</span>  <span class="c1"># [d]</span>
+        <span class="k">if</span> <span class="n">has_leap_second</span> <span class="ow">and</span> <span class="mf">1.0</span> <span class="o">&lt;=</span> <span class="n">elapsed</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>  <span class="c1"># [s] Inserted second through the following midnight.</span>
+            <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">JulianDateCurrent</span> <span class="o">==</span> <span class="n">midnight_julian_date</span>
+        <span class="k">if</span> <span class="n">previous_julian_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">JulianDateCurrent</span> <span class="o">&gt;=</span> <span class="n">previous_julian_date</span>
+        <span class="n">previous_julian_date</span> <span class="o">=</span> <span class="n">time_output</span><span class="o">.</span><span class="n">JulianDateCurrent</span>
+        <span class="k">assert</span> <span class="n">gps_week</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">expected_gps_time</span><span class="o">//</span><span class="n">SECONDS_PER_WEEK</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">GPSSeconds</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_gps_time</span> <span class="o">%</span> <span class="n">SECONDS_PER_WEEK</span><span class="p">,</span>
+                                                     <span class="n">rel</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">)</span>  <span class="c1"># [s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_gps_time_crosses_gps_epoch">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceTimeOutput.html#test_spiceTimeOutput.test_gps_time_crosses_gps_epoch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gps_time_crosses_gps_epoch</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Release the zero GPS outputs when a simulation crosses the GPS epoch."""</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="s2">"1980 JAN 05 23:59:59 UTC"</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">sample_times</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="k">for</span> <span class="n">elapsed</span> <span class="ow">in</span> <span class="n">sample_times</span><span class="p">:</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">elapsed</span><span class="p">))</span>
+        <span class="n">time_output</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">spiceTimeOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">expected_seconds</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">GPSWeek</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">GPSRollovers</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">time_output</span><span class="o">.</span><span class="n">GPSSeconds</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_seconds</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">)</span>  <span class="c1"># [s]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">test_gps_time_and_julian_date</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">47</span><span class="p">),</span> <span class="mi">13</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

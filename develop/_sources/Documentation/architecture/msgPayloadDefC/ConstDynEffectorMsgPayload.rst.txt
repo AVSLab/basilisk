@@ -1,0 +1,10 @@
+.. _ConstDynEffectorMsgPayload:
+
+ConstDynEffectorMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ConstDynEffectorMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _HeadingFilterMsgPayload:
+
+HeadingFilterMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: HeadingFilterMsgPayload.h
+   :project: msgPayloadDefC
+
