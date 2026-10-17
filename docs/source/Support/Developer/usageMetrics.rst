@@ -25,8 +25,28 @@ another complete window is available. In particular, ClickPy's lack of records
 for a date does not establish zero downloads: it may reflect an ingestion gap.
 The latest reported day's count may still be partial.
 
+.. note::
+
+   The **Recorded wheel download requests** box counts requests for known
+   BSK filenames ending in ``.whl`` from all clients except identified mirrors
+   and repository caches listed below. This includes ``pip`` and ``uv`` (Python
+   package installers), browsers, Poetry, scripts, and unidentified clients.
+   Source archives, metadata files, signatures, and records without filenames
+   are excluded. The **BSK wheels** line uses the same daily counts, displayed
+   as a seven-day trailing mean.
+
+   The box sums daily counts over the displayed coverage dates, independently
+   of the plotted averages, and updates with each metrics collection. It shows
+   the number of observed days; missing dates remain unknown. Repeat requests,
+   automated builds, and partial wheel requests may be included. The count
+   does not verify full-file transfers, completed installations, or unique
+   users. Requests served entirely from local caches or private mirrors are
+   not recorded by PyPI. Broader distribution and installer counts remain
+   available in the CSV and summary; they use a different counting rule and
+   may include older metadata requests when filenames are unavailable.
+
 .. image:: https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/usage.svg
-   :alt: Daily Basilisk PyPI download and GitHub clone activity
+   :alt: Recorded wheel download requests, daily BSK wheel request trends, and GitHub clone activity
    :width: 100%
    :target: https://github.com/AVSLab/basilisk/tree/usage-metrics
 
@@ -37,32 +57,40 @@ The branch contains the following generated files:
 
 ``metrics.csv``
     One row per UTC date. It contains PyPI download events, downloads made by
-    ``pip``, GitHub clone events and daily unique cloners, and snapshots of the
-    current fork and release-asset download counts.
+    ``pip`` and ``uv``, a separate ``pypi_wheel_requests`` count, GitHub clone
+    events and daily unique cloners, and snapshots of the current fork and
+    release-asset download counts.
 
 ``summary.json``
     Machine-readable current totals, source coverage dates, and the latest
     successfully retrieved GitHub clone window. Schema version 2 also records
     each source's status, last attempt, last successful collection, and error.
+    Schema version 3 adds ``uv_downloads``, ``uv_coverage``, and the combined
+    ``pip_uv_downloads`` total with ``pip_uv_coverage`` dates and observed-day count.
+    Schema version 4 adds ``wheel_requests`` and ``wheel_request_coverage``,
+    including the dates and number of observed days used by the wheel-only box.
 
 ``README.md``
     A human-readable summary and the interpretation caveats for each metric.
 
 ``usage.svg``
-    A light- and dark-theme plot of the seven-day trailing means for PyPI
-    downloads and GitHub clone activity.
+    A light- and dark-theme wheel-request total box and plot of the seven-day
+    trailing means for BSK wheel requests and GitHub clone activity.
 
 PyPI history is read from the public PyPI data replicated by
-`ClickPy <https://clickpy.clickhouse.com/>`__. The non-mirror count excludes
-``bandersnatch``, ``z3c.pypimirror``, ``Artifactory``, and ``devpi``, matching
-the `PyPI Stats known-mirror list <https://pypistats.org/faqs>`__. The separate
-``pip`` count selects records whose installer is identified as ``pip``.
+`ClickPy <https://clickpy.clickhouse.com/>`__. The non-mirror distribution counts
+and wheel requests exclude ``bandersnatch``, ``z3c.pypimirror``, ``Artifactory``,
+and ``devpi`` from the `PyPI Stats known-mirror list <https://pypistats.org/faqs>`__,
+plus ``nexus``, an identified repository cache. The separate
+``pip`` and ``uv`` counts select records identified with those installers.
 
-Both PyPI counts exclude records with a known filename that does not end in
+The broader distribution counts exclude records with a known filename that does not end in
 ``.whl``, ``.tar.gz``, or ``.zip``. This removes identifiable metadata sidecars
 and signatures. Older records without filenames are retained because they
 cannot be reliably classified. A successful collection refreshes returned
-historical dates with this filter; totals can decrease after the first refresh.
+historical dates with this filter and the current mirror exclusions; totals can
+decrease after a refresh. The wheel-request total instead requires a known
+``.whl`` filename and never infers wheel requests from these broader counts.
 
 Missing CSV values are blank rather than zero. If a source has never been
 collected successfully, its unavailable summary counts are JSON ``null``.
@@ -89,10 +117,14 @@ unchanged and fails without publishing. A remote lookup, fetch, or history
 restore failure also stops publication. Only a successful remote lookup that
 confirms the metrics branch is absent permits an initial collection.
 
-The workflow restores both ``metrics.csv`` and ``summary.json``. Version 1
-summaries are accepted and upgraded; if PyPI is unavailable during that upgrade,
-``pypi.counting_policy`` remains ``legacy_unfiltered`` until a successful refresh.
-Normal filtered collections use ``distribution_files_or_unknown_filename``.
+The workflow restores both ``metrics.csv`` and ``summary.json``. Version 1, 2,
+and 3 summaries and their CSV formats are accepted and upgraded. A successful
+PyPI collection backfills ``uv`` and wheel-request counts for returned historical
+dates. Older rows without ``pypi_wheel_requests`` remain unknown until backfilled;
+if no wheel-request history is available, the box displays **Unavailable**.
+If PyPI is unavailable during a version 1 upgrade, ``pypi.counting_policy``
+remains ``legacy_unfiltered`` until a successful refresh. Normal filtered
+collections use ``distribution_files_or_unknown_filename``.
 
 Snapshot Publication
 --------------------
@@ -178,6 +210,12 @@ Interpretation Limits
 PyPI supplies file-download events, not successful installations or unique
 users. Repeated installs, continuous integration, caches, mirrors, and other
 installers affect the counts.
+
+Wheel requests cannot currently be separated into full-file transfers and
+partial HTTP range requests using the ClickPy fields collected here. A request
+to inspect only part of a wheel can contribute to the box. The known-filename
+requirement also omits older records that cannot be classified, so the box is
+not a complete lifetime count.
 
 PyPI changed its download logging on August 24, 2026, to exclude metadata
 requests, leaving older source records unchanged. Although the collector removes
