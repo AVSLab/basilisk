@@ -57,12 +57,13 @@ ImuSensor::ImuSensor()
     this->AMatrixAccel.fill(0.0);
     this->walkBoundsGyro.fill(-1.0);  // Default to -1 to detect if user sets it
     this->walkBoundsAccel.fill(-1.0); // Default to -1 to detect if user sets it
-    this->previous_omega_BN_B.fill(0.0);
     this->current_omega_BN_B.fill(0.0);
     this->current_nonConservativeAccelpntB_B.fill(0.0);
     this->current_omegaDot_BN_B.fill(0.0);
-    this->previous_TotalAccumDV_BN_B.fill(0.0);
-    this->current_TotalAccumDV_BN_B.fill(0.0);
+    this->previous_TotalAccumDV_CN_N.fill(0.0);
+    this->current_TotalAccumDV_CN_N.fill(0.0);
+    this->previous_v_SC_N.fill(0.0);
+    this->current_v_SC_N.fill(0.0);
     this->accel_SN_P_out.fill(0.0);
     this->DV_SN_P_out.fill(0.0);
     this->omega_PN_P_out.fill(0.0);
@@ -154,7 +155,13 @@ void ImuSensor::readInputMessages()
     this->current_omega_BN_B = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
     this->current_nonConservativeAccelpntB_B = cArray2EigenVector3d(this->StateCurrent.nonConservativeAccelpntB_B);
     this->current_omegaDot_BN_B = cArray2EigenVector3d(this->StateCurrent.omegaDot_BN_B);
-    this->current_TotalAccumDV_BN_B = cArray2EigenVector3d(this->StateCurrent.TotalAccumDV_BN_B);
+    this->current_TotalAccumDV_CN_N = cArray2EigenVector3d(this->StateCurrent.TotalAccumDV_CN_N);
+
+    // velocity of the sensor relative to the center of mass, v_SN_N - v_CN_N
+    Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->StateCurrent.v_BN_N);
+    Eigen::Vector3d v_CN_N = cArray2EigenVector3d(this->StateCurrent.v_CN_N);
+    this->current_v_SC_N = v_BN_N - v_CN_N
+        + this->current_sigma_BN.toRotationMatrix() * this->current_omega_BN_B.cross(this->sensorPos_B);
 
     return;
 }
@@ -347,12 +354,15 @@ void ImuSensor::computePlatformDR()
 }
 
 /*!
-    This functions gathers actual spacecraft velocity from the spacecraft output message.
-    It then differences the velocity between this time and the last time the IMU was called to get a
-    DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraft
-    output message. Then, it is converted to the platform frame and rotational terms are added to it
-    to account for CoM offset of the platform frame.
-    @param CurrentTime
+    This function computes the sensed acceleration and the delta-v between IMU calls.
+    The acceleration of point B is read from the spacecraft output message, the terms due to the offset of the sensor
+    from point B are added and the result is converted to the platform frame.
+    The delta-v is the change of the inertial velocity of the sensor due to non-gravitational acceleration since the
+    last IMU call. It is the sum of the change of TotalAccumDV_CN_N, which the spacecraft accumulates in inertial
+    components, and the change of the sensor velocity relative to the center of mass. The sum is converted to
+    the platform frame with the current attitude, so a rotation never turns previously accumulated delta-v into
+    a new delta-v.
+    @param CurrentTime [ns] current simulation time
  */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
 {
@@ -361,13 +371,13 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
     rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;
 
-    //Calculate time-average cumulative delta v
-    Eigen::Matrix3d dcm_NB_1;      // direction cosine matrix from N to B at time 1
-    dcm_NB_1 = this->previous_sigma_BN.toRotationMatrix();
-    Eigen::Matrix3d dcm_NB_2;      // direction cosine matrix from N to B at time 2
-    dcm_NB_2 = this->current_sigma_BN.toRotationMatrix();
+    //Calculate the delta v of the sensor since the last call
+    Eigen::Vector3d DV_SN_N;      // [m/s] sensor non conservative delta v in inertial frame coordinates
+    DV_SN_N = (this->current_TotalAccumDV_CN_N - this->previous_TotalAccumDV_CN_N)
+        + (this->current_v_SC_N - this->previous_v_SC_N);
+    Eigen::Matrix3d dcm_BN_2 = this->current_sigma_BN.toRotationMatrix().transpose(); // DCM from N to B at time 2
 
-    this->DV_SN_P_out =this->dcm_PB * dcm_NB_2.transpose() * ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) + ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) - (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
+    this->DV_SN_P_out = this->dcm_PB * dcm_BN_2 * DV_SN_N;
 
     return;
 }
@@ -401,8 +411,8 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 
     //record data from the current spacecraft message which is needed for the next IMU call
     this->previous_sigma_BN = this->current_sigma_BN;
-    this->previous_omega_BN_B = this->current_omega_BN_B;
-    this->previous_TotalAccumDV_BN_B = this->current_TotalAccumDV_BN_B;
+    this->previous_TotalAccumDV_CN_N = this->current_TotalAccumDV_CN_N;
+    this->previous_v_SC_N = this->current_v_SC_N;
     this->PreviousTime = CurrentSimNanos;
 
     this->NominalReady = true;

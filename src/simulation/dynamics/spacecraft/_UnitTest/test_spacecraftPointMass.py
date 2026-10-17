@@ -136,6 +136,27 @@ def test_spacecraftPointMass_allowsAttitudeDependentDynamicEffector():
                                pointMassWithGravityGradientLog.omega_BN_B[0])
 
 
+@pytest.mark.parametrize("pointMassMode", [False, True])
+def test_spacecraftPointMass_zeroAccelerationsBeforeIntegration(pointMassMode):
+    """
+    The state message must not hold uninitialized accelerations.
+
+    The non-conservative acceleration and the angular acceleration are only computed after an integration step in the
+    6-DOF mode and never in the point-mass mode. Before that they must be zero, and the angular acceleration must stay
+    zero in the point-mass mode.
+
+    Args:
+        pointMassMode (bool): if ``True``, run the spacecraft in ``pointMassTranslationalOnly`` mode
+    """
+
+    dataLog = _runSpacecraft(pointMassMode=pointMassMode, addExternalForce=True)
+
+    np.testing.assert_array_equal(dataLog.nonConservativeAccelpntB_B[0], [0.0, 0.0, 0.0])
+    np.testing.assert_array_equal(dataLog.omegaDot_BN_B[0], [0.0, 0.0, 0.0])
+    if pointMassMode:
+        np.testing.assert_array_equal(dataLog.omegaDot_BN_B, np.zeros_like(dataLog.omegaDot_BN_B))
+
+
 def test_spacecraftPointMass_rejectsStateEffectors():
     """Point-mass mode must reject state effectors because they add internal states."""
 

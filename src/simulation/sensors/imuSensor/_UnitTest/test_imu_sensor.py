@@ -37,6 +37,10 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.simulation import imuSensor
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import extForceTorque
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
@@ -235,7 +239,14 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     StateCurrent.omega_BN_B = np.dot(dcm_BN, omega_BN_N[0][:]) #1 rpm around each axis
     StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN, rDotDot_BN_N[0][:])
     StateCurrent.omegaDot_BN_B = np.dot(dcm_BN, omegaDot_BN_N[0][:])
-    StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
+    StateCurrent.v_BN_N = rDot_BN_N[0][:]
+    StateCurrent.v_CN_N = rDot_CN_N[0][:]
+    # The accumulated delta v fields are built the way spacecraft builds them. No gravity acts in this test, so
+    # all the velocity change is non-conservative. TotalAccumDV_BN_B adds the delta v of each step in the body
+    # frame of that step, so it must not be used to compute the delta v between IMU calls.
+    StateCurrent.TotalAccumDV_CN_N = np.array([0., 0., 0.])  # [m/s]
+    StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])  # [m/s]
+    totalAccumDV_BN_B = np.array([0., 0., 0.])  # [m/s]
 
     # add module to the task
     unitSim.AddModelToTask(unitTaskName, ImuSensor)
@@ -344,7 +355,11 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         StateCurrent.omega_BN_B = np.dot(dcm_BN_2, omega_BN_N[i][:])
         StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN_2, rDotDot_BN_N[i][:])
         StateCurrent.omegaDot_BN_B = np.dot(dcm_BN_2, omegaDot_BN_N[i][:])
-        StateCurrent.TotalAccumDV_BN_B = np.dot(dcm_BN_2, rDot_BN_N[i][:] - rDot_BN_N[0][:])
+        StateCurrent.v_BN_N = rDot_BN_N[i][:]
+        StateCurrent.v_CN_N = rDot_CN_N[i][:]
+        StateCurrent.TotalAccumDV_CN_N = rDot_CN_N[i][:] - rDot_CN_N[0][:]
+        totalAccumDV_BN_B = totalAccumDV_BN_B + np.dot(dcm_BN_2, rDot_BN_N[i][:] - rDot_BN_N[i-1][:])
+        StateCurrent.TotalAccumDV_BN_B = totalAccumDV_BN_B
         scStateMsg.write(StateCurrent, unitSim.TotalSim.CurrentNanos)
 
     # Pull output time histories from messaging system
@@ -586,6 +601,141 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         print("PASSED")
 
     return [testFailCount, ''.join(testMessages)]
+
+
+def test_imuDeltaVIgnoresRotationOfAccumulatedDeltaV():
+    """
+    A rotation of the spacecraft must not turn the delta v accumulated before the last IMU call into a new delta v.
+
+    The input message holds 100 m/s of delta v accumulated before the first IMU call, filled the way spacecraft fills
+    it. The spacecraft then rotates by 10 deg without any new delta v, so the IMU must output zero. In a third call
+    the spacecraft gains 2 m/s along the inertial y axis, which the IMU must output in the current platform frame.
+    """
+    imu = imuSensor.ImuSensor()
+    imu.setBodyToPlatformDCM(0.3, -0.2, 0.1)  # [rad]
+    dcm_PB = rbk.euler3212C([0.3, -0.2, 0.1])
+
+    scState = messaging.SCStatesMsgPayload()
+    scState.TotalAccumDV_BN_B = [100.0, 0.0, 0.0]  # [m/s] delta v accumulated with sigma_BN = 0
+    scState.TotalAccumDV_CN_N = [100.0, 0.0, 0.0]  # [m/s]
+    scStateMsg = messaging.SCStatesMsg().write(scState, 0)
+    imu.scStateInMsg.subscribeTo(scStateMsg)
+    imu.Reset(0)
+    imu.UpdateState(0)
+
+    # 10 deg rotation, no new delta v
+    sigma_BN = rbk.PRV2MRP([0.0, 0.0, np.radians(10.0)])
+    scState.sigma_BN = sigma_BN
+    scStateMsg.write(scState, macros.sec2nano(1.0))
+    imu.UpdateState(macros.sec2nano(1.0))
+    np.testing.assert_allclose(imu.sensorOutMsg.read().DVFramePlatform, [0.0, 0.0, 0.0], rtol=0.0, atol=1e-12,
+                               err_msg="a rotation turned accumulated delta v into a new delta v")
+
+    # 2 m/s of new delta v along the inertial y axis
+    deltaV_N = np.array([0.0, 2.0, 0.0])  # [m/s]
+    dcm_BN = rbk.MRP2C(sigma_BN)
+    scState.TotalAccumDV_CN_N = (np.array([100.0, 0.0, 0.0]) + deltaV_N).tolist()  # [m/s]
+    scState.TotalAccumDV_BN_B = (np.array([100.0, 0.0, 0.0]) + dcm_BN @ deltaV_N).tolist()  # [m/s]
+    scStateMsg.write(scState, macros.sec2nano(2.0))
+    imu.UpdateState(macros.sec2nano(2.0))
+    np.testing.assert_allclose(imu.sensorOutMsg.read().DVFramePlatform, dcm_PB @ dcm_BN @ deltaV_N,
+                               rtol=0.0, atol=1e-12, err_msg="new delta v is wrong")
+
+
+@pytest.mark.parametrize("r_BcB_B, sensorPos_B, accuracy", [
+    ([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1e-10),
+    ([0.5, 0.0, 0.2], [1.0, 0.5, -0.3], 1e-5),
+])
+def test_imuDeltaVWithSpacecraft(r_BcB_B, sensorPos_B, accuracy):
+    """
+    The IMU delta v must match the non-gravitational change of the sensor velocity when it runs slower than spacecraft.
+
+    A spinning spacecraft in LEO is pushed by a constant inertial force and then coasts. The IMU runs every 10 s
+    and the dynamics every 1 s. The truth over each IMU interval is the analytic delta v of the force, F/m times the
+    burn time in the interval, plus the change of the sensor velocity relative to the center of mass, resolved in the
+    current platform frame. With the sensor at the center of mass the output must be zero during the coast.
+    The ``accuracy`` [m/s] of the offset case is set by the RK4 integration error of the spacecraft states.
+
+    Args:
+        r_BcB_B (list): [m] hub center of mass location in the body frame
+        sensorPos_B (list): [m] IMU location in the body frame
+        accuracy (float): [m/s] accuracy of the delta v of each IMU interval
+    """
+    dynTimeStep = 1.0  # [s]
+    imuTimeStep = 10.0  # [s]
+    burnStart = 100.0  # [s]
+    burnStop = 300.0  # [s]
+    stopTime = 600.0  # [s]
+    force_N = np.array([10.0, 0.0, 0.0])  # [N]
+    mass = 500.0  # [kg]
+
+    sim = SimulationBaseClass.SimBaseClass()
+    proc = sim.CreateNewProcess("process")
+    proc.addTask(sim.CreateNewTask("dynTask", macros.sec2nano(dynTimeStep)), 100)
+    proc.addTask(sim.CreateNewTask("imuTask", macros.sec2nano(imuTimeStep)), 50)
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraft"
+    scObject.hub.mHub = mass
+    scObject.hub.IHubPntBc_B = np.diag([100.0, 100.0, 100.0]).tolist()  # [kg*m^2]
+    scObject.hub.r_BcB_B = [[x] for x in r_BcB_B]  # [m]
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    gravFactory.addBodiesTo(scObject)
+    oe = orbitalMotion.ClassicElements()
+    oe.a = 6778.0e3  # [m]
+    oe.e = 0.0  # [-]
+    oe.i = 0.5  # [rad]
+    oe.Omega = 0.1  # [rad]
+    oe.omega = 0.0  # [rad]
+    oe.f = 0.0  # [rad]
+    r_CN_N, v_CN_N = orbitalMotion.elem2rv(earth.mu, oe)
+    scObject.hub.r_CN_NInit = r_CN_N  # [m]
+    scObject.hub.v_CN_NInit = v_CN_N  # [m/s]
+    scObject.hub.omega_BN_BInit = [[0.01], [0.02], [0.03]]  # [rad/s]
+    extForce = extForceTorque.ExtForceTorque()
+    extForce.ModelTag = "extForce"
+    scObject.addDynamicEffector(extForce)
+    sim.AddModelToTask("dynTask", scObject)
+    sim.AddModelToTask("dynTask", extForce)
+
+    imu = imuSensor.ImuSensor()
+    imu.ModelTag = "imu"
+    imu.sensorPos_B = sensorPos_B  # [m]
+    imu.setBodyToPlatformDCM(0.3, -0.2, 0.1)  # [rad]
+    imu.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    sim.AddModelToTask("imuTask", imu)
+    stateLog = scObject.scStateOutMsg.recorder(macros.sec2nano(imuTimeStep))
+    imuLog = imu.sensorOutMsg.recorder(macros.sec2nano(imuTimeStep))
+    sim.AddModelToTask("imuTask", stateLog)
+    sim.AddModelToTask("imuTask", imuLog)
+
+    sim.InitializeSimulation()
+    for segmentStop, forceOn in [(burnStart, 0.0), (burnStop, 1.0), (stopTime, 0.0)]:
+        extForce.extForce_N = (forceOn * force_N).tolist()  # [N]
+        sim.ConfigureStopTime(macros.sec2nano(segmentStop))
+        sim.ExecuteSimulation()
+
+    times = stateLog.times() * macros.NANO2SEC  # [s]
+    dcm_PB = rbk.euler3212C([0.3, -0.2, 0.1])
+    sensorPos_B = np.array(sensorPos_B)  # [m]
+    dcm_NB = [rbk.MRP2C(sigma).T for sigma in stateLog.sigma_BN]
+    # sensor velocity relative to the center of mass
+    v_SC_N = [stateLog.v_BN_N[k] - stateLog.v_CN_N[k] + dcm_NB[k] @ np.cross(stateLog.omega_BN_B[k], sensorPos_B)
+              for k in range(len(times))]  # [m/s]
+    DVout = imuLog.DVFramePlatform
+    for k in range(1, len(times)):
+        burnTime = max(0.0, min(times[k], burnStop) - max(times[k - 1], burnStart))  # [s]
+        DV_SN_N = force_N / mass * burnTime + v_SC_N[k] - v_SC_N[k - 1]  # [m/s]
+        DVtruth = dcm_PB @ dcm_NB[k].T @ DV_SN_N
+        np.testing.assert_allclose(DVout[k], DVtruth, rtol=0.0, atol=accuracy,
+                                   err_msg=f"IMU delta v is wrong at t = {times[k]} s")
+        if times[k - 1] >= burnStop and not sensorPos_B.any() and not np.any(r_BcB_B):
+            np.testing.assert_allclose(DVout[k], [0.0, 0.0, 0.0], rtol=0.0, atol=accuracy,
+                                       err_msg=f"IMU at the center of mass sensed delta v during the coast at t = "
+                                               f"{times[k]} s")
+
 
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script

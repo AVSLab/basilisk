@@ -15,6 +15,19 @@ Version |release|
   altitude, showed the position components with an index shifted by one and read past the end of the position
   vector.
 
+- GitHub issue 1619: The :ref:`imuSensor` module computed ``DVFramePlatform`` by rotating the whole
+  ``TotalAccumDV_BN_B`` of :ref:`spacecraft` with the attitudes of the current and the previous IMU call.
+  :ref:`spacecraft` builds this field by adding the delta v of each integration step in the body frame of that
+  step, so every attitude change between two IMU calls turned the delta v accumulated since the start of the
+  simulation into a spurious delta v.
+
+- :ref:`MJSite` left the fields of ``stateOutMsg`` other than the position, velocity, attitude and angular rate
+  of the site uninitialized.
+
+- :ref:`spacecraft` did not initialize ``nonConservativeAccelpntB_B`` and ``omegaDot_BN_B`` of
+  ``scStateOutMsg``. They held uninitialized values in the message written before the first integration step
+  and, with ``pointMassTranslationalOnly``, during the whole simulation. They are now zero until computed.
+
 - GitHub issue 1615: The :ref:`eclipse` module returned the occulted fraction :math:`(b/a)^2` of the solar disk
   instead of the visible fraction :math:`1 - (b/a)^2` when the disk of the occulting body lies entirely inside the
   solar disk, where :math:`a` and :math:`b` are the apparent radii of the Sun and the body. The same formula in
