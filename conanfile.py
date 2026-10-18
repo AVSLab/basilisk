@@ -60,7 +60,8 @@ bskModuleOptionsFlag = {
     "clean": [[True, False], False],
 }
 
-required_conan_version = ">=2.0.5"
+# The modern Protobuf recipe requires >2.1; compiler.cstd requires 2.4.
+required_conan_version = ">=2.4.0"
 
 PY_LIMITED_API_PY39  = "0x03090000"  # cp39-abi3
 NUMBA_CACHE_SEARCH_DIRS = ("src", "docs/source", "examples")
@@ -583,10 +584,11 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.get_safe("opNav"):
-            self.requires("opencv/4.13.0")
+            self.requires("opencv/4.14.0")
 
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
-            self.requires("protobuf/3.21.12") # For compatibility with openCV
+            # Protobuf 6.x preserves Python 3.9 support for the generated bindings.
+            self.requires("protobuf/6.33.5")
             self.requires("cppzmq/4.11.0")
 
         if self.options.get_safe("mujoco"):

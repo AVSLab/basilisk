@@ -1,0 +1,2 @@
+- Updated the C++ Protobuf dependency to 6.33.5 and OpenCV to 4.14.0, replacing the unsupported Protobuf 3.x runtime while retaining the Vizard message schema and Python 3.9 support. Source builds now require Conan 2.4.0 or newer, and the Python Protobuf dependency now requires version 6.33.5 or newer.
+- Fixed incremental builds retaining an incompatible cached Protobuf compiler after a dependency upgrade.
