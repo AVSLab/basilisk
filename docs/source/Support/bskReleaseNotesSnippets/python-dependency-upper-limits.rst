@@ -1,0 +1,2 @@
+- Updated Python runtime, build, test, and documentation dependency upper limits to versions validated by the October 17, 2026 canary build, preserving the existing minimum versions and allowing compatible releases on older supported Python versions.
+- Included Numba in development requirements and required Numba 0.67 or newer on Python 3.12 and newer, preventing NumPy 2.5 upgrades from leaving an incompatible Numba installation in existing development environments.
