@@ -70,7 +70,7 @@ void Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_
     int i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
     EphemerisMsgPayload tmpOutputState;
-    ClassicElements orbEl;
+    ClassicElements orbEl = { 0 };
 
     tmpOutputState = EphemerisMsg_C_zeroMsgPayload();
 
@@ -99,7 +99,7 @@ void Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_
         currentScaledValue = currentScaledValue / fabs(currentScaledValue);
     }
 
-    /* - determine orbit elements from chebychev polynominals */
+    /* - determine orbit elements from Chebyshev polynomials */
     tmpOutputState.timeTag = (double)callTime * NANO2SEC;
     orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff, currentScaledValue);
     orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff, currentScaledValue);
@@ -108,19 +108,30 @@ void Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_
     orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff, currentScaledValue);
     anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff, currentScaledValue);
 
+    /* Periapsis radius and eccentricity alone cannot specify a rectilinear state. */
+    if (!isfinite(orbEl.rPeriap) || orbEl.rPeriap <= 0.0 || !isfinite(orbEl.e) || orbEl.e < 0.0) {
+        _bskError(configData->bskLogger,
+                  "oeStateEphem: records require positive periapsis radius and finite e >= 0; rectilinear states are "
+                  "unsupported.");
+        return;
+    }
+
     /*! - determine the true anomaly angle */
     if (currRec->anomalyFlag == 0) {
         orbEl.f = anomalyAngle;
     } else if (orbEl.e < 1.0) {
         /* input is mean elliptic anomaly angle */
         orbEl.f = E2f(M2E(anomalyAngle, orbEl.e), orbEl.e);
-    } else {
+    } else if (orbEl.e > 1.0) {
         /* input is mean hyperbolic anomaly angle */
         orbEl.f = H2f(N2H(anomalyAngle, orbEl.e), orbEl.e);
+    } else {
+        _bskError(configData->bskLogger, "oeStateEphem: parabolic records require true anomaly (anomalyFlag = 0).");
+        return;
     }
 
     /*! - determine semi-major axis */
-    if (fabs(orbEl.e - 1.0) > 1e-12) {
+    if (orbEl.e != 1.0) {
         /* elliptic or hyperbolic case */
         orbEl.a = orbEl.rPeriap / (1.0 - orbEl.e);
     } else {
@@ -130,6 +141,12 @@ void Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_
 
     /*! - Determine position and velocity vectors */
     elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
+    for (i = 0; i < 3; i++) {
+        if (!isfinite(tmpOutputState.r_BdyZero_N[i]) || !isfinite(tmpOutputState.v_BdyZero_N[i])) {
+            _bskError(configData->bskLogger, "oeStateEphem: fitted elements do not define a finite orbital state.");
+            return;
+        }
+    }
 
     /*! - Write the output message */
     EphemerisMsg_C_write(&tmpOutputState, &configData->stateFitOutMsg, moduleID, callTime);

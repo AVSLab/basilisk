@@ -6,6 +6,21 @@ This module takes the TDB time, current object time and computes the state of th
 If the time provided is outside the specified range for which the stored Chebyshev coefficients are valid then the position vectors rail high/low appropriately.  More information can be found in the
 :download:`PDF Description </../../src/fswAlgorithms/transDetermination/oeStateEphem/_Documentation/Basilisk-oeStateEphem-20190426.pdf>`.
 
+Module Assumptions and Limitations
+----------------------------------
+
+The fitted periapsis radius is in meters and angles are in radians. Elliptic
+and hyperbolic records use their fitted eccentricity without a tolerance band
+around unity. A nonrectilinear parabola (``e = 1`` with positive periapsis radius) uses the periapsis radius directly
+and requires true anomaly (``anomalyFlag = 0``). Mean anomaly is supported only
+for elliptic and hyperbolic records. Unsupported parabolic mean anomalies or
+fits that produce a nonfinite Cartesian state raise a Basilisk error before
+an output message is written.
+
+Records must have a finite, positive periapsis radius and finite, nonnegative
+eccentricity. Rectilinear states also have ``e = 1``, but the fitted fields
+cannot specify their energy and radial position; these states are unsupported.
+
 Message Connection Descriptions
 -------------------------------
 The following diagram and table list all the module input and output messages.  The module message connection is

@@ -64,7 +64,7 @@ def setupFilterData(filterObject):
     elementsInit = orbitalMotion.ClassicElements()
     elementsInit.a = 8000*1E3 #m
     elementsInit.e = 0.2
-    elementsInit.i = 10
+    elementsInit.i = 10.0 * macros.D2R  # [rad]
     elementsInit.Omega = 0.001
     elementsInit.omega = 0.01
     elementsInit.f = 0.1

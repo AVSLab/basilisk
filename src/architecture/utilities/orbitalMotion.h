@@ -22,7 +22,11 @@
 
 #define N_DEBYE_PARAMETERS 37
 
-/*! @brief Structure used to define classic orbit elements */
+/**
+ * @brief Classical orbit elements, using consistent distance units L and angles in radians.
+ * @note See elem2rv() for planar parabolic and rectilinear encodings. In particular,
+ * e = 1 with nonzero a denotes radial motion, not a planar parabola.
+ */
 typedef struct
 {
     double a;       //!< object semi-major axis
@@ -30,11 +34,11 @@ typedef struct
     double i;       //!< inclination of the orbital plane
     double Omega;   //!< Right ascension of the ascending node
     double omega;   //!< Argument of periapsis of the orbit
-    double f;       //!< True anomaly of the orbit
-    double rmag;    //!< Magnitude of the position vector (extra)
+    double f;       //!< True anomaly; radial E/H or parabolic direction flag as documented in elem2rv()
+    double rmag;    //!< Position magnitude [L]; required input for a rectilinear parabola
     double alpha;   //!< Inverted semi-major axis (extra)
-    double rPeriap; //!< Radius of periapsis (extra)
-    double rApoap;  //!< Radius if apoapsis (extra)
+    double rPeriap; //!< Periapsis radius [L]; required input when a = 0, e = 1
+    double rApoap;  //!< Apoapsis radius [L]; signed algebraic value for hyperbolas, zero for parabolas
 } ClassicElements;
 
 /* Celestial object being orbited */
@@ -110,4 +114,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+
 #endif

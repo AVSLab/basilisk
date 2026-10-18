@@ -407,226 +407,260 @@ double N2H(double N, double e)
     return nan("");
 }
 
-/*!
- * Purpose: Translates the orbit elements
- *           a   - semi-major axis           (km)
- *           e   - eccentricity
- *           i   - inclination               (rad)
- *           AN  - ascending node            (rad)
- *           AP  - argument of periapses     (rad)
- *           f   - true anomaly angle        (rad)
- *   to the inertial Cartesian position and velocity vectors.
- *   The attracting body is specified through the supplied
- *   gravitational constant mu (units of km^3/s^2).
- *
- *   The code can handle the following cases:
- *      circular:       e = 0           a > 0
- *      elliptical-2D:  0 < e < 1       a > 0
- *      elliptical-1D:  e = 1           a > 0        f = Ecc. Anom. here
- *      parabolic:      e = 1           rp = -a
- *      hyperbolic:     e > 1           a < 0
- *
- *   Note: to handle the parabolic case and distinguish it form the
- *   rectilinear elliptical case, instead of passing along the
- *   semi-major axis a in the "a" input slot, the negative radius
- *   at periapses is supplied.  Having "a" be negative and e = 1
- *   is a then a unique identified for the code for the parabolic
- *   case.
- * Inputs:
- *   mu = gravitational parameter
- *   elements = orbital elements
- * Outputs:
- *   rVec = position vector
- *   vVec = velocity vector
+/**
+ * @brief Convert classical elements to a finite inertial Cartesian state.
+ * @param mu Positive gravitational parameter [L^3/s^2].
+ * @param elements Orbital elements, with distances in L and angles in radians.
+ * @param[out] rVec Inertial position vector [L].
+ * @param[out] vVec Inertial velocity vector [L/s].
+ * @note Inclination must satisfy 0 <= i <= pi. Ellipses use a > 0, e < 1; hyperbolas use a < 0, e > 1. No
+ * eccentricity tolerance selects a conic. Planar parabolas use e = 1, a = 0,
+ * rPeriap > 0 and true anomaly f.
+ * @note Rectilinear ellipses use e = 1, a > 0 and f = eccentric anomaly E,
+ * with outward motion for sin(E) > 0. Rectilinear hyperbolas use e = 1,
+ * a < 0 and f = signed hyperbolic anomaly H, outward for H > 0.
+ * Rectilinear parabolas use e = 1, a = rPeriap = 0, rmag > 0 and f = 0
+ * for outward motion or f = pi for inward motion. For radial states the
+ * perifocal x axis is the outward radial ray; the plane about it is arbitrary.
+ * Extra fields are read only where required by these conventions.
+ * @note Invalid/nonfinite inputs, collisions, open-conic anomalies at or beyond
+ * infinity, and numerical overflow produce a diagnostic and all-NaN vectors.
  */
 void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
 {
-    double e;     /* eccentricty */
-    double a;     /* semi-major axis */
-    double f;     /* true anomaly */
-    double r;     /* orbit radius */
-    double v;     /* orbit velocity magnitude */
-    double i;     /* orbit inclination angle */
-    double p;     /* the parameter or the semi-latus rectum */
-    double AP;    /* argument of perigee */
-    double AN;    /* argument of the ascending node */
-    double theta; /* true latitude theta = omega + f */
-    double h;     /* orbit angular momentum magnitude */
-    double ir[3]; /* orbit radius unit vector */
-    double eps;   /* small numerical value parameter */
-
-    /* define what is a small numerical value */
-    eps = 1e-12;
-
-    /* map classical elements structure into local variables */
-    a = elements->a;
-    e = elements->e;
-    i = elements->i;
-    AN = elements->Omega;
-    AP = elements->omega;
-    f = elements->f;
-
-    if ((fabs(e - 1.0) < eps) && (fabs(a) > eps)) { /* 1D rectilinear elliptic/hyperbolic orbit case */
-
-        double angle; /* eccentric/hyperbolic anomaly */
-        angle = f;    /* f is treated as ecc/hyp anomaly */
-        /* orbit radius  */
-        if (elements->a > 0.0) {
-            r = a * (1 - e * cos(angle));
-        } else {
-            r = a * (1 - e * cosh(angle));
-        }
-        v = sqrt(2 * mu / r - mu / a);
-        ir[0] = cos(AN) * cos(AP) - sin(AN) * sin(AP) * cos(i);
-        ir[1] = sin(AN) * cos(AP) + cos(AN) * sin(AP) * cos(i);
-        ir[2] = sin(AP) * sin(i);
-        v3Scale(r, ir, rVec);
-        if (sin(angle) > 0) {
-            v3Scale(v, ir, vVec);
-        } else {
-            v3Scale(-v, ir, vVec);
-        }
-    } else { /* general 2D orbit case */
-        /* evaluate semi-latus rectum */
-        if (fabs(a) > eps) {
-            p = a * (1 - e * e); /* elliptic or hyperbolic */
-        } else {
-            p = 2 * elements->rPeriap; /* parabolic */
-        }
-
-        r = p / (1 + e * cos(f)); /* orbit radius */
-        theta = AP + f;           /* true latitude angle */
-        h = sqrt(mu * p);         /* orbit ang. momentum mag. */
-
-        rVec[0] = r * (cos(AN) * cos(theta) - sin(AN) * sin(theta) * cos(i));
-        rVec[1] = r * (sin(AN) * cos(theta) + cos(AN) * sin(theta) * cos(i));
-        rVec[2] = r * (sin(theta) * sin(i));
-
-        vVec[0] = -mu / h * (cos(AN) * (sin(theta) + e * sin(AP)) + sin(AN) * (cos(theta) + e * cos(AP)) * cos(i));
-        vVec[1] = -mu / h * (sin(AN) * (sin(theta) + e * sin(AP)) - cos(AN) * (cos(theta) + e * cos(AP)) * cos(i));
-        vVec[2] = -mu / h * (-(cos(theta) + e * cos(AP)) * sin(i));
+    const double a = elements->a;
+    const double e = elements->e;
+    const double i = elements->i;
+    const double node = elements->Omega;
+    const double periapsis = elements->omega;
+    double anomaly = elements->f;
+    double pHat[3], qHat[3];
+    double radius, radialSpeed, parameter;
+    if (!isfinite(mu) || mu <= 0.0 || !isfinite(a) || !isfinite(e) || e < 0.0 || !isfinite(i) || i < 0.0 || i > M_PI ||
+        !isfinite(node) || !isfinite(periapsis) || !isfinite(anomaly)) {
+        goto invalid;
     }
+    v3Set(cos(node) * cos(periapsis) - sin(node) * sin(periapsis) * cos(i),
+          sin(node) * cos(periapsis) + cos(node) * sin(periapsis) * cos(i),
+          sin(periapsis) * sin(i),
+          pHat);
+    v3Set(-cos(node) * sin(periapsis) - sin(node) * cos(periapsis) * cos(i),
+          -sin(node) * sin(periapsis) + cos(node) * cos(periapsis) * cos(i),
+          cos(periapsis) * sin(i),
+          qHat);
+    if (e == 1.0 && (a != 0.0 || elements->rPeriap == 0.0)) {
+        if (a > 0.0) {
+            /* Let libm reduce the angle; a rounded 2*pi divisor loses phase. */
+            const double half = 0.5 * anomaly;
+            const double factor = sin(half);
+            radius = 2.0 * a * factor * factor;
+            if (radius <= 0.0) {
+                goto invalid;
+            }
+            radialSpeed = sqrt(mu / a) * cos(half) / factor;
+        } else if (a < 0.0) {
+            const double factor = sinh(0.5 * anomaly);
+            radius = -2.0 * a * factor * factor;
+            if (radius <= 0.0) {
+                goto invalid;
+            }
+            radialSpeed = copysign(sqrt(mu / -a) / tanh(0.5 * fabs(anomaly)), anomaly);
+        } else {
+            radius = elements->rmag;
+            if (!isfinite(radius) || radius <= 0.0 || (anomaly != 0.0 && anomaly != M_PI)) {
+                goto invalid;
+            }
+            radialSpeed = sqrt(2.0 * (mu / radius)) * (anomaly == 0.0 ? 1.0 : -1.0);
+        }
+        v3Scale(radius, pHat, rVec);
+        v3Scale(radialSpeed, pHat, vVec);
+    } else {
+        if (e == 1.0 && a == 0.0) {
+            if (!isfinite(elements->rPeriap) || elements->rPeriap <= 0.0) {
+                goto invalid;
+            }
+            parameter = 2.0 * elements->rPeriap;
+        } else {
+            parameter = a * (1.0 - e) * (1.0 + e);
+        }
+        const double cosine = cos(anomaly);
+        const double sine = sin(anomaly);
+        const double principalAnomaly = atan2(sine, cosine);
+        if (!isfinite(parameter) || parameter <= 0.0 || (e >= 1.0 && fabs(principalAnomaly) >= acos(-1.0 / e))) {
+            goto invalid;
+        }
+        const double halfCosine = cos(0.5 * anomaly);
+        /* Retain 1-e and e-1 near apoapsis/infinity. */
+        const double denominator = cosine < 0.0 ? (1.0 - e) + 2.0 * e * halfCosine * halfCosine : 1.0 + e * cosine;
+        if (denominator <= 0.0) {
+            goto invalid;
+        }
+        radius = parameter / denominator;
+        const double transverse = cosine < 0.0 ? (e - 1.0) + 2.0 * halfCosine * halfCosine : e + cosine;
+        const double speed = sqrt(mu / parameter);
+        for (int index = 0; index < 3; ++index) {
+            rVec[index] = radius * (cosine * pHat[index] + sine * qHat[index]);
+            vVec[index] = speed * (-sine * pHat[index] + transverse * qHat[index]);
+        }
+    }
+    for (int index = 0; index < 3; ++index) {
+        if (!isfinite(rVec[index]) || !isfinite(vVec[index])) {
+            goto invalid;
+        }
+    }
+    return;
+invalid:
+    BSK_PRINT(MSG_ERROR, "%s", "elem2rv() invalid conic, collision, anomaly at/beyond infinity, or numerical overflow");
+    v3Set(nan(""), nan(""), nan(""), rVec);
+    v3Set(nan(""), nan(""), nan(""), vVec);
 }
 
-/*!
- * Purpose: Translates the orbit elements inertial Cartesian position
- *   vector rVec and velocity vector vVec into the corresponding
- *   classical orbit elements where
- *           a   - semi-major axis (zero if parabolic)
- *           e   - eccentricity
- *           i   - inclination               (rad)
- *           AN  - ascending node            (rad)
- *           AP  - argument of periapses     (rad)
- *           f   - true anomaly angle        (rad)
- *                 if the orbit is rectilinear, then this will be the
- *                 eccentric or hyperbolic anomaly
- *           rp  - radius at periapses
- *           ra  - radius at apoapses (zero if parabolic)
- *   The attracting body is specified through the supplied
- *   gravitational constant mu (units of km^3/s^2).
- * Inputs:
- *   mu = gravitational parameter
- *   rVec = position vector
- *   vVec = velocity vector
- * Outputs:
- *   elements = orbital elements
+/**
+ * @brief Convert a Cartesian state to classical orbital elements.
+ * @param mu Positive gravitational parameter [L^3/s^2].
+ * @param rVec Nonzero inertial position vector [L].
+ * @param vVec Inertial velocity vector [L/s].
+ * @param[out] elements Orbital elements, with distances in L and angles in radians.
+ * @note Inputs must be finite and use consistent distance units. Inclination is
+ * in [0, pi]; Omega, omega, and nonradial f are in [0, 2*pi), including hyperbolic f.
+ * Degenerate conics use the conventions documented in elem2rv().
+ * @note A dimensionless tolerance of 1e-12 selects singular-angle conventions.
+ * For e <= tolerance, omega = 0 and f is the argument of latitude. For
+ * sin(i) <= tolerance, Omega = 0 and i is set to 0 or pi; omega measures
+ * periapsis from the inertial x axis in the direction of orbital motion.
+ * If both conditions hold, f measures position from that axis in the direction
+ * of motion. Replacing unresolved directions introduces relative state errors
+ * on the order of the singularity tolerance.
+ * @note Parabolic energy and zero transverse velocity are detected within
+ * 8 machine epsilons of the local energy and speed scales, respectively.
+ * Radial states use a deterministic plane about the outward radial ray.
+ * Near zero energy, relative accuracy of a and state reconstruction from
+ * rounded a, e degrades as machine epsilon divided by abs(1-e).
+ * Nonradial finite-energy states whose eccentricity rounds to one or the wrong
+ * side of one cannot be encoded consistently. These, invalid inputs and numerical
+ * overflow produce a diagnostic and all-NaN elements.
  */
 void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
 {
-    double hVec[3];  /* orbit angular momentum vector */
-    double ihHat[3]; /* normalized orbit angular momentum vector */
-    double h;        /* orbit angular momentum magnitude */
-    double v3[3];    /* temp vector */
-    double n1Hat[3]; /* 1st inertial frame base vector */
-    double n3Hat[3]; /* 3rd inertial frame base vector */
-    double nVec[3];  /* line of nodes vector */
-    double inHat[3]; /* normalized line of nodes vector */
-    double irHat[3]; /* normalized position vector */
-    double r;        /* current orbit radius */
-    double v;        /* orbit velocity magnitude */
-    double eVec[3];  /* eccentricity vector */
-    double ieHat[3]; /* normalized eccentricity vector */
-    double p;        /* the parameter, also called semi-latus rectum */
-    double eps;      /* small numerical value parameter */
-
-    /* define what is a small numerical value */
-    eps = 1e-12;
-
-    /* define inertial frame axes */
-    v3Set(1.0, 0.0, 0.0, n1Hat);
-    v3Set(0.0, 0.0, 1.0, n3Hat);
-
-    /* norms of position and velocity vectors */
-    r = v3Norm(rVec);
-    elements->rmag = r;
-    v = v3Norm(vVec);
-    v3Normalize(rVec, irHat);
-
-    /* Calculate the specific angular momentum and its magnitude */
-    v3Cross(rVec, vVec, hVec);
-    h = v3Norm(hVec);
-    v3Normalize(hVec, ihHat);
-    p = h * h / mu;
-
-    /* Calculate the line of nodes */
-    v3Cross(n3Hat, hVec, nVec);
-    if (v3Norm(nVec) < eps) {
-        /* near equatorial orbits */
-        v3Copy(n1Hat, inHat);
+    const double singularityTolerance = 1e-12; // [-]
+    const double roundoff = 8.0 * DBL_EPSILON;
+    double rHat[3], scaledV[3], scaledH[3], hHat[3], eVec[3], eHat[3], nHat[3], temp[3];
+    double radius, speedScale, speedSquared, scaledEnergy, momentum, parameter, nodeMagnitude;
+    int radial;
+    if (!isfinite(mu) || mu <= 0.0) {
+        goto invalid;
+    }
+    for (int index = 0; index < 3; ++index) {
+        if (!isfinite(rVec[index]) || !isfinite(vVec[index])) {
+            goto invalid;
+        }
+    }
+    radius = hypot(hypot(rVec[0], rVec[1]), rVec[2]);
+    if (!isfinite(radius) || radius <= 0.0) {
+        goto invalid;
+    }
+    speedScale = sqrt(mu / radius);
+    if (!isfinite(speedScale) || speedScale <= 0.0) {
+        goto invalid;
+    }
+    for (int index = 0; index < 3; ++index) {
+        rHat[index] = rVec[index] / radius;
+        scaledV[index] = vVec[index] / speedScale;
+    }
+    speedSquared = v3Dot(scaledV, scaledV);
+    if (!isfinite(speedSquared)) {
+        goto invalid;
+    }
+    scaledEnergy = 2.0 - speedSquared;
+    if (fabs(scaledEnergy) <= roundoff * fmax(2.0, speedSquared)) {
+        scaledEnergy = 0.0; // [-]; unresolved energy at the parabolic limit
+    }
+    v3Cross(rHat, scaledV, scaledH);
+    momentum = hypot(hypot(scaledH[0], scaledH[1]), scaledH[2]);
+    radial = momentum <= roundoff * sqrt(speedSquared);
+    elements->rmag = radius;
+    elements->alpha = scaledEnergy / radius;
+    elements->a = scaledEnergy != 0.0 ? radius / scaledEnergy : 0.0; // [L]
+    parameter = radius * momentum * momentum;
+    if (radial) {
+        elements->e = 1.0;
+        elements->rPeriap = 0.0; // [L]
+        /* Choose the least-aligned inertial axis for a well-conditioned plane. */
+        int axis = 0;
+        for (int index = 1; index < 3; ++index) {
+            if (fabs(rHat[index]) < fabs(rHat[axis])) {
+                axis = index;
+            }
+        }
+        v3SetZero(temp);
+        temp[axis] = 1.0;
+        v3Cross(rHat, temp, hHat);
+        v3Normalize(hHat, hHat);
+        v3Copy(rHat, eHat);
     } else {
-        v3Normalize(nVec, inHat);
+        v3Scale(1.0 / momentum, scaledH, hHat);
+        v3Cross(scaledV, scaledH, eVec);
+        v3Subtract(eVec, rHat, eVec);
+        elements->e = hypot(hypot(eVec[0], eVec[1]), eVec[2]);
+        if (scaledEnergy == 0.0) {
+            elements->e = 1.0;
+        } else if ((scaledEnergy > 0.0 && elements->e >= 1.0) || (scaledEnergy < 0.0 && elements->e <= 1.0)) {
+            BSK_PRINT(MSG_ERROR, "%s", "rv2elem() eccentricity cannot resolve the finite-energy conic");
+            goto invalid;
+        }
+        elements->rPeriap = parameter / (1.0 + elements->e);
+        v3Normalize(eVec, eHat);
     }
-
-    /* Orbit eccentricity vector */
-    v3Scale(v * v / mu - 1.0 / r, rVec, eVec);
-    v3Scale(v3Dot(rVec, vVec) / mu, vVec, v3);
-    v3Subtract(eVec, v3, eVec);
-    elements->e = v3Norm(eVec);
-    elements->rPeriap = p / (1.0 + elements->e);
-
-    /* Orbit eccentricity unit vector */
-    if (elements->e > eps) {
-        v3Normalize(eVec, ieHat);
+    elements->rApoap = scaledEnergy != 0.0 ? elements->a * (1.0 + elements->e) : 0.0; // [L]
+    v3Set(-hHat[1], hHat[0], 0.0, nHat);
+    nodeMagnitude = hypot(nHat[0], nHat[1]);
+    if (nodeMagnitude <= singularityTolerance) {
+        v3Set(1.0, 0.0, 0.0, nHat);
+        elements->i = hHat[2] >= 0.0 ? 0.0 : M_PI; // [rad]
     } else {
-        /* near circular orbits, make i_e_hat equal to line of nodes */
-        v3Copy(inHat, ieHat);
+        v3Scale(1.0 / nodeMagnitude, nHat, nHat);
+        elements->i = atan2(nodeMagnitude, hHat[2]);
     }
-
-    /* compute semi-major axis */
-    elements->alpha = 2.0 / r - v * v / mu;
-    if (fabs(elements->alpha) > eps) {
-        /* elliptic or hyperbolic case */
-        elements->a = 1.0 / elements->alpha;
-        elements->rApoap = p / (1.0 - elements->e);
-    } else {
-        /* parabolic case */
-        elements->a = 0.0;
-        elements->rApoap = 0.0;
+    if (elements->e <= singularityTolerance) {
+        v3Copy(nHat, eHat);
     }
-
-    /* Calculate the inclination */
-    elements->i = safeAcos(hVec[2] / h);
-
-    /* Calculate Ascending Node Omega */
-    v3Cross(n1Hat, inHat, v3);
-    elements->Omega = atan2(v3[2], inHat[0]);
-    if (elements->Omega < 0.0) {
-        elements->Omega += 2 * M_PI;
+    elements->Omega = atan2(nHat[1], nHat[0]);
+    v3Cross(nHat, eHat, temp);
+    elements->omega = atan2(v3Dot(hHat, temp), v3Dot(nHat, eHat));
+    v3Cross(eHat, rHat, temp);
+    elements->f = atan2(v3Dot(hHat, temp), v3Dot(eHat, rHat));
+    double* angles[3] = { &elements->Omega, &elements->omega, &elements->f };
+    for (int index = 0; index < 3; ++index) {
+        if (*angles[index] < 0.0) {
+            *angles[index] += 2.0 * M_PI;
+        }
+        if (*angles[index] >= 2.0 * M_PI) {
+            *angles[index] = 0.0; // [rad]; rounding can reach the upper endpoint
+        }
     }
-
-    /* Calculate Argument of Periapses omega */
-    v3Cross(inHat, ieHat, v3);
-    elements->omega = atan2(v3Dot(ihHat, v3), v3Dot(inHat, ieHat));
-    if (elements->omega < 0.0) {
-        elements->omega += 2 * M_PI;
+    if (radial) {
+        const double radialSpeed = v3Dot(rHat, scaledV);
+        if (scaledEnergy > 0.0) {
+            elements->f = atan2(radialSpeed * sqrt(scaledEnergy), 1.0 - scaledEnergy);
+            if (elements->f < 0.0) {
+                elements->f += 2.0 * M_PI;
+            }
+        } else if (scaledEnergy < 0.0) {
+            elements->f = copysign(2.0 * asinh(sqrt(-0.5 * scaledEnergy)), radialSpeed);
+        } else {
+            elements->f = radialSpeed >= 0.0 ? 0.0 : M_PI; // [rad]; radial direction flag
+        }
     }
-
-    /* Calculate true anomaly angle f */
-    v3Cross(ieHat, irHat, v3);
-    elements->f = atan2(v3Dot(ihHat, v3), v3Dot(ieHat, irHat));
-    if (elements->f < 0.0) {
-        elements->f += 2 * M_PI;
+    if (!isfinite(elements->a) || !isfinite(elements->alpha) || !isfinite(elements->e) ||
+        !isfinite(elements->rPeriap) || !isfinite(elements->rApoap) || !isfinite(elements->i) ||
+        !isfinite(elements->Omega) || !isfinite(elements->omega) || !isfinite(elements->f)) {
+        goto invalid;
     }
+    return;
+invalid:
+    BSK_PRINT(MSG_ERROR, "%s", "rv2elem() invalid state or unrepresentable orbital elements");
+    elements->a = elements->e = elements->i = elements->Omega = elements->omega = elements->f = nan("");
+    elements->rmag = elements->alpha = elements->rPeriap = elements->rApoap = nan("");
 }
 
 /*!

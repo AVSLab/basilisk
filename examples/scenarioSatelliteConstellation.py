@@ -296,7 +296,7 @@ if __name__ == "__main__":
     run(
         True,       # show_plots
         29994000,   # semi-major axis [m]
-        56,         # orbit inclination [deg]
+        56.0 * macros.D2R,  # orbit inclination [rad]
         24,         # total number of satellites (int)
         3,          # number of orbit planes (int)
         1           # phasing (int)

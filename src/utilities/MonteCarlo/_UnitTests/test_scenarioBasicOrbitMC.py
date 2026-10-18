@@ -193,10 +193,10 @@ def test_MonteCarloSimulation(show_plots):
     dispDict["mu"] = 0.3986004415e15
     dispDict["a"] = ["normal", 42000 * 1e3, 2000 * 1e3]
     dispDict["e"] = ["uniform", 0, 0.5]
-    dispDict["i"] = ["uniform", -80, 80]
+    dispDict["i"] = ["uniform", 0.0, 80.0 * macros.D2R]  # [rad]
     dispDict["Omega"] = None
-    dispDict["omega"] = ["uniform", 80, 90]
-    dispDict["f"] = ["uniform", 0, 359]
+    dispDict["omega"] = ["uniform", 80.0 * macros.D2R, 90.0 * macros.D2R]  # [rad]
+    dispDict["f"] = ["uniform", 0.0, 359.0 * macros.D2R]  # [rad]
     monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
     monteCarlo.addDispersion(

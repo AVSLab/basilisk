@@ -375,3 +375,63 @@ if __name__ == "__main__":
         True,  # validChebyCurveTime
         1,
     )  # anomFlag
+
+
+def _constant_record(eccentricity, anomaly_flag, periapsis=7e6):
+    """Construct a constant ephemeris record with periapsis in meters."""
+    model = oeStateEphem.oeStateEphem()
+    model.muCentral = 3.986004415e14  # [m^3/s^2]
+    record = model.ephArray[0]
+    record.nChebCoeff = 1
+    record.ephemTimeRad = 1.0  # [s]
+    record.rPeriapCoeff = [periapsis]
+    record.eccCoeff = [eccentricity]
+    record.incCoeff = [0.5]  # [rad]
+    record.argPerCoeff = [0.4]  # [rad]
+    record.RAANCoeff = [0.2]  # [rad]
+    record.anomCoeff = [0.3 if anomaly_flag == 0 else 0.0]  # [rad]
+    record.anomalyFlag = anomaly_flag
+    clock = messaging.TDBVehicleClockCorrelationMsg().write(messaging.TDBVehicleClockCorrelationMsgPayload())
+    model.clockCorrInMsg.subscribeTo(clock)
+    model.SelfInit()
+    model.Reset(0)
+    return model, clock
+
+
+@pytest.mark.parametrize("eccentricity", [1.0 - 5e-13, 1.0, 1.0 + 5e-13])
+@pytest.mark.parametrize("anomaly_flag", [0, 1])
+def test_near_parabolic_record(eccentricity, anomaly_flag):
+    """Near-unity eccentricity retains its conic; exact parabolas require true anomaly."""
+    from Basilisk.architecture import bskLogging
+    model, clock = _constant_record(eccentricity, anomaly_flag)
+    if eccentricity == 1.0 and anomaly_flag:
+        with pytest.raises(bskLogging.BasiliskError, match="parabolic records require true anomaly"):
+            model.UpdateState(0)
+        assert not messaging.EphemerisMsg_C_isWritten(model.stateFitOutMsg)
+        return
+    model.UpdateState(0)
+    output = model.stateFitOutMsg.read()
+    # Independent perifocal conic equations avoid a round trip through elem2rv.
+    anomaly = 0.3 if anomaly_flag == 0 else 0.0  # [rad]
+    parameter = 7e6 * (1.0 + eccentricity)  # [m]
+    radius = parameter / (1.0 + eccentricity * math.cos(anomaly))
+    ci, si = math.cos(0.5), math.sin(0.5)
+    co, so = math.cos(0.2), math.sin(0.2)
+    cw, sw = math.cos(0.4), math.sin(0.4)
+    rotation = numpy.array([[co*cw-so*sw*ci, -co*sw-so*cw*ci],
+                            [so*cw+co*sw*ci, -so*sw+co*cw*ci], [sw*si, cw*si]])
+    expected_r = rotation @ (radius * numpy.array([math.cos(anomaly), math.sin(anomaly)]))
+    expected_v = rotation @ (math.sqrt(model.muCentral / parameter)
+                             * numpy.array([-math.sin(anomaly), eccentricity + math.cos(anomaly)]))
+    numpy.testing.assert_allclose(output.r_BdyZero_N, expected_r, rtol=2e-14, atol=1e-8)  # [m]
+    numpy.testing.assert_allclose(output.v_BdyZero_N, expected_v, rtol=2e-14, atol=1e-10)  # [m/s]
+
+
+@pytest.mark.parametrize("periapsis", [0.0, -1.0, numpy.nan])  # [m]
+def test_rectilinear_record_rejected(periapsis):
+    """Eccentricity one with zero periapsis is rectilinear, not a supported parabola."""
+    from Basilisk.architecture import bskLogging
+    model, clock = _constant_record(1.0, 0, periapsis)
+    with pytest.raises(bskLogging.BasiliskError, match="positive periapsis radius"):
+        model.UpdateState(0)
+    assert not messaging.EphemerisMsg_C_isWritten(model.stateFitOutMsg)
