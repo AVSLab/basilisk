@@ -36,7 +36,21 @@ description provides information on what this message is used for.
 
 Module Assumptions and Limitations
 ----------------------------------
-- This module assumes that target orbital element differnce is constant during simulation.
+- This module assumes that the target orbital element difference is constant during simulation.
+- The mean/osculating conversion is a first-order J2 approximation for elliptic
+  orbits, valid when the corrections are small and the inclination is away from
+  the critical values where :math:`1 - 5\cos^2 i = 0`.
+- Use ``oeType = 1`` for circular or prograde equatorial orbits. The classical
+  control matrix remains singular at zero eccentricity or equatorial inclination;
+  the equinoctial control matrix remains singular at retrograde equatorial
+  inclination, :math:`i = \pi`.
+- Failed mean-element or equinoctial conversions raise a Basilisk error before
+  a force message is written. For nonzero J2, the mean-element map rejects
+  ``abs(1 - 5*cos(i)**2) <= sqrt(machine epsilon)`` as numerically singular.
+  The prograde equinoctial map rejects ``cos(i/2) <= 8*machine epsilon``.
+  Accepted states must still satisfy the small-perturbation assumption.
+- ``J2 = 0`` disables the mean/osculating correction, so the controller can also
+  operate on two-body orbital elements.
 
 User Guide
 ----------------------------------
@@ -45,7 +59,8 @@ This module requires the following variables to be set as parameters:
 - ``oeType`` 0 for classic oe (default), 1 for equinoctial oe
 - ``mu`` gravitational constant for a central body in m^3/s^2
 - ``req`` equatorial radius of a central body in meters
-- ``J2`` J2 constant of a central body
+- ``J2`` finite, nonnegative, dimensionless J2 coefficient of the central body;
+  zero gives an identity mean/osculating conversion
 - ``targetDiffOeMean`` desired mean orbital element difference. Assumed oe is linked to ``oeType``.
 - ``K`` control gain matrix
 

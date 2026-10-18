@@ -24,8 +24,9 @@
 #   Creation Date:      March 27, 2020
 #
 
+import numpy as np
 import pytest
-from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import meanOEFeedback  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -170,6 +171,76 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 
+def _equinoctial_force(eccentricity, inclination, j2, chief_anomaly, deputy_anomaly, deputy_offset=0.0):
+    """Run two controller updates from supplied elliptic Cartesian states.
+
+    Anomalies and inclination are in radians; ``deputy_offset`` changes the
+    deputy semimajor axis in meters. The output is inertial force in newtons.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("equatorialProcess")
+    step = macros.sec2nano(0.1)  # [ns]
+    process.addTask(simulation.CreateNewTask("equatorialTask", step))
+    module = meanOEFeedback.meanOEFeedback()
+    module.ModelTag = "equatorialFeedback"
+    module.oeType = 1
+    module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    module.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
+    module.J2 = j2
+    module.K = (1e7 * np.eye(6)).ravel().tolist()  # [N*m/s]; normalized-element gain
+    module.targetDiffOeMean = [0.0] * 6
+    simulation.AddModelToTask("equatorialTask", module)
+    messages = []
+    for anomaly, offset in [(chief_anomaly, 0.0), (deputy_anomaly, deputy_offset)]:
+        elements = orbitalMotion.ClassicElements()
+        elements.a = 8e6 + offset  # [m]
+        elements.e = eccentricity
+        elements.i = inclination
+        elements.Omega = 0.0  # [rad]
+        elements.omega = 0.4  # [rad]
+        elements.f = anomaly
+        payload = messaging.NavTransMsgPayload()
+        payload.r_BN_N, payload.v_BN_N = orbitalMotion.elem2rv(module.mu, elements)
+        messages.append(messaging.NavTransMsg().write(payload))
+    module.chiefTransInMsg.subscribeTo(messages[0])
+    module.deputyTransInMsg.subscribeTo(messages[1])
+    recorder = module.forceOutMsg.recorder()
+    simulation.AddModelToTask("equatorialTask", recorder)
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(step)
+    simulation.ExecuteSimulation()
+    return np.asarray(recorder.forceRequestInertial)
+
+
+@pytest.mark.parametrize("eccentricity", [0.0, 0.1])
+@pytest.mark.parametrize("inclination", [0.0, 1e-8])  # [rad]
+@pytest.mark.parametrize("j2", [0.0, orbitalMotion.J2_EARTH])
+def test_equinoctial_equatorial_identity(eccentricity, inclination, j2):
+    """Identical equatorial states must command finite zero force in equinoctial mode."""
+    force = _equinoctial_force(eccentricity, inclination, j2, 0.3, 0.3)
+    assert np.all(np.isfinite(force))
+    np.testing.assert_array_equal(force, np.zeros_like(force))
+
+
+@pytest.mark.parametrize("inclination", [0.0, 1e-8, 0.7])  # [rad]
+@pytest.mark.parametrize("anomaly", [0.3, -1e-9, np.pi - 1e-9])  # [rad]
+def test_equinoctial_anomaly_revolutions(inclination, anomaly):
+    """Equivalent chief/deputy states produce the same nonzero controller force."""
+    force = _equinoctial_force(0.1, inclination, orbitalMotion.J2_EARTH, anomaly, anomaly + 0.0002, 100.0)
+    wrapped = _equinoctial_force(0.1, inclination, orbitalMotion.J2_EARTH,
+                                anomaly + 4.0 * np.pi, anomaly + 0.0002 - 6.0 * np.pi, 100.0)
+    assert np.all(np.isfinite(force)) and np.all(np.isfinite(wrapped))
+    assert np.linalg.norm(force) > 0.0
+    np.testing.assert_allclose(wrapped, force, rtol=1e-8, atol=1e-8)  # [N] absolute tolerance
+
+
+@pytest.mark.parametrize("j2", [-1e-3, np.nan, np.inf])
+def test_equinoctial_invalid_j2(j2):
+    """Accepting the zero-J2 identity must not admit invalid coefficients."""
+    with pytest.raises(bskLogging.BasiliskError, match="J2 must be finite and nonnegative"):
+        _equinoctial_force(0.1, 0.0, j2, 0.3, 0.3)
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
@@ -180,3 +251,14 @@ if __name__ == "__main__":
         True,  # useClassicElem
         1e-6    # accuracy
     )
+
+
+@pytest.mark.parametrize("inclination,message", [
+    (np.arccos(1/np.sqrt(5)), "invalid mean-element mapping"),
+    (np.pi-np.arccos(1/np.sqrt(5)), "invalid mean-element mapping"),
+    (np.pi, "retrograde equator"),
+])  # [rad]
+def test_equinoctial_rejects_singular_domain(inclination, message):
+    """An unsupported conversion must stop the controller instead of producing a NaN force."""
+    with pytest.raises(bskLogging.BasiliskError, match=message):
+        _equinoctial_force(0.1, inclination, orbitalMotion.J2_EARTH, 0.3, 0.3)

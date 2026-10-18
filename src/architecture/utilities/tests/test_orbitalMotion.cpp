@@ -1032,6 +1032,103 @@ TEST(OrbitalMotion, classicElementsToMeanElements)
     EXPECT_NEAR_REL(elements_p.f, 0.19982315726261962174348241205735, orbitalElementsAccuracy);
 }
 
+/** @brief Compare both equatorial orientations with an independent planar limit. */
+TEST(OrbitalMotion, meanOscEquatorial)
+{
+    // Planar-limit references: delta(a)/a = 2*gamma*(a_r^3-eta^-3),
+    // delta(mean longitude) = 3*gamma/eta^4*(f-M+e*sin(f)).
+    // Eccentricity and mean anomaly are recovered from (e+delta(e), e*delta(M)).
+    const double expectedR[2][3] = { { 4499.199053733382, 5668.85695301761, 0.0 },
+                                     { 4488.47581038344, 5657.032670656745, 0.0 } }; // [km]
+    const double expectedV[2][3] = { { -5.950694310784638, 4.990389813133058, 0.0 },
+                                     { -5.964686867945799, 5.000352990770512, 0.0 } }; // [km/s]
+    for (int direction : { -1, 1 }) {
+        const int index = (direction + 1) / 2;
+        for (bool retrograde : { false, true }) {
+            ClassicElements elements = {};
+            elements.a = 8000.0; // [km]
+            elements.e = 0.1;
+            elements.i = retrograde ? M_PI : 0.0;     // [rad]
+            elements.Omega = retrograde ? -0.2 : 0.2; // [rad]
+            elements.omega = 0.4;                     // [rad]
+            elements.f = 0.3;                         // [rad]
+            ClassicElements mapped = {};
+            clMeanOscMap(REQ_EARTH, J2_EARTH, &elements, &mapped, direction);
+            EXPECT_DOUBLE_EQ(mapped.i, elements.i);
+            double position[3], velocity[3];
+            elem2rv(MU_EARTH, &mapped, position, velocity);
+            for (int component = 0; component < 3; ++component) {
+                const double reflection = retrograde && component == 1 ? -1.0 : 1.0;
+                EXPECT_NEAR(position[component], reflection * expectedR[index][component], 2e-10); // [km]
+                EXPECT_NEAR(velocity[component], reflection * expectedV[index][component], 2e-13); // [km/s]
+            }
+        }
+    }
+}
+
+/** @brief Preserve the exact unwrapped elements when J2 vanishes, including aliasing. */
+TEST(OrbitalMotion, meanOscZeroJ2)
+{
+    const double inclinations[] = { 0.0, 1e-12, std::acos(1.0 / std::sqrt(5.0)), M_PI - 1e-12, M_PI }; // [rad]
+    for (double inclination : inclinations) {
+        for (double direction : { -1.0, 1.0 }) {
+            ClassicElements elements = {};
+            elements.a = 8000.0; // [km]
+            elements.e = 0.1;
+            elements.i = inclination;
+            elements.Omega = 0.2;          // [rad]
+            elements.omega = 0.4;          // [rad]
+            elements.f = 8.0 * M_PI + 0.3; // [rad]
+            ClassicElements mapped = {};
+            clMeanOscMap(REQ_EARTH, 0.0, &elements, &mapped, direction);
+            EXPECT_DOUBLE_EQ(mapped.a, elements.a);
+            EXPECT_DOUBLE_EQ(mapped.e, elements.e);
+            EXPECT_DOUBLE_EQ(mapped.i, elements.i);
+            EXPECT_DOUBLE_EQ(mapped.Omega, elements.Omega);
+            EXPECT_DOUBLE_EQ(mapped.omega, elements.omega);
+            EXPECT_DOUBLE_EQ(mapped.f, elements.f);
+            clMeanOscMap(REQ_EARTH, 0.0, &mapped, &mapped, direction);
+            EXPECT_DOUBLE_EQ(mapped.f, elements.f);
+            EXPECT_DOUBLE_EQ(mapped.i, elements.i);
+        }
+    }
+}
+
+/** @brief Whole turns must not change the mapped state in either direction or hemisphere. */
+TEST(OrbitalMotion, meanOscRevolutions)
+{
+    const double inclinations[] = { 0.0, 1e-8, 0.7, M_PI - 1e-8, M_PI };             // [rad]
+    const double anomalies[] = { 0.0, 0.3, -0.3, M_PI - 1e-10, M_PI, M_PI + 1e-10 }; // [rad]
+    for (double inclination : inclinations) {
+        for (double direction : { -1.0, 1.0 }) {
+            for (double anomaly : anomalies) {
+                ClassicElements elements = {};
+                elements.a = 8000.0; // [km]
+                elements.e = 0.1;
+                elements.i = inclination;
+                elements.Omega = 0.2; // [rad]
+                elements.omega = 0.4; // [rad]
+                elements.f = anomaly;
+                ClassicElements mapped = {};
+                clMeanOscMap(REQ_EARTH, J2_EARTH, &elements, &mapped, direction);
+                double referenceR[3], referenceV[3];
+                elem2rv(MU_EARTH, &mapped, referenceR, referenceV);
+                for (int turns : { -100, -2, -1, 1, 2, 100 }) {
+                    ClassicElements wrapped = elements;
+                    wrapped.f += turns * 2.0 * M_PI; // [rad]
+                    clMeanOscMap(REQ_EARTH, J2_EARTH, &wrapped, &wrapped, direction);
+                    double position[3], velocity[3];
+                    elem2rv(MU_EARTH, &wrapped, position, velocity);
+                    for (int component = 0; component < 3; ++component) {
+                        EXPECT_NEAR(position[component], referenceR[component], 3e-8);  // [km]
+                        EXPECT_NEAR(velocity[component], referenceV[component], 3e-11); // [km/s]
+                    }
+                }
+            }
+        }
+    }
+}
+
 TEST(OrbitalMotion, classicElementsToEquinoctialElements)
 {
     ClassicElements elements;
@@ -1051,4 +1148,145 @@ TEST(OrbitalMotion, classicElementsToEquinoctialElements)
     EXPECT_NEAR(elements_eq.Q2, 0.09920802187229026125603326136115, orbitalElementsAccuracy);
     EXPECT_NEAR_REL(elements_eq.l, 0.78093005232114087732497864635661, orbitalElementsAccuracy);
     EXPECT_NEAR_REL(elements_eq.L, 0.85000000000000008881784197001252, orbitalElementsAccuracy);
+}
+
+/** @brief Reject undefined Hill planes and invalid deputy states at every C entry point. */
+TEST(OrbitalMotion, hillInvalidDomains)
+{
+    const double chiefs[][6] = {
+        { 0, 0, 0, 0, 1, 0 },
+        { 1, 0, 0, 0, 0, 0 },
+        { 1, 0, 0, 1, 0, 0 },
+        { 1, 0, 0, -1, 0, 0 },
+        { 1, 0, 0, 1, 1e-16, 0 },
+        { std::numeric_limits<double>::quiet_NaN(), 0, 0, 0, 1, 0 },
+        { 1, 0, 0, 0, std::numeric_limits<double>::infinity(), 0 }
+    };                                // Position [L], velocity [L/s].
+    double relative[3] = { 1, 2, 3 }; // [L]
+    double velocity[3] = {};          // [L/s]
+    for (const auto& chief : chiefs) {
+        double position[3], speed[3], frame[3][3], outputR[3], outputV[3];
+        for (int index = 0; index < 3; index++) {
+            position[index] = chief[index];
+            speed[index] = chief[index + 3];
+        }
+        hillFrameChecked(position, speed, frame);
+        for (const auto& row : frame) {
+            for (double entry : row) {
+                EXPECT_TRUE(std::isnan(entry));
+            }
+        }
+        for (auto transform : { hill2rvChecked, rv2hillChecked }) {
+            transform(position, speed, relative, velocity, outputR, outputV);
+            for (int index = 0; index < 3; index++) {
+                EXPECT_TRUE(std::isnan(outputR[index]));
+                EXPECT_TRUE(std::isnan(outputV[index]));
+            }
+        }
+    }
+    for (auto transform : { hill2rvChecked, rv2hillChecked }) {
+        for (int argument : { 0, 1 }) {
+            double position[3] = { 7000, 0, 0 }; // [km]
+            double speed[3] = { 0, 7, 0 };       // [km/s]
+            double deputyR[3] = { 1, 2, 3 };     // [km]
+            double deputyV[3] = {};              // [km/s]
+            (argument == 0 ? deputyR : deputyV)[1] = std::numeric_limits<double>::quiet_NaN();
+            double outputR[3], outputV[3];
+            transform(position, speed, deputyR, deputyV, outputR, outputV);
+            for (int index = 0; index < 3; index++) {
+                EXPECT_TRUE(std::isnan(outputR[index]));
+                EXPECT_TRUE(std::isnan(outputV[index]));
+            }
+        }
+    }
+}
+
+/** @brief Hill geometry and rotating-frame velocity must not depend on distance scaling. */
+TEST(OrbitalMotion, hillScaledRoundTrip)
+{
+    for (double scale : { 1e-200, 1.0, 1e160 }) {
+        double position[3] = { 7000 * scale, 0, 0 };                           // [L]
+        double velocity[3] = { scale, 0, 7 * scale };                          // [L/s]
+        double relative[3] = { 2 * scale, 3 * scale, 4 * scale };              // [L]
+        double relativeRate[3] = { 0.01 * scale, 0.02 * scale, 0.03 * scale }; // [L/s]
+        double deputyR[3], deputyV[3], recoveredR[3], recoveredV[3], frame[3][3];
+        hillFrame(position, velocity, frame);
+        EXPECT_NEAR(frame[0][0], 1.0, 1e-15);
+        EXPECT_NEAR(frame[1][2], 1.0, 1e-15);
+        EXPECT_NEAR(frame[2][1], -1.0, 1e-15);
+        hill2rv(position, velocity, relative, relativeRate, deputyR, deputyV);
+        const double expectedR[3] = { 7002.0, -4.0, 3.0 };   // [L/scale]
+        const double expectedV[3] = { 1.007, -0.03, 7.022 }; // [L/s/scale]
+        rv2hill(position, velocity, deputyR, deputyV, recoveredR, recoveredV);
+        for (int index = 0; index < 3; index++) {
+            EXPECT_NEAR(deputyR[index] / scale, expectedR[index], 2e-12);
+            EXPECT_NEAR(deputyV[index] / scale, expectedV[index], 2e-14);
+            EXPECT_NEAR(recoveredR[index] / scale, relative[index] / scale, 2e-12);
+            EXPECT_NEAR(recoveredV[index] / scale, relativeRate[index] / scale, 2e-14);
+        }
+    }
+}
+
+/** @brief Native compatibility entry points retain their old rejected-domain results. */
+TEST(OrbitalMotion, legacyDomainFallbacks)
+{
+    double position[3] = { 7000.0, 0.0, 0.0 }; // [km]
+    double velocity[3] = {};                   // [km/s]
+    double frame[3][3];
+    hillFrame(position, velocity, frame);
+    EXPECT_DOUBLE_EQ(frame[0][0], 1.0);
+    for (int row = 1; row < 3; row++) {
+        for (double value : frame[row]) {
+            EXPECT_DOUBLE_EQ(value, 0.0);
+        }
+    }
+    ClassicElements elements = {};
+    elements.a = 8000.0; // [km]
+    elements.e = 0.1;
+    elements.i = M_PI; // [rad]
+    equinoctialElements output;
+    clElem2eqElem(&elements, &output);
+    EXPECT_DOUBLE_EQ(output.Q2, tan(M_PI / 2.0));
+    clElem2eqElemChecked(&elements, &output);
+    EXPECT_TRUE(std::isnan(output.Q2));
+    elements.i = 0.7; // [rad]
+    elements.f = 0.3; // [rad]
+    ClassicElements mapped = {};
+    mapped.rmag = 42.0; // [km]; verify auxiliary output fields are untouched.
+    clMeanOscMap(REQ_EARTH, J2_EARTH, &elements, &mapped, 0);
+    EXPECT_DOUBLE_EQ(mapped.a, elements.a);
+    EXPECT_NEAR(mapped.f, elements.f, 2e-15);
+    EXPECT_DOUBLE_EQ(mapped.rmag, 42.0);
+    elements.rmag = 42.0; // [km]
+    clMeanOscMap(REQ_EARTH, J2_EARTH, &elements, &elements, 0);
+    EXPECT_NEAR(elements.f, mapped.f, 2e-15);
+    EXPECT_DOUBLE_EQ(elements.rmag, 42.0);
+}
+
+/** @brief Inclination validation is intentional and applies to all public element converters. */
+TEST(OrbitalMotion, inclinationInterval)
+{
+    ClassicElements elements = {};
+    elements.a = 8000.0; // [km]
+    elements.e = 0.1;
+    for (double inclination : { -0.1, M_PI + 0.1, -2 * M_PI, 2 * M_PI }) { // [rad]
+        elements.i = inclination;
+        double position[3], velocity[3];
+        elem2rv(MU_EARTH, &elements, position, velocity);
+        EXPECT_TRUE(std::isnan(position[0]));
+        EXPECT_TRUE(std::isnan(velocity[0]));
+        ClassicElements mapped = {};
+        clMeanOscMap(REQ_EARTH, J2_EARTH, &elements, &mapped, 1);
+        EXPECT_TRUE(std::isnan(mapped.a));
+        equinoctialElements output;
+        clElem2eqElem(&elements, &output);
+        EXPECT_TRUE(std::isnan(output.a));
+    }
+    for (double inclination : { 0.0, M_PI }) { // [rad]
+        elements.i = inclination;
+        double position[3], velocity[3];
+        elem2rv(MU_EARTH, &elements, position, velocity);
+        EXPECT_TRUE(std::isfinite(position[0]));
+        EXPECT_TRUE(std::isfinite(velocity[0]));
+    }
 }
