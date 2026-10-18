@@ -23,7 +23,31 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/stateExtrapolation.h"
 #include <algorithm>
+#include <cmath>
 #include <iostream>
+
+namespace {
+/*! @brief Evaluate the circular-segment area divided by its squared radius.
+ * @param angle Half the segment's central angle [rad], in [0, pi].
+ * @return Dimensionless segment factor, angle - sin(angle)*cos(angle).
+ */
+double circularSegmentFactor(double angle)
+{
+    const double smallAngle = 0.1; // [rad]
+    if (angle >= smallAngle) {
+        return angle - std::sin(angle) * std::cos(angle);
+    }
+    // Expand through angle^11 to avoid cancellation for a shallow segment.
+    const double square = angle * angle;
+    double term = (2.0 / 3.0) * angle * square;
+    double factor = term;
+    for (int index = 2; index <= 5; ++index) {
+        term *= -4.0 * square / ((2 * index) * (2 * index + 1));
+        factor += term;
+    }
+    return factor;
+}
+} // namespace
 
 Eclipse::Eclipse()
 {
@@ -223,23 +247,33 @@ double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d 
     double normS_BP_N = s_BP_N.norm();
     double a = safeAsin(REQ_SUN * 1000 / normR_HB_N); // apparent radius of sun
     double b = safeAsin(planetRadius / normS_BP_N);   // apparent radius of occulting body
-    double c = safeAcos((-s_BP_N.dot(r_HB_N)) / (normS_BP_N * normR_HB_N));
+    const Eigen::Vector3d sunDirection = r_HB_N / normR_HB_N;
+    const Eigen::Vector3d planetDirection = -s_BP_N / normS_BP_N;
+    // atan2 retains the angular separation when the disk centers nearly align.
+    double c = std::atan2(sunDirection.cross(planetDirection).norm(), sunDirection.dot(planetDirection));
 
     // The order of these conditionals is important.
     // In particular (c < a + b) must check last to avoid testing
     // with implausible a, b and c values
-    if (c < b - a) { // total eclipse, implying a < b
+    if (c <= b - a) { // total eclipse, including internal tangency and coincident equal disks
         illuminationFraction = 0.0;
-    } else if (c < a - b) {  // annular eclipse: the disk of the body is inside the solar disk, implying a > b
+    } else if (c <= a - b) { // annular eclipse, including internal tangency
         area = M_PI * b * b; // occulted area of the solar disk
         illuminationFraction = 1 - area / (M_PI * a * a);
     } else if (c < a + b) { // partial eclipse
-        double x = (c * c + a * a - b * b) / (2 * c);
-        double y = sqrt(std::max(0.0, a * a - x * x)); // guard against rounding at the annular/partial boundary
-        area = a * a * safeAcos(x / a) + b * b * safeAcos((c - x) / b) - c * y;
+        const double small = std::min(a, b);
+        const double large = std::max(a, b);
+        // Measure the common chord from the smaller disk. Factor c^2-large^2
+        // so a small solar disk does not lose precision against a large planet.
+        const double x = std::clamp(((c - large) * (c + large) + small * small) / (2.0 * c), -small, small);
+        const double y = std::sqrt(std::max(0.0, (small - x) * (small + x)));
+        const double smallAngle = std::atan2(y, x);
+        const double largeAngle = std::atan2(y, c - x);
+        // Add two segment areas without subtracting large sector/triangle terms.
+        area = small * small * circularSegmentFactor(smallAngle) + large * large * circularSegmentFactor(largeAngle);
         illuminationFraction = 1 - area / (M_PI * a * a);
     }
-    return illuminationFraction;
+    return std::clamp(illuminationFraction, 0.0, 1.0);
 }
 
 /*!
