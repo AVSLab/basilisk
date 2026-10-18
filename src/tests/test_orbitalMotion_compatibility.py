@@ -189,6 +189,30 @@ def test_signed_legacy_adapter_angles(eccentricity):
         np.testing.assert_allclose(actual, expected, rtol=5e-15, atol=1e-11)
 
 
+@pytest.mark.parametrize("body", ["SUN", "PLUTO"])
+def test_legacy_zero_zonal_sentinel(body):
+    """Existing None checks continue to work, even before position/degree validation."""
+    assert om.jPerturb(None, None, "CELESTIAL_" + body) is None
+    np.testing.assert_array_equal(om.jPerturb([7000.0, 0.0, 0.0], 2, "CELESTIAL_" + body, strict=True),
+                                  np.zeros(3))  # [km], [km/s^2]
+
+
+@pytest.mark.parametrize("body", ["PHOBOS", "DEIMOS", "TYPO"])
+def test_legacy_unknown_body_fallback(body):
+    """Retain the historical Earth fallback for unknown body names."""
+    position = [7000.0, 0.0, 0.0]  # [km]
+    actual = om.jPerturb(position, 2, "CELESTIAL_" + body)
+    np.testing.assert_array_equal(actual, om.jPerturb(position, 2, strict=True))
+
+
+@pytest.mark.parametrize("degree", [2.0, 2.5, np.float64(5.9)])
+def test_legacy_degree_cutoff(degree):
+    """Historically accepted floating cutoffs retain their integer-degree sum."""
+    position = [7000.0, 50.0, 100.0]  # [km]
+    actual = om.jPerturb(position, degree)
+    np.testing.assert_array_equal(actual, om.jPerturb(position, int(degree), strict=True))
+
+
 def test_legacy_hill_sentinels():
     """Keep historical partially finite frames while exposing a checked alternative."""
     position = np.array([7000.0, 0.0, 0.0])  # [km]

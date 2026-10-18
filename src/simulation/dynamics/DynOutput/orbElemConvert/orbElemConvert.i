@@ -33,7 +33,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "architecture/utilities/orbitalMotion.h"
+%include "swig_orbitalMotion.swg"
 %include "orbElemConvert.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

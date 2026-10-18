@@ -114,10 +114,34 @@ extern "C"
     double debyeLength(double alt);
     void atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, double* advec);
     void jPerturb(double* rvec, int num, double* ajtot, ...);
+    void jPerturbEarth(double* rvec, int num, double* ajtot);
+    void jPerturbLegacy(double* rvec, int num, double* ajtot, int planetID);
+    void jPerturbForPlanet(double* rvec, int num, double* ajtot, CelestialObject_t planetID);
     void solarRad(double A, double m, double* sunvec, double* arvec);
 
 #ifdef __cplusplus
 }
 #endif
 
+/* Preserve three- and four-argument source calls without reading absent varargs.
+ * The bare jPerturb symbol/function pointer retains its historical FOUR-argument
+ * requirement. Use jPerturbEarth for a fixed three-argument function pointer.
+ * Both source call forms remain supported.
+ */
+#ifndef SWIG
+/**
+ * @brief Header adapter for three- and four-argument jPerturb source calls.
+ * @param rvec Position [km].
+ * @param num Maximum zonal degree.
+ * @param ajtot Output acceleration [km/s^2].
+ * @param planetID Explicit planet or the Earth default appended by the macro.
+ * @note Trailing arguments are ignored. Forwarding the complete argument list
+ * avoids counting commas inside C compound literals or C++ braced initializers.
+ */
+static inline void bskJPerturbDispatch(double* rvec, int num, double* ajtot, int planetID, ...)
+{
+    jPerturbLegacy(rvec, num, ajtot, planetID);
+}
+#define jPerturb(...) bskJPerturbDispatch(__VA_ARGS__, CELESTIAL_EARTH)
+#endif
 #endif

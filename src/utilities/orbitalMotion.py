@@ -20,10 +20,11 @@
 
 # import required modules:
 import math
+from typing import Optional, Tuple
 
 import numpy as np
 from numpy import linalg as la
-from typing import Tuple
+
 
 
 
@@ -736,189 +737,164 @@ def debyeLength(alt: float) -> float:
 
 
 def atmosphericDrag(Cd: float, A: float, m: float, rvec: np.ndarray, vvec: np.ndarray) -> np.ndarray:
+    """Estimate Earth's drag acceleration opposite the supplied velocity.
+
+    The atmosphere is assumed at rest in the input inertial frame; no rotation
+    or wind correction is applied. The :func:`atmosphericDensity` fit is valid
+    from 100 to 1000 km. Positive altitudes below this range are extrapolated;
+    above 1000 km its existing exponential tail is retained without a cutoff.
+
+    Zero speed, area, coefficient, or computed density gives a zero vector
+    after input validation. Acceleration underflow is allowed. Inputs are not
+    modified; sequences and NumPy arrays with shape ``(3,)`` are accepted.
+
+    :param Cd: finite, nonnegative drag coefficient (dimensionless)
+    :param A: finite, nonnegative projected area (m^2)
+    :param m: finite, positive spacecraft mass (kg)
+    :param rvec: finite inertial position three-vector above Earth's equatorial radius (km)
+    :param vvec: finite inertial velocity three-vector (km/s)
+    :return: drag acceleration in the input frame (km/s^2), as a NumPy three-vector
+    :raises ValueError: for invalid inputs, unrepresentable norms, or acceleration overflow
     """
-     This program computes the atmospheric drag acceleration
-     vector acting on a spacecraft.
-     Note the acceleration vector output is inertial, and is
-     only valid for altitudes up to 1000 km.
-     Afterwards the drag force is zero. Only valid for Earth.
+    try:
+        if any(np.iscomplexobj(value) for value in (Cd, A, m, rvec, vvec)):
+            raise ValueError("complex inputs")
+        Cd, A, m = float(Cd), float(A), float(m)
+        rvec = np.asarray(rvec, dtype=float)
+        vvec = np.asarray(vvec, dtype=float)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError("atmosphericDrag() requires real scalar parameters and real three-vectors") from error
+    if not all(math.isfinite(value) for value in (Cd, A, m)) or Cd < 0.0 or A < 0.0 or m <= 0.0:
+        raise ValueError("atmosphericDrag() requires finite Cd >= 0, A >= 0 and m > 0")
+    if (rvec.shape != (3,) or vvec.shape != (3,)
+            or not np.all(np.isfinite(rvec)) or not np.all(np.isfinite(vvec))):
+        raise ValueError("atmosphericDrag() requires finite position and velocity vectors with shape (3,)")
+    radius = math.hypot(*rvec)
+    speed = math.hypot(*vvec)
+    if not math.isfinite(radius) or not math.isfinite(speed) or radius <= REQ_EARTH:
+        raise ValueError("atmosphericDrag() requires finite vector norms and positive altitude above Earth")
+    if Cd == 0.0 or A == 0.0 or speed == 0.0:
+        return np.zeros(3)
+    density = atmosphericDensity(radius - REQ_EARTH)
+    if density == 0.0:
+        return np.zeros(3)
 
-     :param Cd:  drag coefficient of the spacecraft
-     :param A: cross-sectional area of the spacecraft in m^2
-     :param m: mass of the spacecraft in kg
-     :param rvec: Inertial position vector of the spacecraft in km  [x;y;z]
-     :param vvec: Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
-     :return: The inertial acceleration vector due to atmospheric drag in km/sec^2
+    # a = -0.5*km_to_m*density*Cd*A/m*|v|*v: no division by speed.
+    # Separate powers of two to avoid intermediate overflow and underflow.
+    km_to_m = 1000.0  # [m/km]
+    mantissa = 1.0
+    exponent = 0
+    for factor in (0.5 * km_to_m, density, Cd, A, speed):
+        fraction, factor_exponent = math.frexp(factor)
+        mantissa *= fraction
+        exponent += factor_exponent
+    mass_fraction, mass_exponent = math.frexp(m)
+    mantissa /= mass_fraction
+    exponent -= mass_exponent
+    acceleration = np.empty(3)
+    try:
+        for index, component in enumerate(vvec):
+            fraction, velocity_exponent = math.frexp(component)
+            acceleration[index] = math.ldexp(-mantissa * fraction, exponent + velocity_exponent)
+    except OverflowError as error:
+        raise ValueError("atmosphericDrag() acceleration is outside the finite numerical range") from error
+    return acceleration
+
+
+def jPerturb(rvec: np.ndarray, num: int, planet: str = 'CELESTIAL_EARTH', *, strict: bool = False) -> Optional[np.ndarray]:
+    """Compute a body's zonal perturbation acceleration through degree ``num``.
+
+    Earth includes J2 through J6. Mercury, Venus, Moon, Mars, Jupiter, Saturn,
+    Uranus and Neptune include J2 only. Sun and Pluto use a zero-zonal
+    approximation and return a zero vector with ``strict=True``. Phobos, Deimos and unknown body
+    names are unsupported by ``strict=True``. The default retains the original
+    Earth fallback, ``None`` for Sun/Pluto, and fractional-degree truncation.
+
+    This external gravity expansion is intended for positions outside the
+    body's reference radius; the surface boundary is not enforced. The input
+    frame must be planet-centered, with its z axis along the spin axis.
+    Central gravity, tesseral terms and other forces are not included.
+    With ``strict=True``, all inputs are validated, including zero-zonal models.
+
+    :param rvec: finite, nonzero position vector with shape (3,), in kilometers
+    :param num: integer maximum included degree, from 2 through 6 (inclusive)
+    :param planet: body name prefixed by ``CELESTIAL_``; defaults to Earth
+    :param strict: opt in to checked body/degree selection and zero-vector Sun/Pluto
+        results; the default preserves the original dispatch behavior
+    :return: perturbation acceleration in the input frame, in km/s^2, or the legacy
+        ``None`` sentinel for Sun/Pluto when ``strict=False``
+    :raises ValueError: for invalid inputs, unsupported bodies or nonfinite results
     """
-    # find the altitude and velocity #
-    r = la.norm(rvec)
-    v = la.norm(vvec)
-    alt = r - REQ_EARTH
-    advec = np.zeros(3)
+    if not strict:
+        if planet in ('CELESTIAL_SUN', 'CELESTIAL_PLUTO'):
+            return None
+        supported = ('MERCURY', 'VENUS', 'EARTH', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'URANUS', 'NEPTUNE')
+        if planet not in tuple('CELESTIAL_' + body for body in supported):
+            planet = 'CELESTIAL_EARTH'
+        if not isinstance(num, (int, np.integer)) and isinstance(num, (float, np.floating)) and 2 <= num <= 6:
+            num = int(num)
+    if isinstance(num, (bool, np.bool_)) or not isinstance(num, (int, np.integer)) or not 2 <= num <= 6:
+        raise ValueError("jPerturb() requires an integer degree from 2 through 6")
+    rvec = np.asarray(rvec, dtype=float)
+    if rvec.shape != (3,) or not np.all(np.isfinite(rvec)):
+        raise ValueError("jPerturb() requires a finite position vector with shape (3,)")
+    r = math.hypot(*rvec)
+    if not math.isfinite(r) or r <= 0.0:
+        raise ValueError("jPerturb() requires a finite nonzero radius")
+    if not isinstance(planet, str):
+        raise ValueError("jPerturb() requires a CELESTIAL_ body name")
+    if planet in ('CELESTIAL_SUN', 'CELESTIAL_PLUTO'):
+        return np.zeros(3)
 
-    # Checking if user supplied a orbital position is insede the earth #
-    if alt <= 0.:
-        print("ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
-            format(str(rvec[1]), str(rvec[2]), str(rvec[3])))
-        print('The value of rvec should produce a positive altitude for the Earth.')
-        advec.fill(np.nan)
-        return
+    # Each model contains mu [km^3/s^2], reference radius [km], and J coefficients [-].
+    models = {
+        'CELESTIAL_MERCURY': (MU_MERCURY, REQ_MERCURY, (J2_MERCURY,)),
+        'CELESTIAL_VENUS': (MU_VENUS, REQ_VENUS, (J2_VENUS,)),
+        'CELESTIAL_EARTH': (MU_EARTH, REQ_EARTH, (J2_EARTH, J3_EARTH, J4_EARTH, J5_EARTH, J6_EARTH)),
+        'CELESTIAL_MOON': (MU_MOON, REQ_MOON, (J2_MOON,)),
+        'CELESTIAL_MARS': (MU_MARS, REQ_MARS, (J2_MARS,)),
+        'CELESTIAL_JUPITER': (MU_JUPITER, REQ_JUPITER, (J2_JUPITER,)),
+        'CELESTIAL_SATURN': (MU_SATURN, REQ_SATURN, (J2_SATURN,)),
+        'CELESTIAL_URANUS': (MU_URANUS, REQ_URANUS, (J2_URANUS,)),
+        'CELESTIAL_NEPTUNE': (MU_NEPTUNE, REQ_NEPTUNE, (J2_NEPTUNE,)),
+    }
+    if planet not in models:
+        raise ValueError(f"jPerturb() unsupported body {planet!r}")
+    mu, req, coefficients = models[planet]
+    J2, J3, J4, J5, J6 = coefficients + (0.0,) * (5 - len(coefficients))
+    x, y, z = rvec
 
-    # get the Atmospheric density at the given altitude in kg/m^3 #
-    density = atmosphericDensity(alt)
-
-    # compute the magnitude of the drag acceleration #
-    ad = ((-0.5) * density * (Cd * A / m) * (math.pow(v * 1000., 2))) / 1000.
-
-    # computing the vector for drag acceleration #
-    advec = (ad / v) * vvec
-
-    return advec
-
-
-def jPerturb(rvec: np.ndarray, num: int, planet:str) -> np.ndarray:
-    """
-    Computes the J2_EARTH-J6_EARTH zonal gravitational perturbation
-    accelerations.
-
-    :param rvec: Cartesian Position vector in kilometers [x;y;z].
-    :param num: Corresponds to which J components to use,
-                must be an integer between 2 and 6.
-                (note: Additive- 2 corresponds to J2_EARTH while 3 will
-                correspond to J2_EARTH + J3_EARTH)
-    :param planet: planet variable, can be
-                 CELESTIAL_MERCURY
-                 CELESTIAL_VENUS
-                 CELESTIAL_EARTH
-                 CELESTIAL_MOON
-                 CELESTIAL_MARS
-                 CELESTIAL_JUPITER
-                 CELESTIAL_URANUS
-                 CELESTIAL_NEPTUNE
-    :return: ajtot, The total acceleration vector due to the J
-                    perturbations in km/sec^2 [accelx;accely;accelz]
-    """
-
-    ajtot = np.zeros(3)
-
-    # default #
-    mu = MU_EARTH
-    req = REQ_EARTH
-    J2 = J2_EARTH
-    J3 = J3_EARTH
-    J4 = J4_EARTH
-    J5 = J5_EARTH
-    J6 = J6_EARTH
-
-    if planet == 'CELESTIAL_MERCURY':
-        mu = MU_MERCURY
-        req = REQ_MERCURY
-        J2 = J2_MERCURY
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_VENUS':
-        mu = MU_VENUS
-        req = REQ_VENUS
-        J2 = J2_VENUS
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_MOON':
-        mu = MU_MOON
-        req = REQ_MOON
-        J2 = J2_MOON
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_MARS':
-        mu = MU_MARS
-        req = REQ_MARS
-        J2 = J2_MARS
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_JUPITER':
-        mu = MU_JUPITER
-        req = REQ_JUPITER
-        J2 = J2_JUPITER
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_URANUS':
-        mu = MU_URANUS
-        req = REQ_URANUS
-        J2 = J2_URANUS
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_NEPTUNE':
-        mu = MU_NEPTUNE
-        req = REQ_NEPTUNE
-        J2 = J2_NEPTUNE
-        J3 = 0.0
-        J4 = 0.0
-        J5 = 0.0
-        J6 = 0.0
-    elif planet == 'CELESTIAL_PLUTO':
-        return
-    elif planet == 'CELESTIAL_SUN':
-        return
-
-    # Calculate the J perturbations #
-    x = rvec[0]
-    y = rvec[1]
-    z = rvec[2]
-    r = la.norm(rvec)
-
-    # Error Checking #
-    if num < 2 or num > 6:
-        raise ValueError("ERROR: jPerturb() received num = {}.The value of num should be 2 <= num <= 6.".format(str(num)))
-
-    # Calculating the total acceleration based on user input #
-    if num >= 2:
-        ajtot = np.array([(1.0 - 5.0 * math.pow(z / r, 2.0)) * (x / r),
-                          (1.0 - 5.0 * math.pow(z / r, 2.0)) * (y / r),
-                          (3.0 - 5.0 * math.pow(z / r, 2.0)) * (z / r)])
-        ajtot = (-3.0 / 2.0 * J2 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 2.0)) * ajtot
-    if num >= 3:
-        temp = np.array([5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (x / r),
-                         5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (y / r),
-                         -3.0 * (10.0 * math.pow(z / r, 2.0) - (35.0 / 3.0) * math.pow(z / r, 4.0) - 1.0)])
-        temp2 = (1.0 / 2.0 * J3 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 3.0)) * temp
-        ajtot = ajtot + temp2
-    if num >= 4:
-        temp = np.array([(3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0)) * (x / r),
-                         (3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0)) * (y / r),
-                         (15.0 - 70.0 * math.pow(z / r, 2) + 63.0 * math.pow(z / r, 4.0)) * (z / r)])
-        temp2 = (5.0 / 8.0 * J4 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 4.0)) * temp
-        ajtot = ajtot + temp2
-    if num >= 5:
-        temp = np.array([3.0 * (35.0 * (z / r) - 210.0 * math.pow(z / r, 3.0) + 231.0 * math.pow(z / r, 5.0)) * (x / r),
-                         3.0 * (35.0 * (z / r) - 210.0 * math.pow(z / r, 3.0) + 231.0 * math.pow(z / r, 5.0)) * (y / r),
-                         -(15.0 - 315.0 * math.pow(z / r, 2.0) + 945.0 * math.pow(z / r, 4.0) - 693.0 * math.pow(z / r,
-                                                                                                                 6.0))])
-        temp2 = (1.0 / 8.0 * J5 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 5.0)) * temp
-        ajtot = ajtot + temp2
-    if num >= 6:
-        temp = np.array([(35.0 - 945.0 * math.pow(z / r, 2) + 3465.0 * math.pow(z / r, 4.0) - 3003.0 * math.pow(z / r,
-                                                                                                                6.0)) * (
-                             x / r),
-                         (35.0 - 945.0 * math.pow(z / r, 2.0) + 3465.0 * math.pow(z / r, 4.0) - 3003.0 * math.pow(z / r,
-                                                                                                                  6.0)) * (
-                             y / r),
-                         -(3003.0 * math.pow(z / r, 6.0) - 4851.0 * math.pow(z / r, 4.0) + 2205.0 * math.pow(z / r,
-                                                                                                             2.0) - 245.0) * (
-                             z / r)])
-        temp2 = (-1.0 / 16.0 * J6 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 6.0)) * temp
-        ajtot = ajtot + temp2
-
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            x_r, y_r, z_r = x / r, y / r, z / r
+            ajtot = np.array([(1.0 - 5.0 * z_r**2) * x_r,
+                              (1.0 - 5.0 * z_r**2) * y_r,
+                              (3.0 - 5.0 * z_r**2) * z_r])
+            ajtot *= -1.5 * J2 * (mu / r / r) * (req / r)**2
+            if num >= 3 and J3 != 0.0:
+                temp = np.array([5.0 * (7.0 * z_r**3 - 3.0 * z_r) * x_r,
+                                 5.0 * (7.0 * z_r**3 - 3.0 * z_r) * y_r,
+                                 -3.0 * (10.0 * z_r**2 - (35.0 / 3.0) * z_r**4 - 1.0)])
+                ajtot += 0.5 * J3 * (mu / r / r) * (req / r)**3 * temp
+            if num >= 4 and J4 != 0.0:
+                temp = np.array([(3.0 - 42.0 * z_r**2 + 63.0 * z_r**4) * x_r,
+                                 (3.0 - 42.0 * z_r**2 + 63.0 * z_r**4) * y_r,
+                                 (15.0 - 70.0 * z_r**2 + 63.0 * z_r**4) * z_r])
+                ajtot += (5.0 / 8.0) * J4 * (mu / r / r) * (req / r)**4 * temp
+            if num >= 5 and J5 != 0.0:
+                temp = np.array([3.0 * (35.0 * z_r - 210.0 * z_r**3 + 231.0 * z_r**5) * x_r,
+                                 3.0 * (35.0 * z_r - 210.0 * z_r**3 + 231.0 * z_r**5) * y_r,
+                                 -(15.0 - 315.0 * z_r**2 + 945.0 * z_r**4 - 693.0 * z_r**6)])
+                ajtot += 0.125 * J5 * (mu / r / r) * (req / r)**5 * temp
+            if num >= 6 and J6 != 0.0:
+                temp = np.array([(35.0 - 945.0 * z_r**2 + 3465.0 * z_r**4 - 3003.0 * z_r**6) * x_r,
+                                 (35.0 - 945.0 * z_r**2 + 3465.0 * z_r**4 - 3003.0 * z_r**6) * y_r,
+                                 -(3003.0 * z_r**6 - 4851.0 * z_r**4 + 2205.0 * z_r**2 - 245.0) * z_r])
+                ajtot += (-1.0 / 16.0) * J6 * (mu / r / r) * (req / r)**6 * temp
+    except (OverflowError, FloatingPointError, ZeroDivisionError) as error:
+        raise ValueError("jPerturb() acceleration is outside the finite numerical range") from error
+    if not np.all(np.isfinite(ajtot)):
+        raise ValueError("jPerturb() acceleration is outside the finite numerical range")
     return ajtot
 
 

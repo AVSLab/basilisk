@@ -38,7 +38,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %ignore KeplerianOrbit::operator=;
 %include "keplerianOrbit.h"
-%include "orbitalMotion.h"
+%include "swig_orbitalMotion.swg"
 
 %pythoncode %{
 import sys

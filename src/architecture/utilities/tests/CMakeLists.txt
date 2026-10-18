@@ -6,7 +6,8 @@ add_executable(test_gaussMarkov test_gaussMarkov.cpp)
 target_link_libraries(test_gaussMarkov GTest::gtest_main)
 target_link_libraries(test_gaussMarkov ArchitectureUtilities)
 
-add_executable(test_orbitalMotion test_orbitalMotion.cpp)
+add_executable(test_orbitalMotion test_orbitalMotion.cpp test_orbitalMotion_c.c)
+set_target_properties(test_orbitalMotion PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
 target_link_libraries(test_orbitalMotion GTest::gtest_main)
 target_link_libraries(test_orbitalMotion ArchitectureUtilities)
 
