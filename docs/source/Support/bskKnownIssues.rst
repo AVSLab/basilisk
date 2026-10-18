@@ -7,6 +7,12 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
+- GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
+  components with inertial-frame basis-vector derivatives when computing
+  ``domega_RN_N``. The resulting angular acceleration was incorrect for general
+  reference motion, including the single-body fallback. The zero-valued geometric
+  terms are now omitted; the reference attitude and angular rate are unchanged.
+
 - GitHub issue 1606: The :ref:`groundLocation` module did not subtract the planet velocity of ``planetInMsg``
   from the spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields
   could include spurious contributions from planet translation. The planet velocity is now subtracted before
