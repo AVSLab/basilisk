@@ -970,38 +970,93 @@ def v3Normalize(v: np.ndarray) -> np.ndarray:
     return result
 
 
-def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements, sign: int):
+def clMeanOscMapChecked(req: float, J2: float, oe: ClassicElements, oep: ClassicElements, sign: int):
+    """Apply the first-order J2 mean/osculating element mapping.
+
+    The mapping follows Appendix F of *Analytical Mechanics of Space Systems*,
+    Schaub and Junkins, fourth edition. Inputs must be finite and elliptic,
+    with inclination in [0, pi], and sufficiently far from the critical
+    inclinations where ``1 - 5*cos(i)**2 = 0``. The perturbation must be small;
+    applying the opposite mapping leaves errors of second order in J2.
+
+    Both equatorial limits are supported. Whole revolutions in true anomaly
+    do not change the mapped Cartesian state; output angles need not retain
+    input revolution counts. With ``J2 = 0``, the six classical elements are
+    copied exactly, including their angle branches. Only ``a, e, i, Omega,
+    omega, f`` are written; auxiliary fields are unchanged. Input and output
+    may be the same object.
+
+    :param req: equatorial radius, in the same length unit as ``oe.a``
+    :param J2: dimensionless second zonal harmonic coefficient
+    :param oe: input classical elements, with angles in radians
+    :param oep: output classical elements, with the same units as ``oe``
+    :param sign: +1 for mean to osculating, -1 for osculating to mean
+    :return: None; the mapped elements are written to ``oep``
+    :raises ValueError: for invalid inputs, singular inclinations or invalid outputs
+
+    For nonzero J2, ``abs(1 - 5*cos(i)**2) <= sqrt(machine epsilon)`` is
+    rejected. Mapped elements must remain finite and elliptic. This numerical
+    guard does not establish the accuracy of the perturbation model. On failure,
+    ``oep`` is unchanged. Zero J2 bypasses the critical-inclination guard only.
     """
-    First-order J2 Mapping Between Mean and Osculating Orbital Elements
+    _validate_elliptic_elements(oe)
+    if (not all(math.isfinite(value) for value in (req, J2, sign))
+            or req <= 0.0 or sign not in (-1, 1)):
+        raise ValueError("clMeanOscMap() requires finite req > 0, J2 and sign = +/-1")
+    try:
+        _cl_mean_osc_map(req, J2, oe, oep, sign)
+    except (OverflowError, ZeroDivisionError) as error:
+        raise ValueError("clMeanOscMap() result is outside the finite numerical range") from error
 
-    Analytical Mechanics of Space Systems, Hanspeter Schaub, John L. Junkins, 4th edition.
-    [m] or [km] should be the same both for req and elements.a
 
-    :param req: equatorial radius
-    :param J2:
-    :param oe: classical orbit element set
-    :param oep:
-    :param sign: sgn=1:mean to osc, sgn=-1:osc to mean
+def _validate_elliptic_elements(elements):
+    """Require a finite nonrectilinear ellipse with inclination in [0, pi]."""
+    values = [getattr(elements, field) for field in ("a", "e", "i", "Omega", "omega", "f")]
+    if (not all(value is not None and math.isfinite(value) for value in values)
+            or elements.a <= 0.0 or not 0.0 <= elements.e < 1.0 or not 0.0 <= elements.i <= math.pi):
+        raise ValueError("requires finite elliptic elements with a > 0, 0 <= e < 1 and 0 <= i <= pi")
 
-    """
+
+def _cl_mean_osc_map(req, J2, oe, oep, sign):
+    """Evaluate the validated mapping, writing the output only after success."""
+    if J2 == 0.0:
+        for field in ("a", "e", "i", "Omega", "omega", "f"):
+            setattr(oep, field, getattr(oe, field))
+        return
+
     a       = oe.a
     e       = oe.e
     i       = oe.i
     Omega   = oe.Omega
     omega   = oe.omega
-    f       = oe.f
+    # Reflection across the x-z plane preserves J2 dynamics. Map retrograde
+    # orbits in the reflected prograde frame to avoid loss of inclination
+    # resolution in the sin(i/2) reconstruction near pi.
+    retrograde = i > math.pi / 2.0
+    if retrograde:
+        i = math.pi - i
+        Omega = -Omega
+    if abs(1.0 - 5.0 * math.cos(i)**2) <= math.sqrt(np.finfo(float).eps):
+        raise ValueError("clMeanOscMap() is singular near the critical inclinations")
+    # f, E and M must share a branch before the periodic difference f-M.
+    f       = math.atan2(math.sin(oe.f), math.cos(oe.f))
     E       = f2E(f, e)
     M       = E2M(E, e)
-    gamma2  = sign*J2/2*((req/oe.a)**2)
-    eta     = math.sqrt(1-oe.e*oe.e)
+    gamma2  = sign*J2/2*((req/a)**2)
+    eta     = math.sqrt(1-e*e)
     gamma2p = gamma2/(eta**4)
-    a_r     = (1+oe.e*math.cos(oe.f))/(eta**2)
+    a_r     = (1+e*math.cos(f))/(eta**2)
+    sin_i = math.sin(i)
+    cos_i = math.cos(i)
+    # 1-11*c^2-40*c^4/(1-5*c^2) = sin(i)^2*(1-15*c^2)/(1-5*c^2).
+    # Factoring cancels the removable 1/tan(i) singularity in (F.10).
+    inclination_ratio = (1.0 - 15.0 * cos_i**2) / (1.0 - 5.0 * cos_i**2)
+    inclination_factor = sin_i**2 * inclination_ratio
     # calculate oep.a
-    ap = oe.a + oe.a*gamma2*((3*(math.cos(oe.i))**2-1)*(a_r**3-1/(eta**3)) \
-       +3*(1-(math.cos(oe.i))**2)*(a_r**3)*math.cos(2*oe.omega+2*oe.f))  # (F.7)
+    ap = a + a*gamma2*((3*cos_i**2-1)*(a_r**3-1/(eta**3)) \
+       +3*sin_i**2*(a_r**3)*math.cos(2*omega+2*f))  # (F.7)
 
-    de1 = gamma2p/8*e*(eta**2)*(1-11*((math.cos(i))**2)-40*((math.cos(i)) **4) \
-        /(1-5*((math.cos(i))**2)))*math.cos(2*omega)  # (F.8)
+    de1 = gamma2p/8*e*(eta**2)*inclination_factor*math.cos(2*omega)  # (F.8)
 
     de = de1 + (eta ** 2) / 2 * (gamma2 *((3 * ((math.cos(i)) ** 2) - 1) / (eta ** 6) \
        *(e * eta + e / (1 + eta) + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) \
@@ -1009,11 +1064,11 @@ def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements
        *(e + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) * ((math.cos(f)) ** 3)) * math.cos(2 * omega + 2 * f)) \
        - gamma2p * (1 - ((math.cos(i)) ** 2)) *(3 * math.cos(2 * omega + f) + math.cos(2 * omega + 3 * f)))  # (F.9)
 
-    di = -e*de1/(eta**2)/math.tan(i) + gamma2p/2*math.cos(i)*math.sqrt(1-((math.cos(i))**2)) \
-       *(3*math.cos(2*omega+2*f) + 3*e*math.cos(2*omega+f)+e*math.cos(2*omega+3*f))  # (F.10)
+    di = gamma2p/8*sin_i*cos_i*(-e**2*inclination_ratio*math.cos(2*omega)
+         + 4*(3*math.cos(2*omega+2*f) + 3*e*math.cos(2*omega+f)
+              + e*math.cos(2*omega+3*f)))  # (F.10), including the equatorial limit
 
-    MpopOp = M + omega + Omega + gamma2p / 8 * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) \
-           - 40 *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) \
+    MpopOp = M + omega + Omega + gamma2p / 8 * (eta ** 3) * inclination_factor * math.sin(2 * omega) \
            - gamma2p / 16 * (2 + (e ** 2) - 11 * (2 + 3 * (e ** 2)) * ((math.cos(i)) ** 2) - 40 * (2 + 5 * (e ** 2)) \
            *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2)) - 400 * (e ** 2) * ((math.cos(i)) ** 6) \
            /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
@@ -1024,8 +1079,8 @@ def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements
            - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
            - 3 * e * math.sin(2 * omega + f) - e * math.sin(2 * omega + 3 * f))  # (F.11)
 
-    edM = gamma2p / 8 * e * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) - 40 * ((math.cos(i)) ** 4) \
-        /(1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) - gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
+    edM = gamma2p / 8 * e * (eta ** 3) * inclination_factor * math.sin(2 * omega) \
+        - gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
         * ((a_r * eta) ** 2 + a_r + 1) * math.sin(f) + 3 *(1 - ((math.cos(i)) ** 2)) *((-(a_r * eta) ** 2 - a_r + 1) \
         * math.sin(2 * omega + f) + ((a_r * eta) ** 2 + a_r + 1 / 3) * math.sin(2 * omega + 3 * f)))  # (F.12)
 
@@ -1038,96 +1093,208 @@ def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements
     d2 = (e+de)*math.cos(M) - edM*math.sin(M)  # (F.15)
 
     Mp = math.atan2(d1, d2)  # (F.16)
-    ep = math.sqrt(d1**2+d2**2)  # (F.17)
+    ep = math.hypot(d1, d2)  # (F.17)
 
     d3 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.sin(Omega) + math.sin(i/2)*dOmega*math.cos(Omega)  # (F.18)
     d4 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.cos(Omega) - math.sin(i/2)*dOmega*math.sin(Omega)  # (F.19)
 
     Omegap = math.atan2(d3, d4)  # (F.20)
-    ip = 2*math.asin(np.clip(math.sqrt(d3**2+d4**2), a_min=-1.0, a_max=1.0))  # (F.21)
+    sin_half_ip = math.hypot(d3, d4)
+    if (not all(math.isfinite(value) for value in (ap, ep, sin_half_ip, MpopOp))
+            or ap <= 0.0 or ep >= 1.0 or sin_half_ip > 1.0):
+        raise ValueError("clMeanOscMap() mapped elements are outside the elliptic domain")
+    ip = 2*math.asin(sin_half_ip)  # (F.21)
     omegap = MpopOp - Mp - Omegap  # (F.22)
 
     Ep = M2E(Mp, ep)
     fp = E2f(Ep, ep)
+    if not all(math.isfinite(value) for value in (fp, omegap)):
+        raise ValueError("clMeanOscMap() result is outside the finite numerical range")
 
     oep.a = ap
     oep.e = ep
-    oep.i = ip
-    oep.Omega = Omegap
+    oep.i = math.pi - ip if retrograde else ip
+    oep.Omega = -Omegap if retrograde else Omegap
     oep.omega = omegap
     oep.f = fp
     return
 
 
-def clElem2eqElem(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
+def clElem2eqElemChecked(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
+    """Convert an ellipse to prograde equinoctial elements.
+
+    :param elements_cl: finite classical elements with a > 0, 0 <= e < 1,
+        0 <= i < pi; angles in radians
+    :param elements_eq: output elements, using the input length unit and radians
+    :return: None; writes ``a, P1, P2, Q1, Q2, l, L`` to ``elements_eq``
+    :raises ValueError: for invalid inputs, the retrograde-equatorial singularity,
+        or nonfinite output; the output object is unchanged on failure
+
+    The prograde equator is supported. The retrograde equator is singular:
+    ``cos(i/2) <= 8*machine epsilon`` is rejected. Close to this boundary,
+    the coordinates remain ill-conditioned.
     """
-    conversion
-    from classical orbital elements (a,e,i,Omega,omega,f)
-    to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+    _validate_elliptic_elements(elements_cl)
+    if math.cos(elements_cl.i / 2.0) <= 8.0 * np.finfo(float).eps:
+        raise ValueError("clElem2eqElem() is singular at the retrograde equator")
+    longitude = elements_cl.Omega + elements_cl.omega
+    true_longitude = longitude + elements_cl.f
+    if not math.isfinite(longitude) or not math.isfinite(true_longitude):
+        raise ValueError("clElem2eqElem() longitude is outside the finite numerical range")
+    E = f2E(elements_cl.f, elements_cl.e)
+    M = E2M(E, elements_cl.e)
+    result = (elements_cl.a, elements_cl.e * math.sin(longitude), elements_cl.e * math.cos(longitude),
+              math.tan(elements_cl.i / 2) * math.sin(elements_cl.Omega),
+              math.tan(elements_cl.i / 2) * math.cos(elements_cl.Omega), longitude + M, true_longitude)
+    for field, value in zip(("a", "P1", "P2", "Q1", "Q2", "l", "L"), result):
+        setattr(elements_eq, field, value)
 
-    :param elements_cl: classical elements
-    :return: elements_eq, equinoctial elements
+
+def _finite_three_vector(vector):
+    """Convert a real finite three-vector without silently discarding imaginary parts."""
+    try:
+        if np.iscomplexobj(vector):
+            raise ValueError("complex vector")
+        vector = np.asarray(vector, dtype=float)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError("Hill transformations require real three-vectors") from error
+    if vector.shape != (3,) or not np.all(np.isfinite(vector)):
+        raise ValueError("Hill transformations require finite vectors with shape (3,)")
+    return vector
+
+
+def _hill_geometry(rc_N, vc_N, need_rate=False):
+    """Compute a unit-independent Hill basis and, when needed, its angular rate."""
+    radius = math.hypot(*rc_N)
+    speed = math.hypot(*vc_N)
+    if not math.isfinite(radius) or radius <= 0.0 or not math.isfinite(speed) or speed <= 0.0:
+        raise ValueError("Hill transformations require finite nonzero position and velocity norms")
+    ir = rc_N / radius
+    normal = np.cross(ir, vc_N / speed)
+    sine_angle = math.hypot(*normal)
+    if sine_angle <= 8.0 * np.finfo(float).eps:
+        raise ValueError("Hill transformations require a resolved nonrectilinear orbital plane")
+    ih = normal / sine_angle
+    frame = np.array([ir, np.cross(ih, ir), ih])
+    rate = 0.0  # [rad/s]; unused for the frame alone
+    if need_rate:
+        rate = (speed * sine_angle) / radius
+        if not math.isfinite(rate) or rate <= 0.0:
+            raise ValueError("Hill angular rate is outside the finite numerical range")
+    return frame, rate
+
+
+def hillFrameChecked(rc_N: np.ndarray, vc_N: np.ndarray) -> np.ndarray:
+    """Compute the Hill frame DCM HN for a nonrectilinear chief state.
+
+    :param rc_N: finite inertial position three-vector, in a consistent length unit
+    :param vc_N: finite inertial velocity three-vector, in length units per second
+    :return: DCM mapping inertial frame N components to Hill frame H components
+    :raises ValueError: for invalid or zero vectors, unrepresentable norms, or
+        ``norm(cross(unit(rc_N), unit(vc_N))) <= 8*machine epsilon``
     """
-    elements_eq.a  = elements_cl.a
-    elements_eq.P1 = elements_cl.e * math.sin(elements_cl.Omega + elements_cl.omega)
-    elements_eq.P2 = elements_cl.e * math.cos(elements_cl.Omega + elements_cl.omega)
-    elements_eq.Q1 = math.tan(elements_cl.i / 2) * math.sin(elements_cl.Omega)
-    elements_eq.Q2 = math.tan(elements_cl.i / 2) * math.cos(elements_cl.Omega)
-    E              = f2E(elements_cl.f, elements_cl.e)
-    M              = E2M(E, elements_cl.e)
-    elements_eq.l  = elements_cl.Omega + elements_cl.omega + M
-    elements_eq.L  = elements_cl.Omega + elements_cl.omega + elements_cl.f
-    return
+    return _hill_geometry(_finite_three_vector(rc_N), _finite_three_vector(vc_N))[0]
 
 
-def hillFrame(rc_N: np.ndarray, vc_N: np.ndarray) -> np.ndarray:
+def rv2hillChecked(rc_N: np.ndarray, vc_N: np.ndarray, rd_N: np.ndarray, vd_N: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Express the deputy state relative to the chief in its rotating Hill frame.
+
+    :param rc_N: chief inertial position three-vector, in a consistent length unit
+    :param vc_N: chief inertial velocity three-vector, in length units per second
+    :param rd_N: deputy inertial position three-vector, in the same length unit
+    :param vd_N: deputy inertial velocity three-vector, in the same velocity unit
+    :return: Hill relative position and rotating-frame velocity vectors
+    :raises ValueError: for invalid vectors, an unresolved chief plane (see
+        :func:`hillFrame`), or unrepresentable angular rate or outputs
     """
-    Compute the Hill frame DCM HN
-    :param rc_N: inertial position vector
-    :param vc_N: inertial velocity vector
-    :return: HN: DCM that maps from the inertial frame N to the Hill (i.e. orbit) frame H
-    """
-    ir = rc_N/la.norm(rc_N)
-    h = np.cross(rc_N, vc_N)
-    ih = h / la.norm(h)
-    itheta = np.cross(ih, ir)
-
-    return np.array([ir, itheta, ih])
-
-
-def rv2hill(rc_N: np.ndarray, vc_N: np.ndarray, rd_N: np.ndarray, vd_N: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Express the deputy position and velocity vector as chief by the chief Hill frame.
-
-    :param rc_N: chief inertial position vector
-    :param vc_N: chief inertial velocity vector
-    :param rd_N: chief deputy position vector
-    :param vd_N: chief deputy velocity vector
-    :return: rho_H, rhoPrime_H: Hill frame relative position and velocity vectors
-    """
-
-    HN = hillFrame(rc_N, vc_N)
-    fDot = la.norm(np.cross(rc_N, vc_N))/(la.norm(rc_N)**2)
-    omega_HN_H = np.array([0, 0, fDot])
-    rho_H = np.matmul(HN, rd_N - rc_N)
-    rhoPrime_H = np.matmul(HN, vd_N - vc_N) - np.cross(omega_HN_H, rho_H)
+    rc_N, vc_N, rd_N, vd_N = map(_finite_three_vector, (rc_N, vc_N, rd_N, vd_N))
+    HN, rate = _hill_geometry(rc_N, vc_N, need_rate=True)
+    with np.errstate(over="ignore", invalid="ignore"):
+        rho_H = HN @ (rd_N - rc_N)
+        rhoPrime_H = HN @ (vd_N - vc_N) - np.cross([0.0, 0.0, rate], rho_H)
+    if not np.all(np.isfinite(rho_H)) or not np.all(np.isfinite(rhoPrime_H)):
+        raise ValueError("rv2hill() outputs are outside the finite numerical range")
     return rho_H, rhoPrime_H
 
 
-def hill2rv(rc_N: np.ndarray, vc_N: np.ndarray, rho_H: np.ndarray, rhoPrime_H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Map the deputy position and velocity vector relative to the chief Hill frame to inertial frame.
+def hill2rvChecked(rc_N: np.ndarray, vc_N: np.ndarray, rho_H: np.ndarray, rhoPrime_H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Map a deputy state in the chief's rotating Hill frame to inertial vectors.
 
-    :param rc_N: chief inertial position vector
-    :param vc_N: chief inertial velocity vector
-    :param rho_H: deputy Hill relative position vector
-    :param rhoPrime_H: deputy Hill relative velocity vector
-    :return:  rd_N, vd_N: Deputy inertial position and velocity vectors
+    :param rc_N: chief inertial position three-vector, in a consistent length unit
+    :param vc_N: chief inertial velocity three-vector, in length units per second
+    :param rho_H: Hill relative position three-vector, in the same length unit
+    :param rhoPrime_H: Hill rotating-frame velocity three-vector, in the same velocity unit
+    :return: deputy inertial position and velocity vectors
+    :raises ValueError: for invalid vectors, an unresolved chief plane (see
+        :func:`hillFrame`), or unrepresentable angular rate or outputs
     """
-
-    NH = hillFrame(rc_N, vc_N).transpose()
-    fDot = la.norm(np.cross(rc_N, vc_N)) / (la.norm(rc_N) ** 2)
-    omega_HN_H = np.array([0, 0, fDot])
-    rd_N = rc_N + np.matmul(NH, rho_H)
-    vd_N = vc_N + np.matmul(NH, rhoPrime_H + np.cross(omega_HN_H, rho_H))
+    rc_N, vc_N, rho_H, rhoPrime_H = map(_finite_three_vector, (rc_N, vc_N, rho_H, rhoPrime_H))
+    HN, rate = _hill_geometry(rc_N, vc_N, need_rate=True)
+    with np.errstate(over="ignore", invalid="ignore"):
+        rd_N = rc_N + HN.T @ rho_H
+        vd_N = vc_N + HN.T @ (rhoPrime_H + np.cross([0.0, 0.0, rate], rho_H))
+    if not np.all(np.isfinite(rd_N)) or not np.all(np.isfinite(vd_N)):
+        raise ValueError("hill2rv() outputs are outside the finite numerical range")
     return rd_N, vd_N
+
+
+def _validate_inclination(inclination):
+    """Enforce the classical inclination interval, including both equators."""
+    if inclination is None or not math.isfinite(inclination) or not 0.0 <= inclination <= math.pi:
+        raise ValueError("Classical inclination must be finite and between 0 and pi radians")
+
+
+def _legacy_domain_call(name, checked, *args):
+    """Keep historical failure behavior while improving supported-domain calculations."""
+    try:
+        return checked(*args)
+    except ValueError:
+        from Basilisk.utilities import _orbitalMotionCompatibility
+        return getattr(_orbitalMotionCompatibility, name)(*args)
+
+
+def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep: ClassicElements, sign: int):
+    """Map mean/osculating elements while preserving historical failure behavior.
+
+    Parameters and supported-domain results are those of :func:`clMeanOscMapChecked`.
+    Inputs rejected by that function use the original formulas, including their
+    historical exceptions or nonfinite results. Use the checked function to opt
+    into explicit domain validation.
+    Inclination must be finite and in [0, pi], including on the legacy path.
+    """
+    _validate_inclination(oe.i)
+    return _legacy_domain_call("clMeanOscMap", clMeanOscMapChecked, req, J2, oe, oep, sign)
+
+
+def clElem2eqElem(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
+    """Convert elements with the compatibility policy described in :func:`clMeanOscMap`.
+
+    Parameters and supported-domain results are those of :func:`clElem2eqElemChecked`.
+    """
+    _validate_inclination(elements_cl.i)
+    return _legacy_domain_call("clElem2eqElem", clElem2eqElemChecked, elements_cl, elements_eq)
+
+
+def hillFrame(rc_N: np.ndarray, vc_N: np.ndarray) -> np.ndarray:
+    """Compute a Hill frame while preserving historical behavior for invalid states.
+
+    Parameters and supported-domain results are those of :func:`hillFrameChecked`.
+    Use the checked function to opt into explicit domain validation.
+    """
+    return _legacy_domain_call("hillFrame", hillFrameChecked, rc_N, vc_N)
+
+
+def rv2hill(rc_N: np.ndarray, vc_N: np.ndarray, rd_N: np.ndarray, vd_N: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Convert to Hill coordinates with the compatibility policy of :func:`hillFrame`.
+
+    Parameters and supported-domain results are those of :func:`rv2hillChecked`.
+    """
+    return _legacy_domain_call("rv2hill", rv2hillChecked, rc_N, vc_N, rd_N, vd_N)
+
+
+def hill2rv(rc_N: np.ndarray, vc_N: np.ndarray, rho_H: np.ndarray, rhoPrime_H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Convert from Hill coordinates with the compatibility policy of :func:`hillFrame`.
+
+    Parameters and supported-domain results are those of :func:`hill2rvChecked`.
+    """
+    return _legacy_domain_call("hill2rv", hill2rvChecked, rc_N, vc_N, rho_H, rhoPrime_H)

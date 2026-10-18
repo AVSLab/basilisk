@@ -73,8 +73,8 @@ void Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, i
     if (configData->req <= 0.0) {
         _bskError(configData->bskLogger, "Error in meanOEFeedback: req must be set to a positive value.");
     }
-    if (configData->J2 <= 0.0) {
-        _bskError(configData->bskLogger, "Error in meanOEFeedback: J2 must be set to a positive value.");
+    if (!isfinite(configData->J2) || configData->J2 < 0.0) {
+        _bskError(configData->bskLogger, "Error in meanOEFeedback: J2 must be finite and nonnegative.");
     }
 
     return;
@@ -125,8 +125,13 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
     rv2elem(configData->mu, deputyTransMsg.r_BN_N, deputyTransMsg.v_BN_N, &oe_cl_osc_d);
     // osculating classic oe to mean classic oe
     ClassicElements oe_cl_mean_c, oe_cl_mean_d;
-    clMeanOscMap(configData->req, configData->J2, &oe_cl_osc_c, &oe_cl_mean_c, -1);
-    clMeanOscMap(configData->req, configData->J2, &oe_cl_osc_d, &oe_cl_mean_d, -1);
+    clMeanOscMapChecked(configData->req, configData->J2, &oe_cl_osc_c, &oe_cl_mean_c, -1);
+    clMeanOscMapChecked(configData->req, configData->J2, &oe_cl_osc_d, &oe_cl_mean_d, -1);
+    if (!isfinite(oe_cl_mean_c.a) || !isfinite(oe_cl_mean_d.a)) {
+        _bskError(configData->bskLogger,
+                  "meanOEFeedback: invalid mean-element mapping; check orbital domain and critical inclinations.");
+        return;
+    }
     // calculate necessary Force in LVLH frame
     double oed[6];
     double B[6][3];
@@ -152,8 +157,13 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
     } else if (configData->oeType == 1) {
         // mean classic oe to mean equinoctial oe
         equinoctialElements oe_eq_mean_c, oe_eq_mean_d;
-        clElem2eqElem(&oe_cl_mean_c, &oe_eq_mean_c);
-        clElem2eqElem(&oe_cl_mean_d, &oe_eq_mean_d);
+        clElem2eqElemChecked(&oe_cl_mean_c, &oe_eq_mean_c);
+        clElem2eqElemChecked(&oe_cl_mean_d, &oe_eq_mean_d);
+        if (!isfinite(oe_eq_mean_c.a) || !isfinite(oe_eq_mean_d.a)) {
+            _bskError(configData->bskLogger,
+                      "meanOEFeedback: invalid equinoctial conversion; the retrograde equator is singular.");
+            return;
+        }
         // calculate equinoctial oed (da,dP1,dP2,dQ1,dQ2,dl)
         oed[0] = (oe_eq_mean_d.a - oe_eq_mean_c.a) / oe_eq_mean_c.a - configData->targetDiffOeMean[0];
         oed[1] = oe_eq_mean_d.P1 - oe_eq_mean_c.P1 - configData->targetDiffOeMean[1];

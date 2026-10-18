@@ -189,6 +189,55 @@ def test_signed_legacy_adapter_angles(eccentricity):
         np.testing.assert_allclose(actual, expected, rtol=5e-15, atol=1e-11)
 
 
+def test_legacy_hill_sentinels():
+    """Keep historical partially finite frames while exposing a checked alternative."""
+    position = np.array([7000.0, 0.0, 0.0])  # [km]
+    velocity = np.zeros(3)  # [km/s]
+    with np.errstate(invalid="ignore"):
+        output = om.hillFrame(position, velocity)
+    np.testing.assert_array_equal(output[0], [1.0, 0.0, 0.0])
+    assert np.isnan(output[1:]).all()
+    with pytest.raises(ValueError):
+        om.hillFrameChecked(position, velocity)
+    for transform in (om.hill2rv, om.rv2hill):
+        with np.errstate(invalid="ignore"):
+            result = transform(position, velocity, position, velocity)
+        expected_position = [0.0, np.nan, np.nan] if transform is om.rv2hill else [np.nan] * 3
+        np.testing.assert_array_equal(result[0], expected_position)
+        assert np.isnan(result[1]).all()
+
+
+def test_legacy_element_domain_fallbacks():
+    """Retain old finite sentinel/zero-map results until callers opt into checked APIs."""
+    elements = _elements(inclination=math.pi)
+    output = om.EquinoctialElements()
+    om.clElem2eqElem(elements, output)
+    assert output.Q2 == pytest.approx(math.tan(elements.i/2) * math.cos(elements.Omega))
+    with pytest.raises(ValueError):
+        om.clElem2eqElemChecked(elements, output)
+    elements.i = 0.7  # [rad]
+    mapped = om.ClassicElements()
+    om.clMeanOscMap(om.REQ_EARTH, om.J2_EARTH, elements, mapped, 0)
+    for field in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(mapped, field) == pytest.approx(getattr(elements, field), abs=2e-15)
+
+
+@pytest.mark.parametrize("inclination", [-0.1, math.pi+0.1, -2*math.pi, 2*math.pi])  # [rad]
+def test_inclination_range_is_enforced(inclination):
+    """The approved inclination constraint applies even to compatibility entry points."""
+    elements = _elements(inclination=inclination)
+    for forward in (om.elem2rv, om.elem2rv_parab):
+        with pytest.raises(ValueError):
+            forward(om.MU_EARTH, elements)
+    with pytest.raises(ValueError):
+        om.clMeanOscMap(om.REQ_EARTH, om.J2_EARTH, elements, om.ClassicElements(), 1)
+    with pytest.raises(ValueError):
+        om.clElem2eqElem(elements, om.EquinoctialElements())
+    native = _elements(keplerianOrbit, inclination=inclination)
+    with pytest.raises(ValueError):
+        keplerianOrbit.KeplerianOrbit(native, om.MU_EARTH)
+
+
 @pytest.mark.parametrize("inclination", [0.0, math.pi])  # [rad]
 def test_inclination_endpoints_remain_valid(inclination):
     """Both equators are valid inclinations; coordinate-specific singularities remain separate."""

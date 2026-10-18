@@ -99,11 +99,16 @@ extern "C"
     void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec);
     void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements);
     void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn);
+    void clMeanOscMapChecked(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn);
     void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq);
+    void clElem2eqElemChecked(ClassicElements* elements_cl, equinoctialElements* elements_eq);
 
     void hillFrame(double* rc_N, double* vc_N, double HN[3][3]);
+    void hillFrameChecked(double* rc_N, double* vc_N, double HN[3][3]);
     void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N);
+    void hill2rvChecked(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N);
     void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H);
+    void rv2hillChecked(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H);
 
     double atmosphericDensity(double alt);
     double debyeLength(double alt);

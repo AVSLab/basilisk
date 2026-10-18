@@ -28,56 +28,70 @@
 #include "astroConstants.h"
 #include "linearAlgebra.h"
 
-/*!
- * Purpose: maps inertial position and velocity vectors in the Hill frame DCM HN
- * Inputs:
- *   rc_N: inertial position vector
- *   vc_N: inertial velocity vector
- * Outputs:
- *   HN: Hill frame DCM relative to inertial frame
- */
-void hillFrame(double* rc_N, double* vc_N, double HN[3][3])
+static int finiteVector3(const double vector[3])
 {
-    double ir_N[3];     /* orbit radial unit direction vector */
-    double itheta_N[3]; /* along-track unit direction vector */
-    double ih_N[3];     /* orbit plane normal unit direction vector */
-    double hVec_N[3];   /* orbit angular momentum vector */
-
-    v3Normalize(rc_N, ir_N);
-    v3Cross(rc_N, vc_N, hVec_N);
-    v3Normalize(hVec_N, ih_N);
-    v3Cross(ih_N, ir_N, itheta_N);
-    v3Copy(ir_N, HN[0]);
-    v3Copy(itheta_N, HN[1]);
-    v3Copy(ih_N, HN[2]);
+    return isfinite(vector[0]) && isfinite(vector[1]) && isfinite(vector[2]);
 }
 
-/*!
- * Purpose: maps Hill frame deputy states to inertial inertial position and velocity vectors
- * Inputs:
- *   rc_N: chief inertial position vector
- *   vc_N: chief inertial velocity vector
- *   rho_H: deputy Hill position vector
- *   rhoPrime_H: deputy Hill velocity vector
- * Outputs:
- *   rd_N: deputy inertial position vector
- *   vd_N: deputy inertial velocity vector
- */
-void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
+/* Normalize before crossing so the frame test is independent of distance units. */
+static int computeHillFrame(const double rc_N[3], const double vc_N[3], double HN[3][3], double* rate)
+{
+    double radius = hypot(hypot(rc_N[0], rc_N[1]), rc_N[2]);
+    double speed = hypot(hypot(vc_N[0], vc_N[1]), vc_N[2]);
+    double velocityDirection[3];
+    double normal[3];
+    if (!finiteVector3(rc_N) || !finiteVector3(vc_N) || !isfinite(radius) || radius <= 0.0 || !isfinite(speed) ||
+        speed <= 0.0) {
+        return 0;
+    }
+    for (int index = 0; index < 3; index++) {
+        HN[0][index] = rc_N[index] / radius;
+        velocityDirection[index] = vc_N[index] / speed;
+    }
+    v3Cross(HN[0], velocityDirection, normal);
+    double sineAngle = v3Norm(normal);
+    if (sineAngle <= 8.0 * DBL_EPSILON) {
+        return 0;
+    }
+    v3Scale(1.0 / sineAngle, normal, HN[2]);
+    v3Cross(HN[2], HN[0], HN[1]);
+    if (rate != NULL) {
+        *rate = (speed * sineAngle) / radius;
+        if (!isfinite(*rate) || *rate <= 0.0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/* Shared checked implementation; report controls diagnostics. */
+static void hillFrameImpl(double* rc_N, double* vc_N, double HN[3][3], int report)
+{
+    if (!computeHillFrame(rc_N, vc_N, HN, NULL)) {
+        if (report) {
+            BSK_PRINT(
+                MSG_ERROR, "%s", "hillFrame() requires finite nonzero vectors defining a resolved orbital plane.");
+        }
+        for (int index = 0; index < 3; index++) {
+            v3Set(nan(""), nan(""), nan(""), HN[index]);
+        }
+    }
+}
+
+/* Shared checked implementation; report controls diagnostics. */
+static void
+hill2rvImpl(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N, int report)
 {
     double HN[3][3];      /* DCM of Hill frame relative to inertial */
     double NH[3][3];      /* DCM of inertial frame relative to Hill */
-    double hVec_N[3];     /* orbit angular momentum vector */
-    double rc;            /* chief orbit radius */
     double fDot;          /* chief true anomaly rate */
     double omega_HN_H[3]; /* Hill frame angular velocity */
     double rho_N[3];      /* deputy relative to chief vector in N frame components */
 
-    hillFrame(rc_N, vc_N, HN);
+    if (!finiteVector3(rho_H) || !finiteVector3(rhoPrime_H) || !computeHillFrame(rc_N, vc_N, HN, &fDot)) {
+        goto invalidHillState;
+    }
     m33Transpose(HN, NH);
-    v3Cross(rc_N, vc_N, hVec_N);
-    rc = v3Norm(rc_N);
-    fDot = v3Norm(hVec_N) / rc / rc;
     v3Set(0, 0, fDot, omega_HN_H);
 
     /* compute inertial deputy position */
@@ -89,34 +103,33 @@ void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, doub
     v3Add(vd_N, rhoPrime_H, vd_N);
     m33MultV3(NH, vd_N, vd_N);
     v3Add(vd_N, vc_N, vd_N);
+    if (finiteVector3(rd_N) && finiteVector3(vd_N)) {
+        return;
+    }
+invalidHillState:
+    if (report) {
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "hill2rv() requires finite states, a resolved chief orbital plane and representable outputs.");
+    }
+    v3Set(nan(""), nan(""), nan(""), rd_N);
+    v3Set(nan(""), nan(""), nan(""), vd_N);
 }
 
-/*!
- * Purpose: maps inertial frame deputy states to Hill inertial position and velocity vectors
- * Inputs:
- *   rc_N: chief inertial position vector
- *   vc_N: chief inertial velocity vector
- *   rd_N: deputy inertial position vector
- *   vd_N: deputy inertial velocity vector
- * Outputs:
- *   rho_H: deputy Hill position vector
- *   rhoPrime_H: deputy Hill velocity vector
- */
-void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
+/* Shared checked implementation; report controls diagnostics. */
+static void
+rv2hillImpl(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H, int report)
 {
     double HN[3][3];      /* DCM of Hill frame relative to inertial */
-    double hVec_N[3];     /* orbit angular momentum vector */
-    double rc;            /* chief orbit radius */
     double fDot;          /* chief true anomaly rate */
     double omega_HN_H[3]; /* Hill frame angular velocity */
     double rho_N[3];      /* deputy relative to chief vector in N frame components */
     double rhoDot_N[3];   /* inertial derivative of deputy/chief vector */
     double rhoDot_H[3];   /* inertial derivative of deputy/chief vector */
 
-    hillFrame(rc_N, vc_N, HN);
-    v3Cross(rc_N, vc_N, hVec_N);
-    rc = v3Norm(rc_N);
-    fDot = v3Norm(hVec_N) / rc / rc;
+    if (!finiteVector3(rd_N) || !finiteVector3(vd_N) || !computeHillFrame(rc_N, vc_N, HN, &fDot)) {
+        goto invalidHillState;
+    }
     v3Set(0, 0, fDot, omega_HN_H);
 
     /* compute Hill frame position */
@@ -128,6 +141,17 @@ void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho
     m33MultV3(HN, rhoDot_N, rhoDot_H);
     v3Cross(omega_HN_H, rho_H, rhoPrime_H);
     v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
+    if (finiteVector3(rho_H) && finiteVector3(rhoPrime_H)) {
+        return;
+    }
+invalidHillState:
+    if (report) {
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "rv2hill() requires finite states, a resolved chief orbital plane and representable outputs.");
+    }
+    v3Set(nan(""), nan(""), nan(""), rho_H);
+    v3Set(nan(""), nan(""), nan(""), rhoPrime_H);
 }
 
 /*!
@@ -1010,8 +1034,272 @@ void solarRad(double A, double m, double* sunvec, double* arvec)
     v3Scale((-Cr * A * SOLAR_FLUX_EARTH) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
 }
 
-/*! maps classical mean orbit elements to Osculating elements */
-void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
+static int validEllipticElements(const ClassicElements* elements)
+{
+    return isfinite(elements->a) && elements->a > 0.0 && isfinite(elements->e) && elements->e >= 0.0 &&
+           elements->e < 1.0 && isfinite(elements->i) && elements->i >= 0.0 && elements->i <= M_PI &&
+           isfinite(elements->Omega) && isfinite(elements->omega) && isfinite(elements->f);
+}
+
+/* Shared checked implementation; report controls diagnostics. */
+static void clMeanOscMapImpl(double req,
+                             double J2,
+                             ClassicElements* elements,
+                             ClassicElements* elements_p,
+                             double sgn,
+                             int report)
+{
+    if (!validEllipticElements(elements) || !isfinite(req) || req <= 0.0 || !isfinite(J2) ||
+        (sgn != 1.0 && sgn != -1.0)) {
+        goto invalidMeanOsc;
+    }
+    if (J2 == 0.0) {
+        elements_p->a = elements->a;
+        elements_p->e = elements->e;
+        elements_p->i = elements->i;
+        elements_p->Omega = elements->Omega;
+        elements_p->omega = elements->omega;
+        elements_p->f = elements->f;
+        return;
+    }
+
+    double a = elements->a;
+    double e = elements->e;
+    double i = elements->i;
+    double Omega = elements->Omega;
+    double omega = elements->omega;
+    // Reflection across the x-z plane preserves J2 dynamics. Work in the
+    // prograde frame to resolve inclination near pi in the sin(i/2) recovery.
+    int retrograde = i > M_PI / 2.0;
+    if (retrograde) {
+        i = M_PI - i;
+        Omega = -Omega;
+    }
+    if (fabs(1.0 - 5.0 * cos(i) * cos(i)) <= sqrt(DBL_EPSILON)) {
+        goto invalidMeanOsc;
+    }
+    // Put f, E and M on the same branch before forming the periodic f-M term.
+    double f = atan2(sin(elements->f), cos(elements->f));
+    double E = f2E(f, e);
+    double M = E2M(E, e);
+
+    double gamma2 = sgn * J2 / 2.0 * pow((req / a), 2.0); // (F.1),(F.2)
+    double eta = sqrt(1.0 - pow(e, 2.0));
+    double gamma2p = gamma2 / pow(eta, 4.0);         // (F.3)
+    double a_r = (1.0 + e * cos(f)) / pow(eta, 2.0); // (F.6)
+    double sinI = sin(i);
+    double cosI = cos(i);
+    // 1-11*c^2-40*c^4/(1-5*c^2) = sin(i)^2*(1-15*c^2)/(1-5*c^2).
+    // Factoring cancels the removable 1/tan(i) singularity in (F.10).
+    double inclinationRatio = (1.0 - 15.0 * cosI * cosI) / (1.0 - 5.0 * cosI * cosI);
+    double inclinationFactor = sinI * sinI * inclinationRatio;
+
+    double ap = a + a * gamma2 *
+                        ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0)) +
+                         3.0 * sinI * sinI * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f)); // (F.7)
+
+    double de1 = gamma2p / 8.0 * e * pow(eta, 2.0) * inclinationFactor * cos(2.0 * omega); // (F.8)
+
+    double de = de1 + pow(eta, 2.0) / 2.0 *
+                          (gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) *
+                                         (e * eta + e / (1.0 + eta) + 3.0 * cos(f) + 3.0 * e * pow(cos(f), 2.0) +
+                                          pow(e, 2.0) * pow(cos(f), 3.0)) +
+                                     3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) *
+                                         (e + 3.0 * cos(f) + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) *
+                                         cos(2 * omega + 2 * f)) -
+                           gamma2p * (1.0 - pow(cos(i), 2.0)) *
+                               (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f))); // (F.9)
+
+    double di = gamma2p / 8.0 * sinI * cosI *
+                (-e * e * inclinationRatio * cos(2.0 * omega) +
+                 4.0 * (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f) +
+                        e * cos(2.0 * omega + 3.0 * f))); // (F.10), including the equatorial limit
+
+    double MpopOp =
+        M + omega + Omega + gamma2p / 8.0 * pow(eta, 3.0) * inclinationFactor * sin(2.0 * omega) -
+        gamma2p / 16.0 *
+            (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0)) * pow(cos(i), 2.0) -
+             40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) -
+             400.0 * pow(e, 2.0) * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) +
+        gamma2p / 4.0 *
+            (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0)) * (f - M + e * sin(f)) +
+             (3.0 - 5.0 * pow(cos(i), 2.0)) *
+                 (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e * sin(2.0 * omega + 3.0 * f))) -
+        gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
+            (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+             200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) -
+        gamma2p / 2.0 * cos(i) *
+            (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
+             e * sin(2.0 * omega + 3.0 * f)); // (F.11)
+
+    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) * inclinationFactor * sin(2.0 * omega) -
+                 gamma2p / 4.0 * pow(eta, 3.0) *
+                     (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
+                      3.0 * (1.0 - pow(cos(i), 2.0)) *
+                          ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
+                           (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+
+    double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
+                        (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+                         200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+                        sin(2.0 * omega) -
+                    gamma2p / 2.0 * cos(i) *
+                        (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) -
+                         3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f)); // (F.13)
+
+    double d1 = (e + de) * sin(M) + edM * cos(M); // (F.14)
+    double d2 = (e + de) * cos(M) - edM * sin(M); // (F.15)
+
+    double Mp = atan2(d1, d2); // (F.16)
+    double ep = hypot(d1, d2); // (F.17)
+
+    double d3 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * sin(Omega) + sin(i / 2.0) * dOmega * cos(Omega); // (F.18)
+    double d4 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * cos(Omega) - sin(i / 2.0) * dOmega * sin(Omega); // (F.19)
+
+    double sinHalfIp = hypot(d3, d4);
+    if (!isfinite(ap) || ap <= 0.0 || !isfinite(ep) || ep >= 1.0 || !isfinite(sinHalfIp) || sinHalfIp > 1.0 ||
+        !isfinite(MpopOp)) {
+        goto invalidMeanOsc;
+    }
+    double Omegap = atan2(d3, d4);        // (F.20)
+    double ip = 2.0 * asin(sinHalfIp);    // (F.21)
+    double omegap = MpopOp - Mp - Omegap; // (F.22)
+
+    double Ep = M2E(Mp, ep);
+    double fp = E2f(Ep, ep);
+    if (!isfinite(fp) || !isfinite(omegap)) {
+        goto invalidMeanOsc;
+    }
+
+    elements_p->a = ap;
+    elements_p->e = ep;
+    elements_p->i = retrograde ? M_PI - ip : ip;
+    elements_p->Omega = retrograde ? -Omegap : Omegap;
+    elements_p->omega = omegap;
+    elements_p->f = fp;
+    return;
+
+invalidMeanOsc:
+    if (report) {
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "clMeanOscMap() requires valid elliptic inputs away from critical inclinations and finite elliptic "
+                  "outputs.");
+    }
+    elements_p->a = elements_p->e = elements_p->i = elements_p->Omega = elements_p->omega = elements_p->f = nan("");
+}
+
+/* Shared checked implementation; report controls diagnostics. */
+static void clElem2eqElemImpl(ClassicElements* elements_cl, equinoctialElements* elements_eq, int report)
+{
+    if (!validEllipticElements(elements_cl) || cos(elements_cl->i / 2.0) <= 8.0 * DBL_EPSILON ||
+        !isfinite(elements_cl->Omega + elements_cl->omega) ||
+        !isfinite(elements_cl->Omega + elements_cl->omega + elements_cl->f)) {
+        if (report) {
+            BSK_PRINT(
+                MSG_ERROR, "%s", "clElem2eqElem() requires finite elliptic elements away from the retrograde equator.");
+        }
+        elements_eq->a = elements_eq->P1 = elements_eq->P2 = elements_eq->Q1 = elements_eq->Q2 = elements_eq->l =
+            elements_eq->L = nan("");
+        return;
+    }
+    // conversion
+    // from classical orbital elements (a,e,i,Omega,omega,f)
+    // to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
+    elements_eq->a = elements_cl->a;
+    elements_eq->P1 = elements_cl->e * sin(elements_cl->Omega + elements_cl->omega);
+    elements_eq->P2 = elements_cl->e * cos(elements_cl->Omega + elements_cl->omega);
+    elements_eq->Q1 = tan(elements_cl->i / 2.0) * sin(elements_cl->Omega);
+    elements_eq->Q2 = tan(elements_cl->i / 2.0) * cos(elements_cl->Omega);
+    double E = f2E(elements_cl->f, elements_cl->e);
+    double M = E2M(E, elements_cl->e);
+    elements_eq->l = elements_cl->Omega + elements_cl->omega + M;
+    elements_eq->L = elements_cl->Omega + elements_cl->omega + elements_cl->f;
+}
+
+/* Preserve historical results outside the checked domain. */
+static void legacyHillFrame(double* rc_N, double* vc_N, double HN[3][3])
+{
+    double ir_N[3];     /* orbit radial unit direction vector */
+    double itheta_N[3]; /* along-track unit direction vector */
+    double ih_N[3];     /* orbit plane normal unit direction vector */
+    double hVec_N[3];   /* orbit angular momentum vector */
+
+    v3Normalize(rc_N, ir_N);
+    v3Cross(rc_N, vc_N, hVec_N);
+    v3Normalize(hVec_N, ih_N);
+    v3Cross(ih_N, ir_N, itheta_N);
+    v3Copy(ir_N, HN[0]);
+    v3Copy(itheta_N, HN[1]);
+    v3Copy(ih_N, HN[2]);
+}
+
+/* Preserve historical results outside the checked domain. */
+static void legacyHill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
+{
+    double HN[3][3];      /* DCM of Hill frame relative to inertial */
+    double NH[3][3];      /* DCM of inertial frame relative to Hill */
+    double hVec_N[3];     /* orbit angular momentum vector */
+    double rc;            /* chief orbit radius */
+    double fDot;          /* chief true anomaly rate */
+    double omega_HN_H[3]; /* Hill frame angular velocity */
+    double rho_N[3];      /* deputy relative to chief vector in N frame components */
+
+    legacyHillFrame(rc_N, vc_N, HN);
+    m33Transpose(HN, NH);
+    v3Cross(rc_N, vc_N, hVec_N);
+    rc = v3Norm(rc_N);
+    fDot = v3Norm(hVec_N) / rc / rc;
+    v3Set(0, 0, fDot, omega_HN_H);
+
+    /* compute inertial deputy position */
+    m33MultV3(NH, rho_H, rho_N);
+    v3Add(rc_N, rho_N, rd_N);
+
+    /* compute inertial deputy velocity */
+    v3Cross(omega_HN_H, rho_H, vd_N);
+    v3Add(vd_N, rhoPrime_H, vd_N);
+    m33MultV3(NH, vd_N, vd_N);
+    v3Add(vd_N, vc_N, vd_N);
+}
+
+/* Preserve historical results outside the checked domain. */
+static void legacyRv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
+{
+    double HN[3][3];      /* DCM of Hill frame relative to inertial */
+    double hVec_N[3];     /* orbit angular momentum vector */
+    double rc;            /* chief orbit radius */
+    double fDot;          /* chief true anomaly rate */
+    double omega_HN_H[3]; /* Hill frame angular velocity */
+    double rho_N[3];      /* deputy relative to chief vector in N frame components */
+    double rhoDot_N[3];   /* inertial derivative of deputy/chief vector */
+    double rhoDot_H[3];   /* inertial derivative of deputy/chief vector */
+
+    legacyHillFrame(rc_N, vc_N, HN);
+    v3Cross(rc_N, vc_N, hVec_N);
+    rc = v3Norm(rc_N);
+    fDot = v3Norm(hVec_N) / rc / rc;
+    v3Set(0, 0, fDot, omega_HN_H);
+
+    /* compute Hill frame position */
+    v3Subtract(rd_N, rc_N, rho_N);
+    m33MultV3(HN, rho_N, rho_H);
+
+    /* compute Hill frame velocity */
+    v3Subtract(vd_N, vc_N, rhoDot_N);
+    m33MultV3(HN, rhoDot_N, rhoDot_H);
+    v3Cross(omega_HN_H, rho_H, rhoPrime_H);
+    v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
+}
+
+/* Preserve historical results outside the checked domain. */
+static void legacyClMeanOscMap(double req,
+                               double J2,
+                               ClassicElements* elements,
+                               ClassicElements* elements_p,
+                               double sgn)
 {
     // Classical orbital elements = (a,e,i,Omega,omega,f)
     // First-order J2 Mapping Between Mean and Osculating Orbital Elements
@@ -1120,8 +1408,8 @@ void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicEleme
     elements_p->f = fp;
 }
 
-/*! maps from classical orbit elements to equinoctial elements */
-void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
+/* Preserve historical results outside the checked domain. */
+static void legacyClElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
 {
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)
@@ -1135,4 +1423,198 @@ void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_e
     double M = E2M(E, elements_cl->e);
     elements_eq->l = elements_cl->Omega + elements_cl->omega + M;
     elements_eq->L = elements_cl->Omega + elements_cl->omega + elements_cl->f;
+}
+
+/** @brief Compute the Hill DCM from a nonrectilinear chief state.
+ * @param rc_N Finite inertial position [L], with finite nonzero norm.
+ * @param vc_N Finite inertial velocity [L/s], with finite nonzero norm.
+ * @param HN Output DCM mapping inertial components to Hill components.
+ * @note Requires norm(cross(unit(rc_N), unit(vc_N))) > 8*DBL_EPSILON.
+ * Invalid states produce a diagnostic and an all-NaN matrix.
+ */
+void hillFrameChecked(double* rc_N, double* vc_N, double HN[3][3])
+{
+    hillFrameImpl(rc_N, vc_N, HN, 1);
+}
+
+/** @brief Map a deputy state from the rotating chief Hill frame to inertial coordinates.
+ * @param rc_N Chief inertial position [L], satisfying hillFrame() requirements.
+ * @param vc_N Chief inertial velocity [L/s], satisfying hillFrame() requirements.
+ * @param rho_H Finite Hill relative position [L].
+ * @param rhoPrime_H Finite rotating-frame relative velocity [L/s].
+ * @param rd_N Output deputy inertial position [L].
+ * @param vd_N Output deputy inertial velocity [L/s].
+ * @note Invalid states, unrepresentable positive angular rate, or nonfinite outputs
+ * produce a diagnostic and two all-NaN vectors. Use consistent distance units.
+ */
+void hill2rvChecked(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
+{
+    hill2rvImpl(rc_N, vc_N, rho_H, rhoPrime_H, rd_N, vd_N, 1);
+}
+
+/** @brief Express the deputy state relative to the chief in its rotating Hill frame.
+ * @param rc_N Chief inertial position [L], satisfying hillFrame() requirements.
+ * @param vc_N Chief inertial velocity [L/s], satisfying hillFrame() requirements.
+ * @param rd_N Finite deputy inertial position [L].
+ * @param vd_N Finite deputy inertial velocity [L/s].
+ * @param rho_H Output Hill relative position [L].
+ * @param rhoPrime_H Output rotating-frame relative velocity [L/s].
+ * @note Invalid states, unrepresentable positive angular rate, or nonfinite outputs
+ * produce a diagnostic and two all-NaN vectors. Use consistent distance units.
+ */
+void rv2hillChecked(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
+{
+    rv2hillImpl(rc_N, vc_N, rd_N, vd_N, rho_H, rhoPrime_H, 1);
+}
+
+/**
+ * @brief Apply the first-order J2 mean/osculating element mapping.
+ * @param req Equatorial radius, in the same length unit as elements->a.
+ * @param J2 Dimensionless second zonal harmonic coefficient.
+ * @param elements Input classical elements, with angles in radians.
+ * @param elements_p Output classical elements, with the same units as the input.
+ * @param sgn +1 for mean to osculating, -1 for osculating to mean.
+ * @note Follows Appendix F of Analytical Mechanics of Space Systems, Schaub and
+ * Junkins, fourth edition. Inputs must be finite and elliptic with inclination
+ * in [0, pi], away from the critical inclinations where 1 - 5*cos(i)^2 = 0.
+ * The perturbation must be small; opposite mappings leave second-order J2 errors.
+ * @note Both equatorial limits are supported. Whole revolutions in true anomaly
+ * do not affect the mapped Cartesian state; output angles need not retain input
+ * revolution counts. J2 = 0 copies the six classical elements exactly.
+ * Only a, e, i, Omega, omega and f are written; auxiliary fields are unchanged.
+ * Input and output may alias.
+ * @note Requires req > 0 and sgn = +/-1. For nonzero J2, rejects
+ * |1 - 5*cos(i)^2| <= sqrt(DBL_EPSILON) and nonphysical or nonfinite mapped
+ * elements. This numerical guard does not establish perturbation-model accuracy.
+ * Invalid inputs or results produce a diagnostic and six NaN classical elements.
+ */
+void clMeanOscMapChecked(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
+{
+    clMeanOscMapImpl(req, J2, elements, elements_p, sgn, 1);
+}
+
+/** @brief Map finite elliptic classical elements to prograde equinoctial elements.
+ * @param elements_cl Input with a > 0, 0 <= e < 1 and 0 <= i < pi; angles in radians.
+ * @param elements_eq Output with the same length unit as the input and angles in radians.
+ * @note The retrograde equator is singular. Rejects cos(i/2) <= 8*DBL_EPSILON.
+ * Invalid inputs or nonfinite results produce a diagnostic and seven NaN outputs.
+ */
+void clElem2eqElemChecked(ClassicElements* elements_cl, equinoctialElements* elements_eq)
+{
+    clElem2eqElemImpl(elements_cl, elements_eq, 1);
+}
+
+/** @brief Compute the Hill DCM from a nonrectilinear chief state.
+ * @param rc_N Finite inertial position [L], with finite nonzero norm.
+ * @param vc_N Finite inertial velocity [L/s], with finite nonzero norm.
+ * @param HN Output DCM mapping inertial components to Hill components.
+ * @note See hillFrameChecked() for the supported domain. Rejected domains
+ * retain historical results. Checked calls provide explicit domain validation.
+ */
+void hillFrame(double* rc_N, double* vc_N, double HN[3][3])
+{
+    double candidate[3][3];
+    hillFrameImpl(rc_N, vc_N, candidate, 0);
+    if (finiteVector3(candidate[0]) && finiteVector3(candidate[1]) && finiteVector3(candidate[2])) {
+        m33Copy(candidate, HN);
+    } else {
+        legacyHillFrame(rc_N, vc_N, HN);
+    }
+}
+
+/** @brief Map a deputy state from the rotating chief Hill frame to inertial coordinates.
+ * @param rc_N Chief inertial position [L], satisfying hillFrameChecked() requirements.
+ * @param vc_N Chief inertial velocity [L/s], satisfying hillFrameChecked() requirements.
+ * @param rho_H Finite Hill relative position [L].
+ * @param rhoPrime_H Finite rotating-frame relative velocity [L/s].
+ * @param rd_N Output deputy inertial position [L].
+ * @param vd_N Output deputy inertial velocity [L/s].
+ * @note See hill2rvChecked() for the supported domain. Rejected domains
+ * retain historical results. Checked calls provide explicit domain validation.
+ */
+void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
+{
+    double position[3], velocity[3];
+    hill2rvImpl(rc_N, vc_N, rho_H, rhoPrime_H, position, velocity, 0);
+    if (finiteVector3(position) && finiteVector3(velocity)) {
+        v3Copy(position, rd_N);
+        v3Copy(velocity, vd_N);
+    } else {
+        legacyHill2rv(rc_N, vc_N, rho_H, rhoPrime_H, rd_N, vd_N);
+    }
+}
+
+/** @brief Express the deputy state relative to the chief in its rotating Hill frame.
+ * @param rc_N Chief inertial position [L], satisfying hillFrameChecked() requirements.
+ * @param vc_N Chief inertial velocity [L/s], satisfying hillFrameChecked() requirements.
+ * @param rd_N Finite deputy inertial position [L].
+ * @param vd_N Finite deputy inertial velocity [L/s].
+ * @param rho_H Output Hill relative position [L].
+ * @param rhoPrime_H Output rotating-frame relative velocity [L/s].
+ * @note See rv2hillChecked() for the supported domain. Rejected domains
+ * retain historical results. Checked calls provide explicit domain validation.
+ */
+void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
+{
+    double position[3], velocity[3];
+    rv2hillImpl(rc_N, vc_N, rd_N, vd_N, position, velocity, 0);
+    if (finiteVector3(position) && finiteVector3(velocity)) {
+        v3Copy(position, rho_H);
+        v3Copy(velocity, rhoPrime_H);
+    } else {
+        legacyRv2hill(rc_N, vc_N, rd_N, vd_N, rho_H, rhoPrime_H);
+    }
+}
+
+/**
+ * @brief Apply the first-order J2 mean/osculating element mapping.
+ * @param req Equatorial radius, in the same length unit as elements->a.
+ * @param J2 Dimensionless second zonal harmonic coefficient.
+ * @param elements Input classical elements, with angles in radians.
+ * @param elements_p Output classical elements, with the same units as the input.
+ * @param sgn +1 for mean to osculating, -1 for osculating to mean.
+ * @note See clMeanOscMapChecked() for the supported domain. Rejected domains
+ * retain historical results. Checked calls provide explicit domain validation.
+ * Invalid inclinations are always rejected; use 0 <= i <= pi.
+ */
+void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
+{
+    if (!isfinite(elements->i) || elements->i < 0.0 || elements->i > M_PI) {
+        clMeanOscMapChecked(req, J2, elements, elements_p, sgn);
+        return;
+    }
+    ClassicElements candidate = { 0 };
+    clMeanOscMapImpl(req, J2, elements, &candidate, sgn, 0);
+    if (isfinite(candidate.a)) {
+        elements_p->a = candidate.a;
+        elements_p->e = candidate.e;
+        elements_p->i = candidate.i;
+        elements_p->Omega = candidate.Omega;
+        elements_p->omega = candidate.omega;
+        elements_p->f = candidate.f;
+    } else {
+        legacyClMeanOscMap(req, J2, elements, elements_p, sgn);
+    }
+}
+
+/** @brief Map finite elliptic classical elements to prograde equinoctial elements.
+ * @param elements_cl Input with a > 0, 0 <= e < 1 and 0 <= i < pi; angles in radians.
+ * @param elements_eq Output with the same length unit as the input and angles in radians.
+ * @note See clElem2eqElemChecked() for the supported domain. Rejected domains
+ * retain historical results. Checked calls provide explicit domain validation.
+ * Invalid inclinations are always rejected; use 0 <= i <= pi.
+ */
+void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
+{
+    if (!isfinite(elements_cl->i) || elements_cl->i < 0.0 || elements_cl->i > M_PI) {
+        clElem2eqElemChecked(elements_cl, elements_eq);
+        return;
+    }
+    equinoctialElements candidate;
+    clElem2eqElemImpl(elements_cl, &candidate, 0);
+    if (isfinite(candidate.a)) {
+        *elements_eq = candidate;
+    } else {
+        legacyClElem2eqElem(elements_cl, elements_eq);
+    }
 }
