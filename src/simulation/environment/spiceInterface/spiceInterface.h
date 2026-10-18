@@ -20,6 +20,7 @@
 #ifndef SpiceInterface_H
 #define SpiceInterface_H
 
+#include <stdint.h>
 #include <vector>
 #include <map>
 #include <filesystem>

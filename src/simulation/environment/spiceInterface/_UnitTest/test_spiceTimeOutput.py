@@ -42,7 +42,7 @@ def run_spice_time_output(epoch):
     """
     sim = SimulationBaseClass.SimBaseClass()
     process = sim.CreateNewProcess("process")
-    process.addTask(sim.CreateNewTask("task", macros.sec2nano(1.0)))
+    process.addTask(sim.CreateNewTask("task", macros.sec2nano(1.0)))  # [s] Task period
 
     spice = spiceInterface.SpiceInterface()
     spice.SPICEDataPath = bsk_path + "/supportData/EphemerisData/"
@@ -53,7 +53,7 @@ def run_spice_time_output(epoch):
     sim.AddModelToTask("task", time_log)
 
     sim.InitializeSimulation()
-    sim.ConfigureStopTime(0)
+    sim.ConfigureStopTime(0)  # [ns] Sample only the initial epoch
     sim.ExecuteSimulation()
     return time_log
 
@@ -83,6 +83,30 @@ def test_gps_time_and_julian_date(epoch, gps_utc_offset):
     assert gps_week == int(gps_time//SECONDS_PER_WEEK)
     assert time_log.GPSSeconds[-1] == pytest.approx(gps_time % SECONDS_PER_WEEK, rel=0.0, abs=1.0e-6)  # [s]
     assert time_log.JulianDateCurrent[-1] == pytest.approx(julian_date, rel=0.0, abs=1.0e-9)  # [d]
+
+
+@pytest.mark.parametrize("picture, expected", [
+    (None, "JAN 01,2000  12:00:01.0000 (UTC)"),
+    ("YYYY-MM-DD HR:MN:SC.### ::UTC", "2000-01-01 12:00:01.000"),
+])
+def test_time_conversion_after_repeated_reset(picture, expected):
+    """Preserve default and custom time strings and Julian dates across resets."""
+    spice = spiceInterface.SpiceInterface()
+    spice.UTCCalInit = "2000 JAN 01 12:00:00 UTC"
+    if picture is not None:
+        spice.timeOutPicture = picture
+
+    elapsed_seconds = 1.0  # [s]
+    initial_julian_date = 2451545.0  # [d]
+    date_tolerance = 1.0e-9  # [d] Double precision of the Julian date, with margin.
+    for _ in range(3):
+        spice.Reset(0)
+        spice.UpdateState(macros.sec2nano(elapsed_seconds))
+        assert spice.getCurrentTimeString() == expected
+        assert spice.julianDateCurrent == pytest.approx(
+            initial_julian_date + elapsed_seconds / SECONDS_PER_DAY,
+            rel=0.0, abs=date_tolerance,
+        )
 
 
 def test_gps_time_before_gps_epoch():
