@@ -1,0 +1,1 @@
+- Fixed Euler conversions and composition for all 12 sequences in C, Python, and Numba (issue #1611), preserving the represented rotation at and near singularities. At a singularity, the third angle is set to zero and the first carries the observable combined rotation. Returned angle triples can change; Euler rate-map singularities remain. See :ref:`rbkNumericalLimits`.

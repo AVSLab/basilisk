@@ -22,13 +22,19 @@ Version |release| (unreleased)
   uninitialized or stale.
   The issue 1605 fix corrects the rotation term used internally to compute the access rates.
 
+- GitHub issue 1611: Euler conversions and composition could return the wrong rotation
+  at or near singularities, and repeated-axis composition could select incorrect outer angles.
+  All 12 sequences now preserve the represented rotation. At a singularity, the third angle
+  is zero and the first angle carries the observable combined rotation. Returned angle triples
+  can change; compare reconstructed attitudes when checking equivalence. Euler rate maps
+  retain their inherent singularities.
+
 - GitHub issue 1610: PRV conversions and PRV/MRP composition
   now preserve identity, small rotations, and half-turns;
   PRV rate maps use analytic limits at zero and angle wrapping handles multiple
   revolutions. Python and Numba retain sequence inputs and non-contiguous PRV
   arrays. This patch retains the existing Numba dispatcher interface, including
   ``.py_func`` and ``.signatures``; Python-list reflection warnings can still occur.
-  The separate Euler singularity fixes from issue 1611 are not included.
   Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
 

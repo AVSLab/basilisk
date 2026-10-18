@@ -35,9 +35,11 @@ output convention is guaranteed outside this numerical scope.
   retain their existing angle branches and do not automatically reduce every
   result to this interval. The forward PRV rate map is singular at nonzero full
   turns; its zero-angle singularity is removable and is handled analytically.
-- **Euler angles:** the separate conversion and composition fixes for Euler
-  singularities (issue #1611) are not included in this patch. Avoid evaluating
-  Euler conversions, composition, or rate maps at representation singularities.
+- **Euler angles:** at a conversion singularity the third angle is set to zero
+  and the observable combined rotation is recovered in the first angle.
+  This preserves the attitude but does not make the Euler rate map nonsingular.
+  Angle triples are not unique; compare reconstructed attitudes when checking
+  equivalence across the corrected conversion and composition routines.
 
 Angle wrapping supports multiple revolutions, but cannot recover angular detail
 already lost to rounding in a very large input. The library does not impose a
