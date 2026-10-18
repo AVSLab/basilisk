@@ -38,9 +38,11 @@ Version |release| (unreleased)
   Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
 
-- The error message of ``atmosphericDrag()`` in ``orbitalMotion``, printed for a position with a non-positive
+- GitHub issue 1620: The error message of ``atmosphericDrag()`` in ``orbitalMotion``, printed for a position with a non-positive
   altitude, showed the position components with an index shifted by one and read past the end of the position
-  vector.
+  vector. The C diagnostic now reads the correct components. The Python implementation had the same indexing
+  error and a missing return value; it now prints the supplied position and returns a three-component NaN
+  acceleration vector instead of raising ``IndexError``.
 
 - GitHub issue 1615: The :ref:`eclipse` module returned the occulted fraction :math:`(b/a)^2` of the solar disk
   instead of the visible fraction :math:`1 - (b/a)^2` when the disk of the occulting body lies entirely inside the

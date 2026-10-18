@@ -18,6 +18,7 @@
 
 
 import numpy as np
+import pytest
 from Basilisk.utilities import orbitalMotion
 
 a_tol = 1e-14  # array tolerance
@@ -278,6 +279,27 @@ def test_orbitalMotion(show_plots):
     e_count += arrayEqualCheck(trueElements, convertedElements, 'clElem2eqElem')
 
     assert e_count < 1, str(e_count) + " functions failed in orbitalMotion.py script"
+
+
+@pytest.mark.parametrize("position", [
+    [1.0, 2.0, 3.0],  # [km] Below the surface, with distinct components.
+    [orbitalMotion.REQ_EARTH, 0.0, 0.0],  # [km] Exactly on the surface.
+])
+def test_atmospheric_drag_invalid_altitude(position, capsys):
+    """Report the supplied position and return three NaNs for non-positive altitude."""
+    rvec = np.array(position)  # [km]
+    vvec = np.array([0.0, 7.5, 0.0])  # [km/s]
+    drag_coefficient = 2.2  # [-]
+    area = 2.0  # [m^2]
+    mass = 50.0  # [kg]
+
+    acceleration = orbitalMotion.atmosphericDrag(drag_coefficient, area, mass, rvec, vvec)
+
+    assert acceleration.shape == (3,)
+    assert np.isnan(acceleration).all()
+    diagnostic = capsys.readouterr().out
+    assert f"received rvec = [{rvec[0]} {rvec[1]} {rvec[2]}]." in diagnostic
+    assert "positive altitude" in diagnostic
 
 
 if __name__ == "__main__":

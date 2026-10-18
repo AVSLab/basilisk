@@ -25,6 +25,7 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include <limits>
+#include <string>
 #include <tuple>
 
 
@@ -100,6 +101,25 @@ TEST(OrbitalMotion, atmosphericDrag) {
     v3Set(-2.8245395411253663e-007, -2.5420855870128297e-006, -2.8245395411253663e-007, check);
     atmosphericDrag(Cd, A, m, r, v, ans);
     EXPECT_VECTOR3_NEAR(ans, check, 11);  // [km/s^2]
+}
+
+/** @brief Report all three supplied position components and return NaNs for an invalid altitude. */
+TEST(OrbitalMotion, atmosphericDragInvalidAltitude) {
+    double r[3] = {1.0, 2.0, 3.0};  // [km]
+    double v[3] = {0.0, 7.5, 0.0};  // [km/s]
+    double acceleration[3] = {};  // [km/s^2]
+    const double Cd = 2.2;  // [-]
+    const double area = 2.0;  // [m^2]
+    const double mass = 50.0;  // [kg]
+
+    testing::internal::CaptureStdout();
+    atmosphericDrag(Cd, area, mass, r, v, acceleration);
+    const std::string diagnostic = testing::internal::GetCapturedStdout();
+
+    EXPECT_NE(diagnostic.find("received rvec = [1 2 3]."), std::string::npos);
+    for (double component : acceleration) {
+        EXPECT_TRUE(std::isnan(component));
+    }
 }
 
 TEST(OrbitalMotion, jPerturb_order_6) {

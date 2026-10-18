@@ -1,1 +1,2 @@
 - Fixed the error message of ``atmosphericDrag()`` in ``orbitalMotion``, which printed the position components with an index shifted by one and read past the end of the position vector.
+- Fixed Python ``orbitalMotion.atmosphericDrag()`` for non-positive altitude to report the supplied position and return a three-component NaN acceleration vector instead of raising ``IndexError``.

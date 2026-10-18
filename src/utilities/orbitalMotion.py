@@ -825,7 +825,8 @@ def atmosphericDrag(Cd: float, A: float, m: float, rvec: np.ndarray, vvec: np.nd
      :param m: mass of the spacecraft in kg
      :param rvec: Inertial position vector of the spacecraft in km  [x;y;z]
      :param vvec: Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
-     :return: The inertial acceleration vector due to atmospheric drag in km/sec^2
+     :return: The inertial acceleration vector due to atmospheric drag in km/sec^2.
+         All components are NaN when the altitude is non-positive.
     """
     # find the altitude and velocity #
     r = la.norm(rvec)
@@ -833,13 +834,13 @@ def atmosphericDrag(Cd: float, A: float, m: float, rvec: np.ndarray, vvec: np.nd
     alt = r - REQ_EARTH
     advec = np.zeros(3)
 
-    # Checking if user supplied a orbital position is insede the earth #
+    # Check whether the supplied orbital position is on or inside the Earth.
     if alt <= 0.:
-        print("ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
-            format(str(rvec[1]), str(rvec[2]), str(rvec[3])))
+        print("ERROR: atmosphericDrag() received rvec = [{} {} {}].".format(
+            rvec[0], rvec[1], rvec[2]))
         print('The value of rvec should produce a positive altitude for the Earth.')
         advec.fill(np.nan)
-        return
+        return advec
 
     # get the Atmospheric density at the given altitude in kg/m^3 #
     density = atmosphericDensity(alt)
