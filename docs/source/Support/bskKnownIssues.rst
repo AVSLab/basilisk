@@ -7,6 +7,12 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
+  components with inertial-frame basis-vector derivatives when computing
+  ``domega_RN_N``. The resulting angular acceleration was incorrect for general
+  reference motion, including the single-body fallback. The zero-valued geometric
+  terms are now omitted; the reference attitude and angular rate are unchanged.
+
 - Builds with Vizard or optical navigation used Protobuf C++ 3.21.12, which is no
   longer supported upstream. They now use Protobuf 6.33.5, with OpenCV 4.14.0 for
   optical navigation.
