@@ -77,8 +77,8 @@ for these cases.
 The illumination factor obtained through the module is compared to the expected result, which is either trivial or \
 calculated, depending on the eclipse type. Full eclipse and no eclipse illumination factors are compared without the \
 need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse illumination \
-factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using \
-MATLAB and Spice data. In the annular cases the disk of the planet lies inside the solar disk, so the \
+factors, however, vary between 0.0 and 1.0. The partial-eclipse references use 90-digit disk-overlap \
+calculations for the Spice geometry. In the annular cases the disk of the planet lies inside the solar disk, so the \
 truth value is the visible fraction :math:`1 - (b/a)^2` of the solar disk, where :math:`a` and :math:`b` are the \
 apparent radii of the Sun and the planet.
 
@@ -259,7 +259,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     errTol = 1E-12
     if planet == "earth":
         if eclipseCondition == "partial":
-            truthilluminationFactor = 0.62310760206735027
+            truthilluminationFactor = 0.6231076019959562  # [-]; 90-digit disk-overlap reference
             if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Earth partial eclipse condition")
@@ -283,7 +283,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     elif planet == "mars":
         if eclipseCondition == "partial":
-            truthilluminationFactor = 0.18745025055615416
+            truthilluminationFactor = 0.1874502503910066  # [-]; 90-digit disk-overlap reference
             if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Mars partial eclipse condition")
@@ -561,6 +561,57 @@ The ``illuminationFactor`` of the eclipse output message is compared to the anal
 
     illuminationFactor = dataLog.illuminationFactor[-1]
     assert illuminationFactor == pytest.approx(truthIlluminationFactor, abs=1e-12)
+
+
+@pytest.mark.parametrize("planet_position, expected", [
+    ([999993679.4706187, 3601992.8113699565, 0.0], 0.9527438872831191),
+    ([999989586.6835788, 4599984.544014549, 0.0], 0.9774618756925696),
+    ([999984497.9029931, 5597971.695056517, 0.0], 0.9999977010514973),
+    ([217392071.00718537, 2000.0070533225326, 0.0], 0.0012732393325285839),
+    ([217389771.01232973, 1000000.0, 0.0], 0.6089977810442294),
+    ([217382889.43943638, 1997978.917539052, 0.0], 0.9999620450256266),
+    ([416572.5417065085, 998098.1231553757, 0.0], 5.377317289458809e-05),
+    ([411986.0992195054, 1000000.0000000001, 0.0], 0.5004136231731278),
+    ([407390.9739575249, 1001880.801436999, 0.0], 0.9999464357937793),
+])  # Planet position [m], visible fraction [-].
+@pytest.mark.parametrize("perturbation", [-1, 0, 1])
+def test_partial_eclipse_disk_overlap(planet_position, expected, perturbation):
+    """Check disk overlap against 90-digit references without SPICE.
+
+    Apparent planet radii of 0.001, 0.0046, and 1.18 rad bracket the Sun's
+    0.0046 rad radius. Each set samples 0.1%, 50%, and 99.9% of the partial
+    eclipse interval between internal and external tangency. References use
+    the exact binary64 positions below and the disk-intersection area formula
+    evaluated with 90-digit arithmetic. Moving the position components by one
+    representable step must preserve the visible fraction to absolute 5e-13.
+    """
+    sun_position = [151087489356.38785, 0.0, 0.0]  # [m]
+    position = np.asarray(planet_position)
+    if perturbation:
+        position = np.nextafter(position, np.copysign(np.inf, perturbation))
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = sun_position
+    sun_msg = messaging.SpicePlanetStateMsg().write(sun_payload)
+    planet_payload = messaging.SpicePlanetStateMsgPayload()
+    planet_payload.PlanetName = "custom"
+    planet_payload.PositionVector = position.tolist()
+    planet_msg = messaging.SpicePlanetStateMsg().write(planet_payload)
+    spacecraft_msg = messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload())
+
+    module = eclipse.Eclipse()
+    module.rEqCustom = 1.0e6  # [m]
+    module.addSpacecraftToModel(spacecraft_msg)
+    module.addPlanetToModel(planet_msg)
+    module.sunInMsg.subscribeTo(sun_msg)
+    recorder = module.eclipseOutMsgs[0].recorder()
+    module.Reset(0)
+    recorder.Reset(0)
+    module.UpdateState(0)
+    recorder.UpdateState(0)
+
+    actual = recorder.illuminationFactor[-1]
+    assert 0.0 <= actual <= 1.0
+    assert actual == pytest.approx(expected, rel=0.0, abs=5e-13)
 
 
 def test_shadow_vs_illumination_alias_and_deprecation_behavior():
