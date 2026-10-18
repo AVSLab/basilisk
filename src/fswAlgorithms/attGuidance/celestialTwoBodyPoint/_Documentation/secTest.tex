@@ -5,21 +5,21 @@
 The mathematics in this module are straight forward and can be tested in a series of input and output evaluation tests.
 
 \subsection{Test 1}
-The first test does a single-body celestial point. It places a spacecraft around Earth on an orbit with parameters given in \ref{tab:orbitParams}. 
+The first test does a single-body celestial point. It places a spacecraft around Earth on an orbit with parameters given in \ref{tab:orbitParams}.
 \begin{table}[htbp]
-	\caption{Spacecraft Orbital Paramters}
+	\caption{Spacecraft Orbital Parameters}
 	\label{tab:orbitParams}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Orbital Parameter}  & \textbf{Value}  \\ 
+		\textbf{Orbital Parameter}  & \textbf{Value}  \\
 		\hline
-		$a$    		        	     &  $2.8 R_{\text{earth}}	$   \\ 
-		$e$           &  $0  $ \\ 
-		$i$  & $0 \dg $\\ 
-		$\Omega$  & $0\dg  $\\ 
-		$\omega$  & $0\dg$\\ 
-		$f$  & $60 \dg $\\ 
+		$a$    		        	     &  $2.8 R_{\text{earth}}	$   \\
+		$e$           &  $0  $ \\
+		$i$  & $0 \dg $\\
+		$\Omega$  & $0\dg  $\\
+		$\omega$  & $0\dg$\\
+		$f$  & $60 \dg $\\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -29,22 +29,35 @@ The earth position and velocity vectors are both set to the zero vectors.
 The second test does the 2-body celestial point. It uses the same parameters at above and sets a second planet with zero velocity and position vector:
 
 \begin{equation}
-\leftexp{N}{\bm r_2} = \begin{bmatrix}500 & 500 &500 \end{bmatrix}^T (\text{km})
+\leftexp{N}{\bm r_2} = \begin{bmatrix}500 & 500 &500 \end{bmatrix}^T (\text{m})
 \end{equation}
 
+\subsection{Finite-Difference Regression Tests}
+Eight additional cases check the derivatives independently of the analytic truth model. The primary body starts at $[7,1,-2]^T\,10^6$ m with velocity $[-1,7,2]^T\,10^3$ m/s. The moving secondary body starts at $[-3,8,4]^T\,10^6$ m with velocity $[5,1,-3]^T\,10^3$ m/s. The spacecraft is at rest at the origin. Both bodies follow straight-line trajectories, consistent with the module's zero-relative-acceleration assumption.
+
+The cases cover the moving secondary body, an absent secondary message, and secondary directions that remain parallel or antiparallel to the primary direction. Each configuration is evaluated at 0 s and 250 s, away from any fallback switching boundary. A central-difference step of 0.1 s is used.
+
+The rate check differentiates the basis obtained from the output attitude and uses
+\[
+    \leftexp{N}{\bm\omega_{R/N}}
+      = \frac{1}{2}\sum_{i=1}^{3}
+        \leftexp{N}{\hat{\bm r}_i}\times\leftexp{N}{\dot{\hat{\bm r}}_i}.
+\]
+The acceleration check differentiates the published N-frame angular rate. Absolute tolerances are $10^{-11}$ rad/s for rate and $10^{-13}$ rad/s$^2$ for acceleration. These cases detect the component-frame mismatch from issue 1618 without copying the module's angular-acceleration equations.
+
 \section{Test Parameters}
-For each of these two tests, the tested parameters are listed Table~\ref{tab:errortol}. 
+For the first two tests, the tested parameters are listed in Table~\ref{tab:errortol}.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\
 		\hline
-		$\bm\sigma_{R/N}$     		        	     & \input{AutoTeX/toleranceValue}  \\ 
-		$\leftexp{N}{\bm\omega_{R/N}}$            &  \input{AutoTeX/toleranceValue} \\ 
-		$\leftexp{N}{\dot{\bm \omega}_{R/N}}$   & \input{AutoTeX/toleranceValue}\\ 
+		$\bm\sigma_{R/N}$     		        	     & \input{AutoTeX/toleranceValue}  \\
+		$\leftexp{N}{\bm\omega_{R/N}}$            &  \input{AutoTeX/toleranceValue} \\
+		$\leftexp{N}{\dot{\bm \omega}_{R/N}}$   & \input{AutoTeX/toleranceValue}\\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -54,24 +67,21 @@ For each of these two tests, the tested parameters are listed Table~\ref{tab:err
 
 \section{Test Results}
 
-All of the tests passed:
+The first two tests generate the following results. The finite-difference cases are checked by pytest:
 \begin{table}[H]
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c  } % Column formatting,
 		\hline\hline
-		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\
 		\hline
-	   1.1	   			& \input{AutoTex/passFail11} \\ 
-	   1.2	   			& \input{AutoTex/passFail12} \\ 
-	   1.3	   			& \input{AutoTex/passFail13} \\ 
-	   2.1	   			& \input{AutoTex/passFail21} \\ 
-	   2.2	   			& \input{AutoTex/passFail22} \\ 
-	   2.3	   			& \input{AutoTex/passFail23} \\ 
+	   1.1	   			& \input{AutoTeX/passFail11} \\
+	   1.2	   			& \input{AutoTeX/passFail12} \\
+	   1.3	   			& \input{AutoTeX/passFail13} \\
+	   2.1	   			& \input{AutoTeX/passFail21} \\
+	   2.2	   			& \input{AutoTeX/passFail22} \\
+	   2.3	   			& \input{AutoTeX/passFail23} \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
-
-
-
