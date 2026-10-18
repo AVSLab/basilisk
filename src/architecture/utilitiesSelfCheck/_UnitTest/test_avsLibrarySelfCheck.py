@@ -29,13 +29,15 @@ from Basilisk.architecture import avsLibrarySelfCheck
 from Basilisk.utilities import simHelpers
 
 
-@pytest.mark.parametrize("testName",
-                         ["testRigidBodyKinematics"
-                          , "testOrbitalElements"
-                          , "testOrbitalAnomalies"
-                          , "testLinearAlgebra"
-                          , "testOrbitalHill"
-                          , "testEnvironment"])
+SELF_CHECKS = {
+    "testRigidBodyKinematics": 1e-10,
+    "testOrbitalAnomalies": 1e-10,  # [rad] absolute anomaly tolerance
+    "testLinearAlgebra": 1e-10,
+    "testOrbitalHill": 1e-4,  # [km] and [km/s] absolute state tolerances
+}
+
+
+@pytest.mark.parametrize("testName", SELF_CHECKS)
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(testName):
     """AVS Library Self Check"""
@@ -45,29 +47,11 @@ def test_unitDynamicsModes(testName):
 
 
 def unitAVSLibrarySelfCheck(testName):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-
-    if testName == "testRigidBodyKinematics":
-        errorCount = avsLibrarySelfCheck.testRigidBodyKinematics(1e-10)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Rigid Body Kinematics Library Failed Self Test.\n")
-    if testName == "testOrbitalAnomalies":
-        errorCount = avsLibrarySelfCheck.testOrbitalAnomalies(1e-10)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Orbital Anomalies Library Failed Self Test.\n")
-    if testName == "testOrbitalHill":
-        errorCount = avsLibrarySelfCheck.testOrbitalHill(1e-4)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Orbital Hill Library Failed Self Test.\n")
-    if testName == "testLinearAlgebra":
-        errorCount = avsLibrarySelfCheck.testLinearAlgebra(1e-10)
-        if errorCount:
-            testFailCount += errorCount
-            testMessages.append("ERROR: Linear Algebra Library Failed Self Test.\n")
+    """Run a named native self-check; unknown names must never report success."""
+    if testName not in SELF_CHECKS:
+        raise ValueError(f"Unknown AVS self-check: {testName}")
+    testFailCount = getattr(avsLibrarySelfCheck, testName)(SELF_CHECKS[testName])
+    testMessages = [f"ERROR: {testName} failed self-check.\n"] if testFailCount else []
 
     if testFailCount == 0:
         print("PASSED ")
@@ -96,6 +80,29 @@ def unitAVSLibrarySelfCheck(testName):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
+
+
+@pytest.mark.parametrize("name", SELF_CHECKS)
+@pytest.mark.parametrize("error_count", [0, 3])
+def test_self_check_dispatch(monkeypatch, name, error_count):
+    """Every advertised selector calls native code and propagates its failures."""
+    calls = []
+    def native_check(tolerance):
+        calls.append(tolerance)
+        return error_count
+    monkeypatch.setattr(avsLibrarySelfCheck, name, native_check)
+    monkeypatch.setattr(simHelpers, "writeTeXSnippet", lambda *args: None)
+    count, message = unitAVSLibrarySelfCheck(name)
+    assert calls == [SELF_CHECKS[name]]
+    assert count == error_count
+    assert bool(message) == bool(error_count)
+
+
+@pytest.mark.parametrize("name", ["testOrbitalElements", "testEnvironment", "nonexistent_test"])
+def test_self_check_unknown_selector(name):
+    """Previously empty test selectors must fail instead of reporting PASSED."""
+    with pytest.raises(ValueError, match="Unknown AVS self-check"):
+        unitAVSLibrarySelfCheck(name)
 
 
 #

@@ -157,7 +157,7 @@ def run(show_plots):
         dispDict["mu"] = 4.2828371901284001E+13
         dispDict["a"] = ["normal", 22000*1E3, 3000*1E3]
         dispDict["e"] = ["uniform", 0.2, 0.4]
-        dispDict["i"] = ["uniform", -np.deg2rad(20), np.deg2rad(20)]
+        dispDict["i"] = ["uniform", 0.0, np.deg2rad(20)]  # [rad]; classical inclination is nonnegative
         dispDict["Omega"] = None
         dispDict["omega"] = None
         dispDict["f"] = ["uniform", 0., np.deg2rad(180)]
@@ -190,5 +190,3 @@ def run(show_plots):
 
 if __name__ == "__main__":
     run(False)
-
-

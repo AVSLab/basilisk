@@ -57,7 +57,7 @@ pub const REQ_PLUTO: f64 = 1137.0;
 pub const NANO2SEC: f64 = 0.000000001;
 pub const SEC2NANO: f64 = 1000000000.0;
 pub const SEC2HOUR: f64 = 0.0002777777777777778;
-#[doc = " @brief Structure used to define classic orbit elements"]
+#[doc = " @brief Classical orbit elements, using consistent distance units L and angles in radians.\n @note See elem2rv() for planar parabolic and rectilinear encodings. In particular,\n e = 1 with nonzero a denotes radial motion, not a planar parabola."]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct ClassicElements {
@@ -71,15 +71,15 @@ pub struct ClassicElements {
     pub Omega: f64,
     #[doc = "!< Argument of periapsis of the orbit"]
     pub omega: f64,
-    #[doc = "!< True anomaly of the orbit"]
+    #[doc = "!< True anomaly; radial E/H or parabolic direction flag as documented in elem2rv()"]
     pub f: f64,
-    #[doc = "!< Magnitude of the position vector (extra)"]
+    #[doc = "!< Position magnitude [L]; required input for a rectilinear parabola"]
     pub rmag: f64,
     #[doc = "!< Inverted semi-major axis (extra)"]
     pub alpha: f64,
-    #[doc = "!< Radius of periapsis (extra)"]
+    #[doc = "!< Periapsis radius [L]; required input when a = 0, e = 1"]
     pub rPeriap: f64,
-    #[doc = "!< Radius if apoapsis (extra)"]
+    #[doc = "!< Apoapsis radius [L]; signed algebraic value for hyperbolas, zero for parabolas"]
     pub rApoap: f64,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]

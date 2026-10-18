@@ -31,8 +31,11 @@
  * Use meters, seconds, and radians for inputs and outputs.
  *
  * @note The supported domain is a positive semi-major axis, a positive gravitational
- * parameter, and eccentricity in [0, 1). Hyperbolic, parabolic, and rectilinear
- * orbits are outside this class's scope.
+ * parameter, eccentricity in [0, 1), and inclination in [0, pi]. Hyperbolic, parabolic, and rectilinear
+ * orbits are outside this class's scope. All inputs must be finite.
+ * @note Constructors and setters throw std::invalid_argument (ValueError in
+ * Python) for unsupported inputs or unrepresentable derived outputs. Rejected
+ * setters preserve the complete previous state.
  * @note E() and M() follow the f2E() and E2M() angle conventions without additional
  * normalization to [0, 2*pi). Negative and wrapped true anomalies are accepted;
  * these conversions do not preserve a count of completed revolutions.
@@ -43,6 +46,11 @@ class KeplerianOrbit
     KeplerianOrbit();
     KeplerianOrbit(ClassicElements oe, const double mu);
     KeplerianOrbit(const KeplerianOrbit& orig);
+    /*! @brief Copy the complete orbital state, including derived outputs.
+     * @param other Orbit whose state is copied.
+     * @return Reference to this orbit after assignment.
+     */
+    KeplerianOrbit& operator=(const KeplerianOrbit& other) = default;
     ~KeplerianOrbit();
 
     Eigen::Vector3d r_BP_P() const; //!< body position vector relative to planet
@@ -68,6 +76,10 @@ class KeplerianOrbit
     double E() const;   //!< Eccentric anomaly [rad], using f2E().
     double p() const;
     double rDot() const; //!< Radial velocity [m/s], negative for inward motion.
+    /*! @brief Return the characteristic orbital energy C3.
+     * @return Twice the specific orbital energy, C3 = -mu/a [m^2/s^2].
+     * @note C3 is negative for the elliptic orbits supported by this class.
+     */
     double c3() const;
     /*! @brief Return the current orbital elements and derived geometry.
      * @return Elements including the current radius in rmag [m], inverse semi-major
@@ -99,7 +111,7 @@ class KeplerianOrbit
     double true_anomaly_rate{};
     double orbital_period{};
     double orbital_energy{};
-    double v_infinity{};
+    double v_infinity{}; //!< Reserved legacy storage; retained to preserve the native class layout.
     double orbit_radius{};
     double radial_rate{};
     double r_apogee{};

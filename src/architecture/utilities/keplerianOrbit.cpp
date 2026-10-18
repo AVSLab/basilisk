@@ -20,6 +20,7 @@
 #include "keplerianOrbit.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <cmath>
+#include <stdexcept>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()
@@ -175,47 +176,52 @@ double KeplerianOrbit::rDot() const
 {
     return this->radial_rate;
 };
-/*! return escape velocity */
 double KeplerianOrbit::c3() const
 {
-    return this->v_infinity;
+    return -this->mu / this->semi_major_axis;
 };
 
 void KeplerianOrbit::set_a(double a)
 {
-    this->semi_major_axis = a;
-    this->change_orbit();
-};
+    ClassicElements elements = this->oe();
+    elements.a = a;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 /*! set eccentricity */
 void KeplerianOrbit::set_e(double e)
 {
-    this->eccentricity = e;
-    this->change_orbit();
-};
+    ClassicElements elements = this->oe();
+    elements.e = e;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 /*! set inclination angle */
 void KeplerianOrbit::set_i(double i)
 {
-    this->inclination = i;
-    this->change_orbit();
-};
+    ClassicElements elements = this->oe();
+    elements.i = i;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 /*! set argument of periapsis */
 void KeplerianOrbit::set_omega(double omega)
 {
-    this->argument_of_periapsis = omega;
-    this->change_orbit();
-};
+    ClassicElements elements = this->oe();
+    elements.omega = omega;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 /*! set right ascension of the ascending node */
 void KeplerianOrbit::set_RAAN(double RAAN)
 {
-    this->right_ascension = RAAN;
-    this->change_orbit();
-};
+    ClassicElements elements = this->oe();
+    elements.Omega = RAAN;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 /*! set true anomaly angle */
 void KeplerianOrbit::set_f(double f)
 {
-    this->true_anomaly = f;
-    this->change_f();
-};
+    ClassicElements elements = this->oe();
+    elements.f = f;
+    *this = KeplerianOrbit(elements, this->mu);
+}
 
 ClassicElements KeplerianOrbit::oe()
 {
@@ -236,14 +242,32 @@ ClassicElements KeplerianOrbit::oe()
 /*! @brief Recompute the derived state after changing orbital elements or gravity. */
 void KeplerianOrbit::change_orbit()
 {
-    this->mean_motion = sqrt(this->mu / pow(this->semi_major_axis, 3));
+    if (!std::isfinite(this->mu) || this->mu <= 0.0 || !std::isfinite(this->a()) || this->a() <= 0.0 ||
+        !std::isfinite(this->e()) || this->e() < 0.0 || this->e() >= 1.0 || !std::isfinite(this->i()) ||
+        this->i() < 0.0 || this->i() > M_PI || !std::isfinite(this->omega()) || !std::isfinite(this->RAAN()) ||
+        !std::isfinite(this->f())) {
+        throw std::invalid_argument(
+            "KeplerianOrbit requires finite mu > 0, a > 0, 0 <= e < 1 and 0 <= i <= pi with finite angles.");
+    }
+    this->mean_motion = sqrt(this->mu / this->a()) / this->a();
     this->orbital_period = 2 * M_PI / this->mean_motion;
     this->orbital_energy = -this->mu / 2 / this->a();
     this->r_apogee = this->a() * (1 + this->e());
     this->r_perigee = this->a() * (1 - this->e());
     this->change_f();
     this->orbital_angular_momentum_P = this->position_BP_P.cross(this->velocity_BP_P);
-    this->semi_parameter = pow(this->h(), 2) / this->mu;
+    this->semi_parameter = this->a() * (1.0 - this->e()) * (1.0 + this->e());
+    if (!this->position_BP_P.allFinite() || !this->velocity_BP_P.allFinite() ||
+        !this->orbital_angular_momentum_P.allFinite() || !std::isfinite(this->h()) || !std::isfinite(this->v()) ||
+        !std::isfinite(this->c3()) || !std::isfinite(this->orbital_period) || !std::isfinite(this->orbital_energy) ||
+        !std::isfinite(this->r_apogee) || !std::isfinite(this->r_perigee) || !std::isfinite(this->orbit_radius) ||
+        !std::isfinite(this->radial_rate) || !std::isfinite(this->true_anomaly_rate) ||
+        !std::isfinite(this->eccentric_anomaly) || !std::isfinite(this->mean_anomaly) ||
+        !std::isfinite(this->flight_path_angle) || !std::isfinite(this->semi_parameter) ||
+        !std::isfinite(1.0 / this->a()) || this->mean_motion <= 0.0 || this->r_perigee <= 0.0 ||
+        this->orbit_radius <= 0.0 || this->semi_parameter <= 0.0 || this->true_anomaly_rate <= 0.0) {
+        throw std::invalid_argument("KeplerianOrbit derived state is outside the finite numerical range.");
+    }
 }
 /*! @brief Recompute the outputs that depend on the current true anomaly. */
 void KeplerianOrbit::change_f()
@@ -264,6 +288,5 @@ void KeplerianOrbit::change_f()
 
 void KeplerianOrbit::set_mu(const double mu)
 {
-    this->mu = mu;
-    this->change_orbit();
+    *this = KeplerianOrbit(this->oe(), mu);
 }

@@ -107,6 +107,292 @@ def test_kepler_iteration_limit(solver, eccentricity, monkeypatch):
         solver(0.3, eccentricity)
 
 
+@pytest.mark.parametrize("eccentricity", [1.0 - 1e-10, 1.0 - 5e-13, 1.0, 1.0 + 5e-13, 1.0 + 1e-10])
+@pytest.mark.parametrize("scale", [1e-6, 1.0, 1e3])
+@pytest.mark.parametrize("anomaly", [-1.1, 0.0, 1.1])  # [rad]
+def test_parabolic_limit(eccentricity, scale, anomaly):
+    """Keep resolvable conics distinct, independent of the distance unit."""
+    mu = orbitalMotion.MU_EARTH * scale**3  # [L^3/s^2]
+    periapsis = 7500.0 * scale  # [L]
+    elements = orbitalMotion.ClassicElements()
+    elements.e = eccentricity
+    elements.a = periapsis / (1.0 - eccentricity) if eccentricity != 1.0 else 0.0  # [L]
+    elements.rPeriap = periapsis
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    elements.f = anomaly
+    # Independent planar conic reference, parameterized by periapsis, not a.
+    parameter = periapsis * (1.0 + eccentricity)
+    radius = parameter / (1.0 + eccentricity * math.cos(anomaly))
+    expected_r = radius * np.array([math.cos(anomaly), math.sin(anomaly), 0.0])
+    expected_v = math.sqrt(mu / parameter) * np.array([-math.sin(anomaly), eccentricity + math.cos(anomaly), 0.0])
+    r, v = orbitalMotion.elem2rv(mu, elements)
+    np.testing.assert_allclose(r, expected_r, rtol=3e-15, atol=1e-11 * scale)
+    np.testing.assert_allclose(v, expected_v, rtol=3e-15, atol=1e-14 * scale)
+    recovered = orbitalMotion.rv2elem(mu, expected_r, expected_v, canonical=True)
+    assert recovered.rPeriap == pytest.approx(periapsis, rel=3e-15)
+    assert recovered.e == pytest.approx(eccentricity, abs=2e-15)
+    if eccentricity == 1.0:
+        assert recovered.a == recovered.alpha == recovered.rApoap == 0.0
+        assert recovered.e == 1.0
+    else:
+        assert math.copysign(1.0, recovered.alpha) == math.copysign(1.0, 1.0 - eccentricity)
+        # Relative energy/a accuracy is conditioned by the distance from e=1.
+        conditioning = 8.0 * np.finfo(float).eps / abs(1.0 - eccentricity)
+        assert recovered.a == pytest.approx(elements.a, rel=conditioning)
+    reconstructed_r, reconstructed_v = orbitalMotion.elem2rv(mu, recovered)
+    tolerance = 8.0 * np.finfo(float).eps / abs(1.0 - eccentricity) if eccentricity != 1.0 else 5e-15
+    np.testing.assert_allclose(reconstructed_r, expected_r, rtol=tolerance, atol=1e-10 * scale)
+    np.testing.assert_allclose(reconstructed_v, expected_v, rtol=tolerance, atol=1e-13 * scale)
+
+
+@pytest.mark.parametrize("speed", [-2.0, -math.sqrt(2.0), -0.6, 0.0, 0.6, math.sqrt(2.0), 2.0])  # [circular speed]
+@pytest.mark.parametrize("direction", [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [2.0, -3.0, 6.0]])
+@pytest.mark.parametrize("scale", [1e-6, 1e3])
+def test_rectilinear_state(speed, direction, scale):
+    """Reconstruct bound, escape and unbound radial states, including rest."""
+    mu = orbitalMotion.MU_EARTH * scale**3  # [L^3/s^2]
+    radius = 7500.0 * scale  # [L]
+    unit = np.asarray(direction) / np.linalg.norm(direction)
+    r = radius * unit
+    v = speed * math.sqrt(mu / radius) * unit
+    for inverse, forward in [(orbitalMotion.rv2elem, orbitalMotion.elem2rv),
+                             (orbitalMotion.rv2elem_parab, orbitalMotion.elem2rv_parab)]:
+        elements = inverse(mu, r, v)
+        assert elements.e == 1.0
+        assert elements.rPeriap == 0.0
+        assert elements.alpha * radius == pytest.approx(2.0 - speed**2, abs=3e-15)
+        if elements.alpha == 0.0:
+            assert elements.a == 0.0
+            assert elements.rmag == pytest.approx(radius)
+        elif elements.a < 0.0:
+            assert math.copysign(1.0, elements.f) == math.copysign(1.0, speed)
+            # Negative a in the legacy forward adapter always denotes a planar parabola.
+            forward = orbitalMotion.elem2rv
+        reconstructed_r, reconstructed_v = forward(mu, elements)
+        np.testing.assert_allclose(reconstructed_r, r, rtol=5e-15, atol=1e-10 * scale)
+        np.testing.assert_allclose(reconstructed_v, v, rtol=5e-15, atol=1e-13 * scale)
+
+
+@pytest.mark.parametrize("axis,anomaly", [(7500.0, 1e-9), (7500.0, -1e-9), (-7500.0, 1e-9),
+                                         (-7500.0, -1e-9), (-7500.0, 4.0), (-7500.0, -4.0)])  # [km, rad]
+def test_rectilinear_forward(axis, anomaly):
+    """Avoid cancellation at collision and periodic signs for hyperbolic H."""
+    elements = orbitalMotion.ClassicElements()
+    elements.a = axis
+    elements.e = 1.0
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    elements.f = anomaly
+    elements.rPeriap = 0.0  # [km]
+    half = anomaly / 2.0
+    factor = math.sin(half) if axis > 0.0 else math.sinh(half)
+    expected_r = 2.0 * abs(axis) * factor**2
+    expected_v = math.copysign(math.sqrt(orbitalMotion.MU_EARTH * (2.0 / expected_r - 1.0 / axis)), anomaly)
+    forwards = (orbitalMotion.elem2rv, orbitalMotion.elem2rv_parab) if axis > 0.0 else (orbitalMotion.elem2rv,)
+    for forward in forwards:
+        r, v = forward(orbitalMotion.MU_EARTH, elements)
+        np.testing.assert_allclose(r, [expected_r, 0.0, 0.0], rtol=3e-15)
+        velocity_sign = -1.0 if forward is orbitalMotion.elem2rv_parab and axis > 0.0 else 1.0
+        np.testing.assert_allclose(v, [velocity_sign * expected_v, 0.0, 0.0], rtol=3e-15)
+
+
+def test_legacy_parabolic_adapter():
+    """Preserve the negative-periapsis encoding without mutating the caller."""
+    elements = orbitalMotion.ClassicElements()
+    elements.a = -7500.0  # [km]; legacy parabolic encoding
+    elements.e = 1.0
+    elements.i = 2.4  # [rad]
+    elements.Omega = 0.7  # [rad]
+    elements.omega = 1.2  # [rad]
+    elements.f = -1.1  # [rad]
+    r, v = orbitalMotion.elem2rv_parab(orbitalMotion.MU_EARTH, elements)
+    assert elements.a == -7500.0
+    assert elements.rPeriap is None
+    recovered = orbitalMotion.rv2elem_parab(orbitalMotion.MU_EARTH, r, v)
+    assert recovered.a == pytest.approx(-7500.0)
+    assert recovered.e == 1.0
+    assert recovered.alpha == 0.0
+    r2, v2 = orbitalMotion.elem2rv_parab(orbitalMotion.MU_EARTH, recovered)
+    np.testing.assert_allclose(r2, r, rtol=5e-15)
+    np.testing.assert_allclose(v2, v, rtol=5e-15)
+
+
+@pytest.mark.parametrize("anomaly", [1e6, -1e6, 1e10, -1e10, 1e16, -1e16])  # [rad]
+@pytest.mark.parametrize("eccentricity", [0.0, 0.4, 1.0, 1.5])
+def test_large_wrapped_true_anomaly(anomaly, eccentricity):
+    """Preserve the phase of the supplied angle using independent direct trigonometry."""
+    elements = orbitalMotion.ClassicElements()
+    elements.e = eccentricity
+    elements.rPeriap = 7000.0  # [km]
+    elements.a = elements.rPeriap / (1.0 - eccentricity) if eccentricity != 1.0 else 0.0  # [km]
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    elements.f = anomaly
+    parameter = elements.rPeriap * (1.0 + eccentricity)
+    radius = parameter / (1.0 + eccentricity * math.cos(anomaly))
+    expected_r = radius * np.array([math.cos(anomaly), math.sin(anomaly), 0.0])
+    expected_v = math.sqrt(orbitalMotion.MU_EARTH / parameter) * np.array(
+        [-math.sin(anomaly), eccentricity + math.cos(anomaly), 0.0])
+    position, velocity = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, elements)
+    np.testing.assert_allclose(position, expected_r, rtol=5e-15, atol=1e-11)
+    np.testing.assert_allclose(velocity, expected_v, rtol=5e-15, atol=1e-13)
+
+
+@pytest.mark.parametrize("anomaly", [1e6, -1e6, 1e10, -1e10, 1e16, -1e16])  # [rad]
+def test_large_wrapped_radial_anomaly(anomaly):
+    """Preserve radial position and velocity sign for large eccentric anomalies."""
+    elements = orbitalMotion.ClassicElements()
+    elements.a = 7500.0  # [km]
+    elements.e = 1.0
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    elements.f = anomaly
+    radius = elements.a * (1.0 - math.cos(anomaly))
+    speed = math.sqrt(orbitalMotion.MU_EARTH / elements.a) * math.sin(anomaly) / (1.0 - math.cos(anomaly))
+    for forward, sign in ((orbitalMotion.elem2rv, 1.0), (orbitalMotion.elem2rv_parab, -1.0)):
+        position, velocity = forward(orbitalMotion.MU_EARTH, elements)
+        np.testing.assert_allclose(position, [radius, 0.0, 0.0], rtol=5e-15)
+        np.testing.assert_allclose(velocity, [sign * speed, 0.0, 0.0], rtol=5e-15)
+
+
+def test_near_parabolic_apoapsis_and_infinity():
+    """Retain the small denominator and transverse velocity near f = pi."""
+    elements = orbitalMotion.ClassicElements()
+    elements.a = 7500.0  # [km]
+    elements.e = math.nextafter(1.0, 0.0)
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    elements.f = math.pi  # [rad]
+    r, v = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, elements)
+    assert r[0] == pytest.approx(-elements.a * (1.0 + elements.e), rel=3e-15)
+    expected_speed = math.sqrt(orbitalMotion.MU_EARTH / elements.a * (1.0 - elements.e) / (1.0 + elements.e))
+    assert v[1] == pytest.approx(-expected_speed, rel=3e-15)
+    elements.a = 0.0  # [km]
+    elements.e = 1.0
+    elements.rPeriap = 7500.0  # [km]
+    elements.f = math.pi - 1e-8  # [rad]
+    r, v = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, elements)
+    barker_variable = math.tan(elements.f / 2.0)
+    assert np.linalg.norm(r) == pytest.approx(elements.rPeriap * (1.0 + barker_variable**2), rel=3e-15)
+    assert v[1] > 0.0
+    assert np.dot(v, v) == pytest.approx(2.0 * orbitalMotion.MU_EARTH / np.linalg.norm(r), rel=3e-15)
+
+
+@pytest.mark.parametrize("transverse", [1e-3, 1e-10])  # [normalized speed]
+def test_nearly_rectilinear_state(transverse):
+    """Retain resolvable transverse motion and reject an ambiguous e rounded to one."""
+    r = np.array([1.0, 0.0, 0.0])  # [L]
+    v = np.array([1.0, transverse, 0.0])  # [L/s]
+    mu = 1.0  # [L^3/s^2]
+    if transverse == 1e-10:
+        with pytest.raises(ValueError, match="eccentricity cannot resolve"):
+            orbitalMotion.rv2elem(mu, r, v)
+    else:
+        elements = orbitalMotion.rv2elem(mu, r, v)
+        assert elements.e < 1.0
+        assert elements.rPeriap > 0.0
+        r2, v2 = orbitalMotion.elem2rv(mu, elements)
+        np.testing.assert_allclose(r2, r, atol=1e-9, rtol=1e-9)
+        np.testing.assert_allclose(v2, v, atol=1e-9, rtol=1e-9)
+
+
+def test_nearly_rectilinear_energy_consistency():
+    """Reject a rounded eccentricity on the wrong side of the parabolic limit."""
+    r = [-0.7920102500247754, 0.3704143912399991, -0.48529675727125304]  # [L]
+    v = [-1.584020499625905, 0.7408287833858261, -0.9705935145425061]  # [L/s]
+    mu = 1.0  # [L^3/s^2]
+    # Depending on floating-point evaluation, e may round to either side of one.
+    try:
+        elements = orbitalMotion.rv2elem(mu, r, v)
+    except ValueError as error:
+        assert "eccentricity cannot resolve" in str(error)
+    else:
+        assert elements.a < 0.0
+        assert elements.e > 1.0
+
+
+@pytest.mark.parametrize("axis,eccentricity,anomaly,periapsis", [
+    (7500.0, 1.0, 0.0, 0.0), (-7500.0, 1.0, 0.0, 0.0),  # collisions
+    (0.0, 1.0, math.pi, 7500.0), (-7500.0, 2.0, math.pi, 0.0),  # asymptote / beyond
+    (-7500.0, 2.0, 1e16, 0.0), (-7500.0, 2.0, -1e16, 0.0),  # wrapped beyond infinity
+    (0.0, 1.0, 0.0, -1.0), (7500.0, 2.0, 0.0, 0.0), (-7500.0, 0.5, 0.0, 0.0),
+])  # [km, dimensionless, rad, km]
+def test_invalid_conic_elements(axis, eccentricity, anomaly, periapsis):
+    """Reject nonphysical conic combinations and singular collision states."""
+    elements = orbitalMotion.ClassicElements()
+    elements.a, elements.e, elements.f, elements.rPeriap = axis, eccentricity, anomaly, periapsis
+    elements.i = elements.Omega = elements.omega = 0.0  # [rad]
+    with pytest.raises(ValueError, match="elem2rv"):
+        orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, elements)
+
+
+@pytest.mark.parametrize("mu,r,v", [(0.0, [1, 0, 0], [0, 1, 0]), (1.0, [0, 0, 0], [0, 1, 0]),
+                                    (1.0, [math.nan, 0, 0], [0, 1, 0]), (1.0, [1, 0, 0], [math.inf, 0, 0])])
+def test_invalid_cartesian_state(mu, r, v):
+    """Report invalid states explicitly in both Python entry points."""
+    for inverse in (orbitalMotion.rv2elem, orbitalMotion.rv2elem_parab):
+        with pytest.raises(ValueError, match="rv2elem"):
+            inverse(mu, r, v)
+
+
+@pytest.mark.parametrize("eccentricity,inclination", [
+    (0.0, 0.0), (0.0, math.pi), (0.3, 0.0), (0.3, math.pi),
+    (0.0, 0.7), (0.0, 2.4), (0.3, 2.4),
+    (0.0, 1e-8), (0.3, 1e-8), (0.0, math.pi - 1e-8), (0.3, math.pi - 1e-8),
+    (0.3, 5e-13), (0.3, 2e-12), (0.3, math.pi - 5e-13), (0.3, math.pi - 2e-12),
+    (5e-13, 0.7), (2e-12, 0.7), (5e-13, math.pi), (2e-12, math.pi),
+])  # Eccentricity [-], inclination [rad].
+@pytest.mark.parametrize("length_scale", [1e-9, 1.0, 1e3])
+@pytest.mark.parametrize("true_anomaly", [0.4, 4.6])  # [rad]
+def test_rv2elem_singular_orbits(eccentricity, inclination, length_scale, true_anomaly):
+    """Check singular-angle conventions, orbital invariants, and Cartesian reconstruction.
+
+    States are constructed independently from orthonormal perifocal axes. Scaling
+    all lengths, velocities, and the gravitational parameter consistently must
+    preserve the angular elements. Near singularities, individual periapsis and
+    anomaly angles have tolerances proportional to the eccentricity conditioning.
+    """
+    semimajor = 7500.0 * length_scale  # [L]; L is the selected distance unit
+    mu = orbitalMotion.MU_EARTH * length_scale**3  # [L^3/s^2]
+    node = 1.1  # [rad]
+    periapsis = 0.7  # [rad]
+    sin_i = 0.0 if inclination in (0.0, math.pi) else math.sin(inclination)
+    cos_i = math.cos(inclination)
+    ascending = np.array([math.cos(node), math.sin(node), 0.0])
+    transverse = np.array([-math.sin(node) * cos_i, math.cos(node) * cos_i, sin_i])
+    periapsis_axis = math.cos(periapsis) * ascending + math.sin(periapsis) * transverse
+    quadrature_axis = -math.sin(periapsis) * ascending + math.cos(periapsis) * transverse
+    parameter = semimajor * (1.0 - eccentricity**2)
+    radius = parameter / (1.0 + eccentricity * math.cos(true_anomaly))
+    position = radius * (math.cos(true_anomaly) * periapsis_axis + math.sin(true_anomaly) * quadrature_axis)
+    velocity = math.sqrt(mu / parameter) * (
+        -math.sin(true_anomaly) * periapsis_axis + (eccentricity + math.cos(true_anomaly)) * quadrature_axis)
+
+    result = orbitalMotion.rv2elem(mu, position, velocity)
+    equatorial = abs(sin_i) <= 1e-12
+    circular = eccentricity <= 1e-12
+    direction = 1.0 if cos_i >= 0.0 else -1.0
+    expected_i = (0.0 if direction > 0 else math.pi) if equatorial else inclination
+    expected_node = 0.0 if equatorial else node  # [rad]
+    expected_periapsis = 0.0 if circular else periapsis + (direction * node if equatorial else 0.0)  # [rad]
+    expected_anomaly = true_anomaly + (periapsis + (direction * node if equatorial else 0.0) if circular else 0.0)
+    angle_tolerance = 3e-14 if circular else max(3e-14, 5e-15 / eccentricity)  # [rad]
+    for field in ("a", "e", "i", "Omega", "omega", "f", "alpha", "rmag", "rPeriap", "rApoap"):
+        assert math.isfinite(getattr(result, field)), field
+    assert result.a / semimajor == pytest.approx(1.0, abs=2e-14, rel=0.0)
+    assert result.alpha * semimajor == pytest.approx(1.0, abs=2e-14, rel=0.0)
+    assert result.e == pytest.approx(eccentricity, abs=2e-15, rel=0.0)
+    assert result.rmag / radius == pytest.approx(1.0, abs=2e-14, rel=0.0)
+    assert result.rPeriap / semimajor == pytest.approx(1.0 - eccentricity, abs=2e-14, rel=0.0)
+    assert result.rApoap / semimajor == pytest.approx(1.0 + eccentricity, abs=2e-14, rel=0.0)
+    assert result.i == pytest.approx(expected_i, abs=2e-15, rel=0.0)
+    for actual, expected, tolerance in ((result.Omega, expected_node, 3e-14),
+                                        (result.omega, expected_periapsis, angle_tolerance),
+                                        (result.f, expected_anomaly, angle_tolerance)):
+        assert 0.0 <= actual < 2.0 * math.pi
+        assert abs(math.remainder(actual - expected, 2.0 * math.pi)) <= tolerance
+    rebuilt_position, rebuilt_velocity = orbitalMotion.elem2rv(mu, result)
+    np.testing.assert_allclose(rebuilt_position / semimajor, position / semimajor, rtol=0.0, atol=5e-12)
+    speed_scale = math.sqrt(mu / semimajor)
+    np.testing.assert_allclose(rebuilt_velocity / speed_scale, velocity / speed_scale, rtol=0.0, atol=5e-12)
+
+
 def arrayEqualCheck(v1, v2, methodName):
     if len(v1) == len(v2):
         if np.allclose(v1, v2, atol=a_tol):
@@ -198,17 +484,17 @@ def test_orbitalMotion(show_plots):
     e_count += scaleEqualCheck(N2H1, N2HCValue, 'N2H')
 
     # Function elem2rv_parab
-    mu = 1000
+    mu = 1000  # [km^3/s^2]
     elements = orbitalMotion.ClassicElements()
-    elements.a = 1000
+    elements.a = 1000  # [km]
     elements.e = 1.0
-    elements.Omega = 0.15
-    elements.omega = 0.5
-    elements.f = 0.2
-    elements.i = 0.2
+    elements.Omega = 0.15  # [rad]
+    elements.omega = 0.5  # [rad]
+    elements.f = 0.2  # [rad]
+    elements.i = 0.2  # [rad]
     rVec, vVec = orbitalMotion.elem2rv_parab(mu, elements)
-    rVecCValue = np.array([15.8971, 11.8751, 1.8986])
-    vVecCValue = np.array([-7.94852, -5.9375, -0.949294])
+    rVecCValue = np.array([15.8971, 11.8751, 1.8986])  # [km]
+    vVecCValue = np.array([-7.94852, -5.9375, -0.949294])  # [km/s]; legacy E > 0 is inward
     e_count += arrayEqualCheck(rVec, rVecCValue, 'elem2rv_parab')
     e_count += arrayEqualCheck(vVec, vVecCValue, 'elem2rv_parab')
 
@@ -229,20 +515,19 @@ def test_orbitalMotion(show_plots):
 
 
     # Function rv2elem_parab
-    mu3 = 1000
-    rVec3 = np.array([15.8971, 11.8751, 1.8986])
-    vVec3 = np.array([-7.94852, -5.9375, -0.949294])
-    elements3 = orbitalMotion.rv2elem_parab(mu3, rVec3, vVec3)
-    rv2elem_parabCValue = np.array([999.927, 1, 0.102545, -3.14159, -0.552287, -1.94593])
-    rv2elem_parab_Value = np.array([elements3.a, elements3.e, elements3.i, elements3.f, elements3.Omega, elements3.omega])
+    elements3 = orbitalMotion.rv2elem_parab(mu, rVec, -vVec)
+    # a [km], e [-], eccentric anomaly [rad], periapsis [km]. The radial plane is arbitrary.
+    rv2elem_parabCValue = np.array([1000.0, 1.0, 2.0 * math.pi - 0.2, 0.0])
+    rv2elem_parab_Value = np.array([elements3.a, elements3.e, elements3.f, elements3.rPeriap])
     e_count += arrayEqualCheck(rv2elem_parab_Value, rv2elem_parabCValue, 'rv2elem_parab')
 
     # Function rv2elem
-    mu4 = 1000
-    rVec4 = np.array([15.8971, 11.8751, 1.8986])
-    vVec4 = np.array([-7.94852, -5.9375, -0.949294])
-    elements4 = orbitalMotion.rv2elem_parab(mu4, rVec4, vVec4)
-    rv2elemCValue = np.array([999.927, 1, 0.102545, -3.14159, -0.552287, -1.94593])
+    mu4 = orbitalMotion.MU_EARTH  # [km^3/s^2]
+    rVec4 = np.array([6538.3506963942027, 186.7227227879431, -4119.3008399778619])  # [km]
+    vVec4 = np.array([1.4414106130924005, 5.588901415902356, -4.0828931566657038])  # [km/s]
+    elements4 = orbitalMotion.rv2elem(mu4, rVec4, vVec4)
+    # Semi-major axis [km], eccentricity [-], followed by i, f, Omega, omega [rad].
+    rv2elemCValue = np.array([7500.0, 0.5, math.radians(40), math.radians(123), math.radians(133), math.radians(113)])
     rv2elemValue = np.array([elements4.a, elements4.e, elements4.i, elements4.f, elements4.Omega, elements4.omega])
     e_count += arrayEqualCheck(rv2elemValue, rv2elemCValue, 'rv2elem')
 

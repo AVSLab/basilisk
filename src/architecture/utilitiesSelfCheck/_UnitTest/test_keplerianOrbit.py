@@ -210,6 +210,12 @@ def assert_orbit_outputs(orbit, elements, mu):
     assert orbit.n() == pytest.approx(mean_motion, rel=relative_tolerance)
     assert orbit.P() == pytest.approx(2 * np.pi / mean_motion, rel=relative_tolerance)
     assert orbit.Energy() == pytest.approx(-mu / (2 * elements.a), rel=relative_tolerance)
+    # C3 is twice the specific orbital energy [m^2/s^2], negative for an ellipse.
+    cartesian_c3 = np.dot(velocity, velocity) - 2 * mu / np.linalg.norm(position)
+    assert orbit.c3() < 0.0
+    assert orbit.c3() == pytest.approx(-mu / elements.a, rel=relative_tolerance)
+    assert orbit.c3() == pytest.approx(2 * orbit.Energy(), rel=relative_tolerance)
+    assert orbit.c3() == pytest.approx(cartesian_c3, rel=relative_tolerance)
     assert orbit.p() == pytest.approx(parameter, rel=relative_tolerance)
     assert orbit.r() == pytest.approx(radius, rel=relative_tolerance)
     assert orbit.v() == pytest.approx(
@@ -304,3 +310,39 @@ def test_gravitational_parameter_updates(true_anomaly, mu_scale):
 
 if __name__ == "__main__":
     unitKeplerianOrbit()
+
+
+def _orbit_snapshot(orbit):
+    """Capture every public numerical output to detect partial setter updates."""
+    names = ("a", "e", "i", "omega", "RAAN", "f", "M", "n", "P", "fDot", "h", "Energy", "r", "v",
+             "r_a", "r_p", "fpa", "E", "p", "rDot", "c3")
+    return (np.array([getattr(orbit, name)() for name in names]),
+            np.array([orbit.r_BP_P(), orbit.v_BP_P(), orbit.h_BP_P()]),
+            np.array([getattr(orbit.oe(), name) for name in
+                      ("a", "e", "i", "omega", "Omega", "f", "rmag", "alpha", "rPeriap", "rApoap")]))
+
+
+_INVALID_ORBIT_INPUTS = (
+    [(name, value) for name in ("a", "e", "i", "omega", "RAAN", "f", "mu") for value in (np.nan, np.inf, -np.inf)]
+    + [("a", 0.0), ("a", -1.0), ("e", -0.1), ("e", 1.0), ("e", 1.1),
+       ("i", -0.1), ("i", np.pi+0.1), ("mu", 0.0), ("mu", -1.0), ("a", 1e308), ("a", 1e-308)]
+)  # a [m], angles [rad], mu [m^3/s^2], e [-].
+
+
+@pytest.mark.parametrize("name,value", _INVALID_ORBIT_INPUTS)
+def test_keplerian_invalid_constructor_and_transactional_setters(name, value):
+    """Invalid construction raises ValueError; rejected setters preserve every cached output."""
+    orbit = keplerianOrbit.KeplerianOrbit()
+    before = _orbit_snapshot(orbit)
+    with pytest.raises(ValueError, match="KeplerianOrbit"):
+        getattr(orbit, "set_" + name)(value)
+    for found, expected in zip(_orbit_snapshot(orbit), before):
+        np.testing.assert_array_equal(found, expected)
+    elements = orbit.oe()
+    mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    if name == "mu":
+        mu = value
+    else:
+        setattr(elements, "Omega" if name == "RAAN" else name, value)
+    with pytest.raises(ValueError, match="KeplerianOrbit"):
+        keplerianOrbit.KeplerianOrbit(elements, mu)

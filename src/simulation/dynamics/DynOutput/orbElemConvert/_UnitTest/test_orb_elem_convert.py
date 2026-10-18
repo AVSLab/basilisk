@@ -45,6 +45,120 @@ from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
+from Basilisk.utilities import orbitalMotion
+
+
+@pytest.mark.parametrize("eccentricity", [0.0, 0.3])  # [-]
+@pytest.mark.parametrize("inclination", [0.0, 1e-8, math.pi - 1e-8, math.pi])  # [rad]
+def test_singular_state_message(eccentricity, inclination):
+    """Preserve singular and near-equatorial states through the native module's messages.
+
+    An analytic periapsis state provides independent reference geometry. Check
+    the emitted elements against Python and reconstruct both position and
+    velocity through the module's native conversion.
+    """
+    mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    radius = 6e6  # [m]
+    sin_i = 0.0 if inclination in (0.0, math.pi) else math.sin(inclination)
+    cos_i = math.cos(inclination)
+    position = radius * numpy.array([0.6, 0.8 * cos_i, 0.8 * sin_i])
+    speed = math.sqrt(mu * (1.0 + eccentricity) / radius)
+    velocity = speed * numpy.array([-0.8, 0.6 * cos_i, 0.6 * sin_i])
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = position
+    payload.v_BN_N = velocity
+    state_message = messaging.SCStatesMsg().write(payload)
+    converter = orbElemConvert.OrbElemConvert()
+    converter.mu = mu
+    converter.scStateInMsg.subscribeTo(state_message)
+    recorder = converter.elemOutMsg.recorder()
+    converter.Reset(0)
+    converter.UpdateState(0)
+    recorder.UpdateState(0)
+    result = converter.elemOutMsg.read()
+    assert len(recorder.times()) == 1
+    python_result = orbitalMotion.rv2elem(mu, position, velocity, canonical=True)
+
+    assert result.i == pytest.approx(inclination, abs=2e-15, rel=0.0)
+    assert result.e == pytest.approx(eccentricity, abs=2e-15, rel=0.0)
+    assert abs(math.remainder(result.Omega, 2.0 * math.pi)) < 2e-14
+    expected_periapsis = 0.0 if eccentricity == 0.0 else math.atan2(0.8, 0.6)  # [rad]
+    expected_anomaly = math.atan2(0.8, 0.6) if eccentricity == 0.0 else 0.0  # [rad]
+    assert abs(math.remainder(result.omega - expected_periapsis, 2.0 * math.pi)) < 2e-14
+    assert abs(math.remainder(result.f - expected_anomaly, 2.0 * math.pi)) < 2e-14
+    for field in ("a", "e", "i", "Omega", "omega", "f", "alpha", "rmag", "rPeriap", "rApoap"):
+        native_value = getattr(result, field)
+        python_value = getattr(python_result, field)
+        assert math.isfinite(native_value)
+        if field in ("Omega", "omega", "f"):
+            assert abs(math.remainder(native_value - python_value, 2.0 * math.pi)) < 2e-14
+        else:
+            assert native_value == pytest.approx(python_value, rel=2e-14, abs=2e-15)
+    converter.Elements2Cartesian()
+    numpy.testing.assert_allclose(numpy.asarray(converter.r_N) / radius, position / radius, rtol=0.0, atol=2e-14)
+    numpy.testing.assert_allclose(numpy.asarray(converter.v_N) / speed, velocity / speed, rtol=0.0, atol=2e-14)
+
+@pytest.mark.parametrize("kind", ["near_ellipse", "parabola", "near_hyperbola", "radial_bound",
+                                 "radial_escape", "radial_unbound", "rest"])
+@pytest.mark.parametrize("sign", [-1.0, 1.0])
+@pytest.mark.parametrize("scale", [1e-6, 1e3])
+def test_degenerate_conic_messages(kind, sign, scale):
+    """Preserve conic metadata through both message directions and agree with Python."""
+    mu = orbitalMotion.MU_EARTH * scale**3  # [L^3/s^2]
+    periapsis = 7500.0 * scale  # [L]
+    axis = numpy.array([0.6, 0.8, 0.0])
+    transverse = numpy.array([0.0, 0.0, 1.0])
+    if kind in ("near_ellipse", "parabola", "near_hyperbola"):
+        eccentricity = {"near_ellipse": 1.0 - 5e-13, "parabola": 1.0, "near_hyperbola": 1.0 + 5e-13}[kind]
+        anomaly = sign * 0.7  # [rad]
+        parameter = periapsis * (1.0 + eccentricity)
+        position = (parameter / (1.0 + eccentricity * math.cos(anomaly))
+                    * (math.cos(anomaly) * axis + math.sin(anomaly) * transverse))
+        velocity = (math.sqrt(mu / parameter)
+                    * (-math.sin(anomaly) * axis + (eccentricity + math.cos(anomaly)) * transverse))
+        conditioning = 8.0 * numpy.finfo(float).eps / abs(1.0 - eccentricity) if eccentricity != 1.0 else 2e-14
+    else:
+        factor = {"radial_bound": 0.6, "radial_escape": math.sqrt(2.0), "radial_unbound": 2.0, "rest": 0.0}[kind]
+        position = periapsis * axis
+        velocity = sign * factor * math.sqrt(mu / periapsis) * axis
+        conditioning = 2e-14
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N, payload.v_BN_N = position, velocity
+    state_message = messaging.SCStatesMsg().write(payload)
+    inverse = orbElemConvert.OrbElemConvert()
+    inverse.mu = mu
+    inverse.scStateInMsg.subscribeTo(state_message)
+    forward = orbElemConvert.OrbElemConvert()
+    forward.mu = mu
+    forward.elemInMsg.subscribeTo(inverse.elemOutMsg)
+    recorder = forward.scStateOutMsg.recorder()
+    inverse.Reset(0)
+    forward.Reset(0)
+    inverse.UpdateState(0)
+    forward.UpdateState(0)
+    recorder.UpdateState(0)
+    assert len(recorder.times()) == 1
+    native = inverse.elemOutMsg.read()
+    python_result = orbitalMotion.rv2elem(mu, position, velocity, canonical=True)
+    for field in orbitalMotion.ClassicElements.__slots__:
+        native_value, python_value = getattr(native, field), getattr(python_result, field)
+        assert math.isfinite(native_value)
+        if field in ("Omega", "omega", "f"):
+            assert abs(math.remainder(native_value - python_value, 2.0 * math.pi)) < 2e-14
+        elif field in ("a", "alpha", "rApoap"):
+            assert native_value == pytest.approx(python_value, rel=conditioning, abs=1e-20)
+        else:
+            assert native_value == pytest.approx(python_value, rel=2e-14, abs=2e-15)
+    if "radial" in kind or kind == "rest":
+        assert native.e == 1.0
+        assert native.rPeriap == 0.0
+    if kind in ("parabola", "radial_escape"):
+        assert native.e == 1.0
+        assert native.a == native.alpha == native.rApoap == 0.0
+    result = forward.scStateOutMsg.read()
+    numpy.testing.assert_allclose(result.r_BN_N, position, rtol=conditioning, atol=1e-10 * scale)
+    numpy.testing.assert_allclose(result.v_BN_N, velocity, rtol=conditioning, atol=1e-13 * scale)
+
 
 # Class in order to plot using data across the different parameterized scenarios
 class DataStore:

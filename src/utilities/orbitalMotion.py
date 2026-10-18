@@ -388,435 +388,280 @@ def N2H(N: float, e: float) -> float:
 
 
 def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
+    """Convert elements using the legacy Python parabolic encoding.
+
+    This adapter accepts ``e = 1, a < 0`` for a planar parabola with periapsis
+    radius ``-a``, independently of auxiliary fields such as ``rPeriap``.
+    Use :func:`elem2rv` for rectilinear hyperbolas. Other conventions follow it, except
+    for rectilinear elliptic motion. This adapter retains inward velocity for
+    positive sin(E) on rectilinear ellipses. This convention remains supported.
+    The input object is not modified.
+
+    :param mu: positive gravitational parameter (L^3/s^2)
+    :param elements: orbital elements, with distances in L and angles in radians
+    :return: inertial position (L) and velocity (L/s)
+    :raises ValueError: if the elements do not describe a finite physical state
     """
-    Translates the orbit elements:
-
-    === ========================= =======
-    a   semi-major axis           m
-    e   eccentricity
-    i   inclination               rad
-    AN  ascending node            rad
-    AP  argument of periapses     rad
-    f   true anomaly angle        rad
-    === ========================= =======
-
-    to the inertial Cartesian position and velocity vectors.
-    The attracting body is specified through the supplied
-    gravitational constant mu.
-
-    .. note::
-        The semi-major axis units must be the same that the distance units used in the mu variable,
-        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
-
-    The code can handle the following cases:
-
-    ================== ============  ===========   =======================
-        circular:       e = 0           a > 0
-        elliptical-2D:  0 < e < 1       a > 0
-        elliptical-1D:  e = 1           a > 0        f = Ecc. Anom. here
-        parabolic:      e = 1           rp = -a
-        hyperbolic:     e > 1           a < 0
-    ================== ============  ===========   =======================
-
-    .. note::
-
-        To handle the parabolic case and distinguish it form the
-        rectilinear elliptical case, instead of passing along the
-        semi-major axis ``a`` in the "a" input slot, the negative radius
-        at periapses is supplied.  Having "a" be negative and e = 1
-        is a then a unique identified for the code for the parabolic
-        case.
-
-    :param mu: gravitational parameter
-    :param elements: orbital elements
-    :return:   rVec = position vector, vVec = velocity vector
-    """
-    # map classical elements structure into local variables #
-    a = elements.a
-    e = elements.e
-    i = elements.i
-    AN = elements.Omega
-    AP = elements.omega
-    f = elements.f
-
-    ir = np.zeros(3)
-    rVec = np.zeros(3)
-    vVec = np.zeros(3)
-
-    # TODO: Might want to have an error band on this equality #
-    if e == 1.0 and a > 0.0:  # rectilinear elliptic orbit case #
-        Ecc = f  # f is treated as ecc. anomaly #
-        r = a * (1.0 - e * math.cos(Ecc))  # orbit radius #
-        v = math.sqrt(2.0 * mu / r - mu / a)
-        ir[0] = math.cos(AN) * math.cos(AP) - math.sin(AN) * math.sin(AP) * math.cos(i)
-        ir[1] = math.sin(AN) * math.cos(AP) + math.cos(AN) * math.sin(AP) * math.cos(i)
-        ir[2] = math.sin(AP) * math.sin(i)
-        rVec = r * ir
-        if math.sin(Ecc) > 0.0:
-            vVec = -v * ir
+    if elements.e == 1.0 and elements.a != 0.0:
+        # A shallow copy of a SWIG wrapper still shares its native storage.
+        source = elements
+        elements = ClassicElements()
+        for field in ("a", "e", "i", "Omega", "omega", "f"):
+            setattr(elements, field, getattr(source, field))
+        if elements.a < 0.0:
+            elements.rPeriap = -elements.a
+            elements.a = 0.0  # [L]; canonical planar parabolic encoding
         else:
-            vVec = v * ir
+            elements.f = -elements.f
+    return elem2rv(mu, elements)
 
-    else:
-        if e == 1.0 and a < 0.0:    # parabolic case #
-            rp = -a                  # radius at periapses #
-            p = 2.0 * rp             # semi-latus rectum #
-        else:                       # elliptic and hyperbolic cases #
-            p = a * (1.0 - e * e)   # semi-latus rectum #
-
-        r = p / (1.0 + e * math.cos(f))  # orbit radius #
-        theta = AP + f                   # true latitude angle #
-        h = math.sqrt(mu * p)            # orbit ang. momentum mag.
-
-        rVec[0] = r * (math.cos(AN) * math.cos(theta) - math.sin(AN) * math.sin(theta) * math.cos(i))
-        rVec[1] = r * (math.sin(AN) * math.cos(theta) + math.cos(AN) * math.sin(theta) * math.cos(i))
-        rVec[2] = r * (math.sin(theta) * math.sin(i))
-
-        vVec[0] = -mu / h * (math.cos(AN) * (math.sin(theta) + e * math.sin(AP)) + math.sin(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
-        vVec[1] = -mu / h * (math.sin(AN) * (math.sin(theta) + e * math.sin(AP)) - math.cos(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
-        vVec[2] = -mu / h * (-(math.cos(theta) + e * math.cos(AP)) * math.sin(i))
-
-    return rVec, vVec
 
 def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
+    """Convert classical elements to a finite inertial Cartesian state.
+
+    Inclination must be in [0, pi]. Distances use the same unit L as ``mu``. Ellipses have ``a > 0, e < 1``;
+    hyperbolas have ``a < 0, e > 1``. No eccentricity tolerance selects a conic.
+    The C and Python core conversions share these degenerate conventions:
+
+    * Planar parabola: ``e = 1, a = 0, rPeriap > 0``; ``f`` is true anomaly.
+    * Rectilinear ellipse: ``e = 1, a > 0``; ``f`` is eccentric anomaly E,
+      with outward motion for ``sin(E) > 0``.
+    * Rectilinear hyperbola: ``e = 1, a < 0``; ``f`` is signed hyperbolic
+      anomaly H, with outward motion for ``H > 0``.
+    * Rectilinear parabola: ``e = 1, a = rPeriap = 0``; ``rmag > 0`` supplies
+      radius, and ``f = 0`` selects outward motion or ``f = pi`` inward motion.
+
+    For rectilinear states, ``i, Omega, omega`` orient the outward radial ray
+    along the perifocal x axis; the plane about that ray is arbitrary.
+    Collisions and open-conic anomalies at or beyond infinity are rejected.
+    The extra fields are read only where required by these conventions.
+
+    :param mu: positive gravitational parameter (L^3/s^2)
+    :param elements: orbital elements, with distances in L and angles in radians
+    :return: inertial position (L) and velocity (L/s)
+    :raises ValueError: if the elements do not describe a finite physical state
     """
-    Translates the orbit elements:
+    a, e, inc, node, periapsis, anomaly = (elements.a, elements.e, elements.i,
+                                         elements.Omega, elements.omega, elements.f)
+    if not all(value is not None and math.isfinite(value)
+               for value in (mu, a, e, inc, node, periapsis, anomaly)) or mu <= 0.0 or e < 0.0 or not 0.0 <= inc <= math.pi:
+        raise ValueError("elem2rv() requires finite elements, mu > 0, e >= 0 and 0 <= i <= pi")
+    p_hat = np.array([math.cos(node) * math.cos(periapsis) - math.sin(node) * math.sin(periapsis) * math.cos(inc),
+                      math.sin(node) * math.cos(periapsis) + math.cos(node) * math.sin(periapsis) * math.cos(inc),
+                      math.sin(periapsis) * math.sin(inc)])
+    q_hat = np.array([-math.cos(node) * math.sin(periapsis) - math.sin(node) * math.cos(periapsis) * math.cos(inc),
+                      -math.sin(node) * math.sin(periapsis) + math.cos(node) * math.cos(periapsis) * math.cos(inc),
+                      math.cos(periapsis) * math.sin(inc)])
+    radial = e == 1.0 and (a != 0.0 or elements.rPeriap == 0.0)
+    if radial:
+        if a > 0.0:
+            # Let libm reduce the angle; a rounded 2*pi divisor loses phase.
+            half = 0.5 * anomaly
+            factor = math.sin(half)
+            radius = 2.0 * a * factor**2
+            if radius <= 0.0:
+                raise ValueError("elem2rv() cannot represent a rectilinear collision")
+            radial_speed = math.sqrt(mu / a) * math.cos(half) / factor
+        elif a < 0.0:
+            try:
+                factor = math.sinh(0.5 * anomaly)
+                radius = -2.0 * a * factor * factor
+            except OverflowError as error:
+                raise ValueError("elem2rv() rectilinear radius overflow") from error
+            if radius <= 0.0:
+                raise ValueError("elem2rv() cannot represent a rectilinear collision")
+            radial_speed = math.copysign(math.sqrt(mu / -a) / math.tanh(0.5 * abs(anomaly)), anomaly)
+        else:
+            radius = elements.rmag
+            if radius is None or not math.isfinite(radius) or radius <= 0.0 or anomaly not in (0.0, math.pi):
+                raise ValueError("elem2rv() radial parabola requires rmag > 0 and f = 0 or pi")
+            radial_speed = math.sqrt(2.0 * (mu / radius)) * (1.0 if anomaly == 0.0 else -1.0)
+        r_vec, v_vec = radius * p_hat, radial_speed * p_hat
+    else:
+        if e == 1.0 and a == 0.0:
+            if elements.rPeriap is None or not math.isfinite(elements.rPeriap) or elements.rPeriap <= 0.0:
+                raise ValueError("elem2rv() planar parabola requires rPeriap > 0")
+            parameter = 2.0 * elements.rPeriap
+        else:
+            parameter = a * (1.0 - e) * (1.0 + e)
+        cosine = math.cos(anomaly)
+        sine = math.sin(anomaly)
+        principal_anomaly = math.atan2(sine, cosine)
+        if parameter <= 0.0 or not math.isfinite(parameter) or (e >= 1.0 and abs(principal_anomaly) >= math.acos(-1.0 / e)):
+            raise ValueError("elem2rv() invalid conic or anomaly at/beyond infinity")
+        # Half-angle expressions retain 1-e and e-1 near apoapsis/infinity.
+        half_cosine_squared = math.cos(0.5 * anomaly)**2
+        denominator = (1.0 - e) + 2.0 * e * half_cosine_squared if cosine < 0.0 else 1.0 + e * cosine
+        if denominator <= 0.0:
+            raise ValueError("elem2rv() anomaly at/beyond infinity")
+        radius = parameter / denominator
+        transverse = (e - 1.0) + 2.0 * half_cosine_squared if cosine < 0.0 else e + cosine
+        r_vec = radius * (cosine * p_hat + sine * q_hat)
+        v_vec = math.sqrt(mu / parameter) * (-sine * p_hat + transverse * q_hat)
+    if not np.all(np.isfinite(r_vec)) or not np.all(np.isfinite(v_vec)):
+        raise ValueError("elem2rv() state is outside the finite numerical range")
+    return r_vec, v_vec
 
-    === ========================= =======
-    a   semi-major axis           m
-    e   eccentricity
-    i   inclination               rad
-    AN  ascending node            rad
-    AP  argument of periapses     rad
-    f   true anomaly angle        rad
-    === ========================= =======
-
-    to the inertial Cartesian position and velocity vectors.
-    The attracting body is specified through the supplied
-    gravitational constant ``mu``.
-
-    .. note::
-        The semi-major axis units must be the same that the distance units used in the mu variable,
-        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
-
-    :param mu: gravitational parameter
-    :param elements: orbital elements
-    :return:   rVec, position vector
-    :return:   vVec, velocity vector
-    """
-    rVec = np.zeros(3)
-    vVec = np.zeros(3)
-
-    if 1.0 + elements.e * math.cos(elements.f) < tolerance:
-        print('WARNING: Radius is near infinite in elem2rv conversion.')
-
-    # Calculate the semilatus rectum and the radius #
-    p = elements.a * (1.0 - elements.e * elements.e)
-    r = p / (1.0 + elements.e * math.cos(elements.f))
-    theta = elements.omega + elements.f
-    rVec[0] = r * (
-        math.cos(theta) * math.cos(elements.Omega) - math.cos(elements.i) * math.sin(theta) * math.sin(
-            elements.Omega))
-    rVec[1] = r * (
-        math.cos(theta) * math.sin(elements.Omega) + math.cos(elements.i) * math.sin(theta) * math.cos(
-            elements.Omega))
-    rVec[2] = r * (math.sin(theta) * math.sin(elements.i))
-
-    if math.fabs(p) < tolerance:
-        if math.fabs(1.0 - elements.e) < tolerance:
-            # Rectilinear orbit #
-            raise ValueError('elem2rv does not support rectilinear orbits')
-        # Parabola #
-        rp = -elements.a
-        p = 2.0 * rp
-
-    h = math.sqrt(mu * p)
-    vVec[0] = -mu / h * (math.cos(elements.Omega) * (elements.e * math.sin(elements.omega) + math.sin(theta)) +
-                         math.cos(elements.i) * (
-                             elements.e * math.cos(elements.omega) + math.cos(theta)) * math.sin(elements.Omega))
-    vVec[1] = -mu / h * (math.sin(elements.Omega) * (elements.e * math.sin(elements.omega) + math.sin(theta)) -
-                         math.cos(elements.i) * (elements.e * math.cos(elements.omega) + math.cos(theta)) *
-                         math.cos(elements.Omega))
-    vVec[2] = mu / h * (elements.e * math.cos(elements.omega) + math.cos(theta)) * math.sin(elements.i)
-
-    return rVec, vVec
 
 def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
+    """Convert a Cartesian state using the legacy Python parabolic encoding.
+
+    The computation and singular-angle conventions are those of :func:`rv2elem`.
+    Planar parabolas return ``a = rApoap = -rPeriap``. Rectilinear states have
+    ``rPeriap = 0``; use :func:`elem2rv` to reconstruct radial hyperbolas because
+    :func:`elem2rv_parab` retains its negative-a planar encoding. Node, periapsis
+    and nonradial true anomaly retain signed angles in [-pi, pi]; circular orbits
+    place periapsis at the current position.
+    Radial elliptic anomaly retains the supported inward-positive convention.
+
+    :param mu: positive gravitational parameter (L^3/s^2)
+    :param rVec: nonzero inertial position vector (L)
+    :param vVec: inertial velocity vector (L/s)
+    :return: orbital elements, with distances in L and angles in radians
+    :raises ValueError: if the state is invalid or its elements are unrepresentable
     """
-    Translates the orbit elements inertial Cartesian position
-    vector rVec and velocity vector vVec into the corresponding
-    classical orbit elements where
-
-    === ========================= =======
-    a   semi-major axis             m (see below)
-    e   eccentricity
-    i   inclination                 rad
-    AN  ascending node              rad
-    AP  argument of periapses       rad
-    f   true anomaly angle          rad
-    === ========================= =======
-
-    If the orbit is rectilinear, then ``f`` will be the eccentric or hyperbolic anomaly
-
-    The attracting body is specified through the supplied
-    gravitational constant ``mu``.
-
-    .. note::
-        The semi-major axis units must be the same that the distance units used in the mu variable,
-        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
-
-    The code can handle the following cases:
-
-    ============== ============= ===========
-    circular:       e = 0           a > 0
-    elliptical-2D:  0 < e < 1       a > 0
-    elliptical-1D:  e = 1           a > 0
-    parabolic:      e = 1           a = -rp
-    hyperbolic:     e > 1           a < 0
-    ============== ============= ===========
-
-    For the parabolic case the semi-major axis is not defined.
-    In this case -rp (radius at periapses) is returned instead
-    of a.  For the circular case, the AN and AP are ill-defined,
-    along with the associated ie and ip unit direction vectors
-    of the perifocal frame. In this circular orbit case, the
-    unit vector ie is set equal to the normalized inertial
-    position vector ir.
-
-    :param   mu:  gravitational parameter
-    :param   rVec:  position vector
-    :param   vVec: velocity vector
-    :return: orbital elements
-
-
-    Todo: Modify this code to return true longitude of periapsis
-    (non-circular, equatorial), argument of latitude (circular, inclined),
-    and true longitude (circular, equatorial) when appropriate instead of
-    simply zeroing out omega and Omega
-
-    """
-
-    dum = np.zeros(3)
-    dum2 = np.zeros(3)
-    ie = np.zeros(3)
-    ip = np.zeros(3)
-    ih = np.zeros(3)
-    cVec = np.zeros(3)
-    hVec = np.zeros(3)
-    ir = np.zeros(3)
-    elements = ClassicElements()
-
-    # compute orbit radius #
-    r = la.norm(rVec)
-    elements.rmag = r
-    ir = v3Normalize(rVec)
-
-    # compute the angular momentum vector #
-    hVec = np.cross(rVec, vVec)
-    h = la.norm(hVec)
-
-    # compute the eccentricity vector #
-    cVec = np.cross(vVec, hVec)
-    dum = (-mu / r) * rVec
-    cVec = cVec + dum
-    elements.e = la.norm(cVec) / mu
-
-    # compute semi-major axis #
-    elements.alpha = 2.0 / r - np.dot(vVec, vVec) / mu
-    if math.fabs(elements.alpha) > eps:
-        # elliptic or hyperbolic case #
-        elements.a = 1.0 / elements.alpha
-        elements.rPeriap = elements.a * (1.0 - elements.e)
-        elements.rApoap = elements.a * (1.0 + elements.e)
-    else:
-        #  parabolic case #
-        elements.alpha = 0.
-        p = h * h / mu
-        rp = p / 2.0
-        elements.a = -rp  # a is not defined for parabola, so - rp is returned instead #
-        elements.e = 1.0
-        elements.rPeriap = rp
-        elements.rApoap = -rp  # periapses radius doesn't exist, returning -rp instead #
-
-    if h < eps:  # rectilinear motion case #
-        dum = np.array([0.0, 0.0, 1.0])
-        dum2 = np.array([0.0, 1.0, 0.0])
-        ih = np.cross(ie, dum)
-        ip = np.cross(ie, dum2)
-        if la.norm(ih) > la.norm(ip):
-            ih = v3Normalize(ih)
-        else:
-            ih = v3Normalize(ip)
-        ip = np.cross(ih, ie)
-    else:
-        ih = v3Normalize(hVec)
-        if math.fabs(elements.e) > eps:
-            ie = (1.0 / mu / elements.e) * cVec
-        else:
-            ie = ir
-        # circular orbit case.  Here ie, ip are arbitrary, as long as they #
-        # are perpenticular to the ih vector. #
-        ip = np.cross(ih, ie)
-
-    # compute the 3-1-3 orbit plane orientation angles #
-    elements.i = math.acos(ih[2])
-    if elements.i > eps and elements.i < np.pi - eps:
-        elements.Omega = math.atan2(ih[0], -ih[1])
-        elements.omega = math.atan2(ie[2], ip[2])
-    else:
-        elements.Omega = 0.
-        elements.omega = math.atan2(ie[1], ie[0])
-
-    if h < eps:  # rectilinear motion case #
-        if elements.alpha > 0:  # elliptic case #
-            Ecc = math.acos(1 - r * elements.alpha)
-            if np.dot(rVec, vVec) > 0:
-                Ecc = 2.0 * np.pi - Ecc
-            elements.f = Ecc  # for this mode the eccentric anomaly is returned #
-        else:  # hyperbolic case #
-            H = math.acosh(r * elements.alpha + 1)
-            if np.dot(rVec, vVec) < 0:
-                H = 2.0 * np.pi - H
-            elements.f = H  # for this mode the hyperbolic anomaly is returned #
-    else:
-        # compute true anomaly #
-        dum = np.cross(ie, ir)
-        elements.f = math.atan2(np.dot(dum, ih), np.dot(ie, ir))
-
+    elements = rv2elem(mu, rVec, vVec, canonical=True)
+    if elements.a == 0.0 and elements.rPeriap > 0.0:
+        elements.a = elements.rApoap = -elements.rPeriap
+    if elements.rPeriap > 0.0 and elements.f > math.pi:
+        elements.f -= 2.0 * math.pi
+    for field in ("Omega", "omega"):
+        angle = getattr(elements, field)
+        setattr(elements, field, math.atan2(math.sin(angle), math.cos(angle)))
+    if elements.rPeriap == 0.0 and elements.a > 0.0:
+        elements.f = (-elements.f) % (2.0 * math.pi)
+    elif elements.e <= 1e-12:
+        # The legacy adapter places the perifocal x axis at the current position.
+        elements.omega = math.atan2(math.sin(elements.omega + elements.f),
+                                   math.cos(elements.omega + elements.f))
+        elements.f = 0.0  # [rad]
     return elements
 
-def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
+
+def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray, *, canonical: bool = False) -> ClassicElements:
+    """Convert a Cartesian state to classical orbital elements.
+
+    Inputs must be finite and use consistent distance units. Inclination ``i``
+    is in [0, pi]; ``Omega`` and ``omega`` are in [0, 2*pi). Nonradial true
+    anomaly ``f`` is in [0, 2*pi) for ellipses/parabolas and [-pi, pi] for
+    hyperbolas. With ``canonical=True``, degenerate conics use the conventions
+    of :func:`elem2rv`. The default retains the supported Python parabolic
+    encoding ``a = -rPeriap, rApoap = -1``.
+
+    A dimensionless tolerance of 1e-12 selects singular-angle conventions:
+
+    * For ``e <= tolerance``, ``omega = 0`` and ``f`` is the argument of latitude.
+    * For ``sin(i) <= tolerance``, ``Omega = 0`` and ``i`` is set to 0 or pi.
+      ``omega`` measures periapsis from the inertial x axis in the direction of
+      orbital motion. Equatorial retrograde longitudes therefore have the
+      opposite sign to inertial azimuths.
+    * If both conditions hold, ``f`` measures position from that axis in the
+      direction of motion.
+
+    Replacing unresolved directions introduces relative state errors on the
+    order of this tolerance. Energy is classified as parabolic only within
+    8 machine epsilons of the local kinetic/potential energy scale. Radial
+    motion is detected within 8 machine epsilons of zero transverse velocity;
+    the plane is chosen deterministically about the outward ray.
+    Near zero energy, relative accuracy of ``a`` and state reconstruction from
+    rounded ``a, e`` degrades as machine epsilon divided by ``abs(1-e)``.
+    Nonradial finite-energy states whose eccentricity rounds to one or the
+    wrong side of one cannot be encoded consistently and are rejected.
+
+    :param mu: positive gravitational parameter (L^3/s^2)
+    :param rVec: nonzero inertial position vector (L)
+    :param vVec: inertial velocity vector (L/s)
+    :param canonical: if True, use the C-compatible parabolic encoding; otherwise
+        retain the original Python ``a = -rPeriap, rApoap = -1`` result
+    :return: orbital elements, with distances in L and angles in radians; a, e,
+        rmag, alpha, rPeriap and rApoap retain NumPy float64 scalar arithmetic
+    :raises ValueError: if the state is invalid or its elements are unrepresentable
     """
-    Translates the orbit elements inertial Cartesian position
-    vector rVec and velocity vector vVec into the corresponding
-    classical orbit elements where
-
-    === ========================= =======
-    a   semi-major axis           m
-    e   eccentricity
-    i   inclination               rad
-    AN  ascending node            rad
-    AP  argument of periapses     rad
-    f   true anomaly angle        rad
-    === ========================= =======
-
-    If the orbit is rectilinear, then this will be the eccentric or hyperbolic anomaly
-
-    The attracting body is specified through the supplied
-    gravitational constant ``mu``.
-
-    .. note::
-        The semi-major axis units must be the same that the distance units used in the mu variable,
-        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
-
-    :param mu:  gravitational parameter
-    :param rVec: position vector
-    :param vVec: velocity vector
-    :return:  orbital elements
-    """
-    hVec = [0.0] * 3
-    v3 = [0.0] * 3
-    nVec = [0.0] * 3
-    eVec = [0.0] * 3
-    eVec2 = [0.0] * 3
-
+    rVec = np.asarray(rVec, dtype=float)
+    vVec = np.asarray(vVec, dtype=float)
+    if (not math.isfinite(mu) or mu <= 0.0 or rVec.shape != (3,) or vVec.shape != (3,)
+            or not np.all(np.isfinite(rVec)) or not np.all(np.isfinite(vVec))):
+        raise ValueError("rv2elem() requires finite three-vectors and mu > 0")
+    radius = math.hypot(*rVec)
+    if radius <= 0.0 or not math.isfinite(radius):
+        raise ValueError("rv2elem() requires a finite nonzero radius")
+    speed_scale = math.sqrt(mu / radius)
+    if speed_scale == 0.0 or not math.isfinite(speed_scale):
+        raise ValueError("rv2elem() state is outside the finite numerical range")
+    r_hat = rVec / radius
+    scaled_v = vVec / speed_scale
+    speed_squared = float(np.dot(scaled_v, scaled_v))
+    if not math.isfinite(speed_squared):
+        raise ValueError("rv2elem() state is outside the finite numerical range")
+    scaled_energy = 2.0 - speed_squared
+    roundoff = 8.0 * np.finfo(float).eps
+    singularity_tolerance = 1e-12  # [-]
+    if abs(scaled_energy) <= roundoff * max(2.0, speed_squared):
+        scaled_energy = 0.0  # [-]; unresolved energy at the parabolic limit
+    scaled_h = np.cross(r_hat, scaled_v)
+    momentum = math.hypot(*scaled_h)
+    radial = momentum <= roundoff * math.sqrt(speed_squared)
     elements = ClassicElements()
-
-    if (np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec))):
-        print("ERROR: received NAN rVec or vVec values.")
-        elements.a = np.nan
-        elements.alpha = np.nan
-        elements.e = np.nan
-        elements.i = np.nan
-        elements.AN = np.nan
-        elements.AP = np.nan
-        elements.f = np.nan
-        elements.rmag = np.nan
-        return
-
-
-    # Calculate the specific angular momentum and its magnitude #
-    hVec = np.cross(rVec, vVec)
-    h = la.norm(hVec)
-    p = h * h / mu
-
-    # Calculate the line of nodes #
-    v3 = np.array([0.0, 0.0, 1.0])
-    nVec = np.cross(v3, hVec)
-    n = la.norm(nVec)
-
-    # Orbit eccentricity and energy #
-    r = la.norm(rVec)
-    v = la.norm(vVec)
-    eVec = (v * v / mu - 1.0 / r) * rVec
-    v3 = (np.dot(rVec, vVec) / mu) * vVec
-    eVec = eVec - v3
-    elements.e = la.norm(eVec)
-    elements.rmag = r
-    elements.rPeriap = p / (1.0 + elements.e)
-
-    # compute semi-major axis #
-    elements.alpha = 2.0 / r - v * v / mu
-    if math.fabs(elements.alpha) > eps:
-        # elliptic or hyperbolic case #
-        elements.a = 1.0 / elements.alpha
-        elements.rApoap = p / (1.0 - elements.e)
+    elements.rmag = radius
+    elements.alpha = scaled_energy / radius
+    elements.a = radius / scaled_energy if scaled_energy != 0.0 else 0.0  # [L]
+    parameter = radius * momentum * momentum
+    if radial:
+        elements.e = 1.0
+        elements.rPeriap = 0.0  # [L]
+        # The least-aligned inertial axis avoids a degenerate auxiliary plane.
+        axis = np.eye(3)[np.argmin(np.abs(r_hat))]
+        h_hat = np.cross(r_hat, axis)
+        h_hat /= math.hypot(*h_hat)
+        e_hat = r_hat
     else:
-        rp = p / 2.
-        elements.a = -rp
-        elements.rApoap = -1.0
-
-    # Calculate the inclination #
-    elements.i = math.acos(hVec[2] / h)
-
-    if elements.e >= 1e-11 and elements.i >= 1e-11:
-        # Case 1: Non-circular, inclined orbit #
-        elements.Omega = math.acos(nVec[0] / n)
-        if nVec[1] < 0.0:
-            elements.Omega = 2.0 * np.pi - elements.Omega
-        elements.omega = math.acos(np.clip(np.dot(nVec, eVec) / n / elements.e, a_min=-1.0, a_max=1.0))
-        if eVec[2] < 0.0:
-            elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
-        if np.dot(rVec, vVec) < 0.0:
-            elements.f = 2.0 * np.pi - elements.f
-    elif elements.e >= 1e-11 and elements.i < 1e-11:
-        # Case 2: Non-circular, equatorial orbit #
-        # Equatorial orbit has no ascending node #
-        elements.Omega = 0.0
-        # True longitude of periapsis, omegatilde_true #
-        elements.omega = math.acos(eVec[0] / elements.e)
-        if eVec[1] < 0.0:
-            elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
-        if np.dot(rVec, vVec) < 0.0:
-            elements.f = 2.0 * np.pi - elements.f
-    elif elements.e < 1e-11 and elements.i >= 1e-11:
-        # Case 3: Circular, inclined orbit #
-        elements.Omega = math.acos(nVec[0] / n)
-        if nVec[1] < 0.0:
-            elements.Omega = 2.0 * np.pi - elements.Omega
-        elements.omega = 0.0
-        # Argument of latitude, u = omega + f #
-        elements.f = math.acos(np.clip(np.dot(nVec, rVec) / n / r, a_min=-1.0, a_max=1.0))
-        if rVec[2] < 0.0:
-            elements.f = 2.0 * np.pi - elements.f
-    elif elements.e < 1e-11 and elements.i < 1e-11:
-        # Case 4: Circular, equatorial orbit #
-        elements.Omega = 0.0
-        elements.omega = 0.0
-        # True longitude, lambda_true #
-        elements.f = math.acos(rVec[0] / r)
-        if rVec[1] < 0:
-            elements.f = 2.0 * np.pi - elements.f
+        h_hat = scaled_h / momentum
+        e_vec = np.cross(scaled_v, scaled_h) - r_hat
+        elements.e = math.hypot(*e_vec)
+        if scaled_energy == 0.0:
+            elements.e = 1.0
+        elif (scaled_energy > 0.0 and elements.e >= 1.0) or (scaled_energy < 0.0 and elements.e <= 1.0):
+            raise ValueError("rv2elem() eccentricity cannot resolve the finite-energy conic")
+        elements.rPeriap = parameter / (1.0 + elements.e)
+        e_hat = e_vec / math.hypot(*e_vec) if elements.e > singularity_tolerance else None
+    elements.rApoap = elements.a * (1.0 + elements.e) if scaled_energy != 0.0 else 0.0  # [L]
+    n_vec = np.array([-h_hat[1], h_hat[0], 0.0])
+    node_magnitude = math.hypot(n_vec[0], n_vec[1])
+    if node_magnitude <= singularity_tolerance:
+        n_hat = np.array([1.0, 0.0, 0.0])
+        elements.i = 0.0 if h_hat[2] >= 0.0 else math.pi  # [rad]
     else:
-        print("Error: rv2elem couldn't identify orbit type.")
-    if elements.e > 1.0 and math.fabs(elements.f) > np.pi:
-        twopiSigned = math.copysign(2.0 * np.pi, elements.f)
-        elements.f -= twopiSigned
-
+        n_hat = n_vec / node_magnitude
+        elements.i = math.atan2(node_magnitude, h_hat[2])
+    if e_hat is None:
+        e_hat = n_hat
+    elements.Omega = math.atan2(n_hat[1], n_hat[0])
+    elements.omega = math.atan2(np.dot(h_hat, np.cross(n_hat, e_hat)), np.dot(n_hat, e_hat))
+    elements.f = math.atan2(np.dot(h_hat, np.cross(e_hat, r_hat)), np.dot(e_hat, r_hat))
+    for field in ("Omega", "omega", "f"):
+        angle = getattr(elements, field) % (2.0 * math.pi)
+        setattr(elements, field, 0.0 if angle >= 2.0 * math.pi else angle)
+    if radial:
+        radial_speed = float(np.dot(r_hat, scaled_v))
+        if scaled_energy > 0.0:
+            elements.f = math.atan2(radial_speed * math.sqrt(scaled_energy), 1.0 - scaled_energy)
+            if elements.f < 0.0:
+                elements.f += 2.0 * math.pi
+        elif scaled_energy < 0.0:
+            elements.f = math.copysign(2.0 * math.asinh(math.sqrt(-0.5 * scaled_energy)), radial_speed)
+        else:
+            elements.f = 0.0 if radial_speed >= 0.0 else math.pi  # [rad]; radial direction flag
+    elif elements.e > 1.0 and elements.f > math.pi:
+        elements.f -= 2.0 * math.pi
+    if not all(math.isfinite(getattr(elements, field)) for field in ClassicElements.__slots__):
+        raise ValueError("rv2elem() elements are outside the finite numerical range")
+    if not canonical and elements.a == 0.0 and elements.rPeriap > 0.0:
+        elements.a = -elements.rPeriap
+        elements.rApoap = -1.0  # [L]; legacy sentinel, not an apoapsis radius
+    # These fields historically carry NumPy scalar arithmetic (including reflected
+    # list subtraction). Keep the public types independent of internal math helpers.
+    for field in ("a", "e", "rmag", "alpha", "rPeriap", "rApoap"):
+        setattr(elements, field, np.float64(getattr(elements, field)))
     return elements
 
 

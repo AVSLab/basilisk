@@ -23,6 +23,7 @@
 
 %{
    #include "keplerianOrbit.h"
+   #include <stdexcept>
 %}
 
 %pythoncode %{
@@ -30,6 +31,12 @@ from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_eigen.i"
 
+// swig_eigen.i installs its own handler; extend it after that include.
+%default_bsk_exception(catch (const std::invalid_argument& error) {
+    SWIG_exception_fail(SWIG_ValueError, error.what());
+});
+
+%ignore KeplerianOrbit::operator=;
 %include "keplerianOrbit.h"
 %include "orbitalMotion.h"
 

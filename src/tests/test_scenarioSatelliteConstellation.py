@@ -29,7 +29,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import simHelpers
+from Basilisk.utilities import macros, simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -50,7 +50,7 @@ def test_bskAttitudePointing(show_plots):
     try:
         figureList = scenarioSatelliteConstellation.run(show_plots,
                                                         29994000,   # semi-major axis [m]
-                                                        56,         # orbit inclination [deg]
+                                                        56.0 * macros.D2R,  # orbit inclination [rad]
                                                         24,         # total number of satellites (int)
                                                         3,          # number of orbit planes (int)
                                                         1)          # phasing (int)

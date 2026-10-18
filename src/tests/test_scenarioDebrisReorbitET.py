@@ -29,9 +29,12 @@
 import inspect
 import os
 import sys
+from types import SimpleNamespace
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pytest
-from Basilisk.utilities import simHelpers
+from Basilisk.utilities import orbitalMotion, simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -80,6 +83,32 @@ def test_scenarioDebrisReorbitET(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
+
+
+def test_debris_orbit_plot_with_rv2elem_axis():
+    """Preserve plotting with NumPy scalar elements returned by ``rv2elem``."""
+    mu = 3.986004415e14  # [m^3/s^2]
+    initial_axis = 7.0e6  # [m]
+    axes = initial_axis + np.array([0.0, 100.0, 250.0])  # [m]
+    positions = np.zeros((len(axes), 3))
+    velocities = np.zeros_like(positions)
+    positions[:, 0] = axes
+    velocities[:, 1] = np.sqrt(mu / axes)
+    # The scenario obtains its reference elements from the initial Cartesian state.
+    elements = orbitalMotion.rv2elem(mu, positions[0], velocities[0])
+    assert type(elements.a) is np.float64
+    time = np.array([0, 1000000000, 2000000000], dtype=np.uint64)  # [ns]
+    period = 2.0 * np.pi * np.sqrt(elements.a**3 / mu)  # [s]
+    planet = SimpleNamespace(radEquator=6378136.6)  # [m]
+    try:
+        figures = scenarioDebrisReorbitET.plotOrbits(
+            time, positions, velocities, positions, velocities, elements, mu, period, planet
+        )
+        axis_plot = figures[scenarioDebrisReorbitET.fileName + "3"].axes[0].lines[0]
+        np.testing.assert_allclose(axis_plot.get_ydata(), [0.0, 0.1, 0.25], rtol=0.0, atol=5e-12)  # [km]
+    finally:
+        plt.close("all")
+
 
 if __name__ == "__main__":
     test_scenarioDebrisReorbitET(
