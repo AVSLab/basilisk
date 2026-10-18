@@ -63,6 +63,9 @@ bskModuleOptionsFlag = {
 # The modern Protobuf recipe requires >2.1; compiler.cstd requires 2.4.
 required_conan_version = ">=2.4.0"
 
+# Keep the host libraries and protoc on the same zlib release.
+ZLIB_REQUIREMENT = "zlib/1.3.2"
+
 PY_LIMITED_API_PY39  = "0x03090000"  # cp39-abi3
 NUMBA_CACHE_SEARCH_DIRS = ("src", "docs/source", "examples")
 NUMBA_CACHE_DIR_NAME = "__pycache__"
@@ -581,10 +584,14 @@ class BasiliskConan(ConanFile):
         # and https://github.com/conan-io/conan-center-index/pull/22244#issuecomment-1910770387
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             self.tool_requires("protobuf/<host_version>")
+            # Keep protoc's transitive zlib dependency aligned with the host graph.
+            self.tool_requires(ZLIB_REQUIREMENT, override=True)
 
     def requirements(self):
+        self.requires(ZLIB_REQUIREMENT, override=True)
         if self.options.get_safe("opNav"):
             self.requires("opencv/4.14.0")
+            self.requires("libpng/1.6.58", override=True)
 
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             # Protobuf 6.x preserves Python 3.9 support for the generated bindings.

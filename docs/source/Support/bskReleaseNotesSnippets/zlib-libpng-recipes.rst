@@ -1,0 +1,1 @@
+- Upgraded zlib to 1.3.2 and optical navigation builds to libpng 1.6.58, removing their legacy Conan metadata warnings. The libjpeg and cppzmq dependencies are unchanged.
