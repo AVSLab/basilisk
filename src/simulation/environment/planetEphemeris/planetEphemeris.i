@@ -39,7 +39,7 @@ namespace std {
 
 %include "sys_model.i"
 %include "planetEphemeris.h"
-%include "architecture/utilities/orbitalMotion.h"
+%include "swig_orbitalMotion.swg"
 %include "architecture/utilities/astroConstants.h"
 
 

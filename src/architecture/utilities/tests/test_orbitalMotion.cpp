@@ -22,6 +22,7 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "unitTestComparators.h"
+#include <array>
 #include <cmath>
 #include <gtest/gtest.h>
 #include <limits>
@@ -29,6 +30,28 @@
 
 const double orbitalEnvironmentAccuracy = 1e-10;
 const double orbitalElementsAccuracy = 1e-11;
+
+extern "C" void zonalCompoundLiteralsFromC(double acceleration[4][3]);
+
+/** @brief Preserve C compound literals and C++ braced initializers in both source call forms. */
+TEST(OrbitalMotion, zonalSourceArgumentSyntax)
+{
+    double position[3] = { 7000.0, 20.0, 100.0 }; // [km]
+    double fromC[4][3], expected[2][3], fromCpp[2][3];
+    zonalCompoundLiteralsFromC(fromC);
+    jPerturbForPlanet(position, 2, expected[0], CELESTIAL_EARTH);
+    jPerturbForPlanet(position, 2, expected[1], CELESTIAL_MARS);
+    jPerturb(std::array<double, 3>{ 7000.0, 20.0, 100.0 }.data(), 2, fromCpp[0]);                 // [km]
+    jPerturb(std::array<double, 3>{ 7000.0, 20.0, 100.0 }.data(), 2, fromCpp[1], CELESTIAL_MARS); // [km]
+    for (int index = 0; index < 3; ++index) {
+        for (int call = 0; call < 4; ++call) {
+            EXPECT_DOUBLE_EQ(fromC[call][index], expected[call % 2][index]);
+        }
+        for (int call = 0; call < 2; ++call) {
+            EXPECT_DOUBLE_EQ(fromCpp[call][index], expected[call][index]);
+        }
+    }
+}
 
 /** @brief Match direct trigonometric references without reducing by a rounded 2*pi divisor. */
 TEST(OrbitalMotion, largeWrappedAnomalies)
@@ -316,31 +339,236 @@ TEST(OrbitalMotion, debyeLengthInvalidAltitudes)
     }
 }
 
+/** @brief Check the nominal drag reference with a meaningful relative tolerance. */
 TEST(OrbitalMotion, atmosphericDrag)
 {
-    double check[3];
+    // 80-digit Decimal reference using the exact binary64 density coefficients.
+    const double check[3] = { -2.8245395411254788e-7, -2.542085587012931e-6, -2.8245395411254788e-7 }; // [km/s^2]
     double ans[3];
-    double r[3] = { 6200.0, 100.0, 2000.0 };
-    double v[3] = { 1.0, 9.0, 1.0 };
-    double A = 2.0;
-    double Cd = 0.2;
-    double m = 50.0;
+    double r[3] = { 6200.0, 100.0, 2000.0 }; // [km]
+    double v[3] = { 1.0, 9.0, 1.0 };         // [km/s]
+    double A = 2.0;                          // [m^2]
+    double Cd = 0.2;                         // [-]
+    double m = 50.0;                         // [kg]
 
-    v3Set(-2.8245395411253663e-007, -2.5420855870128297e-006, -2.8245395411253663e-007, check);
     atmosphericDrag(Cd, A, m, r, v, ans);
-    EXPECT_VECTOR3_NEAR(ans, check, 11); // [km/s^2]
+    for (int component = 0; component < 3; ++component) {
+        // Radius roundoff is amplified by the steep density gradient at this altitude.
+        EXPECT_NEAR_REL(ans[component], check[component], 3e-13);
+    }
+    atmosphericDrag(Cd, A, m, r, v, r);
+    EXPECT_VECTOR3_NEAR(r, ans, 0.0);               // [km/s^2]; output aliases position
+    double position[3] = { 6200.0, 100.0, 2000.0 }; // [km]
+    atmosphericDrag(Cd, A, m, position, v, v);
+    EXPECT_VECTOR3_NEAR(v, ans, 0.0); // [km/s^2]; output aliases velocity
+}
+
+/** @brief Valid zero speed, coefficient, or area gives an exact zero vector. */
+TEST(OrbitalMotion, atmosphericDragZeroLimits)
+{
+    double position[3] = { REQ_EARTH + 400.0, 0.0, 0.0 }; // [km]
+    for (int zeroCase = 0; zeroCase < 3; ++zeroCase) {
+        double velocity[3] = { 3.0, -6.0, 2.0 }; // [km/s]
+        if (zeroCase == 0) {
+            v3SetZero(velocity);
+        }
+        double acceleration[3];
+        atmosphericDrag(zeroCase == 1 ? 0.0 : 2.2,
+                        zeroCase == 2 ? 0.0 : 3.0,
+                        100.0,
+                        position,
+                        velocity,
+                        acceleration); // Cd [-], A [m^2], m [kg]
+        for (double component : acceleration) {
+            EXPECT_DOUBLE_EQ(component, 0.0); // [km/s^2]
+        }
+    }
+}
+
+/** @brief Invalid mass, coefficients, altitude and vectors always produce three NaNs. */
+TEST(OrbitalMotion, atmosphericDragInvalidInputs)
+{
+    double position[3] = { REQ_EARTH + 400.0, 0.0, 0.0 }; // [km]
+    double velocity[3] = { 3.0, -6.0, 2.0 };              // [km/s]
+    double acceleration[3];
+    const double invalid[] = { -1.0,
+                               std::numeric_limits<double>::infinity(),
+                               -std::numeric_limits<double>::infinity(),
+                               std::numeric_limits<double>::quiet_NaN() };
+    for (int parameter = 0; parameter < 3; ++parameter) {
+        for (double value : invalid) {
+            double parameters[3] = { 2.2, 3.0, 100.0 }; // [-, m^2, kg]
+            parameters[parameter] = value;
+            atmosphericDrag(parameters[0], parameters[1], parameters[2], position, velocity, acceleration);
+            for (double component : acceleration) {
+                EXPECT_TRUE(std::isnan(component));
+            }
+        }
+    }
+    double zero[3] = {};
+    atmosphericDrag(0.0, 0.0, 0.0, position, zero, acceleration); // [-, m^2, kg]
+    for (double component : acceleration) {
+        EXPECT_TRUE(std::isnan(component));
+    }
+    const double invalidPositions[][3] = { { 0.0, 0.0, 0.0 },
+                                           { REQ_EARTH, 0.0, 0.0 },
+                                           { REQ_EARTH - 1.0, 0.0, 0.0 },
+                                           { std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0 },
+                                           { 0.0, std::numeric_limits<double>::infinity(), 0.0 },
+                                           { 1.7e308, 1.7e308, 0.0 } }; // [km]
+    for (const auto& invalidPosition : invalidPositions) {
+        double input[3] = { invalidPosition[0], invalidPosition[1], invalidPosition[2] }; // [km]
+        atmosphericDrag(0.0, 3.0, 100.0, input, velocity, acceleration);                  // [-, m^2, kg]
+        for (double component : acceleration) {
+            EXPECT_TRUE(std::isnan(component));
+        }
+    }
+    const double invalidVelocities[][3] = { { 0.0, 0.0, std::numeric_limits<double>::quiet_NaN() },
+                                            { -std::numeric_limits<double>::infinity(), 0.0, 0.0 },
+                                            { 1.7e308, 1.7e308, 0.0 } }; // [km/s]
+    for (const auto& invalidVelocity : invalidVelocities) {
+        double input[3] = { invalidVelocity[0], invalidVelocity[1], invalidVelocity[2] }; // [km/s]
+        atmosphericDrag(0.0, 3.0, 100.0, position, input, acceleration);                  // [-, m^2, kg]
+        for (double component : acceleration) {
+            EXPECT_TRUE(std::isnan(component));
+        }
+    }
+}
+
+/** @brief Scale the product without intermediate overflow and reject final overflow. */
+TEST(OrbitalMotion, atmosphericDragNumericalRange)
+{
+    double position[3] = { REQ_EARTH + 400.0, 0.0, 0.0 }; // [km]
+    const double density = 2.7985217403313244e-12;        // [kg/m^3]
+    double acceleration[3];
+    double fast[3] = { 1e300, 0.0, 0.0 };                              // [km/s]
+    atmosphericDrag(1e-300, 1.0, 1e300, position, fast, acceleration); // [-, m^2, kg]
+    EXPECT_NEAR_REL(acceleration[0], -500.0 * density, 3e-14);         // [km/s^2]
+    EXPECT_DOUBLE_EQ(acceleration[1], 0.0);
+    EXPECT_DOUBLE_EQ(acceleration[2], 0.0);
+    double slow[3] = { 1e-300, 0.0, 0.0 };                              // [km/s]
+    atmosphericDrag(1.0, 1e300, 1e-300, position, slow, acceleration);  // [-, m^2, kg]
+    EXPECT_NEAR_REL(acceleration[0], -500.0 * density, 3e-14);          // [km/s^2]
+    double overflow[3] = { 1e200, 0.0, 0.0 };                           // [km/s]
+    atmosphericDrag(2.2, 3.0, 100.0, position, overflow, acceleration); // [-, m^2, kg]
+    for (double component : acceleration) {
+        EXPECT_TRUE(std::isnan(component));
+    }
+    atmosphericDrag(2.2, 3.0, 100.0, position, slow, acceleration); // [-, m^2, kg]
+    for (double component : acceleration) {
+        EXPECT_DOUBLE_EQ(component, 0.0); // [km/s^2]
+    }
 }
 
 TEST(OrbitalMotion, jPerturb_order_6)
 {
     double check[3];
     double ans[3];
-    double r[3] = { 6200.0, 100.0, 2000.0 };
+    double r[3] = { 6200.0, 100.0, 2000.0 }; // [km]
     int order = 6;
 
-    v3Set(-7.3080959003487213e-006, -1.1787251452175358e-007, -1.1381118473672282e-005, check);
+    // Reference from an 80-digit Decimal derivative of the Legendre zonal potential.
+    v3Set(-7.307623715798662e-6, -1.178648986419139e-7, -1.1381693580051563e-5, check); // [km/s^2]
     jPerturb(r, order, ans);
-    EXPECT_VECTOR3_NEAR(ans, check, 11); // [km/s^2]
+    EXPECT_VECTOR3_NEAR_REL(ans, check, 2e-14);
+}
+
+class ZonalGravityTests : public ::testing::TestWithParam<std::tuple<CelestialObject_t, double, double, double>>
+{};
+
+/** @brief Differentiate the Legendre potential independently of the expanded production formulas. */
+TEST_P(ZonalGravityTests, potentialGradient)
+{
+    const auto [body, mu, referenceRadius, j2] = GetParam(); // [identifier, km^3/s^2, km, dimensionless]
+    const double coefficients[5] = { j2,
+                                     body == CELESTIAL_EARTH ? J3_EARTH : 0.0,
+                                     body == CELESTIAL_EARTH ? J4_EARTH : 0.0,
+                                     body == CELESTIAL_EARTH ? J5_EARTH : 0.0,
+                                     body == CELESTIAL_EARTH ? J6_EARTH : 0.0 };
+    const double radius = 1.3 * referenceRadius; // [km]
+    const double directions[][3] = { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 }, { 2.0 / 3.0, -1.0 / 3.0, -2.0 / 3.0 } };
+    for (const auto& direction : directions) {
+        for (int degree = 2; degree <= 6; ++degree) {
+            SCOPED_TRACE(::testing::Message() << "degree=" << degree << ", latitude sine=" << direction[2]);
+            double position[3], actual[3], expected[3] = {};
+            for (int index = 0; index < 3; ++index) {
+                position[index] = radius * direction[index];
+            }
+            const double sine = direction[2];
+            double previous = 1.0;
+            double value = sine;
+            double previousDerivative = 0.0;
+            double derivative = 1.0;
+            for (int order = 2; order <= degree; ++order) {
+                const double next = ((2 * order - 1) * sine * value - (order - 1) * previous) / order;
+                const double nextDerivative =
+                    ((2 * order - 1) * (value + sine * derivative) - (order - 1) * previousDerivative) / order;
+                previous = value;
+                value = next;
+                previousDerivative = derivative;
+                derivative = nextDerivative;
+                const double scale =
+                    mu / radius / radius * coefficients[order - 2] * pow(referenceRadius / radius, order);
+                expected[0] += scale * direction[0] * ((order + 1) * value + sine * derivative);
+                expected[1] += scale * direction[1] * ((order + 1) * value + sine * derivative);
+                expected[2] += scale * ((order + 1) * sine * value - (1.0 - sine * sine) * derivative);
+            }
+            jPerturbForPlanet(position, degree, actual, body);
+            EXPECT_VECTOR3_NEAR_REL(actual, expected, 2e-14);
+            // The documented aliasing contract must preserve the input until it is no longer needed.
+            jPerturbForPlanet(position, degree, position, body);
+            EXPECT_VECTOR3_NEAR_REL(position, expected, 2e-14);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(OrbitalMotion,
+                         ZonalGravityTests,
+                         ::testing::Values(std::make_tuple(CELESTIAL_MERCURY, MU_MERCURY, REQ_MERCURY, J2_MERCURY),
+                                           std::make_tuple(CELESTIAL_VENUS, MU_VENUS, REQ_VENUS, J2_VENUS),
+                                           std::make_tuple(CELESTIAL_EARTH, MU_EARTH, REQ_EARTH, J2_EARTH),
+                                           std::make_tuple(CELESTIAL_MOON, MU_MOON, REQ_MOON, J2_MOON),
+                                           std::make_tuple(CELESTIAL_MARS, MU_MARS, REQ_MARS, J2_MARS),
+                                           std::make_tuple(CELESTIAL_JUPITER, MU_JUPITER, REQ_JUPITER, J2_JUPITER),
+                                           std::make_tuple(CELESTIAL_SATURN, MU_SATURN, REQ_SATURN, J2_SATURN),
+                                           std::make_tuple(CELESTIAL_URANUS, MU_URANUS, REQ_URANUS, J2_URANUS),
+                                           std::make_tuple(CELESTIAL_NEPTUNE, MU_NEPTUNE, REQ_NEPTUNE, J2_NEPTUNE)));
+
+TEST(OrbitalMotion, zonalGravityZeroModelsAndInvalidInputs)
+{
+    double position[3] = { 1000000.0, 0.0, 0.0 }; // [km]
+    double acceleration[3] = {};
+    for (CelestialObject_t body : { CELESTIAL_SUN, CELESTIAL_PLUTO }) {
+        for (int degree = 2; degree <= 6; ++degree) {
+            v3Set(1.0, 2.0, 3.0, acceleration); // [km/s^2]; ensure every output is overwritten
+            jPerturbForPlanet(position, degree, acceleration, body);
+            EXPECT_DOUBLE_EQ(acceleration[0], 0.0);
+            EXPECT_DOUBLE_EQ(acceleration[1], 0.0);
+            EXPECT_DOUBLE_EQ(acceleration[2], 0.0);
+        }
+    }
+    for (CelestialObject_t body : { CELESTIAL_PHOBOS, CELESTIAL_DEIMOS, MAX_CELESTIAL }) {
+        jPerturbForPlanet(position, 2, acceleration, body);
+        for (double value : acceleration) {
+            EXPECT_TRUE(std::isnan(value));
+        }
+    }
+    for (CelestialObject_t body : { CELESTIAL_EARTH, CELESTIAL_SUN, CELESTIAL_PLUTO }) {
+        for (int degree : { -1, 0, 1, 7 }) {
+            jPerturbForPlanet(position, degree, acceleration, body);
+            for (double value : acceleration) {
+                EXPECT_TRUE(std::isnan(value));
+            }
+        }
+        for (double radius :
+             { 0.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::infinity() }) {
+            double invalidPosition[3] = { radius, 0.0, 0.0 }; // [km]
+            jPerturbForPlanet(invalidPosition, 2, acceleration, body);
+            for (double value : acceleration) {
+                EXPECT_TRUE(std::isnan(value));
+            }
+        }
+    }
 }
 
 TEST(OrbitalMotion, solarRadiationPressure)
@@ -1225,6 +1453,42 @@ TEST(OrbitalMotion, hillScaledRoundTrip)
             EXPECT_NEAR(recoveredV[index] / scale, relativeRate[index] / scale, 2e-14);
         }
     }
+}
+
+/** @brief Preserve native source and function-pointer calls without deprecation diagnostics. */
+TEST(OrbitalMotion, legacyZonalCalls)
+{
+    testing::internal::CaptureStdout();
+    double position[3] = { 7000.0, 20.0, 100.0 }; // [km]
+    double expected[3], actual[3];
+    jPerturbForPlanet(position, 2, expected, CELESTIAL_MARS);
+    jPerturb(position, 2, actual, CELESTIAL_MARS);
+    for (int index = 0; index < 3; index++) {
+        EXPECT_DOUBLE_EQ(actual[index], expected[index]);
+    }
+    auto legacySymbol = &jPerturb;
+    legacySymbol(position, 2, actual, CELESTIAL_MARS);
+    for (int index = 0; index < 3; index++) {
+        EXPECT_DOUBLE_EQ(actual[index], expected[index]);
+    }
+    jPerturbForPlanet(position, 2, expected, CELESTIAL_EARTH);
+    for (int planet : { static_cast<int>(MAX_CELESTIAL), static_cast<int>(CELESTIAL_PHOBOS) }) {
+        jPerturb(position, 2, actual, planet);
+        for (int index = 0; index < 3; index++) {
+            EXPECT_DOUBLE_EQ(actual[index], expected[index]);
+        }
+    }
+    for (auto planet : { CELESTIAL_SUN, CELESTIAL_PLUTO }) {
+        jPerturb(position, 2, actual, planet);
+        for (int index = 0; index < 3; index++) {
+            EXPECT_DOUBLE_EQ(actual[index], expected[index]); // Legacy output remains unchanged.
+        }
+    }
+    jPerturb(position, 2, actual);
+    for (int index = 0; index < 3; index++) {
+        EXPECT_DOUBLE_EQ(actual[index], expected[index]);
+    }
+    EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
 }
 
 /** @brief Native compatibility entry points retain their old rejected-domain results. */

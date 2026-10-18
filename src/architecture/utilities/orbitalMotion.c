@@ -769,87 +769,133 @@ double debyeLength(double alt)
     return debyedist;
 }
 
-/*!
- * Purpose: This program computes the atmospheric drag acceleration
- *   vector acting on a spacecraft.
- *   Note the acceleration vector output is inertial, and is
- *   only valid for altitudes up to 1000 km.
- *   Afterwards the drag force is zero. Only valid for Earth.
- * Inputs:
- *   Cd = drag coefficient of the spacecraft
- *   A = cross-sectional area of the spacecraft in m^2
- *   m = mass of the spacecraft in kg
- *   rvec = Inertial position vector of the spacecraft in km  [x;y;z]
- *   vvec = Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
- * Outputs:
- *   advec = The inertial acceleration vector due to atmospheric
- *             drag in km/sec^2
+/**
+ * @brief Estimate Earth's atmospheric drag acceleration opposite the supplied velocity.
+ * @param Cd Finite, nonnegative drag coefficient [-].
+ * @param A Finite, nonnegative projected area [m^2].
+ * @param m Finite, positive spacecraft mass [kg].
+ * @param rvec Finite inertial position three-vector [km], above Earth's equatorial radius.
+ * @param vvec Finite inertial velocity three-vector [km/s].
+ * @param[out] advec Drag acceleration in the input frame [km/s^2].
+ * @note Assumes an atmosphere at rest in the input inertial frame; no rotation or
+ * wind correction is applied. Uses atmosphericDensity(), whose fit is valid from
+ * 100 to 1000 km; positive altitudes below this range are extrapolated, and above
+ * 1000 km the existing exponential tail is retained, without a hard cutoff.
+ * @note Zero speed, area, coefficient, or computed density gives zero acceleration
+ * after input validation. Invalid inputs, unrepresentable norms, or acceleration
+ * overflow produce a diagnostic and three NaNs. Acceleration underflow is allowed.
+ * The output may alias either input vector; all arrays must hold three doubles.
  */
 void atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, double* advec)
 {
-    double r;
-    double v;
-    double alt;
-    double ad;
-    double density;
-
-    /* find the altitude and velocity */
-    r = v3Norm(rvec);
-    v = v3Norm(vvec);
-    alt = r - REQ_EARTH;
-
-    /* Checking if user supplied a orbital position is inside the earth */
-    if (alt <= 0.) {
-        BSK_PRINT(MSG_ERROR,
-                  "atmosphericDrag() received rvec = [%g %g %g]. The value of rvec should produce a positive altitude "
-                  "for the Earth.",
-                  rvec[0],
-                  rvec[1],
-                  rvec[2]);
+    if (!isfinite(Cd) || Cd < 0.0 || !isfinite(A) || A < 0.0 || !isfinite(m) || m <= 0.0) {
+        BSK_PRINT(MSG_ERROR, "%s", "atmosphericDrag() requires finite Cd >= 0, A >= 0 and m > 0.");
         v3Set(nan(""), nan(""), nan(""), advec);
         return;
     }
+    for (int index = 0; index < 3; ++index) {
+        if (!isfinite(rvec[index]) || !isfinite(vvec[index])) {
+            BSK_PRINT(MSG_ERROR, "%s", "atmosphericDrag() requires finite position and velocity three-vectors.");
+            v3Set(nan(""), nan(""), nan(""), advec);
+            return;
+        }
+    }
+    const double radius = hypot(hypot(rvec[0], rvec[1]), rvec[2]);
+    const double speed = hypot(hypot(vvec[0], vvec[1]), vvec[2]);
+    if (!isfinite(radius) || !isfinite(speed) || radius <= REQ_EARTH) {
+        BSK_PRINT(MSG_ERROR, "%s", "atmosphericDrag() requires finite vector norms and positive altitude above Earth.");
+        v3Set(nan(""), nan(""), nan(""), advec);
+        return;
+    }
+    if (Cd == 0.0 || A == 0.0 || speed == 0.0) {
+        v3SetZero(advec);
+        return;
+    }
+    const double density = atmosphericDensity(radius - REQ_EARTH);
+    if (density == 0.0) {
+        v3SetZero(advec);
+        return;
+    }
 
-    /* get the Atmospheric density at the given altitude in kg/m^3 */
-    density = atmosphericDensity(alt);
-
-    /* compute the magnitude of the drag acceleration */
-    ad = ((-0.5) * density * (Cd * A / m) * (pow(v * 1000., 2))) / 1000.;
-
-    /* computing the vector for drag acceleration */
-    v3Scale(ad / v, vvec, advec);
+    // a = -0.5*kmToM*density*Cd*A/m*|v|*v: no division by speed.
+    // Keep powers of two separate so intermediate products cannot overflow or
+    // underflow when the final acceleration is representable.
+    const double kmToM = 1000.0; // [m/km]
+    const double factors[] = { 0.5 * kmToM, density, Cd, A, speed };
+    double mantissa = 1.0;
+    int exponent = 0;
+    for (int index = 0; index < 5; ++index) {
+        int factorExponent;
+        mantissa *= frexp(factors[index], &factorExponent);
+        exponent += factorExponent;
+    }
+    int massExponent;
+    mantissa /= frexp(m, &massExponent);
+    exponent -= massExponent;
+    double acceleration[3];
+    for (int index = 0; index < 3; ++index) {
+        int velocityExponent;
+        const double velocityMantissa = frexp(vvec[index], &velocityExponent);
+        acceleration[index] = ldexp(-mantissa * velocityMantissa, exponent + velocityExponent);
+        if (!isfinite(acceleration[index])) {
+            BSK_PRINT(MSG_ERROR, "%s", "atmosphericDrag() acceleration is outside the finite numerical range.");
+            v3Set(nan(""), nan(""), nan(""), advec);
+            return;
+        }
+    }
+    v3Copy(acceleration, advec);
 }
 
-/*!
- * Purpose: Computes the J2_EARTH-J6_EARTH zonal graviational perturbation
- *   accelerations.
- * Inputs:
- *   rvec = Cartesian Position vector in kilometers [x;y;z].
- *   num = Corresponds to which J components to use,
- *       must be an integer between 2 and 6.
- *       (note: Additive- 2 corresponds to J2_EARTH while 3 will
- *       correspond to J2_EARTH + J3_EARTH)
- * Outputs:
- *   ajtot = The total acceleration vector due to the J
- *             perturbations in km/sec^2 [accelx;accely;accelz]
+/**
+ * @brief Compute Earth's zonal perturbation acceleration through the requested degree.
+ * @param rvec Finite, nonzero planet-centered position [km], with z along the spin axis.
+ * @param num Maximum included degree, from 2 through 6 (inclusive).
+ * @param[out] ajtot Perturbation acceleration in the input frame [km/s^2].
+ * @note This fixed three-argument entry point selects Earth. For another body,
+ * use jPerturbForPlanet(rvec, num, ajtot, planetID).
+ * See jPerturbForPlanet() for model assumptions and failure behavior.
  */
-void jPerturb(double* rvec, int num, double* ajtot, ...)
+void jPerturbEarth(double* rvec, int num, double* ajtot)
+{
+    jPerturbForPlanet(rvec, num, ajtot, CELESTIAL_EARTH);
+}
+
+/**
+ * @brief Compute a selected body's zonal perturbation acceleration.
+ * @param rvec Finite, nonzero planet-centered position [km], with z along the spin axis.
+ * @param num Maximum included degree, from 2 through 6 (inclusive).
+ * @param[out] ajtot Perturbation acceleration in the input frame [km/s^2].
+ * @param planetID Body whose coefficients are used; unsupported identifiers are errors.
+ * @note Earth includes J2 through J6. Mercury, Venus, Moon, Mars, Jupiter,
+ * Saturn, Uranus and Neptune include J2 only. Sun and Pluto use a zero-zonal
+ * approximation and return a zero vector. Phobos and Deimos are unsupported.
+ * These approximations omit central gravity, tesseral terms and other forces.
+ * @note The external gravity expansion is intended for positions outside the
+ * body's reference radius; the surface boundary is not enforced. All inputs
+ * are validated even for zero-zonal models. Invalid inputs or nonfinite results
+ * produce a diagnostic and an all-NaN vector. Input/output arrays may alias.
+ */
+void jPerturbForPlanet(double* rvec, int num, double* ajtot, CelestialObject_t planetID)
 {
     double mu;
     double req;
-    double J2, J3, J4, J5, J6;
-    double x;
-    double y;
-    double z;
-    double r;
+    double J2;
+    double J3 = 0.0; // [-]
+    double J4 = 0.0; // [-]
+    double J5 = 0.0; // [-]
+    double J6 = 0.0; // [-]
+    const double x = rvec[0];
+    const double y = rvec[1];
+    const double z = rvec[2];
+    const double r = hypot(hypot(x, y), z);
     double temp[3];
     double temp2[3];
 
-    CelestialObject_t planetID;
-    va_list args;
-    va_start(args, ajtot);
-    planetID = (CelestialObject_t)va_arg(args, int);
-    va_end(args);
+    if (num < 2 || num > 6 || !isfinite(x) || !isfinite(y) || !isfinite(z) || !isfinite(r) || r <= 0.0) {
+        BSK_PRINT(MSG_ERROR, "%s", "jPerturbForPlanet() requires degree 2..6 and a finite nonzero position");
+        v3Set(nan(""), nan(""), nan(""), ajtot);
+        return;
+    }
 
     v3SetZero(ajtot);
 
@@ -858,77 +904,55 @@ void jPerturb(double* rvec, int num, double* ajtot, ...)
             mu = MU_MERCURY;
             req = REQ_MERCURY;
             J2 = J2_MERCURY;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_VENUS:
             mu = MU_VENUS;
             req = REQ_VENUS;
             J2 = J2_VENUS;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_MOON:
             mu = MU_MOON;
             req = REQ_MOON;
             J2 = J2_MOON;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_MARS:
             mu = MU_MARS;
             req = REQ_MARS;
             J2 = J2_MARS;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_JUPITER:
             mu = MU_JUPITER;
             req = REQ_JUPITER;
             J2 = J2_JUPITER;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
+            break;
+
+        case CELESTIAL_SATURN:
+            mu = MU_SATURN;
+            req = REQ_SATURN;
+            J2 = J2_SATURN;
             break;
 
         case CELESTIAL_URANUS:
             mu = MU_URANUS;
             req = REQ_URANUS;
             J2 = J2_URANUS;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_NEPTUNE:
             mu = MU_NEPTUNE;
             req = REQ_NEPTUNE;
             J2 = J2_NEPTUNE;
-            J3 = 0.0;
-            J4 = 0.0;
-            J5 = 0.0;
-            J6 = 0.0;
             break;
 
         case CELESTIAL_PLUTO:
         case CELESTIAL_SUN:
             return;
 
-        default:
+        case CELESTIAL_EARTH:
             mu = MU_EARTH;
             req = REQ_EARTH;
             J2 = J2_EARTH;
@@ -937,19 +961,11 @@ void jPerturb(double* rvec, int num, double* ajtot, ...)
             J5 = J5_EARTH;
             J6 = J6_EARTH;
             break;
-    }
 
-    /* Calculate the J perturbations */
-    x = rvec[0];
-    y = rvec[1];
-    z = rvec[2];
-    r = v3Norm(rvec);
-
-    /* Error Checking */
-    if ((num < 2) || (num > 6)) {
-        BSK_PRINT(MSG_ERROR, "jPerturb() received num = %d. The value of num should be 2 <= num <= 6.", num);
-        v3Set(nan(""), nan(""), nan(""), ajtot);
-        return;
+        default:
+            BSK_PRINT(MSG_ERROR, "jPerturbForPlanet() unsupported planet identifier %d", (int)planetID);
+            v3Set(nan(""), nan(""), nan(""), ajtot);
+            return;
     }
 
     /* Calculating the total acceleration based on user input */
@@ -958,39 +974,44 @@ void jPerturb(double* rvec, int num, double* ajtot, ...)
               (1.0 - 5.0 * pow(z / r, 2.0)) * (y / r),
               (3.0 - 5.0 * pow(z / r, 2.0)) * (z / r),
               ajtot);
-        v3Scale(-3.0 / 2.0 * J2 * (mu / pow(r, 2.0)) * pow(req / r, 2.0), ajtot, ajtot);
+        v3Scale(-3.0 / 2.0 * J2 * (mu / r / r) * pow(req / r, 2.0), ajtot, ajtot);
     }
-    if (num >= 3) {
+    if (num >= 3 && J3 != 0.0) {
         v3Set(5.0 * (7.0 * pow(z / r, 3.0) - 3.0 * (z / r)) * (x / r),
               5.0 * (7.0 * pow(z / r, 3.0) - 3.0 * (z / r)) * (y / r),
               -3.0 * (10.0 * pow(z / r, 2.0) - (35.0 / 3.0) * pow(z / r, 4.0) - 1.0),
               temp);
-        v3Scale(1.0 / 2.0 * J3 * (mu / pow(r, 2.0)) * pow(req / r, 3.0), temp, temp2);
+        v3Scale(1.0 / 2.0 * J3 * (mu / r / r) * pow(req / r, 3.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if (num >= 4) {
+    if (num >= 4 && J4 != 0.0) {
         v3Set((3.0 - 42.0 * pow(z / r, 2.0) + 63.0 * pow(z / r, 4.0)) * (x / r),
               (3.0 - 42.0 * pow(z / r, 2.0) + 63.0 * pow(z / r, 4.0)) * (y / r),
               (15.0 - 70.0 * pow(z / r, 2) + 63.0 * pow(z / r, 4.0)) * (z / r),
               temp);
-        v3Scale(5.0 / 8.0 * J4 * (mu / pow(r, 2.0)) * pow(req / r, 4.0), temp, temp2);
+        v3Scale(5.0 / 8.0 * J4 * (mu / r / r) * pow(req / r, 4.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if (num >= 5) {
+    if (num >= 5 && J5 != 0.0) {
         v3Set(3.0 * (35.0 * (z / r) - 210.0 * pow(z / r, 3.0) + 231.0 * pow(z / r, 5.0)) * (x / r),
               3.0 * (35.0 * (z / r) - 210.0 * pow(z / r, 3.0) + 231.0 * pow(z / r, 5.0)) * (y / r),
               -(15.0 - 315.0 * pow(z / r, 2.0) + 945.0 * pow(z / r, 4.0) - 693.0 * pow(z / r, 6.0)),
               temp);
-        v3Scale(1.0 / 8.0 * J5 * (mu / pow(r, 2.0)) * pow(req / r, 5.0), temp, temp2);
+        v3Scale(1.0 / 8.0 * J5 * (mu / r / r) * pow(req / r, 5.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if (num >= 6) {
+    if (num >= 6 && J6 != 0.0) {
         v3Set((35.0 - 945.0 * pow(z / r, 2) + 3465.0 * pow(z / r, 4.0) - 3003.0 * pow(z / r, 6.0)) * (x / r),
               (35.0 - 945.0 * pow(z / r, 2.0) + 3465.0 * pow(z / r, 4.0) - 3003.0 * pow(z / r, 6.0)) * (y / r),
               -(3003.0 * pow(z / r, 6.0) - 4851.0 * pow(z / r, 4.0) + 2205.0 * pow(z / r, 2.0) - 245.0) * (z / r),
               temp);
-        v3Scale(-1.0 / 16.0 * J6 * (mu / pow(r, 2.0)) * pow(req / r, 6.0), temp, temp2);
+        v3Scale(-1.0 / 16.0 * J6 * (mu / r / r) * pow(req / r, 6.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
+    }
+
+    if (!isfinite(ajtot[0]) || !isfinite(ajtot[1]) || !isfinite(ajtot[2])) {
+        BSK_PRINT(MSG_ERROR, "%s", "jPerturbForPlanet() acceleration is outside the finite numerical range");
+        v3Set(nan(""), nan(""), nan(""), ajtot);
     }
 }
 
@@ -1617,4 +1638,40 @@ void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_e
     } else {
         legacyClElem2eqElem(elements_cl, elements_eq);
     }
+}
+
+/** @brief Explicit-planet adapter preserving the original jPerturb conventions.
+ * @param rvec Position [km].
+ * @param num Maximum zonal degree.
+ * @param ajtot Output acceleration [km/s^2].
+ * @param planetID Legacy planet identifier; unknown values select Earth.
+ * @note Sun/Pluto retain the historical unchanged-output behavior. Use
+ * jPerturbForPlanet() for checked selection and explicit zero-zonal outputs.
+ */
+void jPerturbLegacy(double* rvec, int num, double* ajtot, int planetID)
+{
+    if (planetID == CELESTIAL_SUN || planetID == CELESTIAL_PLUTO) {
+        return;
+    }
+    if (planetID < CELESTIAL_MERCURY || planetID >= MAX_CELESTIAL || planetID == CELESTIAL_PHOBOS ||
+        planetID == CELESTIAL_DEIMOS) {
+        planetID = CELESTIAL_EARTH;
+    }
+    jPerturbForPlanet(rvec, num, ajtot, (CelestialObject_t)planetID);
+}
+
+/** @brief Retain the legacy variadic symbol for explicit-planet native callers.
+ * @param rvec Position [km].
+ * @param num Maximum zonal degree.
+ * @param ajtot Output acceleration [km/s^2].
+ * @note Exactly one trailing int planet identifier is required. Header-based
+ * three-argument calls select Earth through the header adapter without reading varargs.
+ */
+void(jPerturb)(double* rvec, int num, double* ajtot, ...)
+{
+    va_list arguments;
+    va_start(arguments, ajtot);
+    int planetID = va_arg(arguments, int);
+    va_end(arguments);
+    jPerturbLegacy(rvec, num, ajtot, planetID);
 }
