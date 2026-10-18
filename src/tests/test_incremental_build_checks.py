@@ -108,3 +108,58 @@ endforeach()''')
                 check(project, build)
         else:
             check(project, build)
+
+
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
+@pytest.mark.skipif(CMAKE is None, reason="CMake is required")
+@pytest.mark.parametrize("discovery_source", ["PATH", "CMAKE_PROGRAM_PATH"])
+def test_protobuf_compiler_follows_build_environment(tmp_path, discovery_source):
+    """Replace a cached Protobuf compiler and follow subsequent dependency upgrades.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param discovery_source: Environment or toolchain path used to locate the compiler.
+    """
+    project = tmp_path / "source"
+    build = tmp_path / "build"
+    project.mkdir()
+    # No schemas or native targets are needed to exercise compiler discovery.
+    (project / "protobuf-config.cmake").write_text("", encoding="utf-8")
+    discovery = REPOSITORY_ROOT / "src/utilities/vizProtobuffer/CMakeLists.txt"
+    (project / "CMakeLists.txt").write_text(
+        'cmake_minimum_required(VERSION 3.26)\n'
+        'project(protobufCompilerFixture LANGUAGES NONE)\n'
+        'set(BUILD_VIZINTERFACE ON)\n'
+        'set(protobuf_DIR "${CMAKE_CURRENT_SOURCE_DIR}")\n'
+        f'include("{discovery.as_posix()}")\n'
+        'file(WRITE "${CMAKE_BINARY_DIR}/selected-protoc.txt" "${PROTOC_EXE}")\n',
+        encoding="utf-8",
+    )
+    compilers = []
+    for name in ("legacy", "current", "upgraded"):
+        directory = tmp_path / name
+        directory.mkdir()
+        executable = directory / ("protoc.exe" if os.name == "nt" else "protoc")
+        executable.touch()
+        executable.chmod(0o755)
+        compilers.append(executable)
+
+    command = [CMAKE, "-S", str(project), "-B", str(build)]
+    if NINJA:
+        command.extend(["-G", "Ninja", f"-DCMAKE_MAKE_PROGRAM={NINJA}"])
+    for index, compiler in enumerate(compilers[1:]):
+        environment = os.environ.copy()
+        arguments = command.copy()
+        search_path = compiler.parent if discovery_source == "PATH" else compilers[0].parent
+        environment["PATH"] = str(search_path) + os.pathsep + environment.get("PATH", "")
+        if discovery_source == "CMAKE_PROGRAM_PATH":
+            arguments.append(f"-DCMAKE_PROGRAM_PATH={compiler.parent.as_posix()}")
+        if index == 0:
+            arguments.append(f"-DPROTOC_EXE:FILEPATH={compilers[0].as_posix()}")
+        result = subprocess.run(
+            arguments, env=environment, capture_output=True, text=True,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        selected = (build / "selected-protoc.txt").read_text(encoding="utf-8")
+        assert Path(selected).resolve() == compiler.resolve()
