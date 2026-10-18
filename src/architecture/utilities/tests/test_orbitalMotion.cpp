@@ -30,6 +30,91 @@
 const double orbitalEnvironmentAccuracy = 1e-10;
 const double orbitalElementsAccuracy = 1e-11;
 
+class EllipticKeplerTests : public ::testing::TestWithParam<std::tuple<double, double, double>>
+{};
+
+/** @brief Recover elliptic roots where Newton iteration diverged or lost precision. */
+TEST_P(EllipticKeplerTests, convergence)
+{
+    const auto [mean, eccentricity, expected] = GetParam();
+    for (double sign : { -1.0, 1.0 }) {
+        const double result = M2E(sign * mean, eccentricity);
+        ASSERT_TRUE(std::isfinite(result));
+        EXPECT_NEAR(result, sign * expected, 5e-14 * expected);
+    }
+}
+
+// Reference roots from 90-digit Decimal bisection using exact binary64 inputs.
+// Each tuple contains mean anomaly [rad], eccentricity [-], and root [rad].
+INSTANTIATE_TEST_SUITE_P(OrbitalMotion,
+                         EllipticKeplerTests,
+                         ::testing::Values(std::make_tuple(0.3, 0.999, 1.247126572242462),
+                                           std::make_tuple(0.1, 0.9999, 0.8535302901646385),
+                                           std::make_tuple(0.10008, 0.99, 0.8319005379955369),
+                                           std::make_tuple(1e-12, 1.0 - 1e-12, 0.0001817010532025818),
+                                           std::make_tuple(1e-24, std::nextafter(1.0, 0.0), 8.18424690685419e-9),
+                                           std::make_tuple(2.0 * M_PI, std::nextafter(1.0, 0.0), 6.28317393797836)));
+
+class HyperbolicKeplerTests : public ::testing::TestWithParam<std::tuple<double, double, double>>
+{};
+
+/** @brief Recover hyperbolic roots without overflow or iteration-limit fall-through. */
+TEST_P(HyperbolicKeplerTests, convergence)
+{
+    const auto [mean, eccentricity, expected] = GetParam();
+    for (double sign : { -1.0, 1.0 }) {
+        const double result = N2H(sign * mean, eccentricity);
+        ASSERT_TRUE(std::isfinite(result));
+        EXPECT_NEAR(result, sign * expected, 5e-14 * expected);
+    }
+}
+
+// Each tuple contains mean anomaly [rad], eccentricity [-], and reference root [rad].
+INSTANTIATE_TEST_SUITE_P(OrbitalMotion,
+                         HyperbolicKeplerTests,
+                         ::testing::Values(std::make_tuple(250.0, 1.5, 5.832212476255278),
+                                           std::make_tuple(1000.0, 1.5, 7.202614705676229),
+                                           std::make_tuple(1e6, 1.5, 14.103206733523901),
+                                           std::make_tuple(1e-12, 1.0 + 1e-12, 0.0001817010517805506),
+                                           std::make_tuple(1e-24, std::nextafter(1.0, 2.0), 4.437990012889989e-9),
+                                           std::make_tuple(1e300, 1.5, 691.0632099706655),
+                                           std::make_tuple(1e308, 1e308, 0.881373587019543)));
+
+/** @brief Preserve unwrapped anomalies and satisfy the elliptic Kepler equation. */
+TEST(OrbitalMotion, keplerRevolutions)
+{
+    const double eccentricities[] = { 0.0, 0.5, 0.99, std::nextafter(1.0, 0.0) }; // [-]
+    for (double eccentricity : eccentricities) {
+        for (int turns : { -100, -1, 0, 1, 100 }) {
+            const double mean = 0.3 + turns * 2.0 * M_PI; // [rad]
+            const double result = M2E(mean, eccentricity);
+            const double expected = M2E(0.3, eccentricity) + turns * 2.0 * M_PI; // [rad]
+            EXPECT_NEAR(result, expected, 5e-13);                                // [rad]
+            EXPECT_NEAR(result - eccentricity * std::sin(result), mean, 5e-13);  // [rad]
+        }
+    }
+    EXPECT_DOUBLE_EQ(M2E(0.0, 0.999), 0.0);
+    EXPECT_DOUBLE_EQ(N2H(0.0, 1.001), 0.0);
+}
+
+/** @brief Return NaN for invalid conic domains and non-finite input. */
+TEST(OrbitalMotion, keplerInvalidInputs)
+{
+    const double nonfinite[] = { std::numeric_limits<double>::quiet_NaN(),
+                                 std::numeric_limits<double>::infinity(),
+                                 -std::numeric_limits<double>::infinity() };
+    for (double value : nonfinite) {
+        EXPECT_TRUE(std::isnan(M2E(value, 0.5)));
+        EXPECT_TRUE(std::isnan(N2H(value, 1.5)));
+        EXPECT_TRUE(std::isnan(M2E(0.3, value)));
+        EXPECT_TRUE(std::isnan(N2H(0.3, value)));
+    }
+    EXPECT_TRUE(std::isnan(M2E(0.3, -0.1)));
+    EXPECT_TRUE(std::isnan(M2E(0.3, 1.0)));
+    EXPECT_TRUE(std::isnan(N2H(0.3, 0.5)));
+    EXPECT_TRUE(std::isnan(N2H(0.3, 1.0)));
+}
+
 TEST(OrbitalMotion, atmosphericDensity_200km)
 {
     double alt = 200.0;

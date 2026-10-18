@@ -17,11 +17,94 @@
 #
 
 
+import math
+
 import numpy as np
+import pytest
 from Basilisk.utilities import orbitalMotion
 
 a_tol = 1e-14  # array tolerance
 s_tol = 1e-6  # scale tolerance
+
+
+# Reference roots from 90-digit Decimal bisection of Kepler's equations,
+# using exact conversions of the binary64 inputs. Anomalies are in radians.
+@pytest.mark.parametrize("mean,eccentricity,expected", [
+    (0.3, 0.999, 1.247126572242462),
+    (0.1, 0.9999, 0.8535302901646385),
+    (0.10008, 0.99, 0.8319005379955369),
+    (1e-12, 1.0 - 1e-12, 0.0001817010532025818),
+    (1e-24, math.nextafter(1.0, 0.0), 8.18424690685419e-9),
+    (2.0 * math.pi, math.nextafter(1.0, 0.0), 6.28317393797836),
+])
+@pytest.mark.parametrize("sign", [-1, 1])
+def test_M2E_convergence(mean, eccentricity, expected, sign):
+    """Recover elliptic roots where Newton iteration diverged or lost precision."""
+    result = orbitalMotion.M2E(sign * mean, eccentricity)
+    assert math.isfinite(result)
+    assert result == pytest.approx(sign * expected, rel=5e-14, abs=0.0)
+
+
+@pytest.mark.parametrize("mean,eccentricity,expected", [
+    (250.0, 1.5, 5.832212476255278),
+    (1000.0, 1.5, 7.202614705676229),
+    (1e6, 1.5, 14.103206733523901),
+    (1e-12, 1.0 + 1e-12, 0.0001817010517805506),
+    (1e-24, math.nextafter(1.0, 2.0), 4.437990012889989e-9),
+    (1e300, 1.5, 691.0632099706655),
+    (1e308, 1e308, 0.881373587019543),
+])
+@pytest.mark.parametrize("sign", [-1, 1])
+def test_N2H_convergence(mean, eccentricity, expected, sign):
+    """Recover hyperbolic roots without overflow or iteration-limit fall-through."""
+    result = orbitalMotion.N2H(sign * mean, eccentricity)
+    assert math.isfinite(result)
+    assert result == pytest.approx(sign * expected, rel=5e-14, abs=0.0)
+
+
+@pytest.mark.parametrize("eccentricity", [0.0, 0.5, 0.99, math.nextafter(1.0, 0.0)])
+@pytest.mark.parametrize("turns", [-100, -1, 0, 1, 100])
+def test_M2E_revolutions(eccentricity, turns):
+    """Preserve unwrapped anomalies and satisfy the elliptic Kepler equation."""
+    mean = 0.3 + turns * 2.0 * math.pi  # [rad]
+    result = orbitalMotion.M2E(mean, eccentricity)
+    expected = orbitalMotion.M2E(0.3, eccentricity) + turns * 2.0 * math.pi  # [rad]
+    assert result == pytest.approx(expected, rel=0.0, abs=5e-13)
+    assert result - eccentricity * math.sin(result) == pytest.approx(mean, rel=0.0, abs=5e-13)
+
+
+@pytest.mark.parametrize("solver,eccentricity", [(orbitalMotion.M2E, 0.999), (orbitalMotion.N2H, 1.001)])
+def test_kepler_zero_anomaly(solver, eccentricity):
+    """Return the exact zero root at periapsis."""
+    assert solver(0.0, eccentricity) == 0.0
+
+
+@pytest.mark.parametrize("solver,eccentricity", [(orbitalMotion.M2E, 0.5), (orbitalMotion.N2H, 1.5)])
+@pytest.mark.parametrize("mean", [math.nan, math.inf, -math.inf])
+def test_kepler_nonfinite_mean(solver, eccentricity, mean):
+    """Reject non-finite mean anomalies explicitly."""
+    with pytest.raises(ValueError, match=solver.__name__):
+        solver(mean, eccentricity)
+
+
+@pytest.mark.parametrize("solver,eccentricity", [
+    (orbitalMotion.M2E, -0.1), (orbitalMotion.M2E, 1.0),
+    (orbitalMotion.N2H, 0.5), (orbitalMotion.N2H, 1.0),
+    *[(solver, e) for solver in (orbitalMotion.M2E, orbitalMotion.N2H)
+      for e in (math.nan, math.inf, -math.inf)],
+])
+def test_kepler_invalid_eccentricity(solver, eccentricity):
+    """Reject eccentricities outside each solver's finite conic domain."""
+    with pytest.raises(ValueError, match=solver.__name__):
+        solver(0.3, eccentricity)
+
+
+@pytest.mark.parametrize("solver,eccentricity", [(orbitalMotion.M2E, 0.999), (orbitalMotion.N2H, 1.001)])
+def test_kepler_iteration_limit(solver, eccentricity, monkeypatch):
+    """Report iteration exhaustion instead of returning an unconverged iterate."""
+    monkeypatch.setattr(orbitalMotion, "maxIteration", 1)
+    with pytest.raises(RuntimeError, match="failed to converge"):
+        solver(0.3, eccentricity)
 
 
 def arrayEqualCheck(v1, v2, methodName):

@@ -18,6 +18,7 @@
  */
 
 #include "orbitalMotion.h"
+#include <float.h>
 
 #include <math.h>
 #include <stdarg.h>
@@ -270,76 +271,140 @@ double H2N(double H, double e)
     return N;
 }
 
-/*!
- * Purpose: Maps the mean elliptic anomaly angle into the corresponding
- *   eccentric anomaly angle.  Both 2D and 1D elliptic
- *   orbit are allowed.
- * Inputs:
- *   M = mean elliptic anomaly (rad)
- *   e = eccentricity (0 <= e < 1)
- * Outputs:
- *   Ecc = eccentric anomaly (rad)
+/**
+ * @brief Evaluate E - sin(E) or sinh(H) - H without small-angle cancellation.
+ * @param anomaly Nonnegative eccentric or hyperbolic anomaly [rad].
+ * @param hyperbolic Nonzero for the hyperbolic equation, zero for the elliptic equation.
+ * @return The nonlinear anomaly term [rad].
+ */
+static double keplerAnomalyDifference(double anomaly, int hyperbolic)
+{
+    if (anomaly > 0.5) {
+        return hyperbolic ? sinh(anomaly) - anomaly : anomaly - sin(anomaly);
+    }
+    double multiplier = anomaly * anomaly * (hyperbolic ? 1.0 : -1.0);
+    double term = anomaly * anomaly * anomaly / 6.0;
+    double difference = term;
+    /* Through order 17: the omitted term is below round-off for |anomaly| <= 0.5 rad. */
+    for (int index = 2; index < 9; ++index) {
+        term *= multiplier / ((2 * index) * (2 * index + 1));
+        difference += term;
+    }
+    return difference;
+}
+
+/**
+ * @brief Solve the elliptic Kepler equation using bracketed Newton iteration.
+ * @param M Finite mean elliptic anomaly [rad].
+ * @param e Finite eccentricity, 0 <= e < 1.
+ * @return Eccentric anomaly [rad], or NaN with an error diagnostic for invalid
+ * inputs or failure to converge within 200 iterations.
+ * @note The result preserves the revolutions in M. Very large unwrapped anomalies
+ * are limited by input/output angle resolution.
  */
 double M2E(double M, double e)
 {
-    double small = 1e-13;
-    double dE = 10 * small;
-    double E1 = M;
-    int max = 200;
-    int count = 0;
-
-    if ((e >= 0) && (e < 1)) {
-        while (fabs(dE) > small) {
-            dE = (E1 - e * sin(E1) - M) / (1 - e * cos(E1));
-            E1 -= dE;
-            if (++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in M2E(%f,%f)", M, e);
-                dE = 0.;
-            }
-        }
-    } else {
-        E1 = nan("");
-        BSK_PRINT(MSG_ERROR, "M2E() received e = %g. The value of e should be 0 <= e < 1.", e);
+    if (!isfinite(M) || !isfinite(e) || e < 0.0 || e >= 1.0) {
+        BSK_PRINT(MSG_ERROR, "M2E() requires finite M and e with 0 <= e < 1; received M=%g, e=%g", M, e);
+        return nan("");
+    }
+    if (e == 0.0 || M == 0.0) {
+        return M;
     }
 
-    return E1;
+    /* Let libm reduce the angle: remainder(M, 2*pi) loses the small offset near
+       whole revolutions, which is amplified when eccentricity approaches one. */
+    double reducedMean = fabs(M) <= M_PI ? M : atan2(sin(M), cos(M));
+    double mean = fabs(reducedMean);
+    double lower = mean;
+    double upper = M_PI; // [rad]
+    double anomaly = mean;
+    const double relativeTolerance = 4.0 * DBL_EPSILON;
+    for (int count = 0; count < 200; ++count) {
+        double residual = (1.0 - e) * anomaly + e * keplerAnomalyDifference(anomaly, 0) - mean;
+        double halfSine = sin(0.5 * anomaly);
+        double derivative = (1.0 - e) + 2.0 * e * halfSine * halfSine;
+        double correction = residual / derivative;
+        if (fabs(correction) <= relativeTolerance * fabs(anomaly)) {
+            return M + copysign(anomaly - mean, reducedMean);
+        }
+        if (residual > 0.0) {
+            upper = anomaly;
+        } else {
+            lower = anomaly;
+        }
+        double candidate = anomaly - correction;
+        if (!(candidate > lower && candidate < upper)) {
+            candidate = 0.5 * (lower + upper);
+        }
+        if (candidate == anomaly) {
+            return M + copysign(anomaly - mean, reducedMean);
+        }
+        anomaly = candidate;
+    }
+    BSK_PRINT(MSG_ERROR, "M2E() failed to converge for M=%g, e=%g", M, e);
+    return nan("");
 }
 
-/*!
- * Purpose: Maps the mean hyperbolic anomaly angle N into the corresponding
- *   hyperbolic anomaly angle H.
- * Inputs:
- *   N = mean hyperbolic anomaly (rad)
- *   e = eccentricity (e > 1)
- * Outputs:
- *   H = hyperbolic anomaly (rad)
+/**
+ * @brief Solve the hyperbolic Kepler equation using bracketed Newton iteration.
+ * @param N Finite mean hyperbolic anomaly [rad].
+ * @param e Finite eccentricity, e > 1.
+ * @return Hyperbolic anomaly [rad], or NaN with an error diagnostic for invalid
+ * inputs or failure to converge within 200 iterations.
+ * @note The equation is scaled to avoid overflow for large finite mean anomalies
+ * and evaluated without subtractive cancellation near the parabolic limit.
  */
 double N2H(double N, double e)
 {
-    double small = 1e-13;
-    double dH = 10 * small;
-    double H1 = N;
-    int max = 200;
-    int count = 0;
-    if (fabs(H1) > 7.0) {
-        H1 = N / fabs(N) * 7.0;
+    if (!isfinite(N) || !isfinite(e) || e <= 1.0) {
+        BSK_PRINT(MSG_ERROR, "N2H() requires finite N and e with e > 1; received N=%g, e=%g", N, e);
+        return nan("");
+    }
+    if (N == 0.0) {
+        return N;
     }
 
-    if (e > 1) {
-        while (fabs(dH) > small) {
-            dH = (e * sinh(H1) - H1 - N) / (e * cosh(H1) - 1);
-            H1 -= dH;
-            if (++count > max) {
-                BSK_PRINT(MSG_ERROR, "iteration error in N2H(%f,%f)", N, e);
-                dH = 0.;
-            }
+    double mean = fabs(N) / e;
+    double lower = asinh(mean);
+    double upper = lower + 2.0; // [rad]; brackets the positive root for every e > 1
+    double anomaly = lower;
+    const double relativeTolerance = 4.0 * DBL_EPSILON;
+    for (int count = 0; count < 200; ++count) {
+        double residual;
+        double derivative;
+        if (anomaly <= 1.0) {
+            /* Divide by e and retain the small linear term when e is close to one. */
+            double linear = (e - 1.0) / e;
+            residual = linear * anomaly + keplerAnomalyDifference(anomaly, 1) - mean;
+            double halfSine = sinh(0.5 * anomaly);
+            derivative = linear + 2.0 * halfSine * halfSine;
+        } else {
+            /* Divide both f and f' by e*exp(H), without forming either large factor. */
+            double inverseExp = exp(-anomaly);
+            residual = -0.5 * expm1(-2.0 * anomaly) - (anomaly / e + mean) * inverseExp;
+            derivative = 0.5 * (1.0 + inverseExp * inverseExp) - inverseExp / e;
         }
-    } else {
-        H1 = nan("");
-        BSK_PRINT(MSG_ERROR, "N2H() received e = %g. The value of e should be e > 1.", e);
+        double correction = residual / derivative;
+        if (fabs(correction) <= relativeTolerance * fabs(anomaly)) {
+            return copysign(anomaly, N);
+        }
+        if (residual > 0.0) {
+            upper = anomaly;
+        } else {
+            lower = anomaly;
+        }
+        double candidate = anomaly - correction;
+        if (!(candidate > lower && candidate < upper)) {
+            candidate = 0.5 * (lower + upper);
+        }
+        if (candidate == anomaly) {
+            return copysign(anomaly, N);
+        }
+        anomaly = candidate;
     }
-
-    return H1;
+    BSK_PRINT(MSG_ERROR, "N2H() failed to converge for N=%g, e=%g", N, e);
+    return nan("");
 }
 
 /*!
