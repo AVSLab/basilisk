@@ -259,55 +259,133 @@ def H2N(H:float, e:float) -> float:
     raise ValueError('Error: H2N() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def M2E(M:float, e:float) -> float:
+def _kepler_anomaly_difference(anomaly: float, hyperbolic: bool) -> float:
+    """Evaluate ``E - sin(E)`` or ``sinh(H) - H`` without small-angle cancellation."""
+    if anomaly > 0.5:
+        return math.sinh(anomaly) - anomaly if hyperbolic else anomaly - math.sin(anomaly)
+    multiplier = anomaly * anomaly * (1.0 if hyperbolic else -1.0)
+    term = anomaly * anomaly * anomaly / 6.0
+    difference = term
+    # Through order 17: the omitted term is below round-off for |anomaly| <= 0.5 rad.
+    for index in range(2, 9):
+        term *= multiplier / ((2 * index) * (2 * index + 1))
+        difference += term
+    return difference
+
+
+def _kepler_result_type(mean, eccentricity):
+    """Retain NumPy scalar and zero-dimensional array results without mutating inputs."""
+    if isinstance(mean, np.ndarray) and mean.ndim == 0:
+        dtype = np.result_type(mean, 0.0)
+        return lambda value: np.asarray(value, dtype=dtype)
+    if isinstance(mean, (np.generic, np.ndarray)) or isinstance(eccentricity, (np.generic, np.ndarray)):
+        return np.result_type(mean, eccentricity, 0.0).type
+    return float
+
+
+def M2E(M: float, e: float) -> float:
     """
-    Maps the mean elliptic anomaly angle into the corresponding
-    eccentric anomaly angle.  Both 2D and 1D elliptic
-    orbit are allowed.
+    Solve the elliptic Kepler equation using bracketed Newton iteration.
+
+    The returned eccentric anomaly preserves the revolutions in ``M``. Very
+    large unwrapped anomalies are limited by the resolution of the input and
+    output angles.
 
     :param M: mean elliptic anomaly (rad)
     :param e: eccentricity (0 <= e < 1)
-    :return: Ecc, eccentric anomaly (rad)
+    :return: eccentric anomaly (rad); NumPy scalar types and zero-dimensional
+        mean-array results are preserved
+    :raises ValueError: if either input is non-finite or eccentricity is outside its domain
+    :raises RuntimeError: if the iteration limit is reached without convergence
     """
-    dE = 10.0 * eps
-    E1 = M
-    count = 0
+    scalar_type = _kepler_result_type(M, e)
+    M, e = float(M), float(e)
+    if not math.isfinite(M) or not math.isfinite(e) or not 0.0 <= e < 1.0:
+        raise ValueError('M2E() requires finite M and e with 0 <= e < 1')
+    if e == 0.0 or M == 0.0:
+        return scalar_type(M)
 
-    if e >= 0.0 and e < 1.0:
-        while math.fabs(dE) > eps:
-            dE = (E1 - e * math.sin(E1) - M) / (1 - e * math.cos(E1))
-            E1 -= dE
-            count += 1
-            if count > maxIteration:
-                print('Iteration error in M2E({},{})'.format(str(M), str(e)))
-                dE = 0.0
-        return E1
-    raise ValueError('Error: M2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    # Let libm reduce the angle: remainder(M, 2*pi) loses the small offset near
+    # whole revolutions, which is amplified when eccentricity approaches one.
+    reduced_mean = M if abs(M) <= math.pi else math.atan2(math.sin(M), math.cos(M))
+    mean = abs(reduced_mean)
+    lower = mean
+    upper = math.pi  # [rad]
+    anomaly = mean
+    relative_tolerance = 4.0 * math.ulp(1.0)
+    for _ in range(maxIteration):
+        residual = (1.0 - e) * anomaly + e * _kepler_anomaly_difference(anomaly, False) - mean
+        derivative = (1.0 - e) + 2.0 * e * math.sin(0.5 * anomaly)**2
+        correction = residual / derivative
+        if abs(correction) <= relative_tolerance * abs(anomaly):
+            return scalar_type(M + math.copysign(anomaly - mean, reduced_mean))
+        if residual > 0.0:
+            upper = anomaly
+        else:
+            lower = anomaly
+        candidate = anomaly - correction
+        if not lower < candidate < upper:
+            candidate = 0.5 * (lower + upper)
+        if candidate == anomaly:
+            return scalar_type(M + math.copysign(anomaly - mean, reduced_mean))
+        anomaly = candidate
+    raise RuntimeError(f'M2E() failed to converge for M={M}, e={e}')
 
 
-def N2H(N:float, e:float) -> float:
+def N2H(N: float, e: float) -> float:
     """
-    Maps the mean hyperbolic anomaly angle N into the corresponding
-    hyperbolic anomaly angle H.
+    Solve the hyperbolic Kepler equation using bracketed Newton iteration.
+
+    The equation is scaled to avoid overflow for large finite mean anomalies
+    and evaluated without subtractive cancellation near the parabolic limit.
 
     :param N: mean hyperbolic anomaly (rad)
     :param e: eccentricity (e > 1)
-    :return: H, hyperbolic anomaly (rad)
+    :return: hyperbolic anomaly (rad); NumPy scalar types and zero-dimensional
+        mean-array results are preserved
+    :raises ValueError: if either input is non-finite or eccentricity is outside its domain
+    :raises RuntimeError: if the iteration limit is reached without convergence
     """
-    dH = 10.0 * eps
-    H1 = N
-    count = 0
+    scalar_type = _kepler_result_type(N, e)
+    N, e = float(N), float(e)
+    if not math.isfinite(N) or not math.isfinite(e) or e <= 1.0:
+        raise ValueError('N2H() requires finite N and e with e > 1')
+    if N == 0.0:
+        return scalar_type(N)
 
-    if e > 1.0:
-        while math.fabs(dH) > eps:
-            dH = (e * math.sinh(H1) - H1 - N) / (e * math.cosh(H1) - 1.0)
-            H1 -= dH
-            count += 1
-            if count > maxIteration:
-                print('Iteration error in M2E({},{})'.format(str(N), str(e)))
-                dH = 0.
-        return H1
-    raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    mean = abs(N) / e
+    lower = math.asinh(mean)
+    upper = lower + 2.0  # [rad]; brackets the positive root for every e > 1
+    anomaly = lower
+    relative_tolerance = 4.0 * math.ulp(1.0)
+    for _ in range(maxIteration):
+        if anomaly <= 1.0:
+            # Divide by e and retain the small linear term when e is close to one.
+            linear = (e - 1.0) / e
+            residual = linear * anomaly + _kepler_anomaly_difference(anomaly, True) - mean
+            derivative = linear + 2.0 * math.sinh(0.5 * anomaly)**2
+        else:
+            # Divide both f and f' by e*exp(H), without forming either large factor.
+            inverse_exp = math.exp(-anomaly)
+            residual = -0.5 * math.expm1(-2.0 * anomaly) - (anomaly / e + mean) * inverse_exp
+            derivative = 0.5 * (1.0 + inverse_exp * inverse_exp) - inverse_exp / e
+        correction = residual / derivative
+        if abs(correction) <= relative_tolerance * abs(anomaly):
+            result = math.copysign(anomaly, N)
+            return scalar_type(result)
+        if residual > 0.0:
+            upper = anomaly
+        else:
+            lower = anomaly
+        candidate = anomaly - correction
+        if not lower < candidate < upper:
+            candidate = 0.5 * (lower + upper)
+        if candidate == anomaly:
+            result = math.copysign(anomaly, N)
+            return scalar_type(result)
+        anomaly = candidate
+    raise RuntimeError(f'N2H() failed to converge for N={N}, e={e}')
+
 
 def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
