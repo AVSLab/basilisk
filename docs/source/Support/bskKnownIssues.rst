@@ -22,13 +22,14 @@ Version |release| (unreleased)
   uninitialized or stale.
   The issue 1605 fix corrects the rotation term used internally to compute the access rates.
 
-- GitHub issues 1610 and 1611: Rigid-body kinematics conversions and composition
-  now preserve identity, small rotations, half-turns, and Euler singularities;
+- GitHub issue 1610: PRV conversions and PRV/MRP composition
+  now preserve identity, small rotations, and half-turns;
   PRV rate maps use analytic limits at zero and angle wrapping handles multiple
   revolutions. Python and Numba retain sequence inputs and non-contiguous PRV
-  arrays. Numba uses wrappers and overloads to avoid deprecated list reflection;
-  see :ref:`numbaModules_rbkn` for compiled-call requirements and the public
-  callable interface. Representation singularities and extreme floating-point
+  arrays. This patch retains the existing Numba dispatcher interface, including
+  ``.py_func`` and ``.signatures``; Python-list reflection warnings can still occur.
+  The separate Euler singularity fixes from issue 1611 are not included.
+  Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
 
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
