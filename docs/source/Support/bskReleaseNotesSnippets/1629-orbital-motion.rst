@@ -1,0 +1,3 @@
+- Enhanced convergence, accuracy, and numerical robustness in the C and Python orbitalMotion libraries across Kepler solvers, orbital conversions, mean/osculating mapping, and environmental helpers, including singular and degenerate orbit cases (issue 1629).
+- Preserved existing orbital methods, NumPy scalar outputs, and legacy conventions without deprecation; added optional checked APIs. Element inputs now require inclinations in [0, pi] radians (0 to 180 degrees). See :ref:`orbitalMotionMigration` for validation changes and compatibility guidance.
+- Corrected :ref:`keplerianOrbit` characteristic energy and improved related controller, ephemeris, and :ref:`eclipse` calculations, with expanded regression coverage and updated documentation.
