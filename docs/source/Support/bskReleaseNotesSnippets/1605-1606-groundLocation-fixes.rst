@@ -1,0 +1,2 @@
+- Fixed inconsistent planet angular-velocity frame use in :ref:`groundLocation` and :ref:`stripLocation`, correcting the rotation term in ``range_dot``, ``az_dot`` and ``el_dot`` for tilted planet spin axes (issue #1605). This also corrects ``groundLocation.v_BL_L``; the unpopulated ``stripLocation.v_BL_L`` output remains a known issue.
+- Fixed :ref:`groundLocation` ignoring the planet translational velocity from ``planetInMsg`` when computing ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages.

@@ -28,6 +28,9 @@ Module Assumptions and Limitations
 - Elevation constraints are computed assuming a conical field of view around the surface normal
   at the current target location.
 - The pre-imaging time feature uses the same SLERP extrapolation, extending the arc backwards.
+- The ``v_BL_L`` field of the access message is not populated for nonzero spacecraft-to-target
+  separation in this patch branch. Its value can be uninitialized or stale and must not be used
+  (known issue #1607).
 
 Message Connection Descriptions
 -------------------------------

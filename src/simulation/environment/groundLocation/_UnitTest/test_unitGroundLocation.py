@@ -282,7 +282,7 @@ def test_AzElR_rates():
     assert (range_rate_worked and el_rate_worked and az_rate_worked)
 
 
-@pytest.mark.parametrize("tilt_deg", [0.0, 30.0, 60.0])
+@pytest.mark.parametrize("tilt_deg", [0.0, 30.0, 60.0])  # [deg]
 @pytest.mark.parametrize("v_PN_N", [[0.0, 0.0, 0.0], [3.0e4, -1.0e3, 2.0e3]])  # [m/s]
 def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
     """
@@ -292,7 +292,6 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
 
     :param tilt_deg: [deg] angle between the planet spin axis and the inertial 3-axis
     :param v_PN_N: [m/s] planet velocity relative to the inertial frame origin, in N components
-    :return:
     """
     radius = 6378136.3  # [m] planet radius
     omega = 7.2921159e-5  # [rad/s] planet spin rate
@@ -320,11 +319,11 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
     scMsg = messaging.SCStatesMsg().write(scPayload)
 
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))
+    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))  # [s]
     groundStation = groundLocation.GroundLocation()
     groundStation.planetRadius = radius
-    groundStation.minimumElevation = -np.pi / 2
-    groundStation.specifyLocation(np.radians(10.0), np.radians(20.0), 0.0)
+    groundStation.minimumElevation = -np.pi / 2  # [rad]
+    groundStation.specifyLocation(np.radians(10.0), np.radians(20.0), 0.0)  # [deg], [deg], [m]
     groundStation.planetInMsg.subscribeTo(planetMsg)
     groundStation.addSpacecraftToModel(scMsg)
     scSim.AddModelToTask("simTask", groundStation)

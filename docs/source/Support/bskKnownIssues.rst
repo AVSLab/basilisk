@@ -7,14 +7,20 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
-- GitHub issue 1606: The :ref:`groundLocation` module did not subtract the planet velocity of ``planetInMsg`` from the spacecraft velocity,
-  so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields were in error by the planet
-  velocity.
+- GitHub issue 1606: The :ref:`groundLocation` module did not subtract the planet velocity of ``planetInMsg``
+  from the spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields
+  could include spurious contributions from planet translation. The planet velocity is now subtracted before
+  transforming the relative velocity into the rotating ground frame.
 
 - GitHub issue 1605: The :ref:`groundLocation` and :ref:`stripLocation` modules crossed the planet angular velocity,
   which they computed in planet-fixed components, with inertial vectors when removing the planet rotation from the
   spacecraft velocity. This caused incorrect relative velocities and range, azimuth, and elevation rates when the
   planet spin axis was not aligned with the inertial 3-axis. The rotation terms now use consistent frame components.
+
+- GitHub issue 1607: :ref:`stripLocation` still does not populate the ``v_BL_L`` access message field for
+  nonzero spacecraft-to-target separation in this patch branch. Do not use that field; its value can be
+  uninitialized or stale.
+  The issue 1605 fix corrects the rotation term used internally to compute the access rates.
 
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale
