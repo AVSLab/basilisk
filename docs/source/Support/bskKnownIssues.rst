@@ -7,6 +7,15 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- Builds with Vizard or optical navigation used Protobuf C++ 3.21.12, which is no
+  longer supported upstream. They now use Protobuf 6.33.5, with OpenCV 4.14.0 for
+  optical navigation.
+  Source builds require Conan 2.4.0 or newer, and the generated visualization
+  bindings require Python Protobuf 6.33.5 or newer. The Vizard message schema is
+  unchanged. CMake now refreshes the Protobuf compiler path when dependencies
+  change, preventing existing build directories from retaining an incompatible
+  compiler.
+
 - GitHub issue 1621: ``tleHandling.frame_bias()`` applied the GCRS to mean J2000 frame bias rotations in the
   reverse order and with the wrong sign of :math:`\xi_0`. The TEME to J2000/ICRF conversion used by
   ``tleHandling`` and ``ommHandling`` therefore shifted TLE and OMM initial states by about 1.3 m in LEO.
