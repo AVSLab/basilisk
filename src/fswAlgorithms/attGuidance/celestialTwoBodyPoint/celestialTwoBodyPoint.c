@@ -239,10 +239,11 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint6
     v3Scale(2.0, temp3_N, temp3_N);
     v3Add(temp3_N, temp3_3_N, ddr2_hat_N); /* Eq 13c*/
 
-    /* - Angular acceleration computation */
-    domega_RN_R[0] = v3Dot(dr3_hat_N, dr2_hat_N) + v3Dot(r3_hat_N, ddr2_hat_N) - v3Dot(omega_RN_R, dr1_hat_N);
-    domega_RN_R[1] = v3Dot(dr1_hat_N, dr3_hat_N) + v3Dot(r1_hat_N, ddr3_hat_N) - v3Dot(omega_RN_R, dr2_hat_N);
-    domega_RN_R[2] = v3Dot(dr2_hat_N, dr1_hat_N) + v3Dot(r2_hat_N, ddr1_hat_N) - v3Dot(omega_RN_R, dr3_hat_N);
+    /* - Angular acceleration computation. For each basis vector, dr_i/dt = omega_RN x r_i,
+       so omega_RN dot dr_i/dt is zero when both vectors are expressed in the same frame. */
+    domega_RN_R[0] = v3Dot(dr3_hat_N, dr2_hat_N) + v3Dot(r3_hat_N, ddr2_hat_N);
+    domega_RN_R[1] = v3Dot(dr1_hat_N, dr3_hat_N) + v3Dot(r1_hat_N, ddr3_hat_N);
+    domega_RN_R[2] = v3Dot(dr2_hat_N, dr1_hat_N) + v3Dot(r2_hat_N, ddr1_hat_N);
     m33tMultV3(dcm_RN, domega_RN_R, configData->attRefOut.domega_RN_N);
 
     return;
