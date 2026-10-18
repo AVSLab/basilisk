@@ -27,6 +27,7 @@ import inspect
 import os
 
 import numpy as np
+import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -52,6 +53,7 @@ textSnippetFailed = r'\textcolor{Red}{' + "Failed" + '}'
 # provide a unique test method name, starting with test_
 
 def computeCelestialTwoBodyPoint(R_P1, v_P1, a_P1, R_P2, v_P2, a_P2):
+    """Compute analytic truth from relative states expressed in N-frame components."""
 
     # Beforehand computations
     R_n = np.cross(R_P1, R_P2)
@@ -86,18 +88,90 @@ def computeCelestialTwoBodyPoint(R_P1, v_P1, a_P1, R_P2, v_P2, a_P2):
     ddr1_hat = 1.0 / la.norm(R_P1) * (np.dot(C1, a_P1) - np.dot(temp33_1, v_P1))
     temp33_3 = 2 * np.outer(dr3_hat, r3_hat) + np.outer(r3_hat, dr3_hat)
     ddr3_hat = 1.0 / la.norm(R_n) * (np.dot(C3, a_n) - np.dot(temp33_3, v_n))
-    ddr2_hat = np.cross(ddr3_hat, r1_hat) + np.cross(ddr1_hat, r3_hat) + 2 * np.cross(dr3_hat, dr1_hat)
+    ddr2_hat = np.cross(ddr3_hat, r1_hat) + np.cross(r3_hat, ddr1_hat) + 2 * np.cross(dr3_hat, dr1_hat)
 
     # Angular Acceleration computation
     domega_RN_R = np.array([
-        np.dot(dr3_hat, dr2_hat) + np.dot(r3_hat, ddr2_hat) - np.dot(omega_RN_R, dr1_hat),
-        np.dot(dr1_hat, dr3_hat) + np.dot(r1_hat, ddr3_hat) - np.dot(omega_RN_R, dr2_hat),
-        np.dot(dr2_hat, dr1_hat) + np.dot(r2_hat, ddr1_hat) - np.dot(omega_RN_R, dr3_hat)
+        np.dot(dr3_hat, dr2_hat) + np.dot(r3_hat, ddr2_hat),
+        np.dot(dr1_hat, dr3_hat) + np.dot(r1_hat, ddr3_hat),
+        np.dot(dr2_hat, dr1_hat) + np.dot(r2_hat, ddr1_hat)
 
     ])
     domega_RN_N = np.dot(RN.T, domega_RN_R)
 
     return sigma_RN, omega_RN_N, domega_RN_N
+
+
+@pytest.mark.parametrize("secondary_mode", ["moving", "absent", "parallel", "antiparallel"])
+@pytest.mark.parametrize("sample_time", [0.0, 250.0])  # [s]
+def test_reference_derivatives(secondary_mode, sample_time):
+    """Check the published rate and acceleration with central finite differences.
+
+    Bodies follow straight-line trajectories, consistent with the module's
+    zero-relative-acceleration assumption. The moving-secondary case reproduces
+    issue 1618. The remaining cases exercise the fallback reference with an
+    absent, parallel, or antiparallel secondary direction. Each case is sampled
+    at two times with a reference frame that is not aligned with N.
+
+    Differentiate the output attitude basis to check ``omega_RN_N``, then
+    differentiate the output rate to check ``domega_RN_N``. Neither check uses
+    the analytic truth helper or the module's acceleration equations.
+    """
+    primary_position_N = np.array([7e6, 1e6, -2e6])  # [m]
+    primary_velocity_N = np.array([-1e3, 7e3, 2e3])  # [m/s]
+    secondary_position_N = np.array([-3e6, 8e6, 4e6])  # [m]
+    secondary_velocity_N = np.array([5e3, 1e3, -3e3])  # [m/s]
+    step = 0.1  # [s]
+    rate_tolerance = 1e-11  # [rad/s]
+    acceleration_tolerance = 1e-13  # [rad/s^2]
+
+    module = celestialTwoBodyPoint.celestialTwoBodyPoint()
+    module.ModelTag = "referenceDerivativeCheck"
+    module.singularityThresh = np.deg2rad(1.0)  # [rad]
+    nav_message = messaging.NavTransMsg().write(messaging.NavTransMsgPayload())
+    primary_message = messaging.EphemerisMsg()
+    secondary_message = messaging.EphemerisMsg()
+    module.transNavInMsg.subscribeTo(nav_message)
+    module.celBodyInMsg.subscribeTo(primary_message)
+    if secondary_mode != "absent":
+        module.secCelBodyInMsg.subscribeTo(secondary_message)
+    module.SelfInit()
+    module.Reset(0)
+
+    def evaluate(time):
+        """Return reference outputs for the body states at ``time`` in seconds."""
+        primary_data = messaging.EphemerisMsgPayload()
+        primary_data.r_BdyZero_N = primary_position_N + time * primary_velocity_N
+        primary_data.v_BdyZero_N = primary_velocity_N
+        primary_message.write(primary_data)
+        if secondary_mode != "absent":
+            secondary_data = messaging.EphemerisMsgPayload()
+            if secondary_mode == "moving":
+                secondary_data.r_BdyZero_N = secondary_position_N + time * secondary_velocity_N
+                secondary_data.v_BdyZero_N = secondary_velocity_N
+            else:
+                scale = 2.0 if secondary_mode == "parallel" else -2.0  # [-]
+                secondary_data.r_BdyZero_N = scale * np.array(primary_data.r_BdyZero_N)
+                secondary_data.v_BdyZero_N = scale * primary_velocity_N
+            secondary_message.write(secondary_data)
+        # The algorithm is instantaneous; sample time is carried by the input states.
+        module.UpdateState(0)
+        output = module.attRefOutMsg.read()
+        return (rbk.MRP2C(output.sigma_RN), np.array(output.omega_RN_N),
+                np.array(output.domega_RN_N))
+
+    dcm_minus, omega_minus_N, _ = evaluate(sample_time - step)
+    dcm_RN, omega_RN_N, domega_RN_N = evaluate(sample_time)
+    dcm_plus, omega_plus_N, _ = evaluate(sample_time + step)
+    dcm_dot = (dcm_plus - dcm_minus) / (2 * step)
+    omega_difference_N = 0.5 * np.sum(np.cross(dcm_RN, dcm_dot), axis=0)
+    acceleration_difference_N = (omega_plus_N - omega_minus_N) / (2 * step)
+
+    np.testing.assert_allclose(omega_RN_N, omega_difference_N, rtol=0, atol=rate_tolerance)
+    np.testing.assert_allclose(
+        domega_RN_N, acceleration_difference_N, rtol=0, atol=acceleration_tolerance
+    )
+
 
 def test_celestialTwoBodyPointTestFunction(show_plots):
     """Module Unit Test"""
@@ -396,8 +470,8 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     # check domega_RN_N
     moduleOutput = dataLog.domega_RN_N
 
-    # set the filtered output truth states
-    trueVector = [-2.12284893e-07,   5.69968291e-08,  -4.83648052e-08]
+    # Analytic result, also checked by finite differences of the reference rate.
+    trueVector = [-1.2147297051129594e-07, -4.1793434670048644e-08, 0.0]  # [rad/s^2]
 
     # compare the module results to the truth values
     for i in range(0, len(moduleOutput)):
