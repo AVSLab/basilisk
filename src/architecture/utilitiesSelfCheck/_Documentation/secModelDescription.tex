@@ -23,11 +23,11 @@ Common celestial mechanics tools are implemented in the {\tt orbitalMotion} libr
 
 
 \subsubsection{Classical Orbital Elements}
-The classcial orbit elements are given by
+The classical orbit elements are given by
 $$
 	(a, e, i, \Omega, \omega, f)
 $$
-where $a$ is the semi-major axis or SMA, $e$ is the eccentricity, $(\Omega, i, \omega)$ are the 3-1-3 Euler angle orbit plane orientation angles called the ascending node $\Omega$, the inclination angle $i$ and the argument of periapses $\omega$ which are illustrated in Figure~\ref{fig:orbit313}.   The semi-latus rectum $p$ is defined as
+where $a$ is the semi-major axis or SMA, $e$ is the eccentricity, and $(\Omega, i, \omega)$ are the 3-1-3 Euler angles called the right ascension of the ascending node, inclination, and argument of periapsis, respectively. These are illustrated in Figure~\ref{fig:orbit313}. Inclination satisfies $0\leq i\leq\pi$. For nonparabolic motion the semi-latus rectum $p$ is
 \begin{equation}
 	p = a (1-e^{2})
 \end{equation}
@@ -56,9 +56,9 @@ The mean anomaly angle $M$ relates to the eccentric anomaly angle $E$ through\ci
 	M = E - e \sin E
 \end{equation}
 
-The classical orbit elements for a hyperbolic scenario are shown in Figure~\ref{fig:orbitHyperbolic}.  Note that the convention is used where the SMA is a negative value for a hyperbolic orbit, and thus $a < 0$ in this case.  The true anomaly angle $f$ definition is universal for all orbit types, while the hyperbolic anomaly $H$ relates to $f$ through
+The classical orbit elements for a hyperbolic scenario are shown in Figure~\ref{fig:orbitHyperbolic}. The SMA is negative for a hyperbolic orbit. For nonrectilinear motion, the true anomaly $f$ measures position from periapsis. Rectilinear motion instead uses an energy-dependent anomaly convention described below. The hyperbolic anomaly $H$ relates to $f$ through
 \begin{equation}
-	\tanh\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{H}{2} \right)
+	\tan\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{H}{2} \right)
 \end{equation}
 The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly through
 \begin{equation}
@@ -66,7 +66,7 @@ The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly throug
 \end{equation}
 
 
-While mapping from eccentric or hyperbolic anomalies to mean anomalies is analytical, the inverse is not.  The sub-routines use Newton's method to numerically solve from mean anomalies to the corresponding eccentric or hyperbolic anomalies.  This is called solving Kepler's equation.  The iterations continue until a change tolerance of $10^{-13}$ radians is achieved, or a maximum of 200 iterations are performed.  Note that solving this Kepler's equation for most cases converges very quickly within 3-5 iterations.
+The inverse mean-anomaly mappings solve Kepler's equation with bracketed Newton iteration, using bisection whenever a Newton step leaves the bracket. Stable residual and derivative expressions reduce cancellation near unit eccentricity and avoid overflow for large hyperbolic anomalies. Iteration stops when the correction is at most $4\epsilon$ times the magnitude of the current anomaly, or when the next representable iterate is unchanged; $\epsilon$ is double-precision machine epsilon. The limit is 200 iterations. Invalid inputs or exhausted iteration produce a diagnostic and NaN in C, or an exception in Python. Elliptic results retain whole revolutions, subject to the resolution of the input and output angles.
 
 
 
@@ -75,7 +75,7 @@ While mapping from eccentric or hyperbolic anomalies to mean anomalies is analyt
 Let $\leftexp{N}{\bm r}_{C/N}$ and $\leftexp{N}{\bm v}_{C/N}$ be the inertial spacecraft center of mass $C$ position and velocity vector matrix representations, expressed with respect to inertial frame \frameDefinition{N} components.  Functions are provided to map from classical orbit elements to these Cartesian coordinates through {\tt elem2rv()}, as well as the inverse mapping from Cartesian to classical orbit elements through {\tt rv2elem()}.
 
 \paragraph{{\tt elem2rv()} Function}
-The general conversion of classical orbit elements to the inertial Cartesian components is outlined in detail in section 9.6.2 of Reference~\citenum{schaub}.  Given the true anomaly angle $f$, the orbit radius is for any orbit type given by
+The general conversion of classical orbit elements to inertial Cartesian components is outlined in section 9.6.2 of Reference~\citenum{schaub}. For nonrectilinear motion, the orbit radius at true anomaly $f$ is
 \begin{equation}
 	r = \frac{p}{1 + e \cos f}
 \end{equation}
@@ -83,11 +83,11 @@ If the satellite is not on a parabola, then $p$ is computed using
 \begin{equation}
 	p = a(1-e^{2})
 \end{equation}
-If the satellite is on a parabola, then the algorithm assumes $a=0$ (computers don't like infinity), and
+For a nonrectilinear parabola, the core C and Python conversions use the sentinel $a=0$, $e=1$, and
 \begin{equation}
-	p = 2*r_{p}
+	p = 2r_{p}
 \end{equation}
-where $r_{p}$ is the radius at periapses.
+where $r_{p}>0$ is supplied in {\tt rPeriap}. Eccentricity $e=1$ alone does not identify a parabola, because rectilinear motion also has unit eccentricity. Distances must use the same unit L as the gravitational parameter $\mu$ in L$^3$/s$^2$; angles are in radians. Open-conic anomalies must satisfy $|f|<\arccos(-1/e)$ after reduction to the principal interval. Collisions and anomalies at or beyond infinity are rejected. Trigonometric evaluation retains the phase of large wrapped inputs without division by a rounded $2\pi$.
 
 The true latitude angle $\theta$ is given by
 \begin{equation}
@@ -118,25 +118,25 @@ while the inertial velocity vector is
 \end{pmatrix}
 \label{eq:tb:dr2}
 \end{equation}
-where $\mu$ is the gravitational constant and $h$ is the massless orbital angular momentum $\bm h = \bm r \times \dot{\bm r}$.
+where $\mu$ is the gravitational parameter and $h=|\bm h|$ is the magnitude of the specific orbital angular momentum $\bm h = \bm r \times \dot{\bm r}$.
 
 
-The {\tt elem2rv()} function checks for a special rectilinear motion case.  Here the eccentricity is $e = 1$ while the SMA is non-zero with $|a|>0$.  Under this condition the spacecraft is moving purely along a radial direction relative to the planet, and the true anomaly angle no longer can be used to determine the spacecrafts location.  In this scenario the Eccentric or Hyperbolic anomaly angle $E$ can still be used to determine spacecraft position, and the {\tt elem2rv()} function assumes here that the anomaly angle provided is either $E$ or $H$ and not $f$.  For an ellipse the orbit radius is here computed using\cite{schaub}
+For rectilinear motion with nonzero energy, {\tt elem2rv()} uses $e=1$ and nonzero $a$. The {\tt f} field holds eccentric anomaly $E$ for $a>0$, or signed hyperbolic anomaly $H$ for $a<0$. The corresponding radii are\cite{schaub}
 \begin{equation}
-	r = a (1 - e \cos E)
+	r = a (1 - \cos E) = 2a\sin^2(E/2), \qquad a>0
 \end{equation}
-where on a hyperbola the radius is
+and
 \begin{equation}
-	r = a(1 - e \cosh H)
+	r = a(1 - \cosh H) = -2a\sinh^2(H/2), \qquad a<0.
 \end{equation}
-The radial unit direction vector along which all rectilinear motion is occuring is
+For rectilinear parabolic motion, use $e=1$, $a=0$, {\tt rPeriap}=0, and a positive radius in {\tt rmag}. The {\tt f} field is a direction flag: zero for outward motion, $\pi$ for inward motion. The radial unit direction vector for all rectilinear cases is
 \begin{equation}
 	\leftexp{N}{\hat{\bm\imath}}_{r}=\leftexp{N\!\!\!}{\begin{pmatrix}
 \cos\Omega\cos\omega
 - \sin\Omega\sin\omega\cos i \\
 \sin\Omega\cos\omega + \cos\Omega\sin\omega\cos
 i \\
- \sin\theta\sin i
+ \sin\omega\sin i
  \end{pmatrix}}
 \end{equation}
 The inertial position vector is then given by
@@ -145,24 +145,23 @@ The inertial position vector is then given by
 \end{equation}
 
 
-The velocity magnitude $v$ is determined through the orbit energy equation as\cite{schaub}
+The inertial velocity is $\leftexp{N}{\bm v}_{C/N}=v_r\leftexp{N}{\hat{\bm\imath}}_r$, with signed radial speed
 \begin{equation}
-	v = \sqrt{ \frac{2 \mu}{r} - \frac{\mu}{a} }
-\end{equation}
-The inertial velocity vector is a function of the eccentric anomaly $E$ through
-\begin{equation}
-	\leftexp{N}{\bm v}_{C/N} = \begin{cases}
-		+v \ \leftexp{N}{\hat{\bm\imath}}_{r}  & 0 \le E \le \pi \\
-		-v  \ \leftexp{N}{\hat{\bm\imath}}_{r} & -\pi \le E \le 0
+	v_r = \begin{cases}
+		\sqrt{\mu/a}\cot(E/2) & a>0, \\
+		\sqrt{\mu/(-a)}\coth(H/2) & a<0, \\
+		\phantom{-}\sqrt{2\mu/r} & a=0,\ f=0, \\
+		-\sqrt{2\mu/r} & a=0,\ f=\pi.
 	\end{cases}
 \end{equation}
+Thus positive $\sin E$ or positive $H$ selects outward motion in the core conversion. The plane about the radial ray is arbitrary. Python's {\tt elem2rv\_parab} retains its original inward-positive elliptic convention and interprets every $e=1$, $a<0$ input as a planar parabola with $r_p=-a$, regardless of auxiliary fields. Use the core {\tt elem2rv} for rectilinear hyperbolas. Both conventions remain supported, and conversions leave input element storage unchanged.
 
 
 
 
 
 \paragraph{{\tt rv2elem()} Function}
-To convert from the inertial position and velocity vectors to the corresponding classical orbit elements, the following algorithm is used.  First the semi-latus rectum is computed using
+The following equations describe the inverse mapping for nonrectilinear motion. The implementation scales velocity by $\sqrt{\mu/r}$ and uses normalized directions to avoid unit-dependent intermediate overflow. First the semi-latus rectum is computed using
 \begin{equation}
 	p = \frac{\bm h \cdot \bm h}{\mu}
 \end{equation}
@@ -186,7 +185,7 @@ If $e$ is near zero, then the orbit is near circular and the periapses direction
 
 Within this function the orbit radius is set through
 \begin{equation}
-	r = \frac{\bm r_{C/N}}{ | \bm r_{C/N}|}
+	r = |\bm r_{C/N}|
 \end{equation}
 and the radius at periapses is set to
 \begin{equation}
@@ -197,19 +196,19 @@ The SMA is computed using a robust method where first the inverse of the SMA, ca
 \begin{equation}
 	\alpha = \frac{2}{r} - \frac{v^{2}}{\mu}
 \end{equation}
-If $\alpha$ is non-zero, then the orbit is not parabolic and $a$ is determined through
+If $\alpha$ is resolved as nonzero, $a$ is determined through
 \begin{equation}
 	a = \frac{1}{\alpha}
 \end{equation}
 while the radius at apoapses is set to
 \begin{equation}
-	r_{a} = \frac{p}{1 - e}
+	r_{a} = a(1+e).
 \end{equation}
-If $\alpha$ is zero, then the motion is parabolic and the SMA is not defined (i.e. is infinite).  In this case the code sets
+For hyperbolic motion this is a signed algebraic value, not a physical apoapsis. Energy is treated as zero when $|2-v^2r/\mu|\leq8\epsilon\max(2,v^2r/\mu)$. In that parabolic case the core conversion sets
 $$
 	a = 0.0
 $$
-while $r_{a} = 0.0$ is returned as a value that is not defined in this case.
+and returns $r_a=0$. Python's default {\tt rv2elem} retains $a=-r_p$, {\tt rApoap}=$-1$ for planar parabolas; {\tt canonical=True} explicitly selects the core encoding. Near zero energy, relative accuracy of $a$ and reconstruction from rounded $a,e$ degrade with conditioning. Finite-energy nonradial states whose eccentricity rounds to one or the wrong side of one cannot be represented consistently and are rejected.
 
 
 Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.
@@ -230,20 +229,23 @@ Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}
 	\cos i = \hat{\bm \imath}_{h} \cdot \hat{\bm n}_{3}
 \end{equation}
 
-To find the true anomaly angle, the angle between $\bm r$ and $\bm e$ is determine while checking for quadrants again.
+The true anomaly is the angle from $\bm e$ to $\bm r$, again with quadrant checking:
 \begin{equation}
-	\tan \omega = \frac{(\hat{\bm \imath}_{e} \times \hat{\bm \imath}_{r}) \cdot \hat{\bm \imath}_{h}}
+	\tan f = \frac{(\hat{\bm \imath}_{e} \times \hat{\bm \imath}_{r}) \cdot \hat{\bm \imath}_{h}}
 	{\hat{\bm \imath}_{e} \cdot \hat{\bm \imath}_{r}}
 \end{equation}
 
-The angles $\Omega$, $\omega$ and $f$ are returned to be a positive values between $0$ and 360\dg.
+These ratios are evaluated with {\tt atan2} to preserve quadrants. C returns $\Omega$, $\omega$ and nonradial $f$ in $[0,2\pi)$. Python's main inverse retains signed hyperbolic true anomaly; its {\tt rv2elem\_parab} adapter retains signed node, periapsis and nonradial anomaly angles.
 
 The 3-1-3 Euler angles representing the orbit frame orientation have singular configurations.  The following list discusses how each case is handled:
 \begin{itemize}
-	\item {\bfseries Equatorial non-circular orbit:} Here the ascending node $\Omega$ is ill-defined, and is  set to 0.0 radians.
-	\item {\bfseries Inclined circular orbit:}  Here the argument of periapses $\omega$ is ill-defined, and is set to 0.0 radians.
-	\item {\bfseries Equatorial circular orbit:} Here both $\Omega$ and $\omega$ are ill-defined are are each set to 0.0 radians.
+	\item {\bfseries Equatorial non-circular orbit:} Set $\Omega=0$ and $i=0$ or $\pi$. Measure periapsis from the inertial x axis in the direction of orbital motion, including retrograde motion.
+	\item {\bfseries Inclined circular orbit:} Set $\omega=0$ and let $f$ measure argument of latitude from the node.
+	\item {\bfseries Equatorial circular orbit:} Set $\Omega=\omega=0$ and measure $f$ from the inertial x axis in the direction of orbital motion.
 \end{itemize}
+The singularity threshold is dimensionless: $e\leq10^{-12}$ or $\sin i\leq10^{-12}$. Replacing unresolved directions introduces relative state errors of that order. The legacy Python {\tt rv2elem\_parab} circular convention instead places periapsis at the current position and returns $f=0$.
+
+Rectilinear motion is detected when transverse velocity is within $8\epsilon$ of the local speed. It returns $e=1$, $r_p=0$, an arbitrary but deterministic plane about the outward radial ray, and the energy-dependent anomaly described above. In particular, zero angular momentum alone does not imply zero orbital energy.
 
 
 
@@ -261,21 +263,21 @@ The 3-1-3 Euler angles representing the orbit frame orientation have singular co
 
 \subsubsection{Space Environment Parameters}
 \paragraph{Atmospheric Density}
-This program computes the atmospheric density based on altitude  supplied by user.  This function uses a 7-th order polynomial curve fit based on  atmospheric data from the Standard Atmosphere 1976 Data. This function is valid for altitudes ranging from 100km to 1000km.
+The Earth density helper uses a sixth-order polynomial fit to $\log_{10}\rho$, based on Standard Atmosphere 1976 data for altitudes from 100 to 1000 km. It extrapolates below that range. Above 1000 km it retains the exponential tail $\log_{10}(\rho/[\mathrm{kg/m^3}])=-7\times10^{-5}(h/[\mathrm{km}])-14.464$; density is not cut off at 1000 km.
 
 \paragraph{Mean Debye Length}
-This program computes the Debye Length length for a given  altitude and is valid for altitudes ranging  from 200 km to GEO (35000km).  However, all values above   1000 km are HIGHLY speculative at this point.
+The Earth Debye length model accepts altitudes from 200 to 35000 km and returns length in meters. Values above 1000 km are highly speculative.
 
 \paragraph{Atmospheric Drag Acceleration}
-This program computes the atmospheric drag acceleration   vector $\leftexp{N}{\bm a}_{d}$ acting on a spacecraft.   Note the acceleration vector output is inertial, and is   only valid for altitudes up to 1000 km.   Afterwards the drag force is zero. Only valid for Earth.  The disturbance acceleration is defined as
+The Earth drag helper opposes the supplied inertial velocity; it does not subtract an atmosphere rotation velocity. In consistent SI units the acceleration is
 \begin{equation}
-	\bm a_{d} = -\frac{\rho}{2} C_{d} \frac{A v^{2}}{m} \cdot \frac{\dot{\bm r}}{|\bm r|}
+	\bm a_{d} = -\frac{\rho C_{d} A}{2m} |\bm v|\bm v.
 \end{equation}
-where $\rho$ is the local atmospheric density, $C_{d}$ is the drag coefficient, $A$ is the projected area into the flight direction, and $m$ is the spacecraft mass.
+Here $\rho$ is density in kg/m$^3$, $C_d$ is dimensionless, $A$ is projected area in m$^2$, and $m$ is mass in kg. The API accepts position in km and velocity in km/s and converts internally to return km/s$^2$. Positive altitude above Earth's reference radius, positive mass, nonnegative $C_d,A$, and finite inputs are required. Valid zero speed, area, or coefficient returns zero acceleration. Invalid inputs or unrepresentable output produce NaNs with a diagnostic in C, or {\tt ValueError} in Python. The density extrapolations above remain active; they do not extend the fit's validated altitude range.
 
 
 \paragraph{Gravitational Zonal Harmonics}
-This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  For other planets only their $J_{2}$ value is used, while the higher order harmonics are set to zero.  The gravitational zonal harmonic accelerations are then given by\cite{schaub}
+The zonal helper sums Earth's contributions from $J_2$ through the requested degree, at most $J_6$. Other supported oblate bodies use $J_2$ only. These are perturbations without central gravity or tesseral terms, in a planet-centered frame whose z axis is aligned with the spin axis. Distances are in km and accelerations in km/s$^2$. The external expansion is intended for positions outside the body's reference radius; the API does not enforce that surface boundary. Planet selection and legacy zero-zonal behavior are described in the user guide. The individual contributions are\cite{schaub}
 \begin{align}
 	\bm a_{J_{2}} &=   -\frac{3}{2} J_{2}
 	\left(\frac{\mu}{r^{2}}\right)
@@ -288,7 +290,7 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 	\end{pmatrix}}
 	\label{eq:gm:aJ2}
 	\\
-	\bm a_{J_{3}} &=  -\frac{1}{2} J_{3}
+	\bm a_{J_{3}} &=  \frac{1}{2} J_{3}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{3}
 	\leftexp{N\!\!\!}{
@@ -297,12 +299,12 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		\right) \frac{x}{r} \\
 		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right)
 		\right) \frac{y}{r} \\
-		3\left(10\left(\frac{z}{r}\right)^{2} - \frac{35}{3}
+		-3\left(10\left(\frac{z}{r}\right)^{2} - \frac{35}{3}
 		\left(\frac{z}{r}\right)^{4} - 1 \right)
 	\end{pmatrix}}
 	\label{eq:gm:aJ3}
 	\\
-	\bm a_{J_{4}} &=  -\frac{5}{8} J_{4}
+	\bm a_{J_{4}} &=  \frac{5}{8} J_{4}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{4}
 	\leftexp{N\!\!\!}{
@@ -311,12 +313,12 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		\right) \frac{x}{r} \\
 		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4}
 		\right) \frac{y}{r} \\
-		-\left(15-70\left(\frac{z}{r}\right)^{2} + 63
+		\left(15-70\left(\frac{z}{r}\right)^{2} + 63
 		\left(\frac{z}{r}\right)^{4}  \right) \frac{z}{r}
 	\end{pmatrix}}
 	\label{eq:gm:aJ4}
 	\\
-	\bm a_{J_{5}} &=  -\frac{J_{5}}{8}
+	\bm a_{J_{5}} &=  \frac{J_{5}}{8}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{5}
 	\leftexp{N\!\!\!}{
@@ -327,13 +329,13 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		3\left(35\left(\frac{z}{r}\right) - 210
 		\left(\frac{z}{r}\right)^{3} +231 \left(\frac{z}{r}\right)^{5}
 		\right) \frac{y}{r} \\
-		\left(15- 315\left(\frac{z}{r}\right)^{2} \!\!+ 945
+		-\left(15- 315\left(\frac{z}{r}\right)^{2} \!\!+ 945
 		\left( \frac{z}{r}\right)^{4}\!\! -693 \left(\frac{z}{r}\right)^{6}
 		\right)
 	\end{pmatrix}}
 	\label{eq:gm:aJ5}
 	\\
-	\bm a_{J_{6}} &=  \frac{J_{6}}{16}
+	\bm a_{J_{6}} &=  -\frac{J_{6}}{16}
 	\left(\frac{\mu}{r^{2}}\right)\!
 	\left( \frac{r_{eq}}{r}\right)^{6}\!
 	\leftexp{N\!\!\!}{
@@ -346,10 +348,10 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		+ 3465 \left(\frac{z}{r}\right)^{4} \!\!
 		- 3003 \left(\frac{z}{r}\right)^{6}
 		\right) \frac{y}{r} \\
-		\left( 3003 \left(\frac{z}{r}\right)^{6} \!\!
+		-\left( 3003 \left(\frac{z}{r}\right)^{6} \!\!
 		-4851 \left(\frac{z}{r}\right)^{4}\!\!
 		+ 2205 \left(\frac{z}{r}\right)^{2}\!\!
-		- 315
+		- 245
 		\right) \frac{z}{r}
 	\end{pmatrix}}
 	\label{eq:gm:aJ6}

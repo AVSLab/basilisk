@@ -1,11 +1,11 @@
 % !TEX root = ./Basilisk-avsLibrary20170812.tex
 
 \section{Test Description and Success Criteria}
-The AVS support libraries undergo a series of unit test within C-functions that are called by the Swig'd interface {\tt avsLibrarySelfCheck}.  The automated unit test is performed via {\tt pytest} through the script:
+The AVS support libraries undergo a series of unit tests within C-functions that are called by the Swig'd interface {\tt avsLibrarySelfCheck}.  The automated unit test is performed via {\tt pytest} through the script:
 \begin{verbatim}
-     simulation/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.py
+     architecture/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.py
 \end{verbatim}
-In each unit test the C-code library function output is compared to a externally hand-computed solution.  The success criteria is when the pre-computed solution and the C-code computed solution match to within a certain numerical tolerance.  The success criteria absolute value tolerances are shown in Table~\ref{tbl:tolerance}.
+In each unit test the C-code library function output is compared to an externally hand-computed solution.  The success criterion is when the pre-computed solution and the C-code computed solution match to within a certain numerical tolerance.  The success criteria absolute value tolerances are shown in Table~\ref{tbl:tolerance}.
 
 
 
@@ -13,16 +13,15 @@ In each unit test the C-code library function output is compared to a externally
 	\caption{Unit Test Absolute Difference Tolerances}
 	\label{tbl:tolerance}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c} % Column formatting, 
-		\hline 
-		\hline 
+	\begin{tabular}{c | c} % Column formatting,
+		\hline
+		\hline
 		Test    & Absolute Tolerance \\
-		\hline 
+		\hline
 		  Linear Algebra    & $10^{-10}$ \\
 		  Rigid Body Kinematics    & $10^{-10}$ \\
 		  Orbital Motion: Anomalies    & $10^{-10}$ \\
-		  Orbital Motion: Element conversion    & $10^{-10}$ \\
-		  Orbital Motion: Environment    & $10^{-10}$ \\
+		  Orbital Motion: Hill transformations    & $10^{-4}$ \\
 		\hline
 		\hline
 	\end{tabular}
@@ -35,73 +34,53 @@ In each unit test the C-code library function output is compared to a externally
 \section{Test Parameters}
 
 \subsection{Linear Algebra}
-In these unit tests each function is provided non-trivial inputs, such as {\tt v1 = [1,2,3]} to evaluate the associate matrix math.  For specific information on the values used, look at the source code for the function {\tt testLinearAlgebra()} in the file {\tt avsLibrarySelfCheck.c}.  
+In these unit tests each function is provided non-trivial inputs, such as {\tt v1 = [1,2,3]} to evaluate the associate matrix math.  For specific information on the values used, look at the source code for the function {\tt testLinearAlgebra()} in the file {\tt avsLibrarySelfCheck.c}.
 
 \subsection{Rigid Body Kinematics}
-The attitude kinematics sub-routines are provided with non-trivial inputs to test the functions.   For specific information on the values used, look at the source code for the function {\tt testRigidBodyKinematics()} in the file {\tt avsLibrarySelfCheck.c}.  
+The attitude kinematics sub-routines are provided with non-trivial inputs to test the functions.   For specific information on the values used, look at the source code for the function {\tt testRigidBodyKinematics()} in the file {\tt avsLibrarySelfCheck.c}.
 
 
 \subsection{Orbital Motion}
-The orbital anomaly sub-routines are provided with non-trivial inputs to test the functions.   For specific information on the values used, look at the source code for the function {\tt testOrbitalAnomalies()} in the file {\tt avsLibrarySelfCheck.c}.  
+The orbital anomaly sub-routines are provided with non-trivial inputs to test the functions.   For specific information on the values used, look at the source code for the function {\tt testOrbitalAnomalies()} in the file {\tt avsLibrarySelfCheck.c}.
 
-Regarding the orbit element to Cartesian coordinate conversion routines, an Earth orbit is simulated that is either non-equatorial and non-circular (case 1), non-circular equatorial (case 2), circular and inclined (case 3) and circular equatorial (case 4).  The resulting orbit elements used are shown in Table~\ref{tbl:orbitValues}.  
-
-
-\begin{table}[htbp]
-	\caption{Orbit Elements Used in Orbit Coordinate Conversion Routine Checking}
-	\label{tbl:orbitValues}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c || c | c | c | c | c | c} % Column formatting, 
-		\hline 
-		\hline 
-		Case    & SMA  [km]& $e$ & $i$[\dg] & $\Omega$[\dg\ & $\omega$[\dg\ & $f$[\dg] \\
-		\hline 
-		  1   &  7500 & 0.5 & 40 & 133 & 113 & 123 \\
-		  2   &  7500 & 0.5 & 0 & 133 & 113 & 123 \\
-		  3   &  7500 & 0.0 & 40 & 133 & 113 & 123 \\
-		  4   &  7500 & 0.0 & 0 & 133 & 113 & 123 \\
-		\hline
-		\hline
-	\end{tabular}
-\end{table}
-
-
-
-
+The Hill self-check, {\tt testOrbitalHill()}, exercises rotating-frame state
+transformations. The native target {\tt test\_orbitalMotion} checks element
+conversions and environment models. Additional Python regressions are under
+{\tt src/tests}, with integration tests in module test directories. These are separate from the C self-check entry points. Individual
+assertions define tolerances appropriate to each quantity and case.
+Compatibility regressions include repeated calls with Python and SWIG element
+containers, ignored auxiliary fields in the legacy parabolic adapter, and C
+compound-literal and C++ braced-initializer zonal calls. Large wrapped anomalies
+are checked against direct trigonometric state references in both languages.
 
 \section{Test Results}
-An automated suite of tests are run to perform unit tests on all the AVS support library functions.  The results are shown in Table~\ref{tbl:avsLibraryResults}.  
+The four native self-check entry points exercised by this Python wrapper are listed in Table~\ref{tbl:avsLibraryResults}. Unknown selectors fail explicitly; no result is claimed for an entry point that does not exist.
 
 
 \begin{table}[h]
 	\caption{Integration test results.}
 	\label{tbl:avsLibraryResults}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c | l } % Column formatting, 
+	\begin{tabular}{c | c | l } % Column formatting,
 		\hline\hline
-		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes} 									        
+		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes}
 		\\ \hline
-		{\tt rigidBodyKinematics}		  	& 
-		\input{AutoTex/test_avsLibrarySelfCheckTestMsg-testRigidBodyKinematics}      	  &
-		\input{AutoTex/test_avsLibrarySelfCheckMsg-testRigidBodyKinematics}
-		\\ 
-		{\tt orbitalElements}		  	& 
-		\input{AutoTex/test_avsLibrarySelfCheckTestMsg-testOrbitalElements}      	  &
-		\input{AutoTex/test_avsLibrarySelfCheckMsg-testOrbitalElements}
-		\\ 
-		{\tt orbitalAnomalies}		  	& 
-		\input{AutoTex/test_avsLibrarySelfCheckTestMsg-testOrbitalAnomalies}      	  &
-		\input{AutoTex/test_avsLibrarySelfCheckMsg-testOrbitalAnomalies}
-		\\ 
-		{\tt linearAlgebra}		  	& 
-		\input{AutoTex/test_avsLibrarySelfCheckTestMsg-testLinearAlgebra}      	  &
-		\input{AutoTex/test_avsLibrarySelfCheckMsg-testLinearAlgebra}
-		\\ 
-		{\tt environment}		  	& 
-		\input{AutoTex/test_avsLibrarySelfCheckTestMsg-testEnvironment}      	  &
-		\input{AutoTex/test_avsLibrarySelfCheckMsg-testEnvironment}
-		\\ 
+		{\tt rigidBodyKinematics}		  	&
+		\input{AutoTeX/test_avsLibrarySelfCheckTestMsg-testRigidBodyKinematics}      	  &
+		\input{AutoTeX/test_avsLibrarySelfCheckMsg-testRigidBodyKinematics}
+		\\
+		{\tt orbitalHill}		  	&
+		\input{AutoTeX/test_avsLibrarySelfCheckTestMsg-testOrbitalHill}      	  &
+		\input{AutoTeX/test_avsLibrarySelfCheckMsg-testOrbitalHill}
+		\\
+		{\tt orbitalAnomalies}		  	&
+		\input{AutoTeX/test_avsLibrarySelfCheckTestMsg-testOrbitalAnomalies}      	  &
+		\input{AutoTeX/test_avsLibrarySelfCheckMsg-testOrbitalAnomalies}
+		\\
+		{\tt linearAlgebra}		  	&
+		\input{AutoTeX/test_avsLibrarySelfCheckTestMsg-testLinearAlgebra}      	  &
+		\input{AutoTeX/test_avsLibrarySelfCheckMsg-testLinearAlgebra}
+		\\
 		\hline\hline
 	\end{tabular}
 \end{table}
-

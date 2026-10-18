@@ -47,9 +47,9 @@
 
 \newcommand{\ModuleName}{avsLibrary}
 \newcommand{\subject}{AVS Library of Astrodynamics  and C-Based Linear Algebra Support Sub-Routines}
-\newcommand{\status}{Initial Document}
+\newcommand{\status}{Revised}
 \newcommand{\preparer}{H. Schaub}
-\newcommand{\summary}{The AVS Library has released a series of C, Matlab and Mathematica support routines to perform common astrodynamics functions.  This document outlines how these support files are automatically validated within the Basilisk environment.  There are C-based functions that run each routine with sample input, and compare to hand computed answers if the function response is correct.  This checking is performed automatically every time {\tt pytest} is run on the root Basilisk folder. } 
+\newcommand{\summary}{The AVS Library has released a series of C, Matlab and Mathematica support routines to perform common astrodynamics functions.  This document outlines how these support files are automatically validated within the Basilisk environment.  There are C-based functions that run each routine with sample input, and compare to hand computed answers if the function response is correct.  This checking is performed automatically every time {\tt pytest} is run on the root Basilisk folder. }
 
 \begin{document}
 
@@ -60,14 +60,15 @@
 %	to add more lines, copy the table entry and the \hline, and paste after the current entry.
 %
 \pagestyle{empty}
-{\renewcommand{\arraystretch}{2}
+{\renewcommand{\arraystretch}{1.25}
 \noindent
-\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
+\begin{longtable}{|p{0.5in}|p{3.3in}|p{1.07in}|p{0.9in}|}
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
 1.0 & Initial Revision & H. Schaub & 08/2017\\
 1.1 & Small typo fixes & H. Schaub & 10/18/2017\\
+1.2 & Orbital-motion numerical methods, equations, API compatibility, and regression coverage (issue 1629) & AVS Lab & 10/18/2026\\
 \hline
 
 \end{longtable}

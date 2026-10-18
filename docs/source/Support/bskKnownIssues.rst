@@ -37,6 +37,19 @@ Version |release|
   The integrator bindings now use matching vector type declarations, preserving both shared vector objects
   and Python lists as inputs.
 
+- GitHub issue 1629 (orbital calculations): Fixed defects in convergence,
+  orbital geometry, and numerical stability across the C and Python orbital utilities,
+  including singular and degenerate orbits, mean/osculating conversions, and
+  environmental helpers. Also corrected characteristic orbital energy in
+  :ref:`keplerianOrbit` and related controller, ephemeris, and eclipse calculations.
+
+- GitHub issue 1629 (compatibility and validation): Existing methods, NumPy
+  scalar outputs, and legacy orbital conventions remain supported without
+  deprecation. Optional checked APIs provide explicit input validation.
+  Element inputs now require inclinations in [0, pi] radians (0 to 180 degrees),
+  and invalid or unsupported calculations may fail explicitly. See
+  :ref:`orbitalMotionMigration` for detailed compatibility guidance and limitations.
+
 - GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
   components with inertial-frame basis-vector derivatives when computing
   ``domega_RN_N``. The resulting angular acceleration was incorrect for general
@@ -55,10 +68,6 @@ Version |release|
 - GitHub issue 1621: ``tleHandling.frame_bias()`` applied the GCRS to mean J2000 frame bias rotations in the
   reverse order and with the wrong sign of :math:`\xi_0`. The TEME to J2000/ICRF conversion used by
   ``tleHandling`` and ``ommHandling`` therefore shifted TLE and OMM initial states by about 1.3 m in LEO.
-
-- The error message of ``atmosphericDrag()`` in ``orbitalMotion``, printed for a position with a non-positive
-  altitude, showed the position components with an index shifted by one and read past the end of the position
-  vector.
 
 - GitHub issue 1619: The :ref:`imuSensor` module computed ``DVFramePlatform`` by rotating the whole
   ``TotalAccumDV_BN_B`` of :ref:`spacecraft` with the attitudes of the current and the previous IMU call.
