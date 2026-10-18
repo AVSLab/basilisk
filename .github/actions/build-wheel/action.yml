@@ -52,7 +52,7 @@ runs:
     - name: Install Conan cache tooling
       if: ${{ runner.os != 'Linux' }}
       shell: bash
-      run: python -m pip install "conan>=2.4.0,<=2.28.1"
+      run: python -m pip install "conan>=2.4.0,<=2.33.0"
 
     - name: Setup sccache
       uses: mozilla-actions/sccache-action@v0.0.10
