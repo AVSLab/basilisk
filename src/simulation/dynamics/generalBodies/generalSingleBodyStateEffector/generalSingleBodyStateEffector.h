@@ -85,7 +85,7 @@ class GeneralSingleBodyStateEffector
 {
   public:
     GeneralSingleBodyStateEffector();
-    ~GeneralSingleBodyStateEffector() = default;
+    ~GeneralSingleBodyStateEffector();
 
     void setMass(const double mass) { this->mass = mass; };
     void setIPntGc_G(const Eigen::Matrix3d IPntGc_G) { this->IPntGc_G = IPntGc_G; };
