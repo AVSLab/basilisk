@@ -16,6 +16,7 @@
 
 """Tests for the Python ``GravBodyData`` gravity-model configuration API."""
 
+import numpy as np
 import pytest
 
 from Basilisk.simulation import gravityEffector
@@ -110,3 +111,47 @@ def test_spherical_harmonics_keep_file_mu_without_body_mu():
 
     assert body.spherHarm.muBody == 3.986004415e14  # [m^3/s^2]
     assert body.spherHarm.radEquator == 6378136.3  # [m]
+
+
+def test_spherical_harmonics_field_uses_reference_radius_of_file(tmp_path):
+    """Verify the computed field is scaled by the reference radius of the coefficient file.
+
+    A coefficient file with only the normalized :math:`\\bar{C}_{20}` term is
+    loaded into a body whose equatorial radius and gravitational parameter
+    differ from those of the file. The field computed after initializing the
+    body is compared against the closed-form :math:`J_2` acceleration, which
+    uses the reference radius of the file and the ``mu`` of the body.
+    """
+    radFile = 6378136.3  # [m]
+    muFile = 3.986004415e14  # [m^3/s^2]
+    c20Bar = -4.84165371736e-4  # [-]
+    coeffPath = tmp_path / "zonalDegreeTwo.txt"
+    coeffPath.write_text(
+        f"{radFile}, {muFile}, 0.0, 2, 2, 1, 0.0, 0.0\n"
+        f"2, 0, {c20Bar}, 0.0, 0.0, 0.0\n"
+        "2, 1, 0.0, 0.0, 0.0, 0.0\n"
+        "2, 2, 0.0, 0.0, 0.0, 0.0\n"
+    )
+
+    body = gravityEffector.GravBodyData()
+    body.mu = 3.9860044e14  # [m^3/s^2]
+    body.radEquator = 6.0e6  # [m]
+    body.useSphericalHarmonicsGravityModel(str(coeffPath), 2)
+    body.initBody(0)
+
+    position = np.array([4.0e6, -3.0e6, 5.5e6])  # [m] planet-fixed
+    fieldJ2 = np.array(body.spherHarm.computeField(position, 2, False)).flatten()  # [m/s^2]
+
+    def j2Acceleration(radius):
+        """Closed-form :math:`J_2` acceleration for the given reference radius."""
+        j2 = -np.sqrt(5.0) * c20Bar  # [-]
+        x, y, z = position
+        r = np.linalg.norm(position)  # [m]
+        factor = -1.5 * j2 * body.mu * radius**2 / r**5  # [1/s^2]
+        zRatio = 5.0 * z**2 / r**2  # [-]
+        return factor * np.array([x * (1.0 - zRatio), y * (1.0 - zRatio), z * (3.0 - zRatio)])
+
+    expected = j2Acceleration(radFile)  # [m/s^2]
+    np.testing.assert_allclose(fieldJ2, expected, rtol=1e-12, atol=0.0)
+    # The body radius would scale the field by (radFile / body.radEquator)^-2.
+    assert not np.allclose(fieldJ2, j2Acceleration(body.radEquator), rtol=1e-3, atol=0.0)
