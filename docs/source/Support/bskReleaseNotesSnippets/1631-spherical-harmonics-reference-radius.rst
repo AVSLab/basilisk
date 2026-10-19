@@ -1,0 +1,2 @@
+- Fixed the spherical harmonics gravity model replacing the reference radius loaded from the coefficient file with ``radEquator`` of the gravity body when the body was initialized. The radius of the file is now kept; to evaluate the field with a different reference radius, set ``spherHarm.radEquator`` instead of the body ``radEquator``.
+- Documented that the spherical harmonics field uses ``mu`` of the gravity body instead of the gravitational parameter of the coefficient file.

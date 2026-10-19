@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
+  coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
+  differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.
+
 - GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
   components with inertial-frame basis-vector derivatives when computing
   ``domega_RN_N``. The resulting angular acceleration was incorrect for general

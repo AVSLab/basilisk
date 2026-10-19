@@ -56,7 +56,10 @@
 %extend SphericalHarmonicsGravityModel {
    %pythoncode %{
       def loadFromFile(self, fileName: str, maxDeg: int):
-          """Loads the C and S coefficients from a file."""
+          """Loads the C and S coefficients from a file.
+
+          Also sets ``radEquator`` and ``muBody`` from the first row of the file.
+          """
           from Basilisk.simulation.gravityEffector import loadGravFromFile
           loadGravFromFile(fileName, self, maxDeg)
           return self

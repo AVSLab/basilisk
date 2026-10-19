@@ -89,8 +89,10 @@ class GravBodyData
 
     std::shared_ptr<GravityModel> gravityModel; /**< Model used to compute the gravity of the object */
 
-    double mu = 0;          /**< [m3/s^2] central body gravitational param */
-    double radEquator = 0;  /**< [m]      Equatorial radius for the body */
+    double mu = 0;          /**< [m3/s^2] central body gravitational param, also used by the spherical
+                                 harmonics field if positive */
+    double radEquator = 0;  /**< [m]      Equatorial radius for the body, used as the spherical harmonics
+                                 reference radius only if the model has none (e.g. not loaded from a file) */
     double radiusRatio = 1; /**< []       ratio of polar over equatorial radius */
     std::string planetName =
         ""; /**< Gravitational body name, this is used as the Spice name if spiceInterface is used */

@@ -55,6 +55,20 @@ Each gravity body data object can be created using::
 Note that the ``simIncludeGradBody.py`` helper file contains a gravity body factor class to facilitate
 setting up gravity bodies.
 
+Spherical Harmonics Reference Radius and Gravitational Parameter
+----------------------------------------------------------------
+``useSphericalHarmonicsGravityModel(file, maxDeg)`` loads the reference radius and the gravitational parameter of the
+first row of the coefficient file into ``spherHarm.radEquator`` and ``spherHarm.muBody``. When the body is
+initialized:
+
+- The field keeps the reference radius of the file, since the normalized coefficients are only valid with the
+  reference radius of their model. ``radEquator`` of the ``GravBodyData`` is used only if ``spherHarm.radEquator``
+  is not positive, for example when the coefficients were set directly instead of being loaded from a file. To
+  evaluate the field with a different reference radius, set ``spherHarm.radEquator``.
+- The gravitational parameter of the field is replaced by ``mu`` of the ``GravBodyData`` if that value is positive,
+  so that the field is consistent with the rest of the simulation. No warning is given when it differs from the
+  gravitational parameter of the file.
+
 Planet Orientation
 ------------------
 The planet orientation is read from ``planetBodyInMsg`` together with its time derivative ``J20002Pfix_dot``. Between
