@@ -81,8 +81,16 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
 
 std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body)
 {
-    this->radEquator = body.radEquator;
-    this->muBody = body.mu;
+    // The normalized coefficients are only valid with the reference radius of their model,
+    // so a radius loaded from the coefficient file (or set by the user) takes precedence.
+    if (this->radEquator <= 0.0) {
+        this->radEquator = body.radEquator;
+    }
+    // The body gravitational parameter is used for the field so that it is consistent with
+    // the rest of the simulation (e.g. orbital element conversions).
+    if (body.mu > 0.0) {
+        this->muBody = body.mu;
+    }
     return this->initializeParameters();
 }
 

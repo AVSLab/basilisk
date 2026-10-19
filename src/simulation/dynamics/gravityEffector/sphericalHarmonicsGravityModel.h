@@ -42,7 +42,13 @@ class SphericalHarmonicsGravityModel : public GravityModel
 
     /** Initialize all parameters necessary for the computation of gravity.
      *
-     * The attributes `muBody`and `radEquator` are read from the given `GravBodyData`.
+     * The attribute `radEquator` is kept if it is positive, for example when it was
+     * loaded from the coefficient file, since the normalized coefficients are only
+     * valid with the reference radius of their model. Otherwise, it is read from
+     * the `radEquator` of the given `GravBodyData`.
+     *
+     * The attribute `muBody` is replaced by the `mu` of the given `GravBodyData`
+     * if that value is positive. Otherwise, the current `muBody` is kept.
      *
      * Will return an error message (string) if `cBar` or `sBar` were not set.
      * Otherwise, returns an empty optional.
@@ -92,7 +98,7 @@ class SphericalHarmonicsGravityModel : public GravityModel
     bool dependsOnOrientation() const override;
 
   public:
-    double radEquator = 0; /**< [m] Reference radius for the planet */
+    double radEquator = 0; /**< [m] Reference radius of the spherical harmonics coefficients */
     double muBody = 0;     /**< [m^3/s^2] Gravitation parameter for the planet */
 
     /** The maximum degree of Spherical Harmonics to use
