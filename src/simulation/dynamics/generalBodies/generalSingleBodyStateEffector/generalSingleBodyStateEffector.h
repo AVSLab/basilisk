@@ -101,6 +101,7 @@ class GeneralSingleBodyStateEffector
     void addRotDOF(std::shared_ptr<DOF> newDOF);
     void addTransDOF(std::shared_ptr<DOF> newDOF);
     std::shared_ptr<DOF> getDOF(uint64_t index) { return this->jointDOFList.at(index); };
+    void clearDOFs();
 
     void Reset(uint64_t currentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
