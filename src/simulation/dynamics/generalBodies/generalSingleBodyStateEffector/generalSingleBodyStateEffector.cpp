@@ -75,7 +75,40 @@ void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states)
     this->betaDotState->setState(betaDotInit);
 }
 
-void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos) {}
+void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos)
+{
+    // Read input messages
+    uint64_t rotIdx{};
+    uint64_t transIdx{};
+    for (auto& dof : this->jointDOFList) {
+        if (dof->type == DOF::Type::ROTATION) {
+            if (this->spinningBodyRefInMsg[rotIdx].isLinked()) {
+                HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyRefInMsg[rotIdx]();
+                dof->betaRef = spinningBodyBuffer.theta;
+                dof->betaDotRef = spinningBodyBuffer.thetaDot;
+            }
+            if (this->motorTorqueInMsg[rotIdx].isLinked()) {
+                ArrayMotorTorqueMsgPayload motorTorqueBuffer = this->motorTorqueInMsg[rotIdx]();
+                dof->u = motorTorqueBuffer.motorTorque[0];
+            }
+            rotIdx++;
+        } else {
+            if (this->translatingBodyRefInMsgs[transIdx].isLinked()) {
+                LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyRefInMsgs[transIdx]();
+                dof->betaRef = translatingBodyBuffer.rho;
+                dof->betaDotRef = translatingBodyBuffer.rhoDot;
+            }
+            if (this->motorForceInMsg[transIdx].isLinked()) {
+                ArrayMotorForceMsgPayload motorForceBuffer = this->motorForceInMsg[transIdx]();
+                dof->f = motorForceBuffer.motorForce[0];
+            }
+            transIdx++;
+        }
+    }
+
+    this->computeGeneralBodyInertialStates();
+    this->writeOutputStateMessages(currentSimNanos);
+}
 
 void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates() {}
 
