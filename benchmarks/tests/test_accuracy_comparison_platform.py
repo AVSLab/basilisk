@@ -19,14 +19,12 @@
 """Fast checks of the GMAT and Orekit reference generators for differences between machines: operating system file
 layouts, path separators and escaping, line endings and tool releases.
 
-The GMAT ``README.txt`` files of several releases are fetched once with Pooch (cached like the Basilisk support data,
-see ``BSK_SUPPORT_DATA_CACHE``) and the tests are skipped when they cannot be downloaded. Neither GMAT nor Orekit
-is run.
+Release detection uses local version paragraphs from the GMAT ``README.txt`` files.
+These tests need no downloads. Neither GMAT nor Orekit is run.
 The test of the Orekit jar needs ``orekit_jpype`` and a Java runtime, which the CI runners do not have: it is marked
 ``ciSkip`` so that the CI runs deselect it (a skip would be an error there) and it skips itself when they are missing.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -38,14 +36,27 @@ sys.path.insert(0, str(ACCURACY_DIR))
 import comparisonCommon as common  # noqa: E402
 import generate_gmat_reference as gmat  # noqa: E402
 
-# GMAT releases whose ``README.txt`` states the release in its copyright notice: file name -> SHA-256
+# Version paragraphs from the release READMEs, with line endings normalized to LF.
+# Source: https://sourceforge.net/projects/gmat/files/GMAT/GMAT-{release}/README.txt/download
+# Keep the release text literal so the expected version and parser input are independent.
 GMAT_READMES = {
-    "R2020a": "1f0960b306cdb10d36239f105f0b68ec80c90202b7498a1a01bc3a1058491966",
-    "R2022a": "5ad0bf193191d60fb85ef498d4cea42ef0f9532447b5557dab992149b546e471",
-    "R2025a": "5d0736ac2b32cad9a667ebb16f7dd0f188fdb823f74c8bf57e12e84b0abbaa5c",
-    "R2026a": "e3e498dbb5d23560a6ac8c6ead8563056e9b9b1f932fa4ff29ee3742ff8bd655",
+    "R2020a": (
+        "NASA Docket No. GSC-18,479-1, identified as “General Mission Analysis\n"
+        "Tool (GMAT) Version R2020a”\n"
+    ),
+    "R2022a": (
+        "“NASA Docket No. GSC-19097-1, identified as "
+        "“General Mission Analysis Tool (GMAT) Version R2022a”\n"
+    ),
+    "R2025a": (
+        "“NASA Docket No. GSC-19468-1, identified as “General Mission Analysis Tool \n"
+        "(GMAT) Version R2025a”\n"
+    ),
+    "R2026a": (
+        "“NASA Docket No. GSC-19468-1, identified as “General Mission Analysis Tool \n"
+        "(GMAT) Version R2026a”\n"
+    ),
 }
-GMAT_README_URL = "https://sourceforge.net/projects/gmat/files/GMAT/GMAT-{release}/README.txt/download"
 
 # Files in ``bin/`` of the distribution of each platform (the Windows files are unversioned, the Linux ones are not)
 PLATFORM_LAYOUTS = {
@@ -55,25 +66,6 @@ PLATFORM_LAYOUTS = {
 }
 README_TEXT = b"NASA Docket No. GSC-19468-1, identified as GMAT Version R2026a\n"
 BANNER = "General Mission Analysis Tool\nConsole Based Version\nBuild Date: Mar 30 2026  10:09:27\n"
-
-
-@pytest.fixture(scope="module")
-def gmatReadmes():
-    """Return the paths of the cached GMAT ``README.txt`` files, skipping the tests when they cannot be fetched."""
-    pooch = pytest.importorskip("pooch")
-    cache = os.environ.get("BSK_SUPPORT_DATA_CACHE")
-    cachePath = Path(cache) if cache else Path(pooch.os_cache("bsk_support_data"))
-    # Pooch creates the folder with a check-then-create that fails when parallel xdist workers race on a cold cache
-    (cachePath / "GMAT").mkdir(parents=True, exist_ok=True)
-    fetcher = pooch.create(path=cachePath, base_url="",
-                           retry_if_failed=2,
-                           registry={f"GMAT/README_{r}.txt": f"sha256:{h}" for r, h in GMAT_READMES.items()},
-                           urls={f"GMAT/README_{r}.txt": GMAT_README_URL.format(release=r) for r in GMAT_READMES})
-    try:
-        return {r: Path(fetcher.fetch(f"GMAT/README_{r}.txt", downloader=pooch.HTTPDownloader(timeout=30)))
-                for r in GMAT_READMES}
-    except Exception as error:  # offline, mirror down, or file changed upstream
-        pytest.skip(f"GMAT README files unavailable: {error}")
 
 
 def _installation(root, platform, release, readmeText):
@@ -90,9 +82,9 @@ def _installation(root, platform, release, readmeText):
 @pytest.mark.parametrize("platform", sorted(PLATFORM_LAYOUTS))
 @pytest.mark.parametrize("release", sorted(GMAT_READMES))
 def test_gmat_release_is_detected_for_every_release_platform_and_line_ending(
-        tmp_path, monkeypatch, gmatReadmes, release, platform, lineEnding):
-    """Verify the release of each GMAT version is read from the real README for the layout of each platform."""
-    readme = gmatReadmes[release].read_bytes().replace(b"\r\n", b"\n").replace(b"\n", lineEnding)
+        tmp_path, monkeypatch, release, platform, lineEnding):
+    """Verify release detection from local README fixtures for each platform layout and line ending."""
+    readme = GMAT_READMES[release].encode("utf-8").replace(b"\n", lineEnding)
     root = tmp_path / "GMAT install"  # a folder with a space, as users have
     console = _installation(root, platform, release, readme)
     assert console.name == ("GmatConsole.exe" if platform == "windows" else "GmatConsole")
