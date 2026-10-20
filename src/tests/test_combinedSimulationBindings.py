@@ -100,6 +100,8 @@ for unrelated in ('Basilisk.simulation._solarFlux', 'Basilisk.simulation._MJSyst
 @pytest.mark.parametrize("import_order", [
     ("gravityEffector", "svIntegrators"),
     ("svIntegrators", "gravityEffector"),
+    ("sphericalHarmonicsGravityModel", "svIntegrators"),
+    ("svIntegrators", "sphericalHarmonicsGravityModel"),
     pytest.param(
         ("gravityEffector", "mujoco", "svIntegrators"),
         marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
@@ -108,10 +110,20 @@ for unrelated in ('Basilisk.simulation._solarFlux', 'Basilisk.simulation._MJSyst
         ("svIntegrators", "mujoco", "gravityEffector"),
         marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
     ),
+    pytest.param(
+        ("sphericalHarmonicsGravityModel", "mujoco", "svIntegrators"),
+        marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
+    ),
+    pytest.param(
+        ("svIntegrators", "mujoco", "sphericalHarmonicsGravityModel"),
+        marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
+    ),
 ])
 @pytest.mark.parametrize("first_use", ["coefficients", "vectors", "integrators"])
 def test_shared_vector_conversions_in_fresh_process(import_order, first_use):
     """Keep vector conversions independent of import order and cached type queries.
+
+    Direct and legacy spherical-harmonics imports must expose the same class.
 
     :param import_order: Public modules to import before using any shared vector.
     :param first_use: Conversion to exercise before SWIG caches its type lookup.
@@ -122,6 +134,9 @@ for name in sys.argv[2:]:
 
 from Basilisk.architecture import swig_common_model
 from Basilisk.simulation import gravityEffector, spacecraft, svIntegrators
+from Basilisk.simulation.sphericalHarmonicsGravityModel import SphericalHarmonicsGravityModel
+
+assert gravityEffector.SphericalHarmonics is SphericalHarmonicsGravityModel
 
 tableau = [[0.0, 0.0], [0.5, 0.0]]  # [-]
 weights = [0.0, 1.0]  # [-]
