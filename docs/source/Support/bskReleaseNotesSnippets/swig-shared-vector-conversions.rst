@@ -1,0 +1,1 @@
+- Fixed import-order-dependent SWIG conversion failures for shared ``DoubleVector`` and ``MultiArray`` objects when using ``svIntegrators`` alongside gravity or MuJoCo bindings. Python-list inputs remain supported.

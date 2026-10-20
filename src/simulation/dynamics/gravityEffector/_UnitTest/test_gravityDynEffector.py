@@ -382,6 +382,7 @@ def singleGravityBody(show_plots):
     gravBody1.isCentralBody = False
     ggm03s_path = get_path(DataFile.LocalGravData.GGM03S)
     gravBody1.useSphericalHarmonicsGravityModel(str(ggm03s_path), 60)
+    gravBody1.mu = gravBody1.spherHarm.muBody  # [m^3/s^2]
     gravBody1.planetBodyInMsg.subscribeTo(SpiceObject.planetStateOutMsgs[0])
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data

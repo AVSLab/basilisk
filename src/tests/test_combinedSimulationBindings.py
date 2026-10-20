@@ -97,6 +97,79 @@ for unrelated in ('Basilisk.simulation._solarFlux', 'Basilisk.simulation._MJSyst
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+@pytest.mark.parametrize("import_order", [
+    ("gravityEffector", "svIntegrators"),
+    ("svIntegrators", "gravityEffector"),
+    pytest.param(
+        ("gravityEffector", "mujoco", "svIntegrators"),
+        marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
+    ),
+    pytest.param(
+        ("svIntegrators", "mujoco", "gravityEffector"),
+        marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled"),
+    ),
+])
+@pytest.mark.parametrize("first_use", ["coefficients", "vectors", "integrators"])
+def test_shared_vector_conversions_in_fresh_process(import_order, first_use):
+    """Keep vector conversions independent of import order and cached type queries.
+
+    :param import_order: Public modules to import before using any shared vector.
+    :param first_use: Conversion to exercise before SWIG caches its type lookup.
+    """
+    code = """import importlib, sys
+for name in sys.argv[2:]:
+    importlib.import_module("Basilisk.simulation." + name)
+
+from Basilisk.architecture import swig_common_model
+from Basilisk.simulation import gravityEffector, spacecraft, svIntegrators
+
+tableau = [[0.0, 0.0], [0.5, 0.0]]  # [-]
+weights = [0.0, 1.0]  # [-]
+nodes = [0.0, 0.5]  # [-]
+
+def coefficients():
+    model = gravityEffector.SphericalHarmonics()
+    for values in (swig_common_model.MultiArray(tableau), tableau):
+        model.cBar = values
+        model.sBar = values
+        assert [list(row) for row in model.cBar] == tableau
+        assert [list(row) for row in model.sBar] == tableau
+
+def vectors():
+    matrix = swig_common_model.MultiArray(tableau)
+    assert list(matrix[1]) == tableau[1]
+    assert [list(row) for row in matrix] == tableau
+    vector = swig_common_model.DoubleVector(weights)
+    assert vector[1] == weights[1]
+    assert list(vector) == weights
+
+def integrators():
+    body = spacecraft.Spacecraft()
+    for matrix, vector in (
+        (swig_common_model.MultiArray, swig_common_model.DoubleVector),
+        (list, list),
+    ):
+        fixed = svIntegrators.svIntegratorRungeKutta2(
+            body, matrix(tableau), vector(weights), vector(nodes))
+        adaptive = svIntegrators.svIntegratorAdaptiveRungeKutta2(
+            body, matrix(tableau), vector(weights), vector([1.0, 0.0]),
+            vector(nodes), 2.0)  # [-] Embedded weights and method order
+        assert fixed.getDynamicsCount() == 1
+        assert adaptive.getDynamicsCount() == 1
+
+checks = dict(coefficients=coefficients, vectors=vectors, integrators=integrators)
+checks.pop(sys.argv[1])()
+for check in checks.values():
+    check()
+"""
+    timeout = 60  # [s]
+    result = subprocess.run(
+        [sys.executable, "-c", code, first_use, *import_order],
+        capture_output=True, text=True, timeout=timeout,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 @pytest.mark.parametrize("suffix", importlib.machinery.EXTENSION_SUFFIXES)
 def test_group_layout_cleanup_preserves_other_groups(tmp_path, suffix):
     """Switching a cross-package group leaves adjacent native modules and loaders intact.

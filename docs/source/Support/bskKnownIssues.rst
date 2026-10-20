@@ -10,6 +10,14 @@ Version |release|
 - GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
   coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
   differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.
+  Spherical harmonics body initialization also rejects an unset, nonpositive, or nonfinite ``mu`` so the
+  field cannot use the file GM while gravity-gradient torque uses an invalid body GM. To use the file GM,
+  set ``planet.mu = planet.spherHarm.muBody`` after loading the file and before initializing the simulation.
+
+- Importing ``svIntegrators`` could make shared ``DoubleVector`` and ``MultiArray`` inputs fail SWIG
+  conversion depending on import and first-use order, including when gravity and MuJoCo tests ran together.
+  The integrator bindings now use matching vector type declarations, preserving both shared vector objects
+  and Python lists as inputs.
 
 - GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
   components with inertial-frame basis-vector derivatives when computing

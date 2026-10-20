@@ -73,8 +73,10 @@ _rk_adaptive_base_classes = {}
 
 %include <std_vector.i>
 %include <std_string.i>
-%template() std::vector<double>;
-%template() std::vector<std::vector<double>>;
+// Match swig_common_model.i's template arguments, including the inner allocator,
+// so SWIG uses the same type descriptors for DoubleVector and MultiArray.
+%template() std::vector<double, std::allocator<double>>;
+%template() std::vector<std::vector<double, std::allocator<double>>>;
 
 %typemap(out) std::optional<double> {
     if ($1.has_value()) {
