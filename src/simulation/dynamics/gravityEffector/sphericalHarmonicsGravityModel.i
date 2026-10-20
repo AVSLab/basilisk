@@ -33,8 +33,10 @@
 %import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include "std_vector.i"
-%template() std::vector<double>;
-%template() std::vector<std::vector<double>>;
+// Match swig_common_model.i's template arguments, including the inner allocator,
+// so SWIG uses the same type descriptors for DoubleVector and MultiArray.
+%template() std::vector<double, std::allocator<double>>;
+%template() std::vector<std::vector<double, std::allocator<double>>>;
 
 %include <std_shared_ptr.i>
 %shared_ptr(SphericalHarmonicsGravityModel)
