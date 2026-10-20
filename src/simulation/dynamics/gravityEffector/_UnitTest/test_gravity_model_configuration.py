@@ -19,12 +19,13 @@
 import numpy as np
 import pytest
 
-from Basilisk.simulation import gravityEffector
+from Basilisk.architecture.bskLogging import BasiliskError
+from Basilisk.simulation import GravityGradientEffector, gravityEffector, spacecraft
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.sphericalHarmonicsGravityModel import (
     SphericalHarmonicsGravityModel,
 )
-from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 
@@ -101,16 +102,80 @@ def test_spherical_harmonics_without_radius_use_body_radius():
     assert body.spherHarm.muBody == body.mu
 
 
-def test_spherical_harmonics_keep_file_mu_without_body_mu():
-    """Verify the gravitational parameter of the file is kept when the body has none."""
+@pytest.mark.parametrize(
+    "mu_case", ["unset", "negative", "nan", "infinite", "negative_infinite", "body", "file"]
+)
+def test_spherical_harmonics_body_mu_is_consistent(mu_case):
+    """Require a valid body GM and use it for both acceleration and gravity-gradient torque.
+
+    A degree-zero model isolates the central gravity field. Invalid body GMs must
+    stop simulation initialization even when the coefficient file supplies a valid
+    GM. Valid cases use either an explicit body GM different from the file or an
+    explicit copy of the file GM. The published planet GM, spacecraft acceleration,
+    and gravity-gradient torque must all agree with the chosen body GM.
+
+    :param mu_case: Body GM configuration to exercise.
+    """
     body = gravityEffector.GravBodyData()
-    ggm03sPath = str(get_path(DataFile.LocalGravData.GGM03S))
-    body.useSphericalHarmonicsGravityModel(ggm03sPath, 2)
+    body.planetName = "earth"
+    body.isCentralBody = True
+    ggm03s_path = str(get_path(DataFile.LocalGravData.GGM03S))
+    body.useSphericalHarmonicsGravityModel(ggm03s_path, 0)
+    invalid_mu = {
+        "negative": -1.0,
+        "nan": float("nan"),
+        "infinite": float("inf"),
+        "negative_infinite": float("-inf"),
+    }  # [m^3/s^2]
+    if mu_case == "body":
+        body.mu = 0.5 * body.spherHarm.muBody
+    elif mu_case == "file":
+        body.mu = body.spherHarm.muBody
+    elif mu_case in invalid_mu:
+        body.mu = invalid_mu[mu_case]
+    expected_mu = body.mu  # [m^3/s^2] Preserve the requested GM before initialization.
 
-    body.initBody(0)
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("process")
+    time_step = macros.sec2nano(1.0)  # [ns]
+    process.addTask(simulation.CreateNewTask("task", time_step))
+    spacecraft_object = spacecraft.Spacecraft()
+    spacecraft_object.hub.mHub = 100.0  # [kg]
+    inertia = np.diag([500.0, 800.0, 350.0])  # [kg*m^2]
+    spacecraft_object.hub.IHubPntBc_B = inertia.tolist()
+    position = np.array([4.0e6, -3.0e6, 5.5e6])  # [m]
+    spacecraft_object.hub.r_CN_NInit = position.tolist()
+    spacecraft_object.hub.v_CN_NInit = [0.0, 0.0, 0.0]
+    spacecraft_object.hub.sigma_BNInit = [0.0, 0.0, 0.0]
+    spacecraft_object.gravField.gravBodies = spacecraft.GravBodyVector([body])
+    gravity_gradient = GravityGradientEffector.GravityGradientEffector()
+    gravity_gradient.addPlanetName(body.planetName)
+    spacecraft_object.addDynamicEffector(gravity_gradient)
+    simulation.AddModelToTask("task", spacecraft_object)
+    simulation.AddModelToTask("task", gravity_gradient)
 
-    assert body.spherHarm.muBody == 3.986004415e14  # [m^3/s^2]
-    assert body.spherHarm.radEquator == 6378136.3  # [m]
+    if mu_case not in ("body", "file"):
+        with pytest.raises(BasiliskError, match=r"GravBodyData\.mu.*finite and positive"):
+            simulation.InitializeSimulation()
+        return
+
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(0)
+    simulation.ExecuteSimulation()
+
+    assert body.mu == expected_mu
+    assert body.spherHarm.muBody == expected_mu
+    published_mu = spacecraft_object.dynManager.getPropertyReference("earth.mu")
+    np.testing.assert_array_equal(published_mu, [[expected_mu]])
+    radius = np.linalg.norm(position)
+    expected_acceleration = -expected_mu * position / radius**3
+    acceleration = spacecraft_object.dynManager.getPropertyReference("g_N")
+    np.testing.assert_allclose(np.asarray(acceleration).flatten(), expected_acceleration, rtol=1e-14, atol=0.0)
+    # At identity attitude, the position components are also in the body frame.
+    expected_torque = 3.0 * expected_mu / radius**5 * np.cross(position, inertia @ position)
+    np.testing.assert_allclose(
+        np.asarray(gravity_gradient.torqueExternalPntB_B).flatten(), expected_torque, rtol=1e-14, atol=0.0
+    )
 
 
 def test_spherical_harmonics_field_uses_reference_radius_of_file(tmp_path):

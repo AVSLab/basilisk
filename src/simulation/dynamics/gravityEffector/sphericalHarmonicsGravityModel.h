@@ -23,6 +23,10 @@
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
+#include <Eigen/Dense>
+#include <cstddef>
+#include <optional>
+#include <string>
 #include <vector>
 
 /**
@@ -40,20 +44,21 @@ class SphericalHarmonicsGravityModel : public GravityModel
      */
     std::optional<std::string> initializeParameters() override;
 
-    /** Initialize all parameters necessary for the computation of gravity.
+    /** @brief Initialize the gravity model from the body parameters.
      *
      * The attribute `radEquator` is kept if it is positive, for example when it was
      * loaded from the coefficient file, since the normalized coefficients are only
      * valid with the reference radius of their model. Otherwise, it is read from
      * the `radEquator` of the given `GravBodyData`.
      *
-     * The attribute `muBody` is replaced by the `mu` of the given `GravBodyData`
-     * if that value is positive. Otherwise, the current `muBody` is kept.
+     * The attribute `muBody` is replaced by `body.mu`, which must be finite and
+     * positive so the field and other gravity consumers use the same parameter.
      *
-     * Will return an error message (string) if `cBar` or `sBar` were not set.
-     * Otherwise, returns an empty optional.
+     * @param body Gravity body supplying the gravitational parameter and fallback reference radius.
+     * @return An error message if `body.mu` is invalid or `cBar` or `sBar` were not set;
+     * otherwise, an empty optional.
      */
-    std::optional<std::string> initializeParameters(const GravBodyData&) override;
+    std::optional<std::string> initializeParameters(const GravBodyData& body) override;
 
     /** Returns the gravity acceleration at a position around this body.
      *

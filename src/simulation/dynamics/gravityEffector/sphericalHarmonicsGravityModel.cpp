@@ -20,6 +20,8 @@
 #include "sphericalHarmonicsGravityModel.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
+#include <cmath>
+
 namespace {
 // Computes the term (2 - d_l), where d_l is the kronecker delta.
 inline double getK(const size_t degree)
@@ -81,16 +83,16 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
 
 std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body)
 {
+    if (!std::isfinite(body.mu) || body.mu <= 0.0) {
+        return "Could not initialize spherical harmonics: 'GravBodyData.mu' must be finite and positive.";
+    }
     // The normalized coefficients are only valid with the reference radius of their model,
     // so a radius loaded from the coefficient file (or set by the user) takes precedence.
     if (this->radEquator <= 0.0) {
         this->radEquator = body.radEquator;
     }
-    // The body gravitational parameter is used for the field so that it is consistent with
-    // the rest of the simulation (e.g. orbital element conversions).
-    if (body.mu > 0.0) {
-        this->muBody = body.mu;
-    }
+    // Use the body gravitational parameter for both the field and consumers of the planet's .mu property.
+    this->muBody = body.mu;
     return this->initializeParameters();
 }
 

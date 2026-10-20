@@ -89,8 +89,8 @@ class GravBodyData
 
     std::shared_ptr<GravityModel> gravityModel; /**< Model used to compute the gravity of the object */
 
-    double mu = 0;          /**< [m3/s^2] central body gravitational param, also used by the spherical
-                                 harmonics field if positive */
+    double mu = 0;          /**< [m3/s^2] central body gravitational parameter, also used by the spherical
+                                 harmonics field, which requires a finite, positive value */
     double radEquator = 0;  /**< [m]      Equatorial radius for the body, used as the spherical harmonics
                                  reference radius only if the model has none (e.g. not loaded from a file) */
     double radiusRatio = 1; /**< []       ratio of polar over equatorial radius */

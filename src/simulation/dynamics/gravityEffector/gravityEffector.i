@@ -149,9 +149,11 @@ struct SpicePlanetStateMsg_C;
         reference radius, set ``spherHarm.radEquator``.
 
         The gravitational parameter of the field is replaced by ``mu`` of this
-        ``GravBodyData`` (if it is positive) so that the field is consistent with the
-        rest of the simulation. No warning is given when it differs from the
-        gravitational parameter of the file.
+        ``GravBodyData`` so that the field and gravity-gradient torque use the same
+        value. Body initialization raises ``BasiliskError`` unless ``mu`` is finite
+        and positive. To use the file GM, set ``planet.mu = planet.spherHarm.muBody``
+        after loading the file and before initializing the simulation. No warning is
+        given when a valid body GM differs from the gravitational parameter of the file.
 
         Args:
             file (str): The file that contains the spherical harmonics data in the

@@ -65,9 +65,11 @@ initialized:
   reference radius of their model. ``radEquator`` of the ``GravBodyData`` is used only if ``spherHarm.radEquator``
   is not positive, for example when the coefficients were set directly instead of being loaded from a file. To
   evaluate the field with a different reference radius, set ``spherHarm.radEquator``.
-- The gravitational parameter of the field is replaced by ``mu`` of the ``GravBodyData`` if that value is positive,
-  so that the field is consistent with the rest of the simulation. No warning is given when it differs from the
-  gravitational parameter of the file.
+- The gravitational parameter of the field is replaced by ``mu`` of the ``GravBodyData``, so that the field and
+  gravity-gradient torque use the same value. Body initialization raises ``BasiliskError`` if ``mu`` is not
+  finite and positive, even when the file supplies a valid GM. To use the file GM, explicitly set
+  ``planet.mu = planet.spherHarm.muBody`` after loading the file and before initializing the simulation.
+  No warning is given when a valid body GM differs from the gravitational parameter of the file.
 
 Planet Orientation
 ------------------
