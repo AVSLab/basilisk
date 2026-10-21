@@ -14,7 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Configuration, reset, and topology regressions for the general single body effector."""
+"""Configuration, lifecycle, and output regressions for the general single body effector."""
 
 import gc
 import weakref
@@ -25,7 +25,7 @@ import pytest
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.architecture import messaging
 from Basilisk.simulation import generalSingleBodyStateEffector as general, spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros
+from Basilisk.utilities import SimulationBaseClass, macros, RigidBodyKinematics as rbk
 
 
 def make_effector(rotational=False):
@@ -443,3 +443,85 @@ def test_reused_dof_does_not_inherit_previous_owner_commands(rotational, command
     sim.ExecuteSimulation()
     assert (reader().theta if rotational else reader().rho) == pytest.approx(0.0)  # [rad] or [m]
     assert (reader().thetaDot if rotational else reader().rhoDot) == pytest.approx(0.0)  # [rad/s] or [m/s]
+
+
+@pytest.mark.parametrize("priority", [None, 1, -1], ids=["attached", "effector_first", "parent_first"])
+@pytest.mark.parametrize("mixed", [False, True], ids=["translation", "rotation_then_translation"])
+@pytest.mark.parametrize("phase", ["initialization", "integration", "reset", "attitude_reference"])
+def test_inertial_outputs_use_current_parent_state(priority, mixed, phase):
+    """Match rigid-body kinematics at initialization, accepted steps, and spacecraft reset.
+
+    The mixed configuration rotates about Z before translating along its moving X axis.
+    Expected outputs use the published hub and joint states, independently of the effector's
+    cached dynamics quantities. A coarse integration step exposes intermediate-stage attitude
+    errors; a prescribed hub attitude reference also exercises the final angular-rate override.
+    """
+    effector, first = make_effector(rotational=mixed)
+    if mixed:
+        first.setDOFAxis([0.0, 0.0, 1.0])  # [-]
+        translation = general.DOF()
+        translation.setBetaInit(0.2)  # [m]
+        translation.setBetaDotInit(-0.1)  # [m/s]
+        effector.addTransDOF(translation)
+        effector.setDCM_G0B(rbk.MRP2C([0.1, -0.05, 0.02]))  # [-]
+        rotation_reader = effector.spinningBodyOutMsgs[0].addSubscriber()
+    else:
+        translation = first
+    effector.setR_G0B_B([0.2, -0.3, 0.4])  # [m]
+    effector.setR_GcG_G([-0.1, 0.2, 0.3])  # [m]
+    translation_reader = effector.translatingBodyOutMsgs[0].addSubscriber()
+    output_reader = effector.generalSingleBodyConfigLogOutMsg.addSubscriber()
+    sim, parent = make_simulation(effector, priority, time_step=0.5)  # [s]
+    parent.hub.r_CN_NInit = [10.0, -20.0, 30.0]  # [m]
+    parent.hub.v_CN_NInit = [0.3, -0.2, 0.1]  # [m/s]
+    parent.hub.sigma_BNInit = [0.12, -0.09, 0.04]  # [-]
+    parent.hub.omega_BN_BInit = [0.4, -0.3, 0.5]  # [rad/s]
+    hub_reader = parent.scStateOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    output_time = 0  # [ns]
+    if phase == "attitude_reference":
+        reference = messaging.AttRefMsgPayload()
+        reference.sigma_RN = [-0.1, 0.2, -0.15]  # [-]
+        reference.omega_RN_N = [-0.2, 0.1, 0.3]  # [rad/s]
+        reference_message = messaging.AttRefMsg().write(reference)
+        parent.attRefInMsg.subscribeTo(reference_message)
+    if phase != "initialization":
+        output_time = macros.sec2nano(1.0)  # [ns]
+        sim.ConfigureStopTime(output_time)
+        sim.ExecuteSimulation()
+    if phase == "reset":
+        parent.hub.r_CN_NInit = [-30.0, 20.0, -10.0]  # [m]
+        parent.hub.v_CN_NInit = [-0.4, 0.5, -0.6]  # [m/s]
+        parent.hub.sigma_BNInit = [-0.2, 0.1, -0.05]  # [-]
+        parent.hub.omega_BN_BInit = [-0.3, 0.2, -0.1]  # [rad/s]
+        translation.setBetaInit(-0.3)  # [m]
+        translation.setBetaDotInit(0.15)  # [m/s]
+        if mixed:
+            first.setBetaInit(-0.2)  # [rad]
+            first.setBetaDotInit(-0.1)  # [rad/s]
+        parent.Reset(output_time)
+
+    hub = hub_reader()
+    joint = translation_reader()
+    dcm_GB = np.asarray(effector.getDCM_G0B())
+    omega_GB_G = np.zeros(3)  # [rad/s]
+    if mixed:
+        rotation = rotation_reader()
+        dcm_GB = rbk.PRV2C([0.0, 0.0, rotation.theta]) @ dcm_GB
+        omega_GB_G[2] = rotation.thetaDot
+    dcm_NB = rbk.MRP2C(hub.sigma_BN).T
+    arm_B = dcm_GB.T @ (np.array([joint.rho, 0.0, 0.0]) + np.asarray(effector.getR_GcG_G()).ravel())
+    r_GcB_B = np.asarray(effector.getR_G0B_B()).ravel() + arm_B
+    omega_GB_B = dcm_GB.T @ omega_GB_G
+    rPrime_GcB_B = dcm_GB.T @ [joint.rhoDot, 0.0, 0.0] + np.cross(omega_GB_B, arm_B)
+    expected_position = hub.r_BN_N + dcm_NB @ r_GcB_B
+    expected_velocity = hub.v_BN_N + dcm_NB @ (rPrime_GcB_B + np.cross(hub.omega_BN_B, r_GcB_B))
+    expected_rate = dcm_GB @ (hub.omega_BN_B + omega_GB_B)
+
+    assert output_reader.isWritten()
+    assert output_reader.timeWritten() == output_time
+    output = output_reader()
+    np.testing.assert_allclose(rbk.MRP2C(output.sigma_BN), dcm_GB @ dcm_NB.T, rtol=0, atol=1e-12)  # [-]
+    np.testing.assert_allclose(output.r_BN_N, expected_position, rtol=0, atol=1e-12)  # [m]
+    np.testing.assert_allclose(output.v_BN_N, expected_velocity, rtol=0, atol=1e-12)  # [m/s]
+    np.testing.assert_allclose(output.omega_BN_B, expected_rate, rtol=0, atol=1e-12)  # [rad/s]

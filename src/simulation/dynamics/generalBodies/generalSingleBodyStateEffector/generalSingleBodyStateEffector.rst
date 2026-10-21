@@ -43,6 +43,11 @@ message ports; reconnect messages after rebuilding the sequence. Destruction als
 so surviving DOF objects can subsequently be added to another effector. Releasing ownership clears
 cached motor and reference commands while preserving the DOF configuration.
 
+The spacecraft publishes joint states and fresh inertial configuration outputs after initialization,
+integration, and spacecraft reset, including for effectors that are not separately scheduled.
+Inertial outputs use the accepted hub attitude and angular rate, including any final hub attitude-reference
+override, together with the current joint kinematics and hub inertial position and velocity.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the
@@ -91,6 +96,9 @@ reached during motion, attached-only initialization, both scheduled reset orders
 Topology tests verify rejection of additions and clearing after initialization, exclusive DOF ownership,
 continued integration after rejected changes, ownership release on clearing or destruction, and
 reuse of previously commanded DOFs without carrying commands into the new effector.
+Inertial output tests compare all four configuration-message fields with rigid-body kinematics at
+initialization, after integration, after spacecraft reset, and with a hub attitude reference, for
+attached-only effectors and both scheduled execution orders.
 
 User Guide
 ----------

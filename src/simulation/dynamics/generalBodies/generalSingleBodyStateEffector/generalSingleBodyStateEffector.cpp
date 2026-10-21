@@ -144,6 +144,8 @@ GeneralSingleBodyStateEffector::DOFMatrix GeneralSingleBodyStateEffector::comput
 
 void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
+    this->hubSigmaState = statesIn.getStateObject(this->stateNameOfSigma);
+    this->hubOmegaState = statesIn.getStateObject(this->stateNameOfOmega);
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
 }
@@ -193,12 +195,16 @@ void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos)
         }
     }
 
-    this->computeGeneralBodyInertialStates();
     this->writeOutputStateMessages(currentSimNanos);
 }
 
 void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
 {
+    // Publish the accepted hub state, including any final attitude-reference override.
+    const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
+    this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = this->hubOmegaState->stateView();
+
     // Inertial attitude
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
     Eigen::Matrix3d dcm_GN = dcm_GB * this->dcm_BN;
@@ -225,6 +231,7 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSi
 {
     // Write the config log message if it is linked
     if (this->generalSingleBodyConfigLogOutMsg.isLinked()) {
+        this->computeGeneralBodyInertialStates();
         SCStatesMsgPayload configLogMsg = this->generalSingleBodyConfigLogOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->r_GcN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_GcN_N, configLogMsg.v_BN_N);

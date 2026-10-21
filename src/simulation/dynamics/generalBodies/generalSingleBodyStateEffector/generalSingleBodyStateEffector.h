@@ -224,6 +224,9 @@ class GeneralSingleBodyStateEffector
     DOFVector betaDot;                 //!< [-] Effector state vector rate
     StateData* betaState = nullptr;    //!< [-] State data container for the effector state vector
     StateData* betaDotState = nullptr; //!< [-] State data container for the effector state vector rate
+
+    const StateData* hubSigmaState = nullptr; //!< Hub attitude state, read live when publishing inertial outputs
+    const StateData* hubOmegaState = nullptr; //!< Hub angular-rate state, read live when publishing inertial outputs
     Eigen::MatrixXd* inertialPositionProperty = nullptr; //!< [m] Identifier for the hub inertial position
     Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] Identifier for the hub inertial velocity
 
