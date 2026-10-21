@@ -14,7 +14,10 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Configuration and reset regressions for the general single body effector."""
+"""Configuration, reset, and topology regressions for the general single body effector."""
+
+import gc
+import weakref
 
 import numpy as np
 import pytest
@@ -253,3 +256,190 @@ def test_rejects_coordinate_singularity_during_motion():
     sim.ConfigureStopTime(macros.sec2nano(1.0))  # [ns]
     with pytest.raises(BasiliskError, match="joint mass matrix.*singular"):
         sim.ExecuteSimulation()
+
+
+def message_port_sizes(effector):
+    """Return the sizes of the input and output collections for both DOF types."""
+    return tuple(len(getattr(effector, name)) for name in (
+        "spinningBodyRefInMsg", "motorTorqueInMsg", "spinningBodyOutMsgs",
+        "translatingBodyRefInMsgs", "motorForceInMsg", "translatingBodyOutMsgs",
+    ))
+
+
+@pytest.mark.parametrize("priority", [None, 1, -1], ids=["attached", "effector_first", "parent_first"])
+@pytest.mark.parametrize("operation", ["addRotDOF", "addTransDOF", "clearDOFs"])
+def test_rejects_topology_changes_after_initialization(priority, operation):
+    """Rejected mutations preserve registered states, existing ports, and continued integration."""
+    effector, translation = make_effector()
+    rotation = general.DOF()
+    rotation.setBetaInit(0.3)  # [rad]
+    rotation.setBetaDotInit(0.4)  # [rad/s], rotation and translation share the X axis
+    effector.addRotDOF(rotation)
+    translation_reader = effector.translatingBodyOutMsgs[0].addSubscriber()
+    rotation_reader = effector.spinningBodyOutMsgs[0].addSubscriber()
+    force_message = messaging.ArrayMotorForceMsg().write(messaging.ArrayMotorForceMsgPayload())
+    effector.motorForceInMsg[0].subscribeTo(force_message)
+    sim, parent = make_simulation(effector, priority)
+    sim.InitializeSimulation()
+    candidate = general.DOF()
+
+    with pytest.raises(RuntimeError, match="cannot change a state effector after state registration"):
+        getattr(effector, operation)(*(() if operation == "clearDOFs" else (candidate,)))
+
+    assert message_port_sizes(effector) == (1, 1, 1, 1, 1, 1)
+    assert effector.motorForceInMsg[0].isLinked()
+    if operation != "clearDOFs":
+        # A rejected addition must not claim the candidate for the frozen effector.
+        another = general.GeneralSingleBodyStateEffector()
+        another.addTransDOF(candidate)
+    duration = 0.02  # [s]
+    sim.ConfigureStopTime(macros.sec2nano(duration))
+    sim.ExecuteSimulation()
+    assert translation_reader().rho == pytest.approx(translation.getBetaInit() + duration*translation.getBetaDotInit())
+    assert translation_reader().rhoDot == pytest.approx(translation.getBetaDotInit())
+    assert rotation_reader().theta == pytest.approx(rotation.getBetaInit() + duration*rotation.getBetaDotInit())
+    assert rotation_reader().thetaDot == pytest.approx(rotation.getBetaDotInit())
+
+
+@pytest.mark.parametrize("same_effector", [False, True])
+@pytest.mark.parametrize("rotational", [False, True])
+@pytest.mark.parametrize("operation", ["addRotDOF", "addTransDOF"])
+def test_rejects_shared_dof_without_changing_owner(same_effector, rotational, operation):
+    """Duplicate and cross-effector additions must preserve the DOF type, index, and ownership."""
+    effector, first = make_effector()
+    first.setBetaDotInit(0.0)  # [m/s]
+    shared = general.DOF()
+    shared.setDOFAxis([1.0, 0.0, 0.0] if rotational else [0.0, 1.0, 0.0])  # [-]
+    shared.setBetaInit(0.3)  # [rad] or [m]
+    (effector.addRotDOF if rotational else effector.addTransDOF)(shared)
+    original_type = shared.getDOFType()
+    original_sizes = message_port_sizes(effector)
+    target = effector if same_effector else general.GeneralSingleBodyStateEffector()
+    with pytest.raises(BasiliskError, match="already added"):
+        getattr(target, operation)(shared)
+
+    assert shared.getDOFType() == original_type
+    assert message_port_sizes(effector) == original_sizes
+    if not same_effector:
+        assert message_port_sizes(target) == (0, 0, 0, 0, 0, 0)
+        target.clearDOFs()
+        with pytest.raises(BasiliskError, match="already added"):
+            getattr(target, operation)(shared)
+    first_reader = effector.translatingBodyOutMsgs[0].addSubscriber()
+    shared_reader = (effector.spinningBodyOutMsgs[0] if rotational
+                     else effector.translatingBodyOutMsgs[1]).addSubscriber()
+    sim, parent = make_simulation(effector)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(0.01))  # [s]
+    sim.ExecuteSimulation()
+    assert first_reader().rho == pytest.approx(first.getBetaInit())
+    assert (shared_reader().theta if rotational else shared_reader().rho) == pytest.approx(shared.getBetaInit())
+
+
+@pytest.mark.parametrize("rotational", [False, True])
+def test_dof_limit_rejection_does_not_claim_ownership(rotational):
+    """A fourth DOF of one type remains available to another effector after rejection."""
+    effector = general.GeneralSingleBodyStateEffector()
+    add = effector.addRotDOF if rotational else effector.addTransDOF
+    for axis in np.eye(3):
+        dof = general.DOF()
+        dof.setDOFAxis(axis)
+        add(dof)
+    candidate = general.DOF()
+    with pytest.raises(BasiliskError, match="cannot exceed 3"):
+        add(candidate)
+    assert message_port_sizes(effector) == ((3, 3, 3, 0, 0, 0) if rotational else (0, 0, 0, 3, 3, 3))
+    another = general.GeneralSingleBodyStateEffector()
+    another.addTransDOF(candidate)
+
+
+def test_clear_dofs_releases_ownership_before_initialization():
+    """Clearing a mutable effector releases both DOF types and permits rebuilding its topology."""
+    effector, translation = make_effector()
+    rotation = general.DOF()
+    effector.addRotDOF(rotation)
+    for _ in range(2):
+        effector.clearDOFs()
+        assert message_port_sizes(effector) == (0, 0, 0, 0, 0, 0)
+    another = general.GeneralSingleBodyStateEffector()
+    another.addTransDOF(translation)
+    another.addRotDOF(rotation)
+    effector.addTransDOF(general.DOF())
+    assert message_port_sizes(effector) == (0, 0, 0, 1, 1, 1)
+    sim, parent = make_simulation(effector)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(0.01))  # [s]
+    sim.ExecuteSimulation()
+
+
+@pytest.mark.parametrize("frozen", [False, True])
+def test_destruction_releases_dof_ownership(frozen):
+    """Destruction bypasses the public topology guard and releases surviving DOF objects."""
+    effector, translation = make_effector()
+    rotation = general.DOF()
+    effector.addRotDOF(rotation)
+    if frozen:
+        effector.freezeTopology()
+    owner = weakref.ref(effector)
+    del effector
+    gc.collect()
+    assert owner() is None
+    another = general.GeneralSingleBodyStateEffector()
+    another.addTransDOF(translation)
+    another.addRotDOF(rotation)
+
+
+@pytest.mark.parametrize("rotational", [False, True])
+@pytest.mark.parametrize("command", ["motor", "position_reference", "rate_reference"])
+def test_reused_dof_does_not_inherit_previous_owner_commands(rotational, command):
+    """Reusing a commanded DOF preserves configuration but discards the previous owner's commands."""
+    effector, dof = make_effector(rotational)
+    dof.setBetaInit(0.0)  # [rad] or [m]
+    dof.setBetaDotInit(0.0)  # [rad/s] or [m/s]
+    dof.setSpringConstantK(2.0)  # [N*m/rad] or [N/m]
+    dof.setDampingConstantC(3.0)  # [N*m*s/rad] or [N*s/m]
+    if command == "motor":
+        payload = messaging.ArrayMotorTorqueMsgPayload() if rotational else messaging.ArrayMotorForceMsgPayload()
+        field = "motorTorque" if rotational else "motorForce"
+        setattr(payload, field, [10.0] + [0.0]*35)  # [N*m] or [N]
+        message = (messaging.ArrayMotorTorqueMsg() if rotational else messaging.ArrayMotorForceMsg()).write(payload)
+        (effector.motorTorqueInMsg if rotational else effector.motorForceInMsg)[0].subscribeTo(message)
+    else:
+        payload = (messaging.HingedRigidBodyMsgPayload() if rotational
+                   else messaging.LinearTranslationRigidBodyMsgPayload())
+        field = "theta" if rotational else "rho"
+        if command == "rate_reference":
+            field += "Dot"
+        setattr(payload, field, 0.4)  # [rad] or [m] for position; [rad/s] or [m/s] for rate
+        message = (messaging.HingedRigidBodyMsg() if rotational
+                   else messaging.LinearTranslationRigidBodyMsg()).write(payload)
+        (effector.spinningBodyRefInMsg if rotational else effector.translatingBodyRefInMsgs)[0].subscribeTo(message)
+    reader = (effector.spinningBodyOutMsgs if rotational else effector.translatingBodyOutMsgs)[0].addSubscriber()
+    sim, parent = make_simulation(effector, priority=1)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(0.02))  # [s]
+    sim.ExecuteSimulation()
+    assert (reader().thetaDot if rotational else reader().rhoDot) > 0.0  # [rad/s] or [m/s]
+
+    owner = weakref.ref(effector)
+    del reader, sim, parent, effector
+    gc.collect()
+    assert owner() is None
+    assert dof.getSpringConstantK() == 2.0  # [N*m/rad] or [N/m]
+    assert dof.getDampingConstantC() == 3.0  # [N*m*s/rad] or [N*s/m]
+
+    effector = general.GeneralSingleBodyStateEffector()
+    effector.setMass(20.0)  # [kg]
+    effector.setIPntGc_G(np.eye(3))  # [kg*m^2]
+    (effector.addRotDOF if rotational else effector.addTransDOF)(dof)
+    assert not any(port.isLinked() for ports in (
+        effector.motorTorqueInMsg, effector.motorForceInMsg,
+        effector.spinningBodyRefInMsg, effector.translatingBodyRefInMsgs,
+    ) for port in ports)
+    reader = (effector.spinningBodyOutMsgs if rotational else effector.translatingBodyOutMsgs)[0].addSubscriber()
+    sim, parent = make_simulation(effector, priority=1)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(0.02))  # [s]
+    sim.ExecuteSimulation()
+    assert (reader().theta if rotational else reader().rho) == pytest.approx(0.0)  # [rad] or [m]
+    assert (reader().thetaDot if rotational else reader().rhoDot) == pytest.approx(0.0)  # [rad/s] or [m/s]

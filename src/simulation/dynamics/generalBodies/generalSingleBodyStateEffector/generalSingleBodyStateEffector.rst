@@ -12,11 +12,12 @@ Note that future work involves expanding the general effector for optional coupl
 
 .. note::
 
-    All configured degree of freedom must be unique, and can only be added to the general effector once. If the user
-    attempts to add more than three rotational or three translational degrees of freedom, an error is thrown.
+    Each DOF object can belong to only one effector at a time and cannot be added twice.
+    Create a new DOF object for each independent coordinate; DOF objects cannot be copied or assigned in C++.
+    Attempts to add more than three rotational or three translational degrees of freedom raise an error.
 
 Module Assumptions and Limitations
----------------------------------
+----------------------------------
 At least one degree of freedom is required. The component mass must be finite and strictly positive,
 and its inertia must be finite and physically consistent. The mounting attitude must be a proper
 rotation matrix, and each DOF axis must be a finite unit vector. Position offsets and initial states
@@ -34,6 +35,13 @@ Configuration validation runs before state registration, including when the effe
 without being added to a simulation task. The effector's ``Reset()`` repeats validation without
 changing live integrated states or cached kinematics. A spacecraft reset restores the configured
 ``betaInit`` and ``betaDotInit`` values through state registration. See :ref:`effectorInitialization`.
+
+Configure the DOF sequence before spacecraft initialization. Once initialization freezes the topology,
+``addRotDOF()``, ``addTransDOF()``, and ``clearDOFs()`` raise ``RuntimeError`` without changing the
+configuration. Before initialization, ``clearDOFs()`` releases DOF ownership and deletes the associated
+message ports; reconnect messages after rebuilding the sequence. Destruction also releases ownership,
+so surviving DOF objects can subsequently be added to another effector. Releasing ownership clears
+cached motor and reference commands while preserving the DOF configuration.
 
 Message Connection Descriptions
 -------------------------------
@@ -80,6 +88,9 @@ effector dynamics.
 
 Configuration tests cover invalid and non-finite inputs, redundant coordinates, a coordinate singularity
 reached during motion, attached-only initialization, both scheduled reset orders, and repeated resets.
+Topology tests verify rejection of additions and clearing after initialization, exclusive DOF ownership,
+continued integration after rejected changes, ownership release on clearing or destruction, and
+reuse of previously commanded DOFs without carrying commands into the new effector.
 
 User Guide
 ----------

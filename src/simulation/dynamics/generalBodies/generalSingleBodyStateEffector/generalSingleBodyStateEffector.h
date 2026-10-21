@@ -39,10 +39,17 @@
 #include <string>
 #include <vector>
 
+class GeneralSingleBodyStateEffector;
+
 /*! Struct for each general body degree of freedom. */
 struct DOF
 {
   public:
+    DOF() = default;
+    // Preserve DOF identity: copying or assigning ownership would invalidate the owning effector.
+    DOF(const DOF&) = delete;
+    DOF& operator=(const DOF&) = delete;
+
     /** Enumeration indicating the joint DOF type */
     enum class Type
     {
@@ -76,6 +83,8 @@ struct DOF
 
   private:
     friend class GeneralSingleBodyStateEffector;
+
+    const GeneralSingleBodyStateEffector* owner = nullptr; //!< Non-owning pointer to the effector using this DOF
 
     Type type{ Type::ROTATION };             //!< [-] DOF type
     Eigen::Vector3d axis_G{ 1.0, 0.0, 0.0 }; //!< [-] DOF axis
@@ -133,13 +142,19 @@ class GeneralSingleBodyStateEffector
     /** Getter for `dcm_G0B` property */
     Eigen::Matrix3d getDCM_G0B() const { return this->dcm_G0B; };
 
-    /** Method for adding a new sequential rotational degree of freedom */
+    /**
+     * @brief Add a sequential rotational degree of freedom before topology is frozen.
+     * @param newDOF Non-null DOF that does not currently belong to an effector.
+     */
     void addRotDOF(std::shared_ptr<DOF> newDOF);
-    /** Method for adding a new sequential translational degree of freedom */
+    /**
+     * @brief Add a sequential translational degree of freedom before topology is frozen.
+     * @param newDOF Non-null DOF that does not currently belong to an effector.
+     */
     void addTransDOF(std::shared_ptr<DOF> newDOF);
     /** Getter for a specific sequential degree of freedom */
     std::shared_ptr<DOF> getDOF(uint64_t index) { return this->jointDOFList.at(index); };
-    /** Method to clear all degrees of freedom */
+    /** @brief Release all DOFs and their message ports before topology is frozen. */
     void clearDOFs();
 
     void Reset(uint64_t currentSimNanos) override;           //!< Reset method
@@ -259,8 +274,8 @@ class GeneralSingleBodyStateEffector
     DOFMatrix computeJointMassMatrixInverse(const DOFMatrix& jointMassMatrix);
     /** Internal method for setting up a new sequential degree of freedom */
     void addDOF(std::shared_ptr<DOF> newDOF);
-    /** Internal method checks if a new degree of freedom has already been added */
-    bool isDOFAdded(const std::shared_ptr<DOF>& newDOF) const;
+    /** @brief Release DOFs and message ports, including during destruction of a frozen effector. */
+    void clearDOFsInternal();
     /** Internal method to compute all joint attitude properties */
     void computeAttitudeProperties();
     /** Internal method to compute all joint position properties */

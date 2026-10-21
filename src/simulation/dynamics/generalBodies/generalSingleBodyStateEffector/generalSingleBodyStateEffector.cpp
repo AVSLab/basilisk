@@ -22,7 +22,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <Eigen/Dense>
-#include <algorithm>
 #include <cmath>
 #include <string>
 #include <utility>
@@ -36,7 +35,7 @@ GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector()
 
 GeneralSingleBodyStateEffector::~GeneralSingleBodyStateEffector()
 {
-    this->clearDOFs();
+    this->clearDOFsInternal();
 }
 
 uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
@@ -681,11 +680,13 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
 
 void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF)
 {
+    this->requireMutableTopology("GeneralSingleBodyStateEffector::addRotDOF");
     if (!newDOF) {
         bskLogger.bskError("A null DOF object was given. Provide a valid DOF object for each degree of freedom.");
     }
-    if (this->isDOFAdded(newDOF)) {
-        bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
+    if (newDOF->owner != nullptr) {
+        bskLogger.bskError(
+            "This DOF was already added to an effector. Create a separate DOF object for each degree of freedom.");
     }
     if (this->numRotDOF >= 3) {
         bskLogger.bskError("General body rotational degrees of freedom cannot exceed 3.");
@@ -703,11 +704,13 @@ void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF)
 
 void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF)
 {
+    this->requireMutableTopology("GeneralSingleBodyStateEffector::addTransDOF");
     if (!newDOF) {
         bskLogger.bskError("A null DOF object was given. Provide a valid DOF object for each degree of freedom.");
     }
-    if (this->isDOFAdded(newDOF)) {
-        bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
+    if (newDOF->owner != nullptr) {
+        bskLogger.bskError(
+            "This DOF was already added to an effector. Create a separate DOF object for each degree of freedom.");
     }
     if (this->numTransDOF >= 3) {
         bskLogger.bskError("General body translational degrees of freedom cannot exceed 3.");
@@ -728,6 +731,7 @@ void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF)
     this->numDOF++;
     newDOF->index = this->numDOF - 1;
     this->jointDOFList.push_back(newDOF);
+    newDOF->owner = this;
 
     // Resize required matrices
     this->TMat.conservativeResize(6, this->TMat.cols() + 1);
@@ -738,16 +742,25 @@ void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF)
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
 }
 
-bool GeneralSingleBodyStateEffector::isDOFAdded(const std::shared_ptr<DOF>& newDOF) const
+void GeneralSingleBodyStateEffector::clearDOFs()
 {
-    return std::find(this->jointDOFList.begin(), this->jointDOFList.end(), newDOF) != this->jointDOFList.end();
+    this->requireMutableTopology("GeneralSingleBodyStateEffector::clearDOFs");
+    this->clearDOFsInternal();
 }
 
-void GeneralSingleBodyStateEffector::clearDOFs()
+void GeneralSingleBodyStateEffector::clearDOFsInternal()
 {
     this->numDOF = 0;
     this->numRotDOF = 0;
     this->numTransDOF = 0;
+    for (const auto& dof : this->jointDOFList) {
+        // Discard commands received through this effector's ports before allowing DOF reuse.
+        dof->u = 0.0;          // [N*m]
+        dof->f = 0.0;          // [N]
+        dof->betaRef = 0.0;    // [rad] or [m]
+        dof->betaDotRef = 0.0; // [rad/s] or [m/s]
+        dof->owner = nullptr;
+    }
     this->jointDOFList.clear();
     this->betaInitList.clear();
     this->betaDotInitList.clear();
