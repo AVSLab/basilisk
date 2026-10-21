@@ -249,6 +249,14 @@ class GeneralSingleBodyStateEffector
     std::string nameOfBetaState;    //!< [-] String for the effector state vector name
     std::string nameOfBetaDotState; //!< [-] String for the effector state vector rate name
 
+    /** @brief Validate configured parameters and initial joint inertia without changing integrated states. */
+    void validateConfiguration();
+    /**
+     * @brief Check numerical rank after coordinate scaling and invert the joint mass matrix.
+     * @param jointMassMatrix Joint inertia matrix to validate and invert.
+     * @return Joint mass matrix inverse in the original coordinate scales.
+     */
+    DOFMatrix computeJointMassMatrixInverse(const DOFMatrix& jointMassMatrix);
     /** Internal method for setting up a new sequential degree of freedom */
     void addDOF(std::shared_ptr<DOF> newDOF);
     /** Internal method checks if a new degree of freedom has already been added */

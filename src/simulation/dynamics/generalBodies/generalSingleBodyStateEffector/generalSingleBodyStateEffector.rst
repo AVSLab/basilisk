@@ -15,6 +15,26 @@ Note that future work involves expanding the general effector for optional coupl
     All configured degree of freedom must be unique, and can only be added to the general effector once. If the user
     attempts to add more than three rotational or three translational degrees of freedom, an error is thrown.
 
+Module Assumptions and Limitations
+---------------------------------
+At least one degree of freedom is required. The component mass must be finite and strictly positive,
+and its inertia must be finite and physically consistent. The mounting attitude must be a proper
+rotation matrix, and each DOF axis must be a finite unit vector. Position offsets and initial states
+and rates must be finite. Spring and damping coefficients must be finite and nonnegative; zero
+coefficients are supported.
+
+The joint mass matrix must remain numerically invertible after scaling by its diagonal inertias,
+so unequal translational and rotational inertia scales alone do not imply singularity.
+Distinct DOF objects with unit axes can
+still define redundant coordinates, such as two translations along the same direction. Rotational
+coordinates can also become singular during motion. Invalid initial configurations and singular
+joint mass matrices encountered during integration raise ``BasiliskError`` instead of propagating NaNs.
+
+Configuration validation runs before state registration, including when the effector is attached
+without being added to a simulation task. The effector's ``Reset()`` repeats validation without
+changing live integrated states or cached kinematics. A spacecraft reset restores the configured
+``betaInit`` and ``betaDotInit`` values through state registration. See :ref:`effectorInitialization`.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the
@@ -53,10 +73,13 @@ motion is provided in the following conference paper
 
 Module Testing
 --------------
-There is a single unit test script for this module. The test configures one through six degrees of freedom for the
+The conservation test configures one through six degrees of freedom for the
 general body, including mixed rotational and translational motion at the six-degree-of-freedom limit. Earth's gravity is added to
 all test simulations. The principles of conservation of energy and angular momentum are used to verify the general
 effector dynamics.
+
+Configuration tests cover invalid and non-finite inputs, redundant coordinates, a coordinate singularity
+reached during motion, attached-only initialization, both scheduled reset orders, and repeated resets.
 
 User Guide
 ----------

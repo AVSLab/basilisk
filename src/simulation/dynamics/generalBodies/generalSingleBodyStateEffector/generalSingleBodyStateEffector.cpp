@@ -23,6 +23,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <Eigen/Dense>
 #include <algorithm>
+#include <cmath>
 #include <string>
 #include <utility>
 
@@ -42,18 +43,104 @@ uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
 
 void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
+    this->validateConfiguration();
+}
+
+void GeneralSingleBodyStateEffector::validateConfiguration()
+{
+    if (this->jointDOFList.empty()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: at least one DOF is required.");
+    }
+    if (!std::isfinite(this->mass) || this->mass <= 0.0) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: mass must be finite and positive.");
+    }
     if (!eigenIsValidInertiaMatrix(this->IPntGc_G)) {
-        bskLogger.bskError("GeneralSingleBodyStateEffector: effector inertia tensor is invalid.");
+        bskLogger.bskError("GeneralSingleBodyStateEffector: IPntGc_G must be a valid finite inertia tensor.");
     }
     if (!eigenIsRotationMatrix(this->dcm_G0B)) {
-        bskLogger.bskError("GeneralSingleBodyStateEffector: effector hub-relative attitude DCM is invalid.");
+        bskLogger.bskError("GeneralSingleBodyStateEffector: dcm_G0B must be a proper rotation matrix.");
+    }
+    if (!this->r_GcG_G.allFinite()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: r_GcG_G must contain only finite values.");
+    }
+    if (!this->r_G0B_B.allFinite()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: r_G0B_B must contain only finite values.");
     }
     for (const auto& dof : this->jointDOFList) {
         if (!eigenIsUnitVector(dof->axis_G)) {
-            bskLogger.bskError(
-                "GeneralSingleBodyStateEffector: effector degree of freedom axis must be a unit vector.");
+            bskLogger.bskError("GeneralSingleBodyStateEffector: axis_G must be a finite unit vector.");
+        }
+        if (!std::isfinite(dof->betaInit)) {
+            bskLogger.bskError("GeneralSingleBodyStateEffector: betaInit must be finite.");
+        }
+        if (!std::isfinite(dof->betaDotInit)) {
+            bskLogger.bskError("GeneralSingleBodyStateEffector: betaDotInit must be finite.");
+        }
+        if (!std::isfinite(dof->k) || dof->k < 0.0) {
+            bskLogger.bskError("GeneralSingleBodyStateEffector: k must be finite and nonnegative.");
+        }
+        if (!std::isfinite(dof->c) || dof->c < 0.0) {
+            bskLogger.bskError("GeneralSingleBodyStateEffector: c must be finite and nonnegative.");
         }
     }
+
+    // Check the initial joint inertia without modifying live states or cached kinematics on reset.
+    Eigen::Matrix<double, 3, 6> jointAxes_B;
+    Eigen::Matrix<double, 3, 6> jointPositions_B;
+    Eigen::Matrix3d dcm_BG = this->dcm_G0B.transpose();
+    Eigen::Vector3d r_GB_B = this->r_G0B_B;
+    for (uint32_t i = 0; i < this->numDOF; i++) {
+        const auto& dof = this->jointDOFList[i];
+        if (dof->type == DOF::Type::ROTATION) {
+            // Match computeAttitudeProperties(), including the accepted axis normalization tolerance.
+            Eigen::Vector3d prv_GG0 = dof->betaInit * dof->axis_G;
+            double dcm_GG0_array[3][3];
+            PRV2C(prv_GG0.data(), dcm_GG0_array);
+            dcm_BG = dcm_BG * c2DArray2EigenMatrix3d(dcm_GG0_array).transpose();
+        } else {
+            r_GB_B += dof->betaInit * (dcm_BG * dof->axis_G);
+        }
+        jointAxes_B.col(i) = dcm_BG * dof->axis_G;
+        jointPositions_B.col(i) = r_GB_B;
+    }
+    const Eigen::Vector3d r_GcB_B = r_GB_B + dcm_BG * this->r_GcG_G;
+    const Eigen::Matrix3d IPntGc_B = dcm_BG * this->IPntGc_G * dcm_BG.transpose();
+    DOFMapping jacobian = DOFMapping::Zero(6, this->numDOF);
+    for (uint32_t i = 0; i < this->numDOF; i++) {
+        if (this->jointDOFList[i]->type == DOF::Type::ROTATION) {
+            jacobian.col(i).head<3>() = jointAxes_B.col(i).cross(r_GcB_B - jointPositions_B.col(i));
+            jacobian.col(i).tail<3>() = jointAxes_B.col(i);
+        } else {
+            jacobian.col(i).head<3>() = jointAxes_B.col(i);
+        }
+    }
+    const DOFMatrix initialMassMatrix = this->mass * jacobian.topRows<3>().transpose() * jacobian.topRows<3>() +
+                                        jacobian.bottomRows<3>().transpose() * IPntGc_B * jacobian.bottomRows<3>();
+    this->computeJointMassMatrixInverse(initialMassMatrix);
+}
+
+GeneralSingleBodyStateEffector::DOFMatrix GeneralSingleBodyStateEffector::computeJointMassMatrixInverse(
+    const DOFMatrix& jointMassMatrix)
+{
+    if (!jointMassMatrix.allFinite()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: joint mass matrix must be finite.");
+    }
+    if ((jointMassMatrix.diagonal().array() == 0.0).any()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: joint mass matrix is singular.");
+    }
+
+    // Equilibrate translational and rotational inertia scales before comparing pivot magnitudes.
+    const DOFVector scaling = jointMassMatrix.diagonal().cwiseAbs().cwiseSqrt().cwiseInverse();
+    const DOFMatrix scaledMassMatrix = scaling.asDiagonal() * jointMassMatrix * scaling.asDiagonal();
+    const Eigen::FullPivLU<DOFMatrix> factorization(scaledMassMatrix);
+    if (!factorization.isInvertible()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: joint mass matrix is singular.");
+    }
+    const DOFMatrix inverse = scaling.asDiagonal() * factorization.inverse() * scaling.asDiagonal();
+    if (!inverse.allFinite()) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: joint mass matrix inverse must be finite.");
+    }
+    return inverse;
 }
 
 void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn)
@@ -64,6 +151,7 @@ void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
 void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
     this->betaState = states.registerState(this->numDOF, 1, this->nameOfBetaState);
     this->betaDotState = states.registerState(this->numDOF, 1, this->nameOfBetaDotState);
 
@@ -514,7 +602,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
     }
 
     // Define BSM ABeta, BBeta, and CBeta matrices
-    const DOFMatrix MBetaInv = MBeta.inverse();
+    const DOFMatrix MBetaInv = this->computeJointMassMatrixInverse(MBeta);
     this->ABeta.noalias() = MBetaInv * ABetaStar;
     this->BBeta.noalias() = MBetaInv * BBetaStar;
     this->CBeta.noalias() = MBetaInv * CBetaStar;
