@@ -180,6 +180,12 @@ class GeneralSingleBodyStateEffector
     Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg; //!< Output message for the effector inertial states
 
   private:
+    // Runtime dimensions use inline storage for the module's maximum of six DOFs.
+    using DOFVector = Eigen::Matrix<double, Eigen::Dynamic, 1, 0, 6, 1>;
+    using DOFMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, 0, 6, 6>;
+    using DOFMatrix3 = Eigen::Matrix<double, Eigen::Dynamic, 3, 0, 6, 3>;
+    using DOFMapping = Eigen::Matrix<double, 6, Eigen::Dynamic, 0, 6, 6>;
+
     double mass{};                                           //!< [kg] General body mass
     Eigen::Matrix3d IPntGc_G{ Eigen::Matrix3d::Identity() }; //!< [kg * m^2] Effector inertia
     Eigen::Vector3d r_GcG_G{
@@ -199,17 +205,17 @@ class GeneralSingleBodyStateEffector
     std::vector<double> betaInitList;    //!< [-] Initial state vector
     std::vector<double> betaDotInitList; //!< [-] Initial state vector rate
 
-    Eigen::VectorXd beta;              //!< [-] Effector state vector
-    Eigen::VectorXd betaDot;           //!< [-] Effector state vector rate
+    DOFVector beta;                    //!< [-] Effector state vector
+    DOFVector betaDot;                 //!< [-] Effector state vector rate
     StateData* betaState = nullptr;    //!< [-] State data container for the effector state vector
     StateData* betaDotState = nullptr; //!< [-] State data container for the effector state vector rate
     Eigen::MatrixXd* inertialPositionProperty = nullptr; //!< [m] Identifier for the hub inertial position
     Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] Identifier for the hub inertial velocity
 
-    Eigen::MatrixXd TMat;                             //!< [-] Effector mapping vectrix
-    Eigen::MatrixXd TPrimeMat;                        //!< [-] Effector mapping vectrix rate
-    Eigen::MatrixXd UMat;                             //!< [-] Kinematics storage data matrix
-    Eigen::VectorXd vVec{ Eigen::VectorXd::Zero(6) }; //!< [-] Kinematics storage data vector
+    DOFMapping TMat;                                                         //!< [-] Effector mapping vectrix
+    DOFMapping TPrimeMat;                                                    //!< [-] Effector mapping vectrix rate
+    DOFMapping UMat;                                                         //!< [-] Kinematics storage data matrix
+    Eigen::Matrix<double, 6, 1> vVec{ Eigen::Matrix<double, 6, 1>::Zero() }; //!< [-] Kinematics storage data vector
     Eigen::Vector3d r_GB_B{
         Eigen::Vector3d::Zero()
     }; //!< [m] Position vector of the effector body frame origin point G relative to the hub frame origin point B
@@ -219,16 +225,16 @@ class GeneralSingleBodyStateEffector
     Eigen::Vector3d v_GcN_N{
         Eigen::Vector3d::Zero()
     }; //!< [m] Velocity vector of the effector center of mass point Gc relative to the inertial frame origin point N
-    Eigen::Vector3d sigma_GN{
-        Eigen::Vector3d::Zero()
+    Eigen::MRPd sigma_GN{
+        Eigen::MRPd::Identity()
     }; //!< [-] MRP attitude of the effector body frame G relative to the inertial frame N
     Eigen::Vector3d omega_GN_G{
         Eigen::Vector3d::Zero()
     }; //!< [rad/s] Angular velocity vector of the effector body frame G relative to the inertial frame N
 
-    Eigen::MatrixXd ABeta; //!< [-] Backsubstitution contribution [A]
-    Eigen::MatrixXd BBeta; //!< [-] Backsubstitution contribution [B]
-    Eigen::VectorXd CBeta; //!< [-] Backsubstitution contribution [C]
+    DOFMatrix3 ABeta; //!< [-] Backsubstitution contribution [A]
+    DOFMatrix3 BBeta; //!< [-] Backsubstitution contribution [B]
+    DOFVector CBeta;  //!< [-] Backsubstitution contribution [C]
 
     Eigen::Matrix3d dcm_BN{
         Eigen::Matrix3d::Identity()

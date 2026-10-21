@@ -53,8 +53,8 @@ motion is provided in the following conference paper
 
 Module Testing
 --------------
-There is a single unit test script for this module. The test configures one, two, and three degrees of freedom for the
-general body. All combinations of motion are tested for each degree of freedom case. Earth's gravity is added to
+There is a single unit test script for this module. The test configures one through six degrees of freedom for the
+general body, including mixed rotational and translational motion at the six-degree-of-freedom limit. Earth's gravity is added to
 all test simulations. The principles of conservation of energy and angular momentum are used to verify the general
 effector dynamics.
 

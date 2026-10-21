@@ -52,6 +52,9 @@ from Basilisk.architecture import messaging
     , (0, 1, 0, 1, 1, 0)
     , (0, 1, 1, 0, 0, 1)
     , (1, 0, 0, 1, 0, 1)
+    , (1, 1, 1, 1, 0, 0)
+    , (1, 1, 1, 1, 1, 0)
+    , (1, 1, 1, 1, 1, 1)
 ])
 
 def test_general_single_body_state_effector(show_plots,
@@ -65,9 +68,9 @@ def test_general_single_body_state_effector(show_plots,
     **Validation Test Description**
 
     This unit test sets up a spacecraft with a general rigid body attached to a rigid hub.
-    Earth's gravity is included in the simulation. The test configures one, two, and three degrees of freedom for the
-    general body. All combinations of motion are tested for each degree of freedom case. The principles of conservation
-    of energy and angular momentum are used to verify the general effector dynamics.
+    Earth's gravity is included in the simulation. The test configures one through six degrees of freedom for the
+    general body. Rotation and translation combinations cover one through three degrees of freedom, with mixed cases
+    exercising four, five, and six degrees of freedom. Conservation of energy and angular momentum verifies the dynamics.
 
     **Description of Variables Being Tested**
 
@@ -334,3 +337,6 @@ if __name__ == "__main__":
     test_general_single_body_state_effector(True, 0, 1, 0, 1, 1, 0)
     test_general_single_body_state_effector(True, 0, 1, 1, 0, 0, 1)
     test_general_single_body_state_effector(True, 1, 0, 0, 1, 0, 1)
+    test_general_single_body_state_effector(True, 1, 1, 1, 1, 0, 0)
+    test_general_single_body_state_effector(True, 1, 1, 1, 1, 1, 0)
+    test_general_single_body_state_effector(True, 1, 1, 1, 1, 1, 1)

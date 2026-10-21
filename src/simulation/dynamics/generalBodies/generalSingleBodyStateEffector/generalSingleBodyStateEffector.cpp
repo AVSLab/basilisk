@@ -24,13 +24,7 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <string>
-
-/** Mappings for general joint kinematics */
-const Eigen::Matrix<double, 3, 6> transMap =
-    (Eigen::Matrix<double, 3, 6>() << 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0).finished();
-
-const Eigen::Matrix<double, 3, 6> rotMap =
-    (Eigen::Matrix<double, 3, 6>() << 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1).finished();
+#include <utility>
 
 GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector()
 {
@@ -73,14 +67,12 @@ void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states)
     this->betaState = states.registerState(this->numDOF, 1, this->nameOfBetaState);
     this->betaDotState = states.registerState(this->numDOF, 1, this->nameOfBetaDotState);
 
-    Eigen::VectorXd betaInit = Eigen::VectorXd::Zero(this->numDOF);
-    Eigen::VectorXd betaDotInit = Eigen::VectorXd::Zero(this->numDOF);
+    auto betaInit = this->betaState->stateView();
+    auto betaDotInit = this->betaDotState->stateView();
     for (auto& dof : this->jointDOFList) {
         betaInit(dof->index, 0) = dof->betaInit;
         betaDotInit(dof->index, 0) = dof->betaDotInit;
     }
-    this->betaState->setState(betaInit);
-    this->betaDotState->setState(betaDotInit);
 }
 
 void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos)
@@ -123,10 +115,10 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     // Inertial attitude
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
     Eigen::Matrix3d dcm_GN = dcm_GB * this->dcm_BN;
-    this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
+    this->sigma_GN = eigenC2MRP(dcm_GN);
 
     // Inertial angular velocity
-    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Vector3d omega_GB_B = this->TMat.bottomRows<3>() * this->betaDot;
     Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
     this->omega_GN_G = dcm_GB * omega_GN_B;
 
@@ -136,11 +128,9 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     this->r_GcN_N = this->dcm_BN.transpose() * r_GcB_B + (Eigen::Vector3d) * this->inertialPositionProperty;
 
     // Inertial velocity
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
     Eigen::Vector3d rPrime_GcB_B =
-        (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
-    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
+        this->TMat.topRows<3>() * this->betaDot - r_GcG_B.cross(omega_GB_B) + this->TPrimeMat.topRows<3>() * this->beta;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + this->omega_BN_B.cross(r_GcB_B);
     this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d) * this->inertialVelocityProperty;
 }
 
@@ -151,8 +141,8 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSi
         SCStatesMsgPayload configLogMsg = this->generalSingleBodyConfigLogOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->r_GcN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_GcN_N, configLogMsg.v_BN_N);
-        eigenMatrixXd2CArray(this->sigma_GN, configLogMsg.sigma_BN);
-        eigenMatrixXd2CArray(this->omega_GN_G, configLogMsg.omega_BN_B);
+        eigenMRPd2CArray(this->sigma_GN, configLogMsg.sigma_BN);
+        eigenVector3d2CArray(this->omega_GN_G, configLogMsg.omega_BN_B);
         this->generalSingleBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentSimNanos);
     }
 
@@ -187,8 +177,8 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime [[
     this->effProps.mEff = this->mass;
 
     // Get current state
-    this->beta = this->betaState->getState();
-    this->betaDot = this->betaDotState->getState();
+    this->beta = std::as_const(*this->betaState).stateView();
+    this->betaDot = std::as_const(*this->betaDotState).stateView();
 
     // Set beta and betaDot for each DOF
     for (auto& dof : this->jointDOFList) {
@@ -208,17 +198,16 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime [[
         if (dof->index != 0) {
             omega_GPrevB_B = this->jointDOFList.at(dof->index - 1)->omega_GB_B;
         }
-        Eigen::Matrix3d omegaTilde_GPrevB_B = eigenTilde(omega_GPrevB_B);
 
         if (dof->type == DOF::Type::ROTATION) {
             this->TMat.col(dof->index).head<3>() = Eigen::Vector3d::Zero();
             this->TMat.col(dof->index).tail<3>() = jointDOFAxis_B;
             this->TPrimeMat.col(dof->index).head<3>() = Eigen::Vector3d::Zero();
-            this->TPrimeMat.col(dof->index).tail<3>() = omegaTilde_GPrevB_B * jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).tail<3>() = omega_GPrevB_B.cross(jointDOFAxis_B);
         } else {
             this->TMat.col(dof->index).head<3>() = jointDOFAxis_B;
             this->TMat.col(dof->index).tail<3>() = Eigen::Vector3d::Zero();
-            this->TPrimeMat.col(dof->index).head<3>() = omegaTilde_GPrevB_B * jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).head<3>() = omega_GPrevB_B.cross(jointDOFAxis_B);
             this->TPrimeMat.col(dof->index).tail<3>() = Eigen::Vector3d::Zero();
         }
     }
@@ -228,51 +217,46 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime [[
         this->UMat.col(colIdx).head<3>().setZero();
         this->UMat.col(colIdx).tail<3>().setZero();
 
-        Eigen::VectorXd sumToN = Eigen::VectorXd::Zero(6);
+        Eigen::Matrix<double, 6, 1> sumToN = Eigen::Matrix<double, 6, 1>::Zero();
         for (uint32_t idx = colIdx + 1; idx < this->numDOF; idx++) {
             sumToN += this->TMat.col(idx) * this->jointDOFList.at(idx)->beta;
         }
 
-        Eigen::Vector3d dofRotAxis = rotMap * this->TMat.col(colIdx);
-        Eigen::Matrix3d dofRotAxisTilde = eigenTilde(dofRotAxis);
-        Eigen::Matrix<double, 6, 6> tildeSixMatrix = Eigen::Matrix<double, 6, 6>::Zero();
-        tildeSixMatrix.topLeftCorner<3, 3>() = dofRotAxisTilde;
-        tildeSixMatrix.bottomRightCorner<3, 3>() = dofRotAxisTilde;
-
-        this->UMat.col(colIdx) = tildeSixMatrix * sumToN;
+        Eigen::Vector3d dofRotAxis = this->TMat.col(colIdx).tail<3>();
+        this->UMat.col(colIdx).head<3>() = dofRotAxis.cross(sumToN.head<3>());
+        this->UMat.col(colIdx).tail<3>() = dofRotAxis.cross(sumToN.tail<3>());
     }
 
     // Compute vVec vector
     this->vVec.setZero();
-    Eigen::VectorXd hVecTerm1{ Eigen::VectorXd::Zero(6) };
-    Eigen::VectorXd hVecTerm2{ Eigen::VectorXd::Zero(6) };
+    Eigen::Matrix<double, 6, 1> hVecTerm1;
+    Eigen::Matrix<double, 6, 1> hVecTerm2;
     for (uint32_t idx1{}; idx1 < this->numDOF; idx1++) {
-        Eigen::VectorXd sumTerm1{ Eigen::VectorXd::Zero(6) };
-        Eigen::VectorXd sumTerm2{ Eigen::VectorXd::Zero(6) };
+        Eigen::Matrix<double, 6, 1> sumTerm1{ Eigen::Matrix<double, 6, 1>::Zero() };
+        Eigen::Matrix<double, 6, 1> sumTerm2{ Eigen::Matrix<double, 6, 1>::Zero() };
 
         for (uint32_t idx2{}; idx2 < idx1; idx2++) {
-            Eigen::VectorXd sumTerm1A{ Eigen::VectorXd::Zero(6) };
+            Eigen::Matrix<double, 6, 1> sumTerm1A{ Eigen::Matrix<double, 6, 1>::Zero() };
             for (uint32_t idx3{}; idx3 < idx2; idx3++) {
                 sumTerm1A += this->TMat.col(idx3) * this->jointDOFList.at(idx3)->betaDot;
             }
 
-            Eigen::Matrix<double, 6, 6> tildeSixMatrix{ Eigen::Matrix<double, 6, 6>::Zero() };
-            tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm1A);
-            tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
-            sumTerm1 += tildeSixMatrix * this->TMat.col(idx2) * this->jointDOFList.at(idx2)->betaDot;
+            sumTerm1.head<3>() +=
+                sumTerm1A.tail<3>().cross(this->TMat.col(idx2).head<3>()) * this->jointDOFList.at(idx2)->betaDot;
+            sumTerm1.tail<3>() +=
+                sumTerm1A.tail<3>().cross(this->TMat.col(idx2).tail<3>()) * this->jointDOFList.at(idx2)->betaDot;
 
             sumTerm2 += this->TMat.col(idx2) * this->jointDOFList.at(idx2)->betaDot;
         }
 
-        Eigen::Matrix<double, 6, 6> tildeSixMatrix{ Eigen::Matrix<double, 6, 6>::Zero() };
-        tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm1);
-        tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
-        hVecTerm1 = tildeSixMatrix * this->TMat.col(idx1) * this->jointDOFList.at(idx1)->beta;
-
-        tildeSixMatrix = Eigen::Matrix<double, 6, 6>::Zero();
-        tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm2) * eigenTilde(rotMap * sumTerm2);
-        tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
-        hVecTerm2 = tildeSixMatrix * this->TMat.col(idx1) * this->jointDOFList.at(idx1)->beta;
+        hVecTerm1.head<3>() =
+            sumTerm1.tail<3>().cross(this->TMat.col(idx1).head<3>()) * this->jointDOFList.at(idx1)->beta;
+        hVecTerm1.tail<3>() =
+            sumTerm1.tail<3>().cross(this->TMat.col(idx1).tail<3>()) * this->jointDOFList.at(idx1)->beta;
+        hVecTerm2.head<3>() = sumTerm2.tail<3>().cross(sumTerm2.tail<3>().cross(this->TMat.col(idx1).head<3>())) *
+                              this->jointDOFList.at(idx1)->beta;
+        hVecTerm2.tail<3>() = sumTerm2.tail<3>().cross(sumTerm2.tail<3>().cross(this->TMat.col(idx1).tail<3>())) *
+                              this->jointDOFList.at(idx1)->beta;
 
         this->vVec += hVecTerm1 + hVecTerm2;
     }
@@ -290,13 +274,12 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime [[
     this->effProps.IEffPntB_B = IPntGc_B - this->mass * rTilde_GcB_B * rTilde_GcB_B;
 
     // Compute and set effProps.rEffPrime_CB_B
-    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d omega_GB_B = this->TMat.bottomRows<3>() * this->betaDot;
     Eigen::Vector3d rPrime_GcB_B =
-        (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
+        this->TMat.topRows<3>() * this->betaDot - r_GcG_B.cross(omega_GB_B) + this->TPrimeMat.topRows<3>() * this->beta;
     this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
 
     // Compute and set effProps.IEffPrimePntB_B
-    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
     Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
     Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
     this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B -
@@ -368,7 +351,6 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
     // Update hub attitude and angular velocity
     this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
     this->omega_BN_B = omega_BN_B;
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
     Eigen::Vector3d g_B = this->dcm_BN * g_N;
     Eigen::Vector3d gravityForce_B = this->mass * g_B;
@@ -379,13 +361,13 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
 
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MBeta;
+    DOFMatrix MBeta;
     MBeta.resize(this->numDOF, this->numDOF);
-    Eigen::Matrix<double, Eigen::Dynamic, 3> ABetaStar;
+    DOFMatrix3 ABetaStar;
     ABetaStar.resize(this->numDOF, 3);
-    Eigen::Matrix<double, Eigen::Dynamic, 3> BBetaStar;
+    DOFMatrix3 BBetaStar;
     BBetaStar.resize(this->numDOF, 3);
-    Eigen::VectorXd CBetaStar;
+    DOFVector CBetaStar;
     CBetaStar.resize(this->numDOF);
 
     // Construct MBeta matrix
@@ -397,9 +379,9 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
                 auto& dofJ = this->jointDOFList.at(j);
                 Eigen::Vector3d dofJAxis_B = dofJ->dcm_GB.transpose() * dofJ->axis_G;
                 if (dofJ->type == DOF::Type::TRANSLATION) {
-                    MBeta(i, j) = this->mass * dofIAxis_B.transpose() * Eigen::Matrix3d::Identity() * dofJAxis_B;
+                    MBeta(i, j) = this->mass * dofIAxis_B.dot(dofJAxis_B);
                 } else {
-                    MBeta(i, j) = -this->mass * dofIAxis_B.transpose() * rTilde_GcG_B * dofJAxis_B;
+                    MBeta(i, j) = -this->mass * dofIAxis_B.dot(r_GcG_B.cross(dofJAxis_B));
                 }
                 for (uint32_t k = 0; k < j; k++) {
                     auto& dofK = this->jointDOFList.at(k);
@@ -412,22 +394,21 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
                             auto& dofJMinus1 = this->jointDOFList.at(j - 1);
                             r_JJMinus1_B = dofJ->r_GB_B - dofJMinus1->r_GB_B;
                         }
-                        MBeta(i, k) -= this->mass * dofIAxis_B.transpose() * eigenTilde(r_JJMinus1_B) * dofKAxis_B;
+                        MBeta(i, k) -= this->mass * dofIAxis_B.dot(r_JJMinus1_B.cross(dofKAxis_B));
                     }
                 }
             }
         } else {
             Eigen::Vector3d r_GcGi_B = r_GcG_B + this->r_GB_B - dofI->r_GB_B;
-            Eigen::Matrix3d rTilde_GcGi_B = eigenTilde(r_GcGi_B);
             for (uint32_t j = 0; j < this->numDOF; j++) {
                 auto& dofJ = this->jointDOFList.at(j);
                 Eigen::Vector3d dofJAxis_B = dofJ->dcm_GB.transpose() * dofJ->axis_G;
 
                 if (dofJ->type == DOF::Type::TRANSLATION) {
-                    MBeta(i, j) = this->mass * dofIAxis_B.transpose() * rTilde_GcGi_B * dofJAxis_B;
+                    MBeta(i, j) = this->mass * dofIAxis_B.dot(r_GcGi_B.cross(dofJAxis_B));
                 } else {
                     MBeta(i, j) =
-                        dofIAxis_B.transpose() * (IPntGc_B - this->mass * rTilde_GcGi_B * rTilde_GcG_B) * dofJAxis_B;
+                        dofIAxis_B.dot(IPntGc_B * dofJAxis_B - this->mass * r_GcGi_B.cross(r_GcG_B.cross(dofJAxis_B)));
                 }
                 for (uint32_t k = 0; k < j; k++) {
                     auto& dofK = this->jointDOFList.at(k);
@@ -440,158 +421,127 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime [[mayb
                             auto& dofJMinus1 = this->jointDOFList.at(j - 1);
                             r_JJMinus1_B = dofJ->r_GB_B - dofJMinus1->r_GB_B;
                         }
-                        MBeta(i, k) -=
-                            this->mass * dofIAxis_B.transpose() * rTilde_GcGi_B * eigenTilde(r_JJMinus1_B) * dofKAxis_B;
+                        MBeta(i, k) -= this->mass * dofIAxis_B.dot(r_GcGi_B.cross(r_JJMinus1_B.cross(dofKAxis_B)));
                     }
                 }
             }
         }
     }
 
+    // These kinematic terms are shared by every DOF row.
+    Eigen::Vector3d cBetaTerm1a = Eigen::Vector3d::Zero();
+    for (uint32_t j = 0; j < this->numDOF; j++) {
+        auto& dofJ = this->jointDOFList.at(j);
+        Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
+        Eigen::Vector3d omega_JJMinus1_B = Eigen::Vector3d::Zero();
+        if (j == 0) {
+            omega_JMinus1N_B = this->omega_BN_B;
+            omega_JJMinus1_B = dofJ->omega_GB_B;
+        } else {
+            auto& dofJMinus1 = this->jointDOFList.at(j - 1);
+            omega_JMinus1N_B = dofJMinus1->omega_GB_B + this->omega_BN_B;
+            omega_JJMinus1_B = dofJ->omega_GB_B - dofJMinus1->omega_GB_B;
+        }
+        cBetaTerm1a += omega_JMinus1N_B.cross(omega_JJMinus1_B);
+    }
+    Eigen::Vector3d omega_GnN_B = this->jointDOFList.back()->omega_GB_B + this->omega_BN_B;
+    Eigen::Vector3d cBetaTerm1 =
+        -this->mass * (cBetaTerm1a.cross(r_GcG_B) + omega_GnN_B.cross(omega_GnN_B.cross(r_GcG_B)));
+
+    Eigen::Vector3d cBetaTerm2 = Eigen::Vector3d::Zero();
+    for (uint32_t j = 0; j < this->numDOF; j++) {
+        Eigen::Vector3d cBetaTerm2a = Eigen::Vector3d::Zero();
+        for (uint32_t k = 0; k < j; k++) {
+            auto& dofK = this->jointDOFList.at(k);
+            Eigen::Vector3d omega_KMinus1N_B = Eigen::Vector3d::Zero();
+            Eigen::Vector3d omega_KKMinus1_B = Eigen::Vector3d::Zero();
+            if (k == 0) {
+                omega_KMinus1N_B = this->omega_BN_B;
+                omega_KKMinus1_B = dofK->omega_GB_B;
+            } else {
+                auto& dofKMinus1 = this->jointDOFList.at(k - 1);
+                omega_KMinus1N_B = dofKMinus1->omega_GB_B + this->omega_BN_B;
+                omega_KKMinus1_B = dofK->omega_GB_B - dofKMinus1->omega_GB_B;
+            }
+            cBetaTerm2a += omega_KMinus1N_B.cross(omega_KKMinus1_B);
+        }
+        auto& dofJ = this->jointDOFList.at(j);
+        Eigen::Vector3d r_JJMinus1_B = Eigen::Vector3d::Zero();
+        Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
+        if (j == 0) {
+            r_JJMinus1_B = dofJ->r_GB_B;
+            omega_JMinus1N_B = this->omega_BN_B;
+        } else {
+            auto& dofJMinus1 = this->jointDOFList.at(j - 1);
+            r_JJMinus1_B = dofJ->r_GB_B - dofJMinus1->r_GB_B;
+            omega_JMinus1N_B = dofJMinus1->omega_GB_B + this->omega_BN_B;
+        }
+
+        Eigen::Vector3d rJMinus1Prime_JJMinus1_B = Eigen::Vector3d::Zero();
+        if (dofJ->type == DOF::Type::TRANSLATION) {
+            rJMinus1Prime_JJMinus1_B = dofJ->betaDot * dofJ->dcm_GB.transpose() * dofJ->axis_G;
+        }
+        cBetaTerm2 += r_JJMinus1_B.cross(cBetaTerm2a) - 2 * omega_JMinus1N_B.cross(rJMinus1Prime_JJMinus1_B) -
+                      omega_JMinus1N_B.cross(omega_JMinus1N_B.cross(r_JJMinus1_B));
+    }
+
+    cBetaTerm2 = this->mass * cBetaTerm2;
+
+    const Eigen::Vector3d cBetaTerm3 = -IPntGc_B * cBetaTerm1a - omega_GnN_B.cross(IPntGc_B * omega_GnN_B);
+
     for (uint32_t i = 0; i < this->numDOF; i++) {
         auto& dofI = this->jointDOFList.at(i);
         Eigen::Vector3d dofAxis_B = dofI->dcm_GB.transpose() * dofI->axis_G;
 
-        Eigen::Matrix3d cBetaTerm1a = Eigen::Matrix3d::Zero();
-        for (uint32_t j = 0; j < this->numDOF; j++) {
-            auto& dofJ = this->jointDOFList.at(j);
-            Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
-            Eigen::Vector3d omega_JJMinus1_B = Eigen::Vector3d::Zero();
-            if (j == 0) {
-                omega_JMinus1N_B = this->omega_BN_B;
-                omega_JJMinus1_B = dofJ->omega_GB_B;
-            } else {
-                auto& dofJMinus1 = this->jointDOFList.at(j - 1);
-                omega_JMinus1N_B = dofJMinus1->omega_GB_B + this->omega_BN_B;
-                omega_JJMinus1_B = dofJ->omega_GB_B - dofJMinus1->omega_GB_B;
-            }
-            cBetaTerm1a += eigenTilde(eigenTilde(omega_JMinus1N_B) * omega_JJMinus1_B);
-        }
-        Eigen::Vector3d omega_GnN_B = this->jointDOFList.back()->omega_GB_B + this->omega_BN_B;
-        Eigen::Matrix3d omegaTilde_GnN_B = eigenTilde(omega_GnN_B);
-        Eigen::Vector3d cBetaTerm1 = -this->mass * (cBetaTerm1a + omegaTilde_GnN_B * omegaTilde_GnN_B) * r_GcG_B;
-
-        Eigen::Vector3d cBetaTerm2 = Eigen::Vector3d::Zero();
-        for (uint32_t j = 0; j < this->numDOF; j++) {
-            Eigen::Vector3d cBetaTerm2a = Eigen::Vector3d::Zero();
-            for (uint32_t k = 0; k < j; k++) {
-                auto& dofK = this->jointDOFList.at(k);
-                Eigen::Vector3d omega_KMinus1N_B = Eigen::Vector3d::Zero();
-                Eigen::Vector3d omega_KKMinus1_B = Eigen::Vector3d::Zero();
-                if (k == 0) {
-                    omega_KMinus1N_B = this->omega_BN_B;
-                    omega_KKMinus1_B = dofK->omega_GB_B;
-                } else {
-                    auto& dofKMinus1 = this->jointDOFList.at(k - 1);
-                    omega_KMinus1N_B = dofKMinus1->omega_GB_B + this->omega_BN_B;
-                    omega_KKMinus1_B = dofK->omega_GB_B - dofKMinus1->omega_GB_B;
-                }
-                cBetaTerm2a += eigenTilde(omega_KMinus1N_B) * omega_KKMinus1_B;
-            }
-            auto& dofJ = this->jointDOFList.at(j);
-            Eigen::Vector3d r_JJMinus1_B = Eigen::Vector3d::Zero();
-            Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
-            if (j == 0) {
-                r_JJMinus1_B = dofJ->r_GB_B;
-                omega_JMinus1N_B = this->omega_BN_B;
-            } else {
-                auto& dofJMinus1 = this->jointDOFList.at(j - 1);
-                r_JJMinus1_B = dofJ->r_GB_B - dofJMinus1->r_GB_B;
-                omega_JMinus1N_B = dofJMinus1->omega_GB_B + this->omega_BN_B;
-            }
-
-            Eigen::Matrix3d omegaTilde_JMinus1N_B = eigenTilde(omega_JMinus1N_B);
-            Eigen::Vector3d rJMinus1Prime_JJMinus1_B = Eigen::Vector3d::Zero();
-            if (dofJ->type == DOF::Type::TRANSLATION) {
-                rJMinus1Prime_JJMinus1_B = dofJ->betaDot * dofJ->dcm_GB.transpose() * dofJ->axis_G;
-            }
-            cBetaTerm2 += eigenTilde(r_JJMinus1_B) * cBetaTerm2a -
-                          2 * omegaTilde_JMinus1N_B * rJMinus1Prime_JJMinus1_B -
-                          omegaTilde_JMinus1N_B * omegaTilde_JMinus1N_B * r_JJMinus1_B;
-        }
-
-        cBetaTerm2 = this->mass * cBetaTerm2;
-
         if (dofI->type == DOF::Type::TRANSLATION) {
-            ABetaStar.row(i) = -dofAxis_B.transpose() * this->mass * Eigen::Matrix3d::Identity();
-            BBetaStar.row(i) = dofAxis_B.transpose() * this->mass * (rTilde_GcG_B + eigenTilde(this->r_GB_B));
+            ABetaStar.row(i) = -this->mass * dofAxis_B.transpose();
+            BBetaStar.row(i) = this->mass * dofAxis_B.cross(r_GcG_B + this->r_GB_B).transpose();
 
-            CBetaStar(i, 0) = dofI->f + dofAxis_B.transpose() * (gravityForce_B + cBetaTerm1 + cBetaTerm2);
+            CBetaStar(i, 0) = dofI->f + dofAxis_B.dot(gravityForce_B + cBetaTerm1 + cBetaTerm2);
         } else {
             Eigen::Vector3d r_GcGi_B = r_GcG_B + this->r_GB_B - dofI->r_GB_B;
-            Eigen::Matrix3d rTilde_GcGi_B = eigenTilde(r_GcGi_B);
-            ABetaStar.row(i) = -dofAxis_B.transpose() * this->mass * rTilde_GcGi_B;
-            BBetaStar.row(i) = -dofAxis_B.transpose() *
-                               (IPntGc_B - this->mass * rTilde_GcGi_B * (rTilde_GcG_B + eigenTilde(this->r_GB_B)));
+            Eigen::Vector3d axisCrossOffset_B = dofAxis_B.cross(r_GcGi_B);
+            ABetaStar.row(i) = -this->mass * axisCrossOffset_B.transpose();
+            BBetaStar.row(i) = -dofAxis_B.transpose() * IPntGc_B +
+                               this->mass * axisCrossOffset_B.cross(r_GcG_B + this->r_GB_B).transpose();
 
-            Eigen::Vector3d cBetaTerm3a = Eigen::Vector3d::Zero();
-            for (uint32_t j = 0; j < this->numDOF; j++) {
-                auto& dofJ = this->jointDOFList.at(j);
-                Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
-                Eigen::Vector3d omega_JJMinus1_B = Eigen::Vector3d::Zero();
-                if (j == 0) {
-                    omega_JMinus1N_B = this->omega_BN_B;
-                    omega_JJMinus1_B = dofJ->omega_GB_B;
-                } else {
-                    auto& dofJMinus1 = this->jointDOFList.at(j - 1);
-                    omega_JMinus1N_B = dofJMinus1->omega_GB_B + this->omega_BN_B;
-                    omega_JJMinus1_B = dofJ->omega_GB_B - dofJMinus1->omega_GB_B;
-                }
-                cBetaTerm3a += eigenTilde(omega_JMinus1N_B) * omega_JJMinus1_B;
-            }
+            Eigen::Vector3d gravityTorquePntG_B = r_GcGi_B.cross(gravityForce_B);
 
-            Eigen::Vector3d cBetaTerm3 = -IPntGc_B * cBetaTerm3a - omegaTilde_GnN_B * IPntGc_B * omega_GnN_B;
-
-            Eigen::Vector3d gravityTorquePntG_B = rTilde_GcGi_B * gravityForce_B;
-
-            CBetaStar(i, 0) = dofI->u + dofAxis_B.transpose() * (gravityTorquePntG_B + cBetaTerm3 +
-                                                                 rTilde_GcGi_B * (cBetaTerm1 + cBetaTerm2));
+            CBetaStar(i, 0) =
+                dofI->u + dofAxis_B.dot(gravityTorquePntG_B + cBetaTerm3 + r_GcGi_B.cross(cBetaTerm1 + cBetaTerm2));
         }
         CBetaStar(i, 0) += -dofI->k * (dofI->beta - dofI->betaRef) - dofI->c * (dofI->betaDot - dofI->betaDotRef);
     }
 
     // Define BSM ABeta, BBeta, and CBeta matrices
-    this->ABeta = MBeta.inverse() * ABetaStar;
-    this->BBeta = MBeta.inverse() * BBetaStar;
-    this->CBeta = MBeta.inverse() * CBetaStar;
+    const DOFMatrix MBetaInv = MBeta.inverse();
+    this->ABeta.noalias() = MBetaInv * ABetaStar;
+    this->BBeta.noalias() = MBetaInv * BBetaStar;
+    this->CBeta.noalias() = MBetaInv * CBetaStar;
 
-    // Define BSM [A] [B] [C] [D] contributions
-    backSubContr.matrixA =
-        this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->ABeta;
-    backSubContr.matrixB =
-        this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->BBeta;
-    backSubContr.matrixC = (IPntGc_B * rotMap * this->TMat +
-                            this->mass * eigenTilde(r_GcG_B + this->r_GB_B) *
-                                ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) *
-                           this->ABeta;
-    backSubContr.matrixD = (IPntGc_B * rotMap * this->TMat +
-                            this->mass * eigenTilde(r_GcG_B + this->r_GB_B) *
-                                ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) *
-                           this->BBeta;
+    // Reuse the translation and rotation mappings for all backsubstitution contributions.
+    const Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
+    const Eigen::Matrix<double, 3, Eigen::Dynamic, 0, 3, 6> translationMap =
+        this->TMat.topRows<3>() - rTilde_GcG_B * this->TMat.bottomRows<3>() + this->UMat.topRows<3>();
+    const Eigen::Matrix<double, 3, Eigen::Dynamic, 0, 3, 6> rotationMap =
+        IPntGc_B * this->TMat.bottomRows<3>() + this->mass * eigenTilde(r_GcB_B) * translationMap;
+    backSubContr.matrixA.noalias() = this->mass * translationMap * this->ABeta;
+    backSubContr.matrixB.noalias() = this->mass * translationMap * this->BBeta;
+    backSubContr.matrixC.noalias() = rotationMap * this->ABeta;
+    backSubContr.matrixD.noalias() = rotationMap * this->BBeta;
 
-    // Define BSM vecTrans and vecRot contributions
-    backSubContr.vecTrans =
-        -this->mass * (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot -
-        this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) *
-            r_GcG_B -
-        this->mass * transMap * this->vVec -
-        this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->CBeta;
-
-    backSubContr.vecRot = -IPntGc_B * rotMap * this->TPrimeMat * this->betaDot -
-                          this->mass * eigenTilde(r_GcG_B + this->r_GB_B) *
-                              ((2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot +
-                               eigenTilde(rotMap * this->TMat * this->betaDot) *
-                                   eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B +
-                               transMap * this->vVec) -
-                          eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap *
-                              this->TMat * this->betaDot -
-                          this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + this->r_GB_B) *
-                              ((transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot +
-                               transMap * this->TPrimeMat * this->beta) -
-                          (IPntGc_B * rotMap * this->TMat +
-                           this->mass * eigenTilde(r_GcG_B + this->r_GB_B) *
-                               ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) *
-                              this->CBeta;
+    // Define BSM vecTrans and vecRot contributions.
+    const Eigen::Vector3d omega_GB_B = this->TMat.bottomRows<3>() * this->betaDot;
+    const Eigen::Vector3d angularRateDerivative_B = this->TPrimeMat.bottomRows<3>() * this->betaDot;
+    const Eigen::Vector3d kinematicAcceleration_B = 2 * this->TPrimeMat.topRows<3>() * this->betaDot -
+                                                    r_GcG_B.cross(angularRateDerivative_B) +
+                                                    omega_GB_B.cross(omega_GB_B.cross(r_GcG_B)) + this->vVec.head<3>();
+    const Eigen::Vector3d rPrime_GcB_B =
+        this->TMat.topRows<3>() * this->betaDot - r_GcG_B.cross(omega_GB_B) + this->TPrimeMat.topRows<3>() * this->beta;
+    backSubContr.vecTrans = -this->mass * (kinematicAcceleration_B + translationMap * this->CBeta);
+    backSubContr.vecRot = -IPntGc_B * angularRateDerivative_B - this->mass * r_GcB_B.cross(kinematicAcceleration_B) -
+                          (omega_GB_B + this->omega_BN_B).cross(IPntGc_B * omega_GB_B) -
+                          this->mass * this->omega_BN_B.cross(r_GcB_B.cross(rPrime_GcB_B)) - rotationMap * this->CBeta;
 }
 
 void GeneralSingleBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]],
@@ -603,14 +553,14 @@ void GeneralSingleBodyStateEffector::computeDerivatives(double integTime [[maybe
     this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
 
     // Set betaState derivative
-    this->betaState->setDerivative(this->betaDotState->getState());
+    this->betaState->derivativeView() = std::as_const(*this->betaDotState).stateView();
 
     // Set betaDotState derivative
-    Eigen::VectorXd betaDDot;
-    betaDDot.resize(this->numDOF);
+    auto betaDDot = this->betaDotState->derivativeView();
     Eigen::Vector3d rDDot_BN_B = this->dcm_BN * rDDot_BN_N;
-    betaDDot = this->ABeta * rDDot_BN_B + this->BBeta * omegaDot_BN_B + this->CBeta;
-    this->betaDotState->setDerivative(betaDDot);
+    betaDDot.noalias() = this->ABeta * rDDot_BN_B;
+    betaDDot.noalias() += this->BBeta * omegaDot_BN_B;
+    betaDDot += this->CBeta;
 }
 
 void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
@@ -622,19 +572,16 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
     this->omega_BN_B = omega_BN_B;
 
     // Rotational angular momentum contribution
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
-    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d omega_GB_B = this->TMat.bottomRows<3>() * this->betaDot;
     Eigen::Vector3d rPrime_GcB_B =
-        (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
-    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
-    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
-    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+        this->TMat.topRows<3>() * this->betaDot - r_GcG_B.cross(omega_GB_B) + this->TPrimeMat.topRows<3>() * this->beta;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + this->omega_BN_B.cross(r_GcB_B);
     Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
-    rotAngMomPntCContr_B = IPntGc_B * omega_GN_B + this->mass * rTilde_GcB_B * rDot_GcB_B;
+    rotAngMomPntCContr_B = IPntGc_B * omega_GN_B + this->mass * r_GcB_B.cross(rDot_GcB_B);
 
     // Rotational energy contribution
     rotEnergyContr = 0.5 * omega_GN_B.dot(IPntGc_B * omega_GN_B) + 0.5 * this->mass * rDot_GcB_B.dot(rDot_GcB_B);
