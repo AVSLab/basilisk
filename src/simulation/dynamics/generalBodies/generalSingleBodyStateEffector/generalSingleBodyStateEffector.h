@@ -30,9 +30,14 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 /*! Struct for each general body degree of freedom. */
 struct DOF
@@ -79,7 +84,7 @@ struct DOF
     double k{};                              //!< [N * m / rad] DOF spring constant
     double c{};                              //!< [N * m * s / rad] DOF damping constant
 
-    uint64_t index{};    //!< [-] DOF index
+    uint32_t index{};    //!< [-] DOF index
     double beta{};       //!< [-] DOF state
     double betaDot{};    //!< [-] DOF rate
     double betaRef{};    //!< [-] DOF reference state
@@ -188,9 +193,9 @@ class GeneralSingleBodyStateEffector
     }; //!< [-] Initial effector body frame G attitude relative to the hub frame B
     std::vector<std::shared_ptr<DOF>> jointDOFList; //!< [-] Effector sequential DOF list
 
-    uint64_t numDOF{};                   //!< [-] Total number of effector degrees of freedom
-    uint64_t numRotDOF{};                //!< [-] Total number of effector rotational degrees of freedom
-    uint64_t numTransDOF{};              //!< [-] Total number of effector translational degrees of freedom
+    uint32_t numDOF{};                   //!< [-] Total number of effector degrees of freedom
+    uint32_t numRotDOF{};                //!< [-] Total number of effector rotational degrees of freedom
+    uint32_t numTransDOF{};              //!< [-] Total number of effector translational degrees of freedom
     std::vector<double> betaInitList;    //!< [-] Initial state vector
     std::vector<double> betaDotInitList; //!< [-] Initial state vector rate
 

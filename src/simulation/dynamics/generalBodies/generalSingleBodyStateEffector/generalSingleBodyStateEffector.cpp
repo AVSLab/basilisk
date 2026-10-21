@@ -22,6 +22,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <Eigen/Dense>
+#include <algorithm>
 #include <string>
 
 /** Mappings for general joint kinematics */
@@ -45,7 +46,7 @@ GeneralSingleBodyStateEffector::~GeneralSingleBodyStateEffector()
 
 uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
 
-void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos)
+void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     if (!eigenIsValidInertiaMatrix(this->IPntGc_G)) {
         bskLogger.bskError("GeneralSingleBodyStateEffector: effector inertia tensor is invalid.");
@@ -180,7 +181,7 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSi
     }
 }
 
-void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
+void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // Set effProps.mEff
     this->effProps.mEff = this->mass;
@@ -202,7 +203,6 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     // Compute general body transformation matrix TMat and its first time derivative TMatPrime
     for (auto& dof : this->jointDOFList) {
         Eigen::Vector3d jointDOFAxis_B = dof->dcm_GB.transpose() * dof->axis_G;
-        Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(dof->omega_GB_B);
 
         Eigen::Vector3d omega_GPrevB_B = Eigen::Vector3d::Zero();
         if (dof->index != 0) {
@@ -224,12 +224,12 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     }
 
     // Compute UMat matrix
-    for (uint64_t colIdx{}; colIdx < this->numDOF; colIdx++) {
+    for (uint32_t colIdx{}; colIdx < this->numDOF; colIdx++) {
         this->UMat.col(colIdx).head<3>().setZero();
         this->UMat.col(colIdx).tail<3>().setZero();
 
         Eigen::VectorXd sumToN = Eigen::VectorXd::Zero(6);
-        for (uint64_t idx = colIdx + 1; idx < this->numDOF; idx++) {
+        for (uint32_t idx = colIdx + 1; idx < this->numDOF; idx++) {
             sumToN += this->TMat.col(idx) * this->jointDOFList.at(idx)->beta;
         }
 
@@ -246,13 +246,13 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     this->vVec.setZero();
     Eigen::VectorXd hVecTerm1{ Eigen::VectorXd::Zero(6) };
     Eigen::VectorXd hVecTerm2{ Eigen::VectorXd::Zero(6) };
-    for (uint64_t idx1{}; idx1 < this->numDOF; idx1++) {
+    for (uint32_t idx1{}; idx1 < this->numDOF; idx1++) {
         Eigen::VectorXd sumTerm1{ Eigen::VectorXd::Zero(6) };
         Eigen::VectorXd sumTerm2{ Eigen::VectorXd::Zero(6) };
 
-        for (uint64_t idx2{}; idx2 < idx1; idx2++) {
+        for (uint32_t idx2{}; idx2 < idx1; idx2++) {
             Eigen::VectorXd sumTerm1A{ Eigen::VectorXd::Zero(6) };
-            for (uint64_t idx3{}; idx3 < idx2; idx3++) {
+            for (uint32_t idx3{}; idx3 < idx2; idx3++) {
                 sumTerm1A += this->TMat.col(idx3) * this->jointDOFList.at(idx3)->betaDot;
             }
 
@@ -359,7 +359,7 @@ void GeneralSingleBodyStateEffector::computeAngularVelocityProperties()
     }
 }
 
-void GeneralSingleBodyStateEffector::updateContributions(double integTime,
+void GeneralSingleBodyStateEffector::updateContributions(double integTime [[maybe_unused]],
                                                          BackSubMatrices& backSubContr,
                                                          Eigen::MRPd sigma_BN,
                                                          Eigen::Vector3d omega_BN_B,
@@ -389,11 +389,11 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     CBetaStar.resize(this->numDOF);
 
     // Construct MBeta matrix
-    for (int i = 0; i < this->numDOF; i++) {
+    for (uint32_t i = 0; i < this->numDOF; i++) {
         auto& dofI = this->jointDOFList.at(i);
         Eigen::Vector3d dofIAxis_B = dofI->dcm_GB.transpose() * dofI->axis_G;
         if (dofI->type == DOF::Type::TRANSLATION) {
-            for (int j = 0; j < this->numDOF; j++) {
+            for (uint32_t j = 0; j < this->numDOF; j++) {
                 auto& dofJ = this->jointDOFList.at(j);
                 Eigen::Vector3d dofJAxis_B = dofJ->dcm_GB.transpose() * dofJ->axis_G;
                 if (dofJ->type == DOF::Type::TRANSLATION) {
@@ -401,7 +401,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                 } else {
                     MBeta(i, j) = -this->mass * dofIAxis_B.transpose() * rTilde_GcG_B * dofJAxis_B;
                 }
-                for (int k = 0; k < j; k++) {
+                for (uint32_t k = 0; k < j; k++) {
                     auto& dofK = this->jointDOFList.at(k);
                     if (dofK->type == DOF::Type::ROTATION) {
                         Eigen::Vector3d dofKAxis_B = dofK->dcm_GB.transpose() * dofK->axis_G;
@@ -419,7 +419,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
         } else {
             Eigen::Vector3d r_GcGi_B = r_GcG_B + this->r_GB_B - dofI->r_GB_B;
             Eigen::Matrix3d rTilde_GcGi_B = eigenTilde(r_GcGi_B);
-            for (int j = 0; j < this->numDOF; j++) {
+            for (uint32_t j = 0; j < this->numDOF; j++) {
                 auto& dofJ = this->jointDOFList.at(j);
                 Eigen::Vector3d dofJAxis_B = dofJ->dcm_GB.transpose() * dofJ->axis_G;
 
@@ -429,7 +429,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                     MBeta(i, j) =
                         dofIAxis_B.transpose() * (IPntGc_B - this->mass * rTilde_GcGi_B * rTilde_GcG_B) * dofJAxis_B;
                 }
-                for (int k = 0; k < j; k++) {
+                for (uint32_t k = 0; k < j; k++) {
                     auto& dofK = this->jointDOFList.at(k);
                     if (dofK->type == DOF::Type::ROTATION) {
                         Eigen::Vector3d dofKAxis_B = dofK->dcm_GB.transpose() * dofK->axis_G;
@@ -448,12 +448,12 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
         }
     }
 
-    for (int i = 0; i < this->numDOF; i++) {
+    for (uint32_t i = 0; i < this->numDOF; i++) {
         auto& dofI = this->jointDOFList.at(i);
         Eigen::Vector3d dofAxis_B = dofI->dcm_GB.transpose() * dofI->axis_G;
 
         Eigen::Matrix3d cBetaTerm1a = Eigen::Matrix3d::Zero();
-        for (int j = 0; j < this->numDOF; j++) {
+        for (uint32_t j = 0; j < this->numDOF; j++) {
             auto& dofJ = this->jointDOFList.at(j);
             Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
             Eigen::Vector3d omega_JJMinus1_B = Eigen::Vector3d::Zero();
@@ -472,9 +472,9 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
         Eigen::Vector3d cBetaTerm1 = -this->mass * (cBetaTerm1a + omegaTilde_GnN_B * omegaTilde_GnN_B) * r_GcG_B;
 
         Eigen::Vector3d cBetaTerm2 = Eigen::Vector3d::Zero();
-        for (int j = 0; j < this->numDOF; j++) {
+        for (uint32_t j = 0; j < this->numDOF; j++) {
             Eigen::Vector3d cBetaTerm2a = Eigen::Vector3d::Zero();
-            for (int k = 0; k < j; k++) {
+            for (uint32_t k = 0; k < j; k++) {
                 auto& dofK = this->jointDOFList.at(k);
                 Eigen::Vector3d omega_KMinus1N_B = Eigen::Vector3d::Zero();
                 Eigen::Vector3d omega_KKMinus1_B = Eigen::Vector3d::Zero();
@@ -525,7 +525,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                                (IPntGc_B - this->mass * rTilde_GcGi_B * (rTilde_GcG_B + eigenTilde(this->r_GB_B)));
 
             Eigen::Vector3d cBetaTerm3a = Eigen::Vector3d::Zero();
-            for (int j = 0; j < this->numDOF; j++) {
+            for (uint32_t j = 0; j < this->numDOF; j++) {
                 auto& dofJ = this->jointDOFList.at(j);
                 Eigen::Vector3d omega_JMinus1N_B = Eigen::Vector3d::Zero();
                 Eigen::Vector3d omega_JJMinus1_B = Eigen::Vector3d::Zero();
@@ -594,7 +594,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                               this->CBeta;
 }
 
-void GeneralSingleBodyStateEffector::computeDerivatives(double integTime,
+void GeneralSingleBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]],
                                                         Eigen::Vector3d rDDot_BN_N,
                                                         Eigen::Vector3d omegaDot_BN_B,
                                                         Eigen::MRPd sigma_BN)
@@ -613,7 +613,7 @@ void GeneralSingleBodyStateEffector::computeDerivatives(double integTime,
     this->betaDotState->setDerivative(betaDDot);
 }
 
-void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTime,
+void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                                                   Eigen::Vector3d& rotAngMomPntCContr_B,
                                                                   double& rotEnergyContr,
                                                                   Eigen::Vector3d omega_BN_B)
