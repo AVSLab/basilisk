@@ -94,11 +94,11 @@ class LinearSpringMassDamper final
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
-    void addPrescribedMotionCouplingContributions(BackSubMatrices&
-        backSubContr) override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
+        override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
     // Properties required for prescribed motion branching/attachment
-    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
+    StateData* hubOmega; //!< [rad/s] hub inertial angular velocity vector
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
