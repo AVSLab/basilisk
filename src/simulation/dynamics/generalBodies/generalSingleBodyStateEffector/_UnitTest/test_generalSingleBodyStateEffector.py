@@ -72,11 +72,16 @@ def test_general_single_body_state_effector(show_plots,
     general body. Rotation and translation combinations cover one through three degrees of freedom, with mixed cases
     exercising four, five, and six degrees of freedom. Conservation of energy and angular momentum verifies the dynamics.
 
+    **Test Parameter Discussion**
+
+    The six DOF flags select rotation and translation along each of the three sequential joint axes.
+    ``show_plots`` controls whether the generated figures are displayed.
+
     **Description of Variables Being Tested**
 
-    The tests with conservative forces (only Earth's gravity) check that both the orbital and rotational quantities of
-    energy and angular momentum are maintained within a strict tolerance. For the tests with nonconservative forces,
-    the spacecraft rotational energy is not checked.
+    All cases use conservative gravity and spring forces, with no motor commands or damping.
+    Initial and final orbital and rotational energy and angular momentum are compared within a strict tolerance.
+    Input-command and damping responses are tested separately in ``test_generalSingleBodyValidation.py``.
     """
     task_name = "unitTask"
     process_name = "TestProcess"
@@ -93,7 +98,7 @@ def test_general_single_body_state_effector(show_plots,
     # Add Earth gravity to the simulation
     earth = gravityEffector.GravBodyData()
     earth.planetName = "earth_planet_data"
-    earth.mu = 0.3986004415E+15
+    earth.mu = 0.3986004415E+15  # [m^3/s^2]
     earth.isCentralBody = True
     sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth])
 
@@ -222,11 +227,11 @@ def create_rotational_dof(rot_hat_G):
 
 def create_translational_dof(trans_hat_G):
     rho_init = 0.1  # [m]
-    spring_constant_k = 100.0  # [N m/rad]
+    spring_constant_k = 100.0  # [N/m]
     one_dof_translation = generalSingleBodyStateEffector.DOF()
     one_dof_translation.setDOFAxis(trans_hat_G)
     one_dof_translation.setBetaInit(rho_init)  # [m]
-    one_dof_translation.setSpringConstantK(spring_constant_k)  # [N m/rad]
+    one_dof_translation.setSpringConstantK(spring_constant_k)  # [N/m]
 
     return one_dof_translation
 
@@ -280,7 +285,7 @@ def plot_conservation(timespan, orb_ang_momentum_N, orb_energy, rot_ang_momentum
     plt.plot(timespan, (orb_ang_momentum_N[:, 1] - orb_ang_momentum_N[0, 1]) / orb_ang_momentum_N[0, 1], color="darkviolet", label=r'$\hat{n}_2$')
     plt.plot(timespan, (orb_ang_momentum_N[:, 2] - orb_ang_momentum_N[0, 2]) / orb_ang_momentum_N[0, 2], color="blue", label=r'$\hat{n}_3$')
     plt.title('Orbital Angular Momentum')
-    plt.ylabel('Relative Difference (Nms)')
+    plt.ylabel('Relative Difference (-)')
     plt.xlabel('Time (s)')
     plt.legend(loc='center right')
     plt.grid(True)
@@ -290,7 +295,7 @@ def plot_conservation(timespan, orb_ang_momentum_N, orb_energy, rot_ang_momentum
     plt.clf()
     plt.plot(timespan, (orb_energy - orb_energy[0]) / orb_energy[0], color="teal")
     plt.title('Orbital Energy')
-    plt.ylabel('Relative Difference (J)')
+    plt.ylabel('Relative Difference (-)')
     plt.xlabel('Time (s)')
     plt.grid(True)
 
@@ -301,7 +306,7 @@ def plot_conservation(timespan, orb_ang_momentum_N, orb_energy, rot_ang_momentum
     plt.plot(timespan, (rot_ang_momentum_N[:, 1] - rot_ang_momentum_N[0, 1]) / rot_ang_momentum_N[0, 1], color="darkviolet", label=r'$\hat{n}_2$')
     plt.plot(timespan, (rot_ang_momentum_N[:, 2] - rot_ang_momentum_N[0, 2]) / rot_ang_momentum_N[0, 2], color="blue", label=r'$\hat{n}_3$')
     plt.title('Rotational Angular Momentum')
-    plt.ylabel('Relative Difference (Nms)')
+    plt.ylabel('Relative Difference (-)')
     plt.xlabel('Time (s)')
     plt.legend(loc='center right')
     plt.grid(True)
@@ -311,7 +316,7 @@ def plot_conservation(timespan, orb_ang_momentum_N, orb_energy, rot_ang_momentum
     plt.clf()
     plt.plot(timespan, (rot_energy - rot_energy[0]) / rot_energy[0], color="teal")
     plt.title('Rotational Energy')
-    plt.ylabel('Relative Difference (J)')
+    plt.ylabel('Relative Difference (-)')
     plt.xlabel('Time (s)')
     plt.grid(True)
 

@@ -41,7 +41,10 @@
 
 class GeneralSingleBodyStateEffector;
 
-/*! Struct for each general body degree of freedom. */
+/**
+ * @brief Configuration and runtime state for one sequential joint degree of freedom.
+ * @note Configuration bounds are checked by the owning effector during state registration and Reset().
+ */
 struct DOF
 {
   public:
@@ -57,28 +60,61 @@ struct DOF
         TRANSLATION
     };
 
-    /** Setter for `axis_G` property */
+    /**
+     * @brief Set the joint motion axis.
+     * @param axis_G Finite unit vector expressed in this joint's frame G [-].
+     */
     void setDOFAxis(Eigen::Vector3d axis_G) { this->axis_G = axis_G; };
-    /** Setter for `betaInit` property */
+    /**
+     * @brief Set the initial joint position used during state registration.
+     * @param betaInit Finite rotation angle [rad] or translation displacement [m].
+     */
     void setBetaInit(double betaInit) { this->betaInit = betaInit; };
-    /** Setter for `betaDotInit` property */
+    /**
+     * @brief Set the initial joint rate used during state registration.
+     * @param betaDotInit Finite angular rate [rad/s] or translation rate [m/s].
+     */
     void setBetaDotInit(double betaDotInit) { this->betaDotInit = betaDotInit; };
-    /** Setter for `k` property */
+    /**
+     * @brief Set the joint spring constant.
+     * @param k Finite nonnegative stiffness [N*m/rad] for rotation or [N/m] for translation.
+     */
     void setSpringConstantK(double k) { this->k = k; };
-    /** Setter for `c` property */
+    /**
+     * @brief Set the joint damping constant.
+     * @param c Finite nonnegative damping [N*m*s/rad] for rotation or [N*s/m] for translation.
+     */
     void setDampingConstantC(double c) { this->c = c; };
 
-    /** Getter for `type` property */
+    /**
+     * @brief Get the current joint motion type.
+     * @return Type assigned when the DOF is added to an effector; rotation for a new DOF.
+     */
     Type getDOFType() const { return this->type; };
-    /** Getter for `axis_G` property */
+    /**
+     * @brief Get the configured joint motion axis.
+     * @return Axis expressed in this joint's frame G [-].
+     */
     Eigen::Vector3d getDOFAxis() const { return this->axis_G; };
-    /** Getter for `betaInit` property */
+    /**
+     * @brief Get the configured initial joint position.
+     * @return Rotation angle [rad] or translation displacement [m].
+     */
     double getBetaInit() const { return this->betaInit; };
-    /** Getter for `betaDotInit` property */
+    /**
+     * @brief Get the configured initial joint rate.
+     * @return Angular rate [rad/s] or translation rate [m/s].
+     */
     double getBetaDotInit() const { return this->betaDotInit; };
-    /** Getter for `k` property */
+    /**
+     * @brief Get the joint spring constant.
+     * @return Stiffness [N*m/rad] for rotation or [N/m] for translation.
+     */
     double getSpringConstantK() const { return this->k; };
-    /** Getter for `c` property */
+    /**
+     * @brief Get the joint damping constant.
+     * @return Damping [N*m*s/rad] for rotation or [N*s/m] for translation.
+     */
     double getDampingConstantC() const { return this->c; };
 
   private:
@@ -88,16 +124,16 @@ struct DOF
 
     Type type{ Type::ROTATION };             //!< [-] DOF type
     Eigen::Vector3d axis_G{ 1.0, 0.0, 0.0 }; //!< [-] DOF axis
-    double betaInit{};                       //!< [-] Initial DOF state
-    double betaDotInit{};                    //!< [-] Initial DOF ratc
-    double k{};                              //!< [N * m / rad] DOF spring constant
-    double c{};                              //!< [N * m * s / rad] DOF damping constant
+    double betaInit{};                       //!< [rad] or [m] Initial DOF state
+    double betaDotInit{};                    //!< [rad/s] or [m/s] Initial DOF rate
+    double k{};                              //!< [N*m/rad] or [N/m] DOF spring constant
+    double c{};                              //!< [N*m*s/rad] or [N*s/m] DOF damping constant
 
     uint32_t index{};    //!< [-] DOF index
-    double beta{};       //!< [-] DOF state
-    double betaDot{};    //!< [-] DOF rate
-    double betaRef{};    //!< [-] DOF reference state
-    double betaDotRef{}; //!< [-] DOF reference rate
+    double beta{};       //!< [rad] or [m] DOF state
+    double betaDot{};    //!< [rad/s] or [m/s] DOF rate
+    double betaRef{};    //!< [rad] or [m] DOF reference state
+    double betaDotRef{}; //!< [rad/s] or [m/s] DOF reference rate
     Eigen::Vector3d r_GB_B{
         Eigen::Vector3d::Zero()
     }; //!< [m] Position vector of joint frame G relative to the hub frame B
@@ -111,7 +147,10 @@ struct DOF
     double f{}; //!< [N] Joint DOF force
 };
 
-/*! @brief General rigid body state effector class */
+/**
+ * @brief Rigid body state effector with up to three rotational and three translational DOFs.
+ * @note Setters store configuration; validation occurs during state registration and Reset().
+ */
 class GeneralSingleBodyStateEffector
     : public StateEffector
     , public SysModel
@@ -120,72 +159,160 @@ class GeneralSingleBodyStateEffector
     GeneralSingleBodyStateEffector();  //!< Class constructor
     ~GeneralSingleBodyStateEffector(); //!< Class destructor
 
-    /** Setter for `mass` property */
+    /**
+     * @brief Set the component mass.
+     * @param mass Finite, strictly positive mass [kg].
+     */
     void setMass(const double mass) { this->mass = mass; };
-    /** Setter for `IPntGc_G` property */
+    /**
+     * @brief Set the component inertia about its center of mass Gc.
+     * @param IPntGc_G Finite symmetric inertia tensor expressed in frame G [kg*m^2].
+     * @note Principal moments must be nonnegative, satisfy the triangle inequalities, and have at most one zero.
+     */
     void setIPntGc_G(const Eigen::Matrix3d IPntGc_G) { this->IPntGc_G = IPntGc_G; };
-    /** Setter for `r_GcG_G` property */
+    /**
+     * @brief Set the component center-of-mass offset.
+     * @param r_GcG_G Finite position of Gc relative to body origin G, expressed in frame G [m].
+     */
     void setR_GcG_G(const Eigen::Vector3d r_GcG_G) { this->r_GcG_G = r_GcG_G; };
-    /** Setter for `r_G0B_B` property */
+    /**
+     * @brief Set the joint mounting position on the hub.
+     * @param r_G0B_B Finite position of mounting origin G0 relative to hub origin B, expressed in frame B [m].
+     */
     void setR_G0B_B(Eigen::Vector3d r_G0B_B) { this->r_G0B_B = r_G0B_B; };
-    /** Setter for `dcm_G0B` property */
+    /**
+     * @brief Set the joint mounting orientation.
+     * @param dcm_G0B Proper rotation matrix mapping frame B components into the undeflected mounting frame G0 [-].
+     */
     void setDCM_G0B(Eigen::Matrix3d dcm_G0B) { this->dcm_G0B = dcm_G0B; };
 
-    /** Getter for `mass` property */
+    /**
+     * @brief Get the component mass.
+     * @return Configured mass [kg].
+     */
     double getMass() const { return this->mass; };
-    /** Getter for `IPntGc_G` property */
+    /**
+     * @brief Get the component inertia about its center of mass Gc.
+     * @return Inertia tensor expressed in frame G [kg*m^2].
+     */
     const Eigen::Matrix3d getIPntGc_G() const { return this->IPntGc_G; };
-    /** Getter for `r_GcG_G` property */
+    /**
+     * @brief Get the component center-of-mass offset.
+     * @return Position of Gc relative to body origin G, expressed in frame G [m].
+     */
     const Eigen::Vector3d getR_GcG_G() const { return this->r_GcG_G; };
-    /** Getter for `r_G0B_B` property */
+    /**
+     * @brief Get the joint mounting position on the hub.
+     * @return Position of mounting origin G0 relative to hub origin B, expressed in frame B [m].
+     */
     Eigen::Vector3d getR_G0B_B() const { return this->r_G0B_B; };
-    /** Getter for `dcm_G0B` property */
+    /**
+     * @brief Get the joint mounting orientation.
+     * @return Rotation matrix mapping frame B components into the undeflected mounting frame G0 [-].
+     */
     Eigen::Matrix3d getDCM_G0B() const { return this->dcm_G0B; };
 
     /**
      * @brief Add a sequential rotational degree of freedom before topology is frozen.
      * @param newDOF Non-null DOF that does not currently belong to an effector.
+     * @note At most three rotational DOFs are supported.
      */
     void addRotDOF(std::shared_ptr<DOF> newDOF);
     /**
      * @brief Add a sequential translational degree of freedom before topology is frozen.
      * @param newDOF Non-null DOF that does not currently belong to an effector.
+     * @note At most three translational DOFs are supported.
      */
     void addTransDOF(std::shared_ptr<DOF> newDOF);
-    /** Getter for a specific sequential degree of freedom */
+    /**
+     * @brief Get a DOF from the configured sequence.
+     * @param index Zero-based index in the combined rotational/translational addition order.
+     * @return Shared pointer to the DOF at the requested index.
+     */
     std::shared_ptr<DOF> getDOF(uint64_t index) { return this->jointDOFList.at(index); };
     /** @brief Release all DOFs and their message ports before topology is frozen. */
     void clearDOFs();
 
-    void Reset(uint64_t currentSimNanos) override;           //!< Reset method
-    void registerStates(DynParamManager& statesIn) override; //!< Method to register effector states
-    void linkInStates(DynParamManager& states) override;     //!< Method to link in other states
-    void UpdateState(uint64_t currentSimNanos) override;     //!< Update method
-    void computeGeneralBodyInertialStates();                 //!< Method to compute the effector inertial states
-    void writeOutputStateMessages(uint64_t currentSimNanos) override; //!< Method to write the output messages
-    void updateEffectorMassProps(double integTime) override;          //!< Method to update the effector mass properties
-    void updateContributions(
-        double integTime,
-        BackSubMatrices& backSubContr,
-        Eigen::MRPd sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N) override; //!< Method to update the effector backsubstitution contributions
+    /**
+     * @brief Validate configuration while preserving live joint states and cached commands/references.
+     * @param currentSimNanos Current simulation time [ns].
+     */
+    void Reset(uint64_t currentSimNanos) override;
+    /**
+     * @brief Validate configuration and register joint states with their configured initial values.
+     * @param statesIn Parent spacecraft state manager.
+     * @note Spacecraft reset calls this method to restore initial joint states without clearing cached commands.
+     */
+    void registerStates(DynParamManager& statesIn) override;
+    /**
+     * @brief Link the hub attitude/rate states and inertial position/velocity properties.
+     * @param states Parent spacecraft state manager containing the configured state and property names.
+     */
+    void linkInStates(DynParamManager& states) override;
+    /**
+     * @brief Read linked, written inputs and publish current output states.
+     * @param currentSimNanos Current simulation time and output message timestamp [ns].
+     * @note Requires task scheduling to consume inputs; unlinked or unwritten inputs preserve cached values.
+     */
+    void UpdateState(uint64_t currentSimNanos) override;
+    /**
+     * @brief Compute inertial configuration from the accepted hub state and current joint kinematics.
+     * @note Requires linked hub states and refreshed joint kinematics from updateEffectorMassProps().
+     */
+    void computeGeneralBodyInertialStates();
+    /**
+     * @brief Publish joint states and refresh subscribed inertial configuration output.
+     * @param currentSimNanos Output message timestamp [ns].
+     */
+    void writeOutputStateMessages(uint64_t currentSimNanos) override;
+    /**
+     * @brief Refresh joint kinematics and effector mass properties from registered states.
+     * @param integTime Current integration time [s].
+     */
+    void updateEffectorMassProps(double integTime) override;
+    /**
+     * @brief Compute the effector contributions to the hub backsubstitution equations.
+     * @param integTime Current integration time [s].
+     * @param[out] backSubContr Effector backsubstitution matrices and forcing vectors.
+     * @param sigma_BN Hub frame B attitude relative to inertial frame N as MRPs [-].
+     * @param omega_BN_B Hub angular velocity relative to frame N, expressed in frame B [rad/s].
+     * @param g_N Gravitational acceleration expressed in frame N [m/s^2].
+     */
+    void updateContributions(double integTime,
+                             BackSubMatrices& backSubContr,
+                             Eigen::MRPd sigma_BN,
+                             Eigen::Vector3d omega_BN_B,
+                             Eigen::Vector3d g_N) override;
+    /**
+     * @brief Compute joint state derivatives using the current backsubstitution coefficients.
+     * @param integTime Current integration time [s].
+     * @param rDDot_BN_N Hub origin B inertial acceleration expressed in frame N [m/s^2].
+     * @param omegaDot_BN_B Hub inertial angular acceleration expressed in frame B [rad/s^2].
+     * @param sigma_BN Hub frame B attitude relative to inertial frame N as MRPs [-].
+     */
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::MRPd sigma_BN) override; //!< Method to compute the effector state derivatives
-    void updateEnergyMomContributions(
-        double integTime,
-        Eigen::Vector3d& rotAngMomPntCContr_B,
-        double& rotEnergyContr,
-        Eigen::Vector3d omega_BN_B) override; //!< Method to update the effector energy and momentum contributions
+                            Eigen::MRPd sigma_BN) override;
+    /**
+     * @brief Compute the effector energy and angular momentum contributions.
+     * @param integTime Current integration time [s].
+     * @param[out] rotAngMomPntCContr_B Angular momentum contribution about hub point B, in frame B [kg*m^2/s].
+     * @param[out] rotEnergyContr Kinetic energy relative to hub point B plus spring potential energy [J].
+     * @param omega_BN_B Hub angular velocity relative to frame N, expressed in frame B [rad/s].
+     * @note The spacecraft shifts the summed contributions to its system center of mass.
+     */
+    void updateEnergyMomContributions(double integTime,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
+                                      Eigen::Vector3d omega_BN_B) override;
 
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
-        spinningBodyRefInMsg; //!< Input message for rotational degree of freedom reference angles
+        spinningBodyRefInMsg; //!< Input messages for rotational DOF reference angles [rad] and rates [rad/s]
     std::vector<ReadFunctor<ArrayMotorTorqueMsgPayload>>
         motorTorqueInMsg; //!< Input message for rotational degree of freedom motor torque
     std::vector<ReadFunctor<LinearTranslationRigidBodyMsgPayload>>
-        translatingBodyRefInMsgs; //!< Input message for translational degree of freedom reference displacements
+        translatingBodyRefInMsgs; //!< Input messages for translational DOF reference displacements [m] and rates [m/s]
     std::vector<ReadFunctor<ArrayMotorForceMsgPayload>>
         motorForceInMsg; //!< Input message for translational degree of freedom motor force
     std::vector<Message<HingedRigidBodyMsgPayload>*>
@@ -217,23 +344,23 @@ class GeneralSingleBodyStateEffector
     uint32_t numDOF{};                   //!< [-] Total number of effector degrees of freedom
     uint32_t numRotDOF{};                //!< [-] Total number of effector rotational degrees of freedom
     uint32_t numTransDOF{};              //!< [-] Total number of effector translational degrees of freedom
-    std::vector<double> betaInitList;    //!< [-] Initial state vector
-    std::vector<double> betaDotInitList; //!< [-] Initial state vector rate
+    std::vector<double> betaInitList;    //!< [rad] or [m] per entry, initial state vector
+    std::vector<double> betaDotInitList; //!< [rad/s] or [m/s] per entry, initial state vector rate
 
-    DOFVector beta;                    //!< [-] Effector state vector
-    DOFVector betaDot;                 //!< [-] Effector state vector rate
-    StateData* betaState = nullptr;    //!< [-] State data container for the effector state vector
-    StateData* betaDotState = nullptr; //!< [-] State data container for the effector state vector rate
+    DOFVector beta;                    //!< [rad] or [m] per entry, effector state vector
+    DOFVector betaDot;                 //!< [rad/s] or [m/s] per entry, effector state vector rate
+    StateData* betaState = nullptr;    //!< [rad] or [m] per entry, state data container for joint positions
+    StateData* betaDotState = nullptr; //!< [rad/s] or [m/s] per entry, state data container for joint rates
 
     const StateData* hubSigmaState = nullptr; //!< Hub attitude state, read live when publishing inertial outputs
     const StateData* hubOmegaState = nullptr; //!< Hub angular-rate state, read live when publishing inertial outputs
     Eigen::MatrixXd* inertialPositionProperty = nullptr; //!< [m] Identifier for the hub inertial position
     Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] Identifier for the hub inertial velocity
 
-    DOFMapping TMat;                                                         //!< [-] Effector mapping vectrix
-    DOFMapping TPrimeMat;                                                    //!< [-] Effector mapping vectrix rate
-    DOFMapping UMat;                                                         //!< [-] Kinematics storage data matrix
-    Eigen::Matrix<double, 6, 1> vVec{ Eigen::Matrix<double, 6, 1>::Zero() }; //!< [-] Kinematics storage data vector
+    DOFMapping TMat;      //!< [-] Effector mapping vectrix
+    DOFMapping TPrimeMat; //!< [1/s] Effector mapping vectrix rate
+    DOFMapping UMat;      //!< Kinematics storage matrix; upper three rows [m], lower three rows [rad]
+    Eigen::Matrix<double, 6, 1> vVec{ Eigen::Matrix<double, 6, 1>::Zero() }; //!< Upper entries [m/s^2], lower [rad/s^2]
     Eigen::Vector3d r_GB_B{
         Eigen::Vector3d::Zero()
     }; //!< [m] Position vector of the effector body frame origin point G relative to the hub frame origin point B
@@ -242,7 +369,7 @@ class GeneralSingleBodyStateEffector
     }; //!< [m] Position vector of the effector center of mass point Gc relative to the inertial frame origin point N
     Eigen::Vector3d v_GcN_N{
         Eigen::Vector3d::Zero()
-    }; //!< [m] Velocity vector of the effector center of mass point Gc relative to the inertial frame origin point N
+    }; //!< [m/s] Velocity vector of the effector center of mass point Gc relative to the inertial frame origin point N
     Eigen::MRPd sigma_GN{
         Eigen::MRPd::Identity()
     }; //!< [-] MRP attitude of the effector body frame G relative to the inertial frame N
@@ -250,9 +377,9 @@ class GeneralSingleBodyStateEffector
         Eigen::Vector3d::Zero()
     }; //!< [rad/s] Angular velocity vector of the effector body frame G relative to the inertial frame N
 
-    DOFMatrix3 ABeta; //!< [-] Backsubstitution contribution [A]
-    DOFMatrix3 BBeta; //!< [-] Backsubstitution contribution [B]
-    DOFVector CBeta;  //!< [-] Backsubstitution contribution [C]
+    DOFMatrix3 ABeta; //!< Backsubstitution A; rotational rows [rad/m], translational rows [-]
+    DOFMatrix3 BBeta; //!< Backsubstitution B; rotational rows [-], translational rows [m/rad]
+    DOFVector CBeta;  //!< Backsubstitution C; rotational entries [rad/s^2], translational entries [m/s^2]
 
     Eigen::Matrix3d dcm_BN{
         Eigen::Matrix3d::Identity()

@@ -3,7 +3,7 @@ Executive Summary
 -----------------
 The general single body state effector class is an instantiation of the state effector abstract class. This effector
 simulates a single general rigid component with up to 6 sequential degrees of freedom (3 translation, 3 rotation).
-Each component degree of freedom must configured individually and added to the effector in the order of intended
+Each component degree of freedom must be configured individually and added to the effector in the order of intended
 sequential motion, starting at the hub base and extending outward.
 
 There are two options for configuring a degree-of-freedom. A rotational degree of freedom can be configured and added
@@ -69,15 +69,15 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. bsk-module-io:: prescribedMotionStateEffector
+.. bsk-module-io:: generalSingleBodyStateEffector
     :caption: Module I/O Messages
 
     input spinningBodyRefInMsg HingedRigidBodyMsgPayload
-        Input message vector for the rotational degree of freedom reference angles
+        Input message vector for the rotational degree of freedom reference angles and angular rates
     input motorTorqueInMsg ArrayMotorTorqueMsgPayload
         Input message vector for the rotational degree of freedom motor torques
     input translatingBodyRefInMsgs LinearTranslationRigidBodyMsgPayload
-        Input message vector for the translational degree of freedom reference displacements
+        Input message vector for the translational degree of freedom reference displacements and rates
     input motorForceInMsg ArrayMotorForceMsgPayload
         Input message vector for the translational degree of freedom motor forces
     output spinningBodyOutMsgs HingedRigidBodyMsgPayload
@@ -121,32 +121,33 @@ retention across repeated effector and spacecraft resets in both orders with the
 
 User Guide
 ----------
-This section outlines how to set up the general effector in python using Basilisk.
+This section outlines how to set up the general effector in Python using Basilisk.
 
-#. Import the generalSingleBodyStateEffector class::
+#. Import the module and NumPy::
 
+    import numpy as np
     from Basilisk.simulation import generalSingleBodyStateEffector
 
 #. Create the general state effector::
 
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
-    general_body.setMass(20.0)
+    general_body.setMass(20.0)  # [kg]
     general_body.setIPntGc_G([[50.0, 0.0, 0.0],
                               [0.0, 80.0, 0.0],
-                              [0.0, 0.0, 60.0]])
-    general_body.setR_GcG_G(np.array([0.1, -0.1, 0.1]))
-    general_body.setR_G0B_B(np.array([-0.1, 0.1, 0.1]))
+                              [0.0, 0.0, 60.0]])  # [kg*m^2]
+    general_body.setR_GcG_G(np.array([0.1, -0.1, 0.1]))  # [m]
+    general_body.setR_G0B_B(np.array([-0.1, 0.1, 0.1]))  # [m]
     general_body.setDCM_G0B(np.array([[0.0, -1.0, 0.0],
                                       [0.0, 0.0, -1.0],
-                                      [1.0, 0.0, 0.0]]))
+                                      [1.0, 0.0, 0.0]]))  # [-]
 
 #. Create the general effector degree of freedom. For a translational degree of freedom::
 
     one_dof_translation = generalSingleBodyStateEffector.DOF()
-    one_dof_translation.setDOFAxis(np.array([0.0, 0.0, 1.0]))
-    one_dof_translation.setBetaInit(0.1)
-    one_dof_translation.setBetaDotInit(0.0)
+    one_dof_translation.setDOFAxis(np.array([0.0, 0.0, 1.0]))  # [-]
+    one_dof_translation.setBetaInit(0.1)  # [m]
+    one_dof_translation.setBetaDotInit(0.0)  # [m/s]
 
 #. Add the translational degree of freedom to the general effector::
 
@@ -156,8 +157,8 @@ This section outlines how to set up the general effector in python using Basilis
 
     sc_object.addStateEffector(general_body)
 
-#. Make sure to connect the required messages for this module.
+#. Connect any desired motor or reference inputs; all inputs are optional.
 
-#. Add the module to the task list::
+#. To consume inputs, schedule the effector before the spacecraft. For a spacecraft at the default priority of -1::
 
-    test_sim.AddModelToTask(task_name, general_body)
+    test_sim.AddModelToTask(task_name, general_body, 1)
