@@ -525,3 +525,130 @@ def test_inertial_outputs_use_current_parent_state(priority, mixed, phase):
     np.testing.assert_allclose(output.r_BN_N, expected_position, rtol=0, atol=1e-12)  # [m]
     np.testing.assert_allclose(output.v_BN_N, expected_velocity, rtol=0, atol=1e-12)  # [m/s]
     np.testing.assert_allclose(output.omega_BN_B, expected_rate, rtol=0, atol=1e-12)  # [rad/s]
+
+
+def make_command_message(effector, rotational, command, value):
+    """Return the input port, an unwritten message, and a payload for the selected command.
+
+    The value uses torque/force, angle/displacement, or angular/linear rate units according
+    to the selected DOF and command. Reference payloads leave the other component at zero.
+    """
+    if command == "motor":
+        message = messaging.ArrayMotorTorqueMsg() if rotational else messaging.ArrayMotorForceMsg()
+        payload = messaging.ArrayMotorTorqueMsgPayload() if rotational else messaging.ArrayMotorForceMsgPayload()
+        field = "motorTorque" if rotational else "motorForce"
+        setattr(payload, field, [value] + [0.0]*(len(getattr(payload, field)) - 1))
+        port = (effector.motorTorqueInMsg if rotational else effector.motorForceInMsg)[0]
+    else:
+        message = messaging.HingedRigidBodyMsg() if rotational else messaging.LinearTranslationRigidBodyMsg()
+        payload = messaging.HingedRigidBodyMsgPayload() if rotational else messaging.LinearTranslationRigidBodyMsgPayload()
+        field = "theta" if rotational else "rho"
+        if command == "rate_reference":
+            field += "Dot"
+        setattr(payload, field, value)
+        port = (effector.spinningBodyRefInMsg if rotational else effector.translatingBodyRefInMsgs)[0]
+    return port, message, payload
+
+
+def damped_joint_state(initial, duration, inverse_inertia, stiffness, damping, drive):
+    """Return the analytical state of the underdamped scalar joint used by the input tests.
+
+    The equation is ``qDDot = inverse_inertia * (drive - stiffness*q - damping*qDot)``.
+    Duration is in seconds; the other arguments use consistent rotational or translational
+    units. The inverse inertia is the sum of the hub and effector inverse inertias or masses.
+    """
+    equilibrium = drive / stiffness
+    decay = inverse_inertia*damping/2
+    frequency = np.sqrt(inverse_inertia*stiffness - decay**2)
+    cosine = np.cos(frequency*duration)
+    sine = np.sin(frequency*duration)
+    amplitude = initial[0] - equilibrium
+    quadrature = (initial[1] + decay*amplitude) / frequency
+    position = equilibrium + np.exp(-decay*duration)*(amplitude*cosine + quadrature*sine)
+    rate = np.exp(-decay*duration)*((frequency*quadrature - decay*amplitude)*cosine
+                                  - (frequency*amplitude + decay*quadrature)*sine)
+    return np.array([position, rate])
+
+
+@pytest.mark.parametrize("rotational", [False, True])
+@pytest.mark.parametrize("command", ["motor", "position_reference", "rate_reference"])
+@pytest.mark.parametrize("scheduled", [False, True], ids=["attached", "scheduled"])
+def test_input_write_and_relink_lifecycle(rotational, command, scheduled):
+    """Unwritten inputs preserve defaults or cached commands, and written zeros replace them."""
+    effector, dof = make_effector(rotational)
+    stiffness = 4.0  # [N*m/rad] or [N/m]
+    damping = 0.5  # [N*m*s/rad] or [N*s/m]
+    dof.setSpringConstantK(stiffness)
+    dof.setDampingConstantC(damping)
+    value = 0.4  # [N*m], [N], [rad], [m], [rad/s], or [m/s], according to the selected input
+    port, message, payload = make_command_message(effector, rotational, command, value)
+    replacement = type(message)()
+    reader = (effector.spinningBodyOutMsgs if rotational else effector.translatingBodyOutMsgs)[0].addSubscriber()
+    sim, parent = make_simulation(effector, priority=1 if scheduled else None, time_step=0.001)  # [s]
+    sim.InitializeSimulation()
+    body_inertia = np.asarray(effector.getIPntGc_G())[0, 0] if rotational else effector.getMass()
+    hub_inertia = np.asarray(parent.hub.IHubPntBc_B)[0, 0] if rotational else parent.hub.mHub
+    inverse_inertia = 1/body_inertia + 1/hub_inertia
+    driven_force = value * {"motor": 1, "position_reference": stiffness, "rate_reference": damping}[command]
+    expected = np.array([dof.getBetaInit(), dof.getBetaDotInit()])
+    duration = 0.02  # [s]
+    for step, phase in enumerate(("unlinked", "unwritten", "written", "relinked_unwritten", "written_zero"), 1):
+        if phase == "unwritten":
+            port.subscribeTo(message)
+            assert not port.isWritten()
+        elif phase == "written":
+            message.write(payload)
+            assert port.isWritten()
+        elif phase == "relinked_unwritten":
+            port.subscribeTo(replacement)
+            assert not port.isWritten()
+        elif phase == "written_zero":
+            replacement.write(type(payload)())
+            assert port.isWritten()
+        drive = driven_force if scheduled and phase in ("written", "relinked_unwritten") else 0.0  # [N*m] or [N]
+        expected = damped_joint_state(expected, duration, inverse_inertia, stiffness, damping, drive)
+        sim.ConfigureStopTime(macros.sec2nano(step*duration))
+        sim.ExecuteSimulation()
+        state = reader()
+        actual = [state.theta, state.thetaDot] if rotational else [state.rho, state.rhoDot]
+        np.testing.assert_allclose(actual, expected, rtol=0, atol=2e-12, err_msg=phase)  # [rad, rad/s] or [m, m/s]
+
+
+@pytest.mark.parametrize("rotational", [False, True])
+@pytest.mark.parametrize("command", ["motor", "position_reference", "rate_reference"])
+@pytest.mark.parametrize("reset_order", [("effector",), ("spacecraft",),
+                                         ("effector", "spacecraft"), ("spacecraft", "effector")])
+def test_reset_retains_cached_commands(rotational, command, reset_order):
+    """Disconnected commands survive repeated resets without being reread from their producer."""
+    effector, dof = make_effector(rotational)
+    stiffness = 4.0  # [N*m/rad] or [N/m]
+    damping = 0.5  # [N*m*s/rad] or [N*s/m]
+    dof.setSpringConstantK(stiffness)
+    dof.setDampingConstantC(damping)
+    value = 0.4  # [N*m], [N], [rad], [m], [rad/s], or [m/s], according to the selected input
+    port, message, payload = make_command_message(effector, rotational, command, value)
+    port.subscribeTo(message.write(payload))
+    reader = (effector.spinningBodyOutMsgs if rotational else effector.translatingBodyOutMsgs)[0].addSubscriber()
+    sim, parent = make_simulation(effector, priority=1, time_step=0.001)  # [s]
+    sim.InitializeSimulation()
+    body_inertia = np.asarray(effector.getIPntGc_G())[0, 0] if rotational else effector.getMass()
+    hub_inertia = np.asarray(parent.hub.IHubPntBc_B)[0, 0] if rotational else parent.hub.mHub
+    inverse_inertia = 1/body_inertia + 1/hub_inertia
+    drive = value * {"motor": 1, "position_reference": stiffness, "rate_reference": damping}[command]
+    initial = np.array([dof.getBetaInit(), dof.getBetaDotInit()])
+    expected = initial.copy()
+    duration = 0.02  # [s]
+    for step in range(1, 4):
+        if step > 1:
+            port.unsubscribe()
+            assert not port.isLinked()
+            for target in reset_order:
+                (effector if target == "effector" else parent).Reset(macros.sec2nano((step - 1)*duration))
+            if "spacecraft" in reset_order:
+                expected = initial.copy()
+        expected = damped_joint_state(expected, duration, inverse_inertia, stiffness, damping, drive)
+        sim.ConfigureStopTime(macros.sec2nano(step*duration))
+        sim.ExecuteSimulation()
+        state = reader()
+        actual = [state.theta, state.thetaDot] if rotational else [state.rho, state.rhoDot]
+        np.testing.assert_allclose(actual, expected, rtol=0, atol=2e-12)  # [rad, rad/s] or [m, m/s]

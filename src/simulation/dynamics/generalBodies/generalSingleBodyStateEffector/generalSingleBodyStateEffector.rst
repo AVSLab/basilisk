@@ -48,6 +48,21 @@ integration, and spacecraft reset, including for effectors that are not separate
 Inertial outputs use the accepted hub attitude and angular rate, including any final hub attitude-reference
 override, together with the current joint kinematics and hub inertial position and velocity.
 
+All motor and reference inputs are optional. Cached motor force/torque, position references, and
+rate references start at zero. A scheduled update reads an input only when it is linked and has
+been written; disconnecting it or relinking it to an unwritten producer preserves the cached values.
+Writing a zero payload explicitly replaces that input's cached values with zero. Zero references
+still produce restoring and damping loads when the spring and damping coefficients are nonzero.
+
+Both effector and spacecraft resets retain cached commands and references. Effector reset preserves
+the live joint states, while spacecraft reset restores their configured initial values as described
+above. To replace retained commands, write the desired input payloads and let the effector process them.
+
+Add the effector to a simulation task to consume commands; attachment alone does not read inputs.
+Schedule command producers before the effector and the effector before the spacecraft on the same
+task when commands should affect that spacecraft update. Inputs are first read in ``UpdateState()``,
+not during initialization or reset.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the
@@ -99,6 +114,10 @@ reuse of previously commanded DOFs without carrying commands into the new effect
 Inertial output tests compare all four configuration-message fields with rigid-body kinematics at
 initialization, after integration, after spacecraft reset, and with a hub attitude reference, for
 attached-only effectors and both scheduled execution orders.
+Input tests compare motion against an analytical spring-damper response for motor commands,
+position references, and rate references. They cover optional-input defaults, first writes,
+relinking to unwritten producers, explicit zero commands, attached-only operation, and cached-command
+retention across repeated effector and spacecraft resets in both orders with the producer disconnected.
 
 User Guide
 ----------

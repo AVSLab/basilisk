@@ -42,6 +42,7 @@ uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
 
 void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
+    // Retain cached motor commands and references; only configuration is validated on reset.
     this->validateConfiguration();
 }
 
@@ -171,23 +172,24 @@ void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos)
     uint64_t transIdx{};
     for (auto& dof : this->jointDOFList) {
         if (dof->type == DOF::Type::ROTATION) {
-            if (this->spinningBodyRefInMsg[rotIdx].isLinked()) {
+            if (this->spinningBodyRefInMsg[rotIdx].isLinked() && this->spinningBodyRefInMsg[rotIdx].isWritten()) {
                 HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyRefInMsg[rotIdx]();
                 dof->betaRef = spinningBodyBuffer.theta;
                 dof->betaDotRef = spinningBodyBuffer.thetaDot;
             }
-            if (this->motorTorqueInMsg[rotIdx].isLinked()) {
+            if (this->motorTorqueInMsg[rotIdx].isLinked() && this->motorTorqueInMsg[rotIdx].isWritten()) {
                 ArrayMotorTorqueMsgPayload motorTorqueBuffer = this->motorTorqueInMsg[rotIdx]();
                 dof->u = motorTorqueBuffer.motorTorque[0];
             }
             rotIdx++;
         } else {
-            if (this->translatingBodyRefInMsgs[transIdx].isLinked()) {
+            if (this->translatingBodyRefInMsgs[transIdx].isLinked() &&
+                this->translatingBodyRefInMsgs[transIdx].isWritten()) {
                 LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyRefInMsgs[transIdx]();
                 dof->betaRef = translatingBodyBuffer.rho;
                 dof->betaDotRef = translatingBodyBuffer.rhoDot;
             }
-            if (this->motorForceInMsg[transIdx].isLinked()) {
+            if (this->motorForceInMsg[transIdx].isLinked() && this->motorForceInMsg[transIdx].isWritten()) {
                 ArrayMotorForceMsgPayload motorForceBuffer = this->motorForceInMsg[transIdx]();
                 dof->f = motorForceBuffer.motorForce[0];
             }
