@@ -1,0 +1,1 @@
+- Updated the optional MuJoCo dependency from 3.11.0 to 3.16.0.
