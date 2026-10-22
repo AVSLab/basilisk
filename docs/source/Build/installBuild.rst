@@ -105,7 +105,7 @@ The script accepts the following options to customize this process.
         control the build type through their interface.
     * - ``strictWarnings``
       - Boolean
-      - False
+      - True
       - Enables additional compiler diagnostics for Basilisk C and C++ sources.  See
         :ref:`strictCompilerWarnings`.
     * - ``generator``
@@ -194,11 +194,11 @@ data, such as ``bskLargeData`` or ``bskExamples``, still require either network 
 
 Strict Compiler Warnings
 ------------------------
-Developers can enable additional compiler diagnostics with::
+Additional compiler diagnostics are enabled by default for Basilisk C and C++ sources. To build without the strict
+compiler warnings use the extra option::
 
-    python3 conanfile.py --buildProject True --strictWarnings True
+    python3 conanfile.py --buildProject True --strictWarnings False
 
-The option is disabled by default and does not change the warning policy of a normal Basilisk build.  When enabled,
 Clang and GCC builds check additional cases involving numeric conversions, signedness, selected shadowed local
 declarations, format strings, implicit fallthrough, unused parameters, double promotion, and other potentially unsafe
 constructs.  Intentionally unused interface parameters are marked explicitly, and intentional numeric conversions
@@ -208,12 +208,16 @@ warning level ``/W4`` and enable its size-conversion diagnostic.  Warnings remai
 
 For example, a clean MuJoCo-enabled build with the additional diagnostics is created with::
 
-    python3 conanfile.py --clean --mujoco True --strictWarnings True
+    python3 conanfile.py --clean --mujoco True
 
 The warning policy is defined in CMake so it is consistent across supported CMake generators, including Unix
 Makefiles, Ninja, and Xcode.  SWIG and Protocol Buffer generated source, Conan-provided dependencies, imported model
-implementations, and other third-party targets are not part of the Basilisk warning baseline.  Developers invoking
-CMake directly can enable the same policy with ``-DBSK_STRICT_WARNINGS=ON``.
+implementations, and other third-party targets are not part of the Basilisk warning baseline.
+
+To disable the additional diagnostics, use ``--strictWarnings False``, or ``-o "&:strictWarnings=False"`` when invoking
+Conan directly. Direct CMake builds also default to this policy and can disable it with ``-DBSK_STRICT_WARNINGS=OFF``.
+For an existing direct CMake build whose cache still contains ``OFF``, pass ``-DBSK_STRICT_WARNINGS=ON`` once to enable
+the diagnostics.
 
 .. warning::
 
