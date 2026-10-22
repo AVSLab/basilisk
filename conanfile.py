@@ -547,7 +547,6 @@ class BasiliskConan(ConanFile):
 
     # Requirements
     requires = [
-        "eigen/3.4.0",
         "cspice/0067",
         "cfitsio/4.6.3",
     ]
@@ -588,6 +587,8 @@ class BasiliskConan(ConanFile):
             self.tool_requires(ZLIB_REQUIREMENT, override=True)
 
     def requirements(self):
+        # OpenCV's Conan recipe still requests Eigen 3.4.0; use one version throughout the host graph.
+        self.requires("eigen/5.0.1", force=True)
         self.requires(ZLIB_REQUIREMENT, override=True)
         if self.options.get_safe("opNav"):
             self.requires("opencv/4.14.0")

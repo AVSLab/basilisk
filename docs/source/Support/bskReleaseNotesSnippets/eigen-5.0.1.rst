@@ -1,0 +1,1 @@
+- Upgraded Eigen from 3.4.0 to 5.0.1, including the dependency used by OpenCV 4.14.0, and updated compiled build metadata for Eigen's release-version format. Rebuild compiled external modules and their SDK against the matching Eigen version.

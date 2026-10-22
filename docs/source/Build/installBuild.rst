@@ -251,7 +251,7 @@ For a Rust-enabled build, this produces output similar to::
       C++ ABI:        libc++ (210106, ABI 1), Itanium ABI
       C++ runtime:    system, exceptions, RTTI
       Python API:     0x03090000
-      Eigen:          3.4.0, 16-byte max alignment, NEON
+      Eigen:          5.0.1, 16-byte max alignment, NEON
       SWIG runtime:   5
       Conan profile:  Release, C++17, libc++
 
