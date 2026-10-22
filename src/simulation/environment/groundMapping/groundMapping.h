@@ -92,15 +92,12 @@ class GroundMapping : public SysModel
         v_PN_N; //!< [m/s] Planet velocity vector relative to inertial frame origin, in inertial frame N components.
     Eigen::Vector3d r_PN_N; //!< [m] Planet position vector relative to inertial frame origin.
     Eigen::Vector3d
-        r_LP_P; //!< [m] Ground Location position vector relative to to planet origin vector in planet frame coordinates.
-    Eigen::Vector3d
         r_LP_N; //!< [m] Gound Location position vector relative to planet origin vector in inertial coordinates.
     Eigen::Vector3d rhat_LP_N; //!< [-] Surface normal vector from the target location in inertial coordinates.
     Eigen::Vector3d
         r_LN_N; //!< [m] Ground Location position vector relative to inertial frame origin in inertial coordinates.
-    Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
-    Eigen::Vector3d r_BP_N;    //!< [m] Inertial position of the body frame wrt the planet
-    Eigen::Matrix3d dcm_NB;    //!< DCM from the body frame to the inertial frame
+    Eigen::Vector3d r_BP_N; //!< [m] Inertial position of the body frame wrt the planet
+    Eigen::Matrix3d dcm_NB; //!< DCM from the body frame to the inertial frame
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<GroundStateMsgPayload>>>

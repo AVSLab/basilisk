@@ -106,7 +106,6 @@ class HingedRigidBodyStateEffector final
     Eigen::Matrix3d rTilde_SP_P;           //!< Tilde matrix of rSB_B
     Eigen::Matrix3d rPrimeTilde_SP_P;      //!< Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_P;         //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Matrix3d omegaTildeLoc_PN_P;    //!< tilde matrix of omegaBN
     Eigen::MRPd sigma_BN{ 0.0, 0.0, 0.0 }; //!< Hub/Inertial attitude represented by MRP
 
     // Hinged rigid body properties

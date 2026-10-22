@@ -562,8 +562,6 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_u
                                                       Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN; /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB; /* direction cosine matrix from B to N */
     Eigen::Vector3d omegaLoc_BN_B = hubOmega->stateView();
 
     //! - Compute energy and momentum contribution of each wheel

@@ -203,8 +203,7 @@ class SimpleAntenna : public SysModel
         r_AP_N; //!< [m]     Position of the antenna wrt to the celestial body frame {P} (used for ground antennas only)
     Eigen::Vector3d
         r_BN_N; //!< [m]     Position of the SC in the inertial frame {N} AND Spacecraft B position relative to sun S
-    Eigen::Vector3d nHat_A; //!< [-]     Antenna boresight vector in antenna frame
-    bool useHaslamMap;      //!< [bool]  Flag to use Haslam sky map data structure (slower but more accurate)
+    bool useHaslamMap; //!< [bool]  Flag to use Haslam sky map data structure (slower but more accurate)
     SpicePlanetStateMsgPayload sunData; //!< [-]     Sun data structure
     double illuminationFactor; //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
 };

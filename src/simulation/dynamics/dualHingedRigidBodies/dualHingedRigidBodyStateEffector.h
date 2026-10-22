@@ -118,7 +118,6 @@ class DualHingedRigidBodyStateEffector final
     Eigen::Vector3d r_H2P_P;     //!< [m] vector pointing from primary body frame P origin to Hinge 2 location
     double u1;                   //!< [N-m] motor torques on panel 1
     double u2;                   //!< [N-m] motor torques on panel 2
-    Eigen::Matrix3d rTildeH1B_B; //!< [-] Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_S1P;     //!< [-] DCM from primary body to S1 frame
     Eigen::Matrix3d dcm_S2P;     //!< [-] DCM from primary body to S2 frame
     Eigen::Vector3d omega_PN_S1; //!< [rad/s] omega_PN in S1 frame components
@@ -135,18 +134,17 @@ class DualHingedRigidBodyStateEffector final
     Eigen::Matrix3d rTildeS2P_P; //!< [-] Tilde matrix of rSP_P
     Eigen::Vector3d rPrimeS1P_P; //!< [m/s] Body time derivative of rSP_P
     Eigen::Vector3d rPrimeS2P_P; //!< [m/s] Body time derivative of rSBP_P
-    Eigen::Matrix3d rPrimeTildeS1P_P;  //!< [-] Tilde matrix of rPrime_SP_P
-    Eigen::Matrix3d rPrimeTildeS2P_P;  //!< [-] Tilde matrix of rPrime_SP_P
-    Eigen::Matrix3d IS1PrimePntS1_P;   //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
-    Eigen::Matrix3d IS2PrimePntS2_P;   //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
-    Eigen::Vector3d omega_PNLoc_P;     //!< [rad/s] local copy of omegaPN
-    Eigen::Matrix3d omegaTildePNLoc_P; //!< [-] tilde matrix of omegaPN
-    double theta1;                     //!< [rad] hinged rigid body angle
-    double theta1Dot;                  //!< [rad/s] hinged rigid body angle rate
-    double theta2;                     //!< [rad] hinged rigid body angle
-    double theta2Dot;                  //!< [rad/s] hinged rigid body angle rate
-    Eigen::Matrix2d matrixADHRB;       //!< [-] term needed for Backsubstitution
-    Eigen::Matrix2d matrixEDHRB;       //!< [-] term needed for Backsubstitution
+    Eigen::Matrix3d rPrimeTildeS1P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d rPrimeTildeS2P_P; //!< [-] Tilde matrix of rPrime_SP_P
+    Eigen::Matrix3d IS1PrimePntS1_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Matrix3d IS2PrimePntS2_P;  //!< [kg-m^2/s] time body derivative IPntS in primary body frame components
+    Eigen::Vector3d omega_PNLoc_P;    //!< [rad/s] local copy of omegaPN
+    double theta1;                    //!< [rad] hinged rigid body angle
+    double theta1Dot;                 //!< [rad/s] hinged rigid body angle rate
+    double theta2;                    //!< [rad] hinged rigid body angle
+    double theta2Dot;                 //!< [rad/s] hinged rigid body angle rate
+    Eigen::Matrix2d matrixADHRB;      //!< [-] term needed for Backsubstitution
+    Eigen::Matrix2d matrixEDHRB;      //!< [-] term needed for Backsubstitution
     Eigen::MatrixXd matrixFDHRB;
     Eigen::MatrixXd matrixGDHRB;
     Eigen::Vector2d vectorVDHRB;

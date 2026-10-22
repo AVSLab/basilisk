@@ -144,9 +144,7 @@ class PrescribedMotionStateEffector final
     Eigen::Vector3d omegaPrime_PB_B; //!< [rad/s^2] B frame time derivative of omega_PB_B in B frame components
 
     // Other vector quantities
-    Eigen::Vector3d r_PcM_B;      //!< [m] Position of frame P center of mass relative to point M in B frame components
     Eigen::Vector3d r_PcB_B;      //!< [m] Position of frame P center of mass relative to point B in B frame components
-    Eigen::Vector3d rPrime_PcM_B; //!< [m/s] B frame time derivative of r_PcM_B in B frame components
     Eigen::Vector3d rPrime_PcB_B; //!< [m/s] B frame time derivative of r_PcB_B in B frame components
     Eigen::Vector3d rPrimePrime_PcB_B; //!< [m/s^2] B frame time derivative of rPrime_PcB_B in B frame components
     Eigen::Vector3d

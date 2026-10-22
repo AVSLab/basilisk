@@ -95,7 +95,6 @@ class PinholeCamera : public SysModel
     int n; //!< [-] number of landmarks
 
     /* Positions */
-    Eigen::Vector3d r_PN_N; //!< [m] current planet position in inertial frame
     Eigen::Vector3d r_BP_P; //!< [m] current spacecraft position w.r.t. planet in planet frame
 
     /* Direction cosine matrices */
