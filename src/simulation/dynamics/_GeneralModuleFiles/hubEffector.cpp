@@ -199,8 +199,6 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]],
     Eigen::Vector3d rDotLocal_BN_N;
     Eigen::MRPd sigmaLocal_BN = sigma_BN;
     Eigen::Vector3d omegaLocal_BN_B;
-    Eigen::Vector3d cLocal_B;
-    Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
     rDotLocal_BN_N = velocityState->stateView();
     omegaLocal_BN_B = omegaState->stateView();

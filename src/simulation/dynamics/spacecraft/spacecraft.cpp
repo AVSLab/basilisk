@@ -599,7 +599,6 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->stateView(); // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;                             // - V_CN_N before integration
-    Eigen::Vector3d oldC_B;                                // - Center of mass offset before integration
     Eigen::MRPd oldSigma_BN;                               // - Sigma_BN before integration
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
     this->oldOmega_BN_B = this->hubOmega_BN_B->stateView();

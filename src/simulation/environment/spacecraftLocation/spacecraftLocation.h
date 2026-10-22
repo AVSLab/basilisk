@@ -87,7 +87,6 @@ class SpacecraftLocation : public SysModel
 
     Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.
-    Eigen::Vector3d r_BP_P; //!< primary spacecraft relative to planet
     Eigen::Vector3d r_BN_N; //!< primary spacecraft relative to inertial
     double zScale;          //!< ration of rEquator over rPolar, used for affine scaling to turn ellipsoid to sphere
     Eigen::Vector3d r_HN_N; //!< [m] sun position in inertial frame

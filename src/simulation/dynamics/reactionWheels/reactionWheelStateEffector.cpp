@@ -507,8 +507,6 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
 {
     this->validateRegisteredLayout();
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN; /*! direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB; /*! direction cosine matrix from B to N */
     Eigen::Vector3d omegaLoc_BN_B = omega_BN_B;
 
     //! - Compute energy and momentum contribution of each wheel

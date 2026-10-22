@@ -341,7 +341,6 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_u
     // - Grab necessary values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
-    Eigen::Vector3d omegaDotLoc_PN_P;
     this->sigma_BN = sigma_BN; // store current hub attitude
     sigmaLocal_PN = this->sigma_BN;
 

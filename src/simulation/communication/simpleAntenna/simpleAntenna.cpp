@@ -260,18 +260,9 @@ double SimpleAntenna::calculateTsky()
     double T_earth = 0.0;        //!< [K] Brightness temperature of earth initialized to zero
     double T_moon = 0.0;         //!< [K] Brightness temperature of moon initialized to zero
     double T_galaxy = 0.0;       //!< [K] Brightness temperature of galaxy initialized to zero
-    Eigen::Matrix3d dcm_BN;      //!< [-] DCM from inertial {N} to body {B}
     Eigen::Vector3d r_SN_N;      //!< [m] Sun position relative to inertial
-    Eigen::Vector3d r_SB_N;      //!< [m] Sun position relative to S/C in {N} frame
-    Eigen::Vector3d sHat_N;      //!< [-] Unit sun heading vector in {N} frame
-    Eigen::Vector3d sHat_A;      //!< [-] Unit sun heading vector in {A} frame
     Eigen::Vector3d r_PN_N;      //!< [m] Planet position relative to inertial in frame N
-    Eigen::Vector3d r_PB_N;      //!< [m] Planet position relative to S/C in frame N
-    Eigen::Vector3d pHat_N;      //!< [-] Unit planet heading vector in inertial frame N
-    Eigen::Vector3d pHat_A;      //!< [-] Unit planet heading vector in antenna frame A
     Eigen::MRPd sigma_BN;        //!< [-] MRP attitude of body relative to inertial
-    Eigen::Vector3d sHat_B;      //!< [-] Unit Sun heading vector relative to the spacecraft in B frame.
-    Eigen::Matrix3d dcm_BA;      //!< [-] DCM from antenna A to body B
     double galaxyCoverage = 1.0; //!< [-] Ratio of galaxy coverage in the antenna field of view
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
     if (this->environment == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
@@ -358,8 +349,6 @@ double SimpleAntenna::calculatePlanetCoverage(double planetRadius,
                                               double elevation)
 {
     Eigen::Vector3d r_PB_N; //!< [m] Planet position relative to spacecraft body B
-    Eigen::Matrix3d dcm_BN; //!< [] DCM from inertial frame N to body frame B
-    Eigen::Matrix3d dcm_BA; //!< [] DCM from antenna frame A to body frame B
     Eigen::Vector3d pHat_N; //!< [] unit planet heading vector in inertial frame N
     Eigen::Vector3d pHat_A; //!< [] unit planet heading vector in antenna frame A
     Eigen::MRPd sigma_BN;   //!< [] MRP attitude of body relative to inertial frame N

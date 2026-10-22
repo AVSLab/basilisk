@@ -86,9 +86,6 @@ class SmallBodyWaypointFeedback : public SysModel
     ClassicElements oe_ast;        //!< Orbital elements of the asteroid
     double F_dot;                  //!< Time rate of change of true anomaly
     double F_ddot;                 //!< Second time derivative of true anomaly
-    Eigen::Vector3d r_BN_N;
-    Eigen::Vector3d v_BN_N;
-    Eigen::Vector3d v_ON_N;
     Eigen::Vector3d r_ON_N;
     Eigen::Vector3d r_SN_N;
     Eigen::Matrix3d dcm_ON; //!< DCM from the inertial frame to the small-body's hill frame
