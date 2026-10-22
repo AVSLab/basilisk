@@ -17,6 +17,10 @@ Version |release|
   ``pixelLineBiasUKFMeasModel``. The MSVC exception settings now allow these errors
   to propagate through C calls to the Python exception handler.
 
+- macOS builds could retain the previous MuJoCo framework after a dependency upgrade, mixing new headers
+  with the old library and failing to load the resulting binaries. Framework discovery now refreshes
+  during configuration, so an existing build directory follows the selected MuJoCo package.
+
 - GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
   coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
   differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.

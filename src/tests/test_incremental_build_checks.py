@@ -163,3 +163,122 @@ def test_protobuf_compiler_follows_build_environment(tmp_path, discovery_source)
         assert result.returncode == 0, result.stdout + result.stderr
         selected = (build / "selected-protoc.txt").read_text(encoding="utf-8")
         assert Path(selected).resolve() == compiler.resolve()
+
+
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
+@pytest.mark.skipif(CMAKE is None, reason="CMake is required")
+@pytest.mark.parametrize("target_os", ["Macos", "Linux", "Windows"])
+def test_mujoco_libraries_follow_dependency_upgrades(tmp_path, target_os):
+    """Select each upgraded Conan package while retaining the build and cache.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param target_os: Platform whose MuJoCo package metadata is generated.
+    """
+    pytest.importorskip("conan")
+    project = tmp_path / "source"
+    build = tmp_path / "build"
+    recipe = tmp_path / "recipe"
+    generators = tmp_path / "generators"
+    project.mkdir()
+    recipe.mkdir()
+    profile = tmp_path / "profile"
+    profile.write_text(
+        f"[settings]\nos={target_os}\narch=x86_64\nbuild_type=Release\n",
+        encoding="utf-8",
+    )
+    environment = os.environ.copy()
+    environment["CONAN_HOME"] = str(tmp_path / "conan-home")
+    mujoco_recipe = REPOSITORY_ROOT / "libs/mujoco/conanfile.py"
+    # Use production package metadata with small stand-ins for the binaries.
+    # No downloads or native compilers are needed to test library discovery.
+    (recipe / "conanfile.py").write_text(
+        f'''import importlib.util
+import os
+from conan.tools.files import save
+
+spec = importlib.util.spec_from_file_location(
+    "mujoco_test_recipe", {str(mujoco_recipe)!r},
+)
+recipe_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(recipe_module)
+
+class MujocoDiscoveryRecipe(recipe_module.MujocoConan):
+    def set_version(self):
+        pass
+
+    def package(self):
+        paths = {{
+            "Macos": ["lib/mujoco.framework/mujoco"],
+            "Linux": ["lib/libmujoco.so"],
+            "Windows": ["lib/mujoco.lib", "bin/mujoco.dll"],
+        }}
+        for path in paths[str(self.settings.os)]:
+            save(self, os.path.join(self.package_folder, path), str(self.version))
+''',
+        encoding="utf-8",
+    )
+
+    def run_conan(arguments):
+        """Generate local packages and CMakeDeps files without remote access."""
+        result = subprocess.run(
+            [sys.executable, "-m", "conans.conan", *arguments,
+             "-pr:h", str(profile), "-pr:b", str(profile), "--no-remote"],
+            cwd=tmp_path, env=environment, capture_output=True, text=True,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+
+    discovery = REPOSITORY_ROOT / "src/cmake/usingMujoco.cmake"
+    (project / "CMakeLists.txt").write_text(
+        'cmake_minimum_required(VERSION 3.26)\n'
+        'project(mujocoDiscoveryFixture LANGUAGES NONE)\n'
+        f'include("{discovery.as_posix()}")\n'
+        f'include("{discovery.as_posix()}")\n'
+        'if(APPLE)\n'
+        '  set(selected "${CONAN_FRAMEWORK_mujoco_FOUND}/mujoco")\n'
+        'else()\n'
+        '  get_target_property(selected CONAN_LIB::mujoco_mujoco_RELEASE\n'
+        '    IMPORTED_LOCATION_RELEASE)\n'
+        '  if(WIN32)\n'
+        '    get_target_property(import_library '
+        'CONAN_LIB::mujoco_mujoco_RELEASE\n'
+        '      IMPORTED_IMPLIB_RELEASE)\n'
+        '    list(APPEND selected "${import_library}")\n'
+        '  endif()\n'
+        'endif()\n'
+        'file(WRITE "${CMAKE_BINARY_DIR}/selected-libraries.txt" '
+        '"${selected}")\n',
+        encoding="utf-8",
+    )
+    system = "Darwin" if target_os == "Macos" else target_os
+    command = [
+        CMAKE, "-S", str(project), "-B", str(build),
+        f"-DCMAKE_SYSTEM_NAME={system}", "-DCMAKE_BUILD_TYPE=Release",
+        f"-Dmujoco_DIR={generators.as_posix()}",
+    ]
+    if NINJA:
+        command.extend(["-G", "Ninja", f"-DCMAKE_MAKE_PROGRAM={NINJA}"])
+    else:
+        generator = "NMake Makefiles" if os.name == "nt" else "Unix Makefiles"
+        command.extend(["-G", generator])
+    retained_libraries = []
+    for version in ("1.0", "2.0", "3.0"):
+        run_conan(["export-pkg", str(recipe), "--version", version])
+        run_conan([
+            "install", "--requires", f"mujoco/{version}", "-g", "CMakeDeps",
+            "-of", str(generators),
+        ])
+        result = subprocess.run(
+            command, capture_output=True, text=True,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        selected = (build / "selected-libraries.txt").read_text(encoding="utf-8")
+        libraries = [Path(path) for path in selected.split(";")]
+        assert len(libraries) == (2 if target_os == "Windows" else 1)
+        for library in libraries:
+            assert library.read_text(encoding="utf-8") == version
+        # Old packages must remain available throughout every reconfiguration.
+        assert all(path.is_file() for path in retained_libraries)
+        retained_libraries.extend(libraries)

@@ -1,1 +1,2 @@
 - Updated the optional MuJoCo dependency from 3.11.0 to 3.16.0.
+- macOS builds refresh the MuJoCo framework path after dependency upgrades, keeping the linked library consistent with its headers.
