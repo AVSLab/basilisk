@@ -122,7 +122,7 @@ TEST(GaussMarkov, meanIsZero)
     Eigen::Vector2d means = noiseOut.rowwise().mean();
 
     // Test with appropriate statistical tolerances
-    double tol = 4.0 / sqrt(numPts); // 4-sigma confidence interval
+    double tol = 4.0 / sqrt(static_cast<double>(numPts)); // [-] 4-sigma confidence interval
     EXPECT_LT(fabs(means(0)), tol);
     EXPECT_LT(fabs(means(1)), tol);
 }

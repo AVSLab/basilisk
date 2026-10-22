@@ -183,7 +183,7 @@ class DualHingedRigidBodyStateEffector final
             effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty2);
             effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty2);
         }
-    };
+    }
 
     void validateConfiguration(); //!< Validate panel masses and the configured hinge-frame DCM
 

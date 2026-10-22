@@ -123,7 +123,7 @@ class SpinningBodyOneDOFStateEffector final
         effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
         effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
-    };
+    }
 
     // Terms needed for Backsubstitution
     Eigen::Vector3d aTheta{ 0.0, 0.0, 0.0 }; //!< rDDot_BN term for Backsubstitution

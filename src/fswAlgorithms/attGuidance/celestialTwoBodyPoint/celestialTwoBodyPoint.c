@@ -90,8 +90,8 @@ void parseInputMessages(celestialTwoBodyPointConfig* configData, int64_t moduleI
     double R_P1B_hat_N[3]; /* Unit direction from spacecraft to primary body, in N-frame components */
     double R_P2B_hat_N[3]; /* Unit direction from spacecraft to secondary body, in N-frame components */
 
-    double platAngDiff; /* Angle between r_P1 and r_P2 */
-    double dotProduct;  /* Temporary scalar variable */
+    double platAngDiff = 0.0; /* [rad] Angle between r_P1 and r_P2 */
+    double dotProduct;        /* Temporary scalar variable */
 
     // read input messages
     navData = NavTransMsg_C_read(&configData->transNavInMsg);

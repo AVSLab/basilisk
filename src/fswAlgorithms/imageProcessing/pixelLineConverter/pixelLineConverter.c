@@ -87,6 +87,9 @@ void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTi
     }
     reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0] / 2 + 0.5;
     reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1] / 2 + 0.5;
+    if (circlesIn.planetIds[0] != 1.0 && circlesIn.planetIds[0] != 2.0 && circlesIn.planetIds[0] != 3.0) {
+        _bskError(configData->bskLogger, "pixelLineConverter: unsupported circle planet ID.");
+    }
     configData->planetTarget = (int32_t)circlesIn.planetIds[0];
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
@@ -123,14 +126,14 @@ void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTi
         if (configData->planetTarget == 1) {
             planetRad = REQ_EARTH; // in km
             opNavMsgOut.planetID = configData->planetTarget;
-        }
-        if (configData->planetTarget == 2) {
+        } else if (configData->planetTarget == 2) {
             planetRad = REQ_MARS; // in km
             opNavMsgOut.planetID = configData->planetTarget;
-        }
-        if (configData->planetTarget == 3) {
+        } else if (configData->planetTarget == 3) {
             planetRad = REQ_JUPITER; // in km
             opNavMsgOut.planetID = configData->planetTarget;
+        } else {
+            _bskError(configData->bskLogger, "pixelLineConverter: unsupported circle planet ID.");
         }
 
         denom = sin(atan(X * circlesIn.circlesRadii[0]));

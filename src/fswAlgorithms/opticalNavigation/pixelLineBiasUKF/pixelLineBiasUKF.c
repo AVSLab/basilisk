@@ -157,6 +157,9 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTi
      propagate and update the filter*/
     newTimeTag = (double)NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;
     if (newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid == 1) {
+        if (inputCircles.planetIds[0] != 1 && inputCircles.planetIds[0] != 2 && inputCircles.planetIds[0] != 3) {
+            _bskError(configData->bskLogger, "pixelLineBiasUKF: unsupported circle planet ID.");
+        }
         configData->circlesInBuffer = inputCircles;
         configData->planetId = (int)inputCircles.planetIds[0];
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
@@ -224,14 +227,14 @@ void relODStateProp(PixelLineBiasUKFConfig* configData, double* stateInOut, doub
     double k1[PIXLINE_DYN_STATES], k2[PIXLINE_DYN_STATES], k3[PIXLINE_DYN_STATES], k4[PIXLINE_DYN_STATES];
     double states1[PIXLINE_DYN_STATES], states2[PIXLINE_DYN_STATES], states3[PIXLINE_DYN_STATES];
     if (configData->planetId == 1) {
-        muPlanet = MU_EARTH;
-    } // in km
-    if (configData->planetId == 2) {
-        muPlanet = MU_MARS;
-    } // in km
-    if (configData->planetId == 3) {
-        muPlanet = MU_JUPITER;
-    } // in km
+        muPlanet = MU_EARTH; // [km^3/s^2]
+    } else if (configData->planetId == 2) {
+        muPlanet = MU_MARS; // [km^3/s^2]
+    } else if (configData->planetId == 3) {
+        muPlanet = MU_JUPITER; // [km^3/s^2]
+    } else {
+        _bskError(configData->bskLogger, "pixelLineBiasUKF: planetId must be Earth (1), Mars (2), or Jupiter (3).");
+    }
 
     /*! Start RK4 */
     /*! - Compute k1 */
@@ -425,16 +428,14 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig* configData)
     X = pX / configData->cameraSpecs.resolution[0];
     Y = pY / configData->cameraSpecs.resolution[1];
 
-    if (configData->circlesInBuffer.planetIds[0] > 0) {
-        if (configData->circlesInBuffer.planetIds[0] == 1) {
-            planetRad = REQ_EARTH; // in km
-        }
-        if (configData->circlesInBuffer.planetIds[0] == 2) {
-            planetRad = REQ_MARS; // in km
-        }
-        if (configData->circlesInBuffer.planetIds[0] == 3) {
-            planetRad = REQ_JUPITER; // in km
-        }
+    if (configData->circlesInBuffer.planetIds[0] == 1) {
+        planetRad = REQ_EARTH; // [km]
+    } else if (configData->circlesInBuffer.planetIds[0] == 2) {
+        planetRad = REQ_MARS; // [km]
+    } else if (configData->circlesInBuffer.planetIds[0] == 3) {
+        planetRad = REQ_JUPITER; // [km]
+    } else {
+        _bskError(configData->bskLogger, "pixelLineBiasUKF: unsupported circle planet ID.");
     }
 
     for (j = 0; j < configData->countHalfSPs * 2 + 1; j++) {

@@ -472,3 +472,17 @@ def utilities_fault(filterModule):
 
 if __name__ == "__main__":
     utilities_fault('inertialUKF')
+
+
+@pytest.mark.parametrize("module", [inertialUKF, sunlineSuKF])
+def test_empty_matrix_inverse(module):
+    """Return success for an empty inverse without touching the output buffer."""
+    source = module.new_doubleArray(1)
+    destination = module.new_doubleArray(1)
+    try:
+        module.doubleArray_setitem(destination, 0, 7.0)
+        assert module.ukfMatInv(source, 0, 0, destination) == 0
+        assert module.doubleArray_getitem(destination, 0) == 7.0
+    finally:
+        module.delete_doubleArray(source)
+        module.delete_doubleArray(destination)

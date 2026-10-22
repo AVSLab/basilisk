@@ -225,7 +225,7 @@ class PrescribedMotionStateEffector final
         effector->setPropName_prescribedAttitude(this->nameOfPrescribedAttitudeProperty);
         effector->setPropName_prescribedAngVelocity(this->nameOfPrescribedAngVelocityProperty);
         effector->setPropName_prescribedAngAcceleration(this->nameOfPrescribedAngAccelerationProperty);
-    };
+    }
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

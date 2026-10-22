@@ -17,7 +17,8 @@
 
 
 import numpy as np
-from Basilisk.architecture import messaging
+import pytest
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
@@ -334,3 +335,83 @@ def StatePropRelOD(show_plots, dt):
 if __name__ == "__main__":
     # relOD_method_test(True)
     StatePropRelOD(True, 1.0)
+
+
+@pytest.mark.parametrize("planet_id", [0, -1, 4])
+def test_state_propagation_rejects_unknown_planet(planet_id):
+    """Reject unsupported gravity models before modifying the propagated state."""
+    data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
+    logger = bskLogging.BSKLogger()
+    data.bskLogger = logger
+    data.planetId = planet_id
+    state = pixelLineBiasUKF.new_doubleArray(9)
+    try:
+        for index in range(9):
+            pixelLineBiasUKF.doubleArray_setitem(state, index, 0.0)
+        pixelLineBiasUKF.doubleArray_setitem(state, 0, 7000.0)  # [km]
+        with pytest.raises(bskLogging.BasiliskError, match="pixelLineBiasUKF: planetId"):
+            pixelLineBiasUKF.relODStateProp(data, state, 1.0)  # [s]
+        assert pixelLineBiasUKF.doubleArray_getitem(state, 0) == 7000.0  # [km]
+        assert all(pixelLineBiasUKF.doubleArray_getitem(state, index) == 0.0 for index in range(1, 9))
+    finally:
+        pixelLineBiasUKF.delete_doubleArray(state)
+
+
+@pytest.mark.parametrize("planet_id", [0, -1, 4, 1.5, float("nan"), float("inf")])
+def test_measurement_rejects_unknown_planet(planet_id):
+    """Reject invalid circle identifiers before using a planet radius."""
+    data = pixelLineBiasUKF.PixelLineBiasUKFConfig()
+    logger = bskLogging.BSKLogger()
+    data.bskLogger = logger
+    camera = messaging.CameraConfigMsgPayload()
+    camera.fieldOfView = 0.5  # [rad]
+    camera.resolution = [512, 512]  # [pixel]
+    data.cameraSpecs = camera
+    circles = messaging.OpNavCirclesMsgPayload()
+    circles.planetIds = [planet_id]
+    data.circlesInBuffer = circles
+    with pytest.raises(bskLogging.BasiliskError, match="pixelLineBiasUKF: unsupported circle planet ID"):
+        pixelLineBiasUKF.pixelLineBiasUKFMeasModel(data)
+
+
+@pytest.mark.parametrize("planet_id", [0, -1, 4, 1.5, float("nan"), float("inf"), -float("inf"), 1e30, -1e30])
+def test_update_rejects_unknown_planet_before_propagation(planet_id):
+    """Reject invalid message IDs before conversion, caching, or filter propagation."""
+    module = pixelLineBiasUKF.pixelLineBiasUKF()
+    setupFilterData(module)
+    update_time = macros.sec2nano(1.0)  # [ns]
+
+    camera = messaging.CameraConfigMsgPayload()
+    camera.fieldOfView = 0.5  # [rad]
+    camera.resolution = [512, 512]  # [pixel]
+    camera_msg = messaging.CameraConfigMsg().write(camera)
+    attitude_msg = messaging.NavAttMsg().write(messaging.NavAttMsgPayload(), update_time)
+    circles = messaging.OpNavCirclesMsgPayload()
+    circles.valid = 1
+    circles.planetIds = [planet_id]
+    circles_msg = messaging.OpNavCirclesMsg().write(circles, update_time)
+    module.cameraConfigInMsg.subscribeTo(camera_msg)
+    module.attInMsg.subscribeTo(attitude_msg)
+    module.circlesInMsg.subscribeTo(circles_msg)
+    module.SelfInit()
+    module.Reset(0)  # [ns]
+
+    state_before = list(module.state)
+    covar_before = list(module.covar)
+    s_bar_before = list(module.sBar)
+    planet_before = module.planetId
+    cached_planet_before = module.circlesInBuffer.planetIds[0]
+    time_before = module.timeTag
+    dt_before = module.dt
+    with pytest.raises(bskLogging.BasiliskError, match="pixelLineBiasUKF: unsupported circle planet ID"):
+        module.UpdateState(update_time)
+
+    np.testing.assert_array_equal(module.state, state_before)
+    np.testing.assert_array_equal(module.covar, covar_before)
+    np.testing.assert_array_equal(module.sBar, s_bar_before)
+    assert module.planetId == planet_before
+    assert module.circlesInBuffer.planetIds[0] == cached_planet_before
+    assert module.timeTag == time_before
+    assert module.dt == dt_before
+    assert not messaging.NavTransMsg_C_isWritten(module.navStateOutMsg)
+    assert not messaging.PixelLineFilterMsg_C_isWritten(module.filtDataOutMsg)

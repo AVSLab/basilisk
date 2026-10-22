@@ -214,14 +214,14 @@ void relODStateProp(RelODuKFConfig* configData, double* stateInOut, double dt)
     double k1[ODUKF_N_STATES], k2[ODUKF_N_STATES], k3[ODUKF_N_STATES], k4[ODUKF_N_STATES];
     double states1[ODUKF_N_STATES], states2[ODUKF_N_STATES], states3[ODUKF_N_STATES];
     if (configData->planetId == 1) {
-        muPlanet = MU_EARTH;
-    } // in km
-    if (configData->planetId == 2) {
-        muPlanet = MU_MARS;
-    } // in km
-    if (configData->planetId == 3) {
-        muPlanet = MU_JUPITER;
-    } // in km
+        muPlanet = MU_EARTH; // [km^3/s^2]
+    } else if (configData->planetId == 2) {
+        muPlanet = MU_MARS; // [km^3/s^2]
+    } else if (configData->planetId == 3) {
+        muPlanet = MU_JUPITER; // [km^3/s^2]
+    } else {
+        _bskError(configData->bskLogger, "relativeODuKF: planetId must be Earth (1), Mars (2), or Jupiter (3).");
+    }
 
     /*! Start RK4 */
     /*! - Compute k1 */

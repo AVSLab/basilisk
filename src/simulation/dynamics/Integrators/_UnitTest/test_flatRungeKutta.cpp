@@ -556,6 +556,10 @@ void configureTolerances(svIntegratorAdaptiveRungeKutta<4>& integrator, const Te
 
 } // namespace
 
+// Preserve the replacement allocation boundary for GCC's allocation-pair diagnostics.
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((noinline))
+#endif
 void* operator new(std::size_t size)
 {
     allocationCount.fetch_add(1, std::memory_order_relaxed);
@@ -570,6 +574,10 @@ void* operator new[](std::size_t size)
     return ::operator new(size);
 }
 
+// Keep GCC from diagnosing the malloc-backed replacement pair as mismatched after inlining.
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((noinline))
+#endif
 void operator delete(void* memory) noexcept
 {
     std::free(memory);
@@ -577,17 +585,17 @@ void operator delete(void* memory) noexcept
 
 void operator delete[](void* memory) noexcept
 {
-    std::free(memory);
+    ::operator delete(memory);
 }
 
 void operator delete(void* memory, std::size_t) noexcept
 {
-    std::free(memory);
+    ::operator delete(memory);
 }
 
 void operator delete[](void* memory, std::size_t) noexcept
 {
-    std::free(memory);
+    ::operator delete(memory);
 }
 
 TEST(FlatRungeKutta, FixedStepExceptionRestoresAcceptedBase)
@@ -1005,7 +1013,7 @@ TEST(FlatRungeKutta, ObjectSpecificToleranceOverridesControlStepAcceptance)
     strictIntegrator.setRelativeTolerance(strictRelative);
     strictIntegrator.setAbsoluteTolerance(strictAbsolute);
 
-    for (const std::string& stateName : { "matrixStateWithANameLongEnoughToAllocate", "vectorState" }) {
+    for (const std::string stateName : { "matrixStateWithANameLongEnoughToAllocate", "vectorState" }) {
         overrideIntegrator.setRelativeTolerance(overrideDynamics, stateName, looseRelative);
         overrideIntegrator.setAbsoluteTolerance(overrideDynamics, stateName, looseAbsolute);
     }

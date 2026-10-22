@@ -94,14 +94,14 @@ void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init)
     addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
     /* Expand the access buffer vectors */
-    AccessMsgPayload accMsg;
+    AccessMsgPayload accMsg{};
     this->accessMsgBuffer.push_back(accMsg);
 
     /* Create ground state output message */
     addOwnedMessage(this->ownedCurrentGroundStateOutMsgs, this->currentGroundStateOutMsgs);
 
     /* Expand the ground state buffer vectors */
-    GroundStateMsgPayload groundMsg;
+    GroundStateMsgPayload groundMsg{};
     this->currentGroundStateMsgBuffer.push_back(groundMsg);
 }
 

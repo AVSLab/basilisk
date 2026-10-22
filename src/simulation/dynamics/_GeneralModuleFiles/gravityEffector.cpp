@@ -195,9 +195,9 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
 void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N [[maybe_unused]])
 {
     uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
-    Eigen::Vector3d r_cN_N; // position of s/c CoM wrt N
-    Eigen::Vector3d r_CN_N; // inertial position of central body if there is one. Big C is
-                            // central body. Little c is CoM of s/c
+    Eigen::Vector3d r_cN_N;                           // position of s/c CoM wrt N
+    Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero(); // inertial position of central body if there is one. Big C is
+                                                      // central body. Little c is CoM of s/c
 
     if (this->centralBody) // If there is a central body
     {
@@ -264,8 +264,8 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr
 
 void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr)
 {
-    Eigen::Vector3d r_CN_N; // C is central body. position of C wrt N in N
-    Eigen::Vector3d r_cN_N; // position c wrt N in N
+    Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero(); // C is central body. position of C wrt N in N
+    Eigen::Vector3d r_cN_N;                           // position c wrt N in N
 
     if (this->centralBody) { // Evaluates true if there is a central body, false
                              // otherwise

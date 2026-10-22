@@ -84,16 +84,15 @@ void logMujocoError(const char* err);
 void logMujocoWarning(const char* err);
 
 /**
- * Logs an error via BSKLogger then throws an exception of type @p ExceptionType.
+ * Logs an error and raises BasiliskError through BSKLogger.
  *
- * @tparam ExceptionType Exception to throw (default: @c std::runtime_error).
+ * @tparam ExceptionType Retained for source compatibility; BSKLogger determines the exception type.
  * @param message        Human-readable error message.
  */
 template<typename ExceptionType = std::runtime_error>
 [[noreturn]] inline void logAndThrow(const std::string& message)
 {
     BSKLogger{}.bskError("%s", message.c_str());
-    throw ExceptionType(message);
 }
 
 /**
@@ -103,7 +102,7 @@ template<typename ExceptionType = std::runtime_error>
  * @param value MuJoCo size to convert.
  * @param quantityName Name used to identify the quantity in an error message.
  * @return The converted size.
- * @throws std::overflow_error If @p value is negative or exceeds the destination range.
+ * @throws BasiliskError If @p value is negative or exceeds the destination range.
  */
 template<typename Target>
 inline Target checkedMjtSizeCast(mjtSize value, const std::string& quantityName)

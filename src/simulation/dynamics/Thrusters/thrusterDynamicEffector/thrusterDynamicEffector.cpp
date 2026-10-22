@@ -159,7 +159,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
             // For each case where we are above the minimum firing request, reset the thruster
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd = *CmdIt;
             this->thrusterData[THIter]->ThrustOps.fireCounter +=
-                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0 : 1;
+                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0u : 1u;
         } else {
             // Will ensure that thruster shuts down once this cmd expires
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd =

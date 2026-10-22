@@ -85,7 +85,5 @@ void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsage)
             break;
         default:
             bskLogger.bskError("AntennaPower: Invalid antenna state.");
-            powerUsage->netPower = -this->basePowerNeed;
-            break;
     }
 }
