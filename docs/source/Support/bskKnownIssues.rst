@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- Windows builds could abort Python when a directly wrapped C function raised
+  ``BasiliskError``, including invalid planet identifiers passed to
+  ``pixelLineBiasUKFMeasModel``. The MSVC exception settings now allow these errors
+  to propagate through C calls to the Python exception handler.
+
 - GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
   coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
   differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.
