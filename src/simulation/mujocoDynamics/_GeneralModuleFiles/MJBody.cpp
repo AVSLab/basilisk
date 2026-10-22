@@ -21,6 +21,7 @@
 #include "MJScene.h"
 #include "MJSpec.h"
 
+#include <cassert>
 #include <cmath>
 #include <stdexcept>
 #include <type_traits>

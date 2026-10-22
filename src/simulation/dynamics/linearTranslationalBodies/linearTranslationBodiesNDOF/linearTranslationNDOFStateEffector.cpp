@@ -21,6 +21,7 @@
 #include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <cassert>
 #include <cmath>
 #include <string>
 
