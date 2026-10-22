@@ -487,8 +487,12 @@ void MJScene::saveToFile(std::string filename)
     if (binary_file) {
         mj_saveModel(this->getMujocoModel(), filename.c_str(), NULL, 0);
     } else {
-        char error[1024];
-        mj_saveXML(this->spec.getMujocoSpec(), filename.c_str(), error, sizeof(error));
+        // MuJoCo requires a compiled specification, including generated body sites.
+        this->spec.recompileUntilStable();
+        char error[1024] = {};
+        if (mj_saveXML(this->spec.getMujocoSpec(), filename.c_str(), error, sizeof(error)) != 0) {
+            this->bskLogger.bskError("Failed to save MuJoCo XML to '%s': %s", filename.c_str(), error);
+        }
     }
 }
 

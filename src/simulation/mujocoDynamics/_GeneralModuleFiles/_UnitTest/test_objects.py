@@ -76,6 +76,19 @@ PREEXISTING_BODY_SITES_XML = """
 </mujoco>
 """
 
+# Geometry dimensions and positions are in [m]; mass is in [kg].
+XML_EXPORT_XML = """
+<mujoco>
+  <worldbody>
+    <body name="root">
+      <freejoint/>
+      <geom type="sphere" size="1" pos="0.25 0 0" mass="1"/>
+      <site name="site"/>
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
 
 def test_loading():
     """Tests that MJObject are created from the XML as expected"""
@@ -118,6 +131,56 @@ def test_loading():
     # Move time forward, which will trigger a re-compile (since
     # we added actuators), and check that the simulation runs ok
     scene.UpdateState(1)
+
+
+@pytest.mark.parametrize(
+    "phase", ["constructed", "reset", "site_added", "actuator_added"]
+)
+def test_xml_save_recompiles_pending_changes(tmp_path, phase):
+    """Save and reload generated sites and pending structural edits.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param phase: Scene configuration to save before simulation updates.
+    """
+    scene = mujoco.MJScene(XML_EXPORT_XML)
+    if phase != "constructed":
+        scene.Reset(0)
+    if phase == "site_added":
+        scene.getBody("root").addSite("added_site", [0, 0, 0])
+    elif phase == "actuator_added":
+        gear = [1, 0, 0, 0, 0, 0]  # [-]
+        scene.addSingleActuator("added_actuator", "site", gear)
+
+    path = tmp_path / "scene.xml"
+    scene.saveToFile(str(path))
+
+    assert path.is_file()
+    restored = mujoco.MJScene.fromFile(str(path))
+    restored.Reset(0)
+    for site in ("root_com", "root_origin", "site"):
+        assert restored.getBody("root").getSite(site).getName() == site
+    if phase == "site_added":
+        site = restored.getBody("root").getSite("added_site")
+        assert site.getName() == "added_site"
+    elif phase == "actuator_added":
+        actuator = restored.getSingleActuator("added_actuator")
+        assert actuator.getName() == "added_actuator"
+
+
+def test_xml_save_reports_write_errors(tmp_path):
+    """Raise a Basilisk error when the requested XML file cannot be written.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    """
+    scene = mujoco.MJScene(XML_EXPORT_XML)
+    scene.Reset(0)
+    path = tmp_path / "missing%folder" / "scene.xml"
+
+    with pytest.raises(BasiliskError, match="Failed to save MuJoCo XML") as error:
+        scene.saveToFile(str(path))
+
+    assert str(path) in str(error.value)
+    assert not path.exists()
 
 
 def test_actuator_addition_alone_triggers_recompile():
