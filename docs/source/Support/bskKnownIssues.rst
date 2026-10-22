@@ -21,6 +21,10 @@ Version |release|
   with the old library and failing to load the resulting binaries. Framework discovery now refreshes
   during configuration, so an existing build directory follows the selected MuJoCo package.
 
+- With MuJoCo 3.16, :ref:`MJScene` XML exports could silently produce no file when generated body sites or
+  subsequent structural edits had not been compiled. XML export now compiles pending changes and reports
+  write failures, including an invalid output path.
+
 - GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
   coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
   differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.

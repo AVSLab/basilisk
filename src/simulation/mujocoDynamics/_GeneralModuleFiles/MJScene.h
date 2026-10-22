@@ -592,7 +592,10 @@ class MJScene : public DynamicObject
     /**
      * @brief Saves the current MuJoCo model to a file.
      *
+     * XML export compiles pending specification changes before writing the file.
+     *
      * @param filename The name of the file to save the model.
+     * @throws BasiliskError If XML compilation or writing fails.
      */
     void saveToFile(std::string filename);
 
