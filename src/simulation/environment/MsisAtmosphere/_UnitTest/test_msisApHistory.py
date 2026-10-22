@@ -23,7 +23,7 @@ import pytest
 
 from Basilisk.architecture import messaging
 from Basilisk.simulation import msisAtmosphere
-from Basilisk.utilities import SimulationBaseClass, macros
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
 EPOCH = datetime.datetime(2026, 1, 1, 12)  # UTC
 R_SC = [6778137.0, 0.0, 0.0]  # [m] spacecraft position on the equator, planet-fixed frame is the inertial frame
@@ -125,8 +125,55 @@ def test_ap_history_default_is_daily_ap():
     assert _density(values) != pytest.approx(_density(values, True), rel=1e-6, abs=0.0)
 
 
+# NRL's Fortran NRLMSISE-00 through pymsis 0.13.0 (version=0, switch 9 set to -1) at 2001-06-21 08:03:20 UTC, 1000 km
+# altitude, latitude 60 deg and longitude 30 deg, with F10.7 = F10.7A = 150 sfu and every Ap value equal to 100
+NRL_DENSITY = 5.854873e-15  # [kg/m^3]
+NRL_TEMPERATURE = 1326.4318  # [K]
+
+
+def test_ap_history_matches_nrlmsise00():
+    """Verify the density and temperature with the 3-hour Ap history against NRL's NRLMSISE-00."""
+    scSim = SimulationBaseClass.SimBaseClass()
+    proc = scSim.CreateNewProcess("p")
+    proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
+
+    atmo = msisAtmosphere.MsisAtmosphere()
+    atmo.setUseApHistory(True)
+    epochMsg = messaging.EpochMsg().write(messaging.EpochMsgPayload(
+        year=2001, month=6, day=21, hours=8, minutes=3, seconds=20.0))  # UTC
+    atmo.epochInMsg.subscribeTo(epochMsg)
+
+    swMsgs = []
+    for c in range(23):
+        value = F107 if c >= 21 else 100.0  # every Ap [-]
+        swMsgs.append(messaging.SwDataMsg().write(messaging.SwDataMsgPayload(dataValue=value)))
+        atmo.swDataInMsgs[c].subscribeTo(swMsgs[-1])
+
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.J20002Pfix = np.eye(3).tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+    atmo.planetPosInMsg.subscribeTo(planetMsg)
+    radius = (orbitalMotion.REQ_EARTH + 1000.0) * 1000.0  # [m]
+    lat = np.radians(60.0)  # [rad]
+    lon = np.radians(30.0)  # [rad]
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [radius * np.cos(lat) * np.cos(lon), radius * np.cos(lat) * np.sin(lon), radius * np.sin(lat)]
+    scMsg = messaging.SCStatesMsg().write(payload)
+    atmo.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("t", atmo)
+    recorder = atmo.envOutMsgs[0].recorder()
+    scSim.AddModelToTask("t", recorder)
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(0)
+    scSim.ExecuteSimulation()
+    assert recorder.neutralDensity[-1] == pytest.approx(NRL_DENSITY, rel=1e-4, abs=0.0)
+    assert recorder.localTemp[-1] == pytest.approx(NRL_TEMPERATURE, abs=0.1)  # [K]
+
+
 if __name__ == "__main__":
     test_ap_history_setter_and_getter()
     test_ap_history_ignores_daily_ap()
     test_ap_history_follows_current_three_hour_ap()
     test_ap_history_default_is_daily_ap()
+    test_ap_history_matches_nrlmsise00()

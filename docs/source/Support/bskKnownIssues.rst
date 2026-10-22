@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1638: With ``setUseApHistory(True)``, the :ref:`msisAtmosphere` module omitted the UT and longitude
+  dependent magnetic activity term of NRLMSISE-00, because ``globe7()`` cast its coefficient to ``int`` before
+  testing it for zero. The density and temperature errors grew with the 3-hour Ap and exceeded 20 % and 100 K at some
+  locations at Ap 100. The default daily Ap mode was not affected.
+
 - Windows builds could abort Python when a directly wrapped C function raised
   ``BasiliskError``, including invalid planet identifiers passed to
   ``pixelLineBiasUKFMeasModel``. The MSVC exception settings now allow these errors
