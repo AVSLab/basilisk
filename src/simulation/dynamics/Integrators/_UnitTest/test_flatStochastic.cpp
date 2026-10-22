@@ -534,6 +534,8 @@ class ReentrantNoiseGenerator final : public GaussianNoiseGenerator
     {
     }
 
+    using GaussianNoiseGenerator::generateWienerInto;
+
     ~ReentrantNoiseGenerator() override { this->destroyed = true; }
 
     void setSeed(size_t) override { this->replaceSelf(); }
@@ -855,6 +857,8 @@ TEST(FlatStochastic, RandomGeneratorSubclassRetainsVirtualDispatch)
     class ConstantGenerator final : public RandomGaussianNoiseGenerator
     {
       public:
+        using RandomGaussianNoiseGenerator::generateWienerInto;
+
         void generateWienerInto(Eigen::VectorXd& dW, size_t, double) override
         {
             ++this->calls;

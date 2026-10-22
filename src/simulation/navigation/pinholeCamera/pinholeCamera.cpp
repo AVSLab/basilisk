@@ -76,7 +76,7 @@ void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal)
     addOwnedMessage(this->ownedLandmarkOutMsgs, this->landmarkOutMsgs);
 
     /* Expand the landmark buffer vectors */
-    LandmarkMsgPayload lmkMsg;
+    LandmarkMsgPayload lmkMsg{};
     this->landmarkMsgBuffer.push_back(lmkMsg);
 }
 

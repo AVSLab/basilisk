@@ -557,8 +557,8 @@ TEST(AngleWrapping, Nonfinite)
 INSTANTIATE_TEST_SUITE_P(RigidBodyKinematics,
                          EulerConversions,
                          ::testing::ValuesIn(sequences),
-                         [](const ::testing::TestParamInfo<EulerSequence>& info) {
-                             return std::string("Sequence") + info.param.name;
+                         [](const ::testing::TestParamInfo<EulerSequence>& sequenceInfo) {
+                             return std::string("Sequence") + sequenceInfo.param.name;
                          });
 
 } // namespace

@@ -256,7 +256,7 @@ void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
     addOwnedMessage(this->ownedEclipseOutMsgs, this->eclipseOutMsgs);
 
     /* expand the sc state buffer vector */
-    SCStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg{};
     this->scStateBuffer.push_back(scMsg);
 
     // Now that we know the number of output messages we can size and zero
@@ -272,7 +272,7 @@ void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
 {
     this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
 
-    SpicePlanetStateMsgPayload tmpMsg;
+    SpicePlanetStateMsgPayload tmpMsg{};
     this->planetBuffer.push_back(tmpMsg);
     return;
 }

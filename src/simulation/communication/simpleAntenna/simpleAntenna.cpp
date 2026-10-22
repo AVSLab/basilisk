@@ -412,7 +412,7 @@ void SimpleAntenna::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpM
 {
     this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
 
-    SpicePlanetStateMsgPayload tmpMsg;
+    SpicePlanetStateMsgPayload tmpMsg{};
     this->planetBuffer.push_back(tmpMsg);
     return;
 }
@@ -476,7 +476,6 @@ double SimpleAntenna::calculateTambient()
     } else {
         // UNKNOWN environment (FUTURE EXPANSION)
         bskLogger.bskError("SimpleAntenna: Unable to calculate ambient temperature due to unknown environment.");
-        T_ambientLocal = 150.0; // [K] Default value
     }
     return T_ambientLocal;
 }

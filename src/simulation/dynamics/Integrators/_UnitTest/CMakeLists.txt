@@ -80,9 +80,9 @@ target_link_libraries(test_integratorAllocations
                               GTest::gtest_main)
 
 if(MSVC)
-  target_compile_options(flat_integrator_test_support PRIVATE /UNDEBUG)
-  target_compile_options(integrator_allocation_test_support PRIVATE /UNDEBUG)
-  target_compile_options(test_integratorAllocations PRIVATE /UNDEBUG)
+  foreach(TEST_TARGET flat_integrator_test_support integrator_allocation_test_support test_integratorAllocations)
+    target_compile_options(${TEST_TARGET} PRIVATE "/FI${CMAKE_CURRENT_SOURCE_DIR}/enableAssertions.h")
+  endforeach()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
   target_compile_options(flat_integrator_test_support PRIVATE -UNDEBUG)
   target_compile_options(integrator_allocation_test_support

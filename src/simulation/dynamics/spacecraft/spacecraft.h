@@ -120,7 +120,7 @@ class Spacecraft : public DynamicObject
         effector->setPropName_inertialPosition(this->gravField.inertialPositionPropName);
         effector->setPropName_inertialVelocity(this->gravField.inertialVelocityPropName);
         effector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
-    };
+    }
 
     StateData* hubR_N;                         //!< State data accesss to inertial position for the hub
     StateData* hubV_N;                         //!< State data access to inertial velocity for the hub

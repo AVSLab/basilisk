@@ -82,7 +82,7 @@ class HingedRigidBodyStateEffector final
         effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
         effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
-    };
+    }
 
     // Terms needed for Backsubstitution
     Eigen::Vector3d aTheta; //!< term needed for Backsubstitution

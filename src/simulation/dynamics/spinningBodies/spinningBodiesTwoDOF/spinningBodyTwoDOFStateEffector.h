@@ -158,7 +158,7 @@ class SpinningBodyTwoDOFStateEffector final
             effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty2);
             effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty2);
         }
-    };
+    }
 
     // Terms needed for Backsubstitution
     Eigen::Matrix<double, 2, 3> ATheta; //!< rDDot_BN term for Backsubstitution

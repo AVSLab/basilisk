@@ -199,7 +199,7 @@ class LinearTranslationOneDOFStateEffector final
         effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
         effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
-    };
+    }
 };
 
 #endif /* LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H */

@@ -17,7 +17,8 @@
 
 
 import numpy as np
-from Basilisk.architecture import messaging
+import pytest
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
@@ -377,3 +378,23 @@ if __name__ == "__main__":
     # relOD_method_test(True)
     # StatePropRelOD(True, 1.0)
     StateUpdateRelOD(False)
+
+
+@pytest.mark.parametrize("planet_id", [0, -1, 4])
+def test_state_propagation_rejects_unknown_planet(planet_id):
+    """Reject unsupported gravity models before modifying the propagated state."""
+    data = relativeODuKF.RelODuKFConfig()
+    logger = bskLogging.BSKLogger()
+    data.bskLogger = logger
+    data.planetId = planet_id
+    state = relativeODuKF.new_doubleArray(6)
+    try:
+        for index in range(6):
+            relativeODuKF.doubleArray_setitem(state, index, 0.0)
+        relativeODuKF.doubleArray_setitem(state, 0, 7000.0)  # [km]
+        with pytest.raises(bskLogging.BasiliskError, match="relativeODuKF: planetId"):
+            relativeODuKF.relODStateProp(data, state, 1.0)  # [s]
+        assert relativeODuKF.doubleArray_getitem(state, 0) == 7000.0  # [km]
+        assert all(relativeODuKF.doubleArray_getitem(state, index) == 0.0 for index in range(1, 6))
+    finally:
+        relativeODuKF.delete_doubleArray(state)

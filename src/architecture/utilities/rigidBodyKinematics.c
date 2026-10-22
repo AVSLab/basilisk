@@ -1352,7 +1352,7 @@ void C2EP(double C[3][3], double b[4])
  * second-axis row, which is unaffected by the middle rotation. This avoids
  * independently extracting two ill-conditioned outer angles near a singularity.
  */
-static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis, int repeated, double q[3])
+static void C2EulerSequence(double C[3][3], int firstAxis, int secondAxis, int repeated, double q[3])
 {
     int remainingAxis = 3 - firstAxis - secondAxis;
     double parity = secondAxis == (firstAxis + 1) % 3 ? 1.0 : -1.0;

@@ -20,6 +20,7 @@
 #include "simulation/dynamics/msmForceTorque/msmForceTorque.h"
 #include "architecture/messaging/ownedMessage.h"
 #include <iostream>
+#include <limits>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -55,7 +56,11 @@ void MsmForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     /* determine number of spheres being modeled */
     this->numSpheres = 0;
     for (long unsigned int c = 0; c < this->numSat; c++) {
-        this->numSpheres += this->radiiList.at(c).size();
+        const auto sphereCount = this->radiiList.at(c).size();
+        if (sphereCount > std::numeric_limits<unsigned int>::max() - this->numSpheres) {
+            bskLogger.bskError("MsmForceTorque: total sphere count exceeds the supported range.");
+        }
+        this->numSpheres += static_cast<unsigned int>(sphereCount);
     }
     if (this->numSpheres == 0) {
         bskLogger.bskError("MsmForceTorque does not have any spheres added?");
@@ -206,7 +211,8 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         dcm_BN = this->sigma_BNList.at(c).toRotationMatrix().transpose();
 
         // set the body sphere end counter
-        i1 = i0 + this->radiiList.at(c).size();
+        // Reset validates that the total sphere count fits in unsigned int.
+        i1 = i0 + static_cast<unsigned long>(this->radiiList.at(c).size());
 
         // zero output message buffer
         forceMsgBuffer = this->eForceOutMsgs.at(c)->zeroMsgPayload;

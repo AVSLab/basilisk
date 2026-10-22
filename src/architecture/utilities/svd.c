@@ -69,7 +69,7 @@ int svdcmp(double* mx, size_t dim1Value, size_t dim2Value, double* w, double* v)
     }
     const int dim1 = (int)dim1Value;
     const int dim2 = (int)dim2Value;
-    int flag, i, its, j, jj, k, l, nm, cm;
+    int flag, i, its, j, jj, k, l = 0, nm = 0, cm;
     double anorm, c, f, g, h, s, scale, x, y, z, max;
     double rv1[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     vSetZero(rv1, dim2Value);

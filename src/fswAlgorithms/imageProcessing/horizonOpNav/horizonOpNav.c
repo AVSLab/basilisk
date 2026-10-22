@@ -96,24 +96,21 @@ void Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_
         }
         configData->planetTarget = (int32_t)limbIn.planetIds;
     }
-    if (configData->planetTarget < 1 || configData->planetTarget > 3) {
-        _bskError(configData->bskLogger, "horizonOpNav: planetTarget must be Earth (1), Mars (2), or Jupiter (3).");
-    }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
     if (configData->planetTarget == 1) {
         planetRad_Eq = REQ_EARTH * 1E3; // in m
         planetRad_Pol = RP_EARTH * 1E3;
         opNavMsgOut.planetID = configData->planetTarget;
-    }
-    if (configData->planetTarget == 2) {
+    } else if (configData->planetTarget == 2) {
         planetRad_Eq = REQ_MARS * 1E3; // in m
         planetRad_Pol = RP_MARS * 1E3;
         opNavMsgOut.planetID = configData->planetTarget;
-    }
-    if (configData->planetTarget == 3) {
+    } else if (configData->planetTarget == 3) {
         planetRad_Eq = REQ_JUPITER * 1E3; // in m
         planetRad_Pol = planetRad_Eq;
         opNavMsgOut.planetID = configData->planetTarget;
+    } else {
+        _bskError(configData->bskLogger, "horizonOpNav: planetTarget must be Earth (1), Mars (2), or Jupiter (3).");
     }
     m33Set(1 / planetRad_Eq, 0, 0, 0, 1 / planetRad_Eq, 0, 0, 0, 1 / planetRad_Pol, Q);
 

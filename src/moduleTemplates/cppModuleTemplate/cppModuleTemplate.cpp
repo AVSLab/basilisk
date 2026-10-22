@@ -69,8 +69,10 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
-    bskLogger.bskLog(
-        BSK_INFORMATION, "C++ Module ID %lld ran Update at %fs", this->moduleID, (double)CurrentSimNanos / (1e9));
+    bskLogger.bskLog(BSK_INFORMATION,
+                     "C++ Module ID %lld ran Update at %fs",
+                     static_cast<long long>(this->moduleID),
+                     (double)CurrentSimNanos / (1e9));
 }
 
 void CppModuleTemplate::setUpdateCounter(double value)

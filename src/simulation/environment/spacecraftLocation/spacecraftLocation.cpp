@@ -120,7 +120,7 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpSc
     addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
     /* expand the buffer vector */
-    AccessMsgPayload accMsg;
+    AccessMsgPayload accMsg{};
     this->accessMsgBuffer.push_back(accMsg);
 }
 
@@ -215,8 +215,8 @@ void SpacecraftLocation::computeAccess()
     // Allow for roundoff in normalization, reflection, and dot products.
     const double glareTolerance = 16.0 * std::numeric_limits<double>::epsilon(); // [-]
     const bool hasSurfaceNormal = this->aHat_B.norm() > surfaceNormalTolerance;
-    Eigen::Vector3d aHat_N;
-    Eigen::Vector3d sunHat_L_N;
+    Eigen::Vector3d aHat_N = Eigen::Vector3d::Zero();
+    Eigen::Vector3d sunHat_L_N = Eigen::Vector3d::Zero();
     double sunIncidenceAngle = 0.0; // [rad]
     if (hasSurfaceNormal) {
         aHat_N = (dcm_NB * this->aHat_B).normalized();

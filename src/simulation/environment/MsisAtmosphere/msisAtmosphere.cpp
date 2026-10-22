@@ -145,7 +145,6 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
 {
     if (year < 1970) {
         bskLogger.bskError("MsisAtmosphere: the apparent solar time requires an epoch year of 1970 or later.");
-        return 0.0;
     }
     // days from the Unix epoch to January 1 of the year, valid for years from 1970
     const int y = year - 1;

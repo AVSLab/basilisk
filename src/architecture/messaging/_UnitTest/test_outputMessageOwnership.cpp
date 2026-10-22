@@ -183,7 +183,7 @@ void operator delete[](void* pointer, std::size_t, std::align_val_t alignment) n
 namespace {
 struct alignas(64) OverAlignedValue
 {
-    std::byte value{};
+    std::byte value[64]{};
 };
 static_assert(alignof(OverAlignedValue) > __STDCPP_DEFAULT_NEW_ALIGNMENT__);
 

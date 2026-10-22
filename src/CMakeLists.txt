@@ -760,6 +760,8 @@ if(USE_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
   message(STATUS "CMAKE_LD_FLAGS : ${CMAKE_LD_FLAGS}")
 endif()
 
+option(BSK_STRICT_WARNINGS "Enable additional compiler warnings for Basilisk sources" ON)
+
 # Add platform specific compiler flags
 if(MSVC)
   set(CMAKE_CXX_STANDARD 17)
@@ -769,7 +771,9 @@ if(MSVC)
   add_definitions(/D _CRT_SECURE_NO_WARNINGS)
   add_definitions(/D _WINSOCK_DEPRECATED_NO_WARNINGS)
   add_definitions(/D _WIN32_WINNT=0x0501) # Targets Windows xp
-  add_definitions(/W3)
+  if(NOT BSK_STRICT_WARNINGS)
+    add_definitions(/W3)
+  endif()
   add_definitions(/wd"4913")
   add_definitions(/wd"4251")
   add_definitions(/wd"5208")
@@ -819,8 +823,6 @@ endif()
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 endif()
-
-option(BSK_STRICT_WARNINGS "Enable additional compiler warnings for Basilisk sources" ON)
 
 # Keep strict diagnostics focused on source maintained by Basilisk. Generated
 # wrappers, imported source, and external modules are excluded from the strict
@@ -889,7 +891,9 @@ if(BSK_STRICT_WARNINGS)
         $<$<COMPILE_LANGUAGE:CXX>:-Wshorten-64-to-32>)
     endif()
   elseif(MSVC)
-    add_compile_options(/W4 /w14267 /wd4100 /wd4458)
+    include(cmake/bskMsvcWarnings.cmake)
+    bsk_remove_msvc_default_warning_levels()
+    add_compile_options(/w14267 /wd4100 /wd4458)
   endif()
 endif()
 
@@ -1176,4 +1180,9 @@ if(BUILD_TESTING)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/simulation/dynamics/Integrators/_UnitTest/CMakeLists.txt")
     add_subdirectory("simulation/dynamics/Integrators/_UnitTest")
   endif()
+endif()
+
+# Match the MSVC branch above; clang-cl uses Clang's warning options.
+if(MSVC AND BSK_STRICT_WARNINGS AND NOT CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang|GNU")
+  bsk_set_msvc_warning_levels("${CMAKE_CURRENT_SOURCE_DIR}")
 endif()

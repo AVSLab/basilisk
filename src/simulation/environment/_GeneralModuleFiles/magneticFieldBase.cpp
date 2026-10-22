@@ -75,7 +75,7 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScM
     addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 
     /* create buffer message copies*/
-    MagneticFieldMsgPayload msgMagBuffer;
+    MagneticFieldMsgPayload msgMagBuffer{};
     this->magFieldOutBuffer.push_back(msgMagBuffer);
 
     return;
