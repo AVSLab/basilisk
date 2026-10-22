@@ -790,7 +790,10 @@ if(MSVC)
       string(REPLACE "/MD" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
       string(REPLACE "/MT" "${CONAN_LINK_RUNTIME_MULTI}" "${flag}" "${${flag}}")
     endif()
-    set("${flag}" "${${flag}} /EHsc")
+    # C module calls can raise BasiliskError through the C++ logger. Remove
+    # CMake's default /EHc assumption that extern "C" functions never throw.
+    string(REPLACE "/EHsc" "/EHs" "${flag}" "${${flag}}")
+    set("${flag}" "${${flag}} /EHs")
   endforeach()
 elseif(APPLE)
   set(CMAKE_CXX_STANDARD 17)

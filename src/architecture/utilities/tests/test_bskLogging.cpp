@@ -25,15 +25,6 @@ int callBskErrorFromNonVoid(BSKLogger& bskLogger)
 {
     bskLogger.bskError("fatal value %d", 7);
 }
-
-#ifdef _MSC_VER
-// MSVC /EHc assumes extern "C" calls do not throw, so catch through a C++ helper.
-__declspec(noinline)
-#endif
-void callCBskError(BSKLogger& bskLogger, const char* info)
-{
-    _bskError(&bskLogger, info);
-}
 }
 
 TEST(BSKLogging, bskErrorThrowsFormattedMessage)
@@ -69,14 +60,8 @@ TEST(BSKLogging, cBskErrorTreatsMessageAsText)
     BSKLogger bskLogger;
 
     try {
-#ifdef _MSC_VER
-        // Keep MSVC from applying /EHc's extern "C" non-throwing assumption here.
-        using CBskErrorCaller = void (*)(BSKLogger&, const char*);
-        CBskErrorCaller volatile cBskErrorCaller = callCBskError;
-        cBskErrorCaller(bskLogger, "preformatted %s message");
-#else
-        callCBskError(bskLogger, "preformatted %s message");
-#endif
+        // Exercise a direct C call, as generated Python wrappers do.
+        _bskError(&bskLogger, "preformatted %s message");
     } catch (const BasiliskError& error) {
         EXPECT_STREQ("preformatted %s message", error.what());
         return;
