@@ -288,7 +288,7 @@ def test_build_info():
     assert abi["cxx"]["standardLibrary"]["family"] in ("libc++", "libstdc++", "msvc")
     assert abi["cxx"]["runtime"]["exceptions"]
     assert abi["cxx"]["runtime"]["rtti"]
-    assert abi["dependencies"]["eigen"]["version"] == "3.4.0"
+    assert abi["dependencies"]["eigen"]["version"] == "5.0.1"
     assert abi["dependencies"]["eigen"]["maxAlignBytes"] >= 0
     assert abi["dependencies"]["swig"]["runtimeVersion"]
     assert abi["dependencies"]["python"]["limitedApi"] > 0
