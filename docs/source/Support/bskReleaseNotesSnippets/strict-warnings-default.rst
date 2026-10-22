@@ -1,0 +1,1 @@
+- Enabled strict compiler diagnostics by default for Basilisk C and C++ sources through Conan and CMake. Use ``--strictWarnings False``, Conan's ``-o "&:strictWarnings=False"``, or CMake's ``-DBSK_STRICT_WARNINGS=OFF`` to disable the additional diagnostics; see :ref:`strictCompilerWarnings`.

@@ -820,7 +820,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 endif()
 
-option(BSK_STRICT_WARNINGS "Enable additional compiler warnings for Basilisk sources" OFF)
+option(BSK_STRICT_WARNINGS "Enable additional compiler warnings for Basilisk sources" ON)
 
 # Keep strict diagnostics focused on source maintained by Basilisk. Generated
 # wrappers, imported source, and external modules are excluded from the strict

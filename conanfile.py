@@ -44,9 +44,9 @@ bskModuleOptionsBool = {
     # Requires a Rust/Cargo toolchain on PATH; off by default so most builds/CI
     # jobs never need one.
     "rustModules": [[True, False], False],
-    # Enable the opt-in compiler warning policy defined by BSK_STRICT_WARNINGS
+    # Default to the compiler warning policy defined by BSK_STRICT_WARNINGS
     # in src/CMakeLists.txt.
-    "strictWarnings": [[True, False], False],
+    "strictWarnings": [[True, False], True],
     "exportCompileCommands": [[True, False], True],
     "buildTesting": [[True, False], True],
     "buildProject": [[True, False], True],

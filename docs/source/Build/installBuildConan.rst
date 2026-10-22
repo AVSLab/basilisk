@@ -98,7 +98,7 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Specifies the build type
     * - ``-o "&:strictWarnings=<value>"``
       - Boolean
-      - False
+      - True
       - Enables the additional Basilisk compiler diagnostics described in
         :ref:`strictCompilerWarnings`
     * - ``-o "&:generator=<value>"``
@@ -191,7 +191,7 @@ they are not used, then the shown default behaviors are used.
       - ``ON``
       - fetches GoogleTest and builds the native C++ test executables
     * - ``BSK_STRICT_WARNINGS``
-      - ``OFF``
+      - ``ON``
       - enables additional compiler diagnostics for Basilisk C and C++ sources
     * - ``BSK_OFFLINE_BUILD``
       - ``OFF``
