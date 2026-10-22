@@ -795,7 +795,7 @@ double globe7(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
         /* ut, longitude magnetic activity */
         if ((int)flags->sw[13]) {
             if (flags->sw[9] == -1) {
-                if ((int)p[51]) {
+                if (p[51] != 0) {
                     t[12] = apt[0] * flags->swc[11] * (1. + p[132] * plg[0][1]) *
                                 ((p[52] * plg[1][2] + p[98] * plg[1][4] + p[67] * plg[1][6]) *
                                  cos(dgtr * (input->g_long - p[97]))) +

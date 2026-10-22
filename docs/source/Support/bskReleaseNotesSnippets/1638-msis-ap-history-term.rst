@@ -1,0 +1,1 @@
+- Fixed :ref:`msisAtmosphere` omitting the UT and longitude dependent magnetic activity term of NRLMSISE-00 when ``setUseApHistory(True)`` is used.
