@@ -796,8 +796,30 @@ extern "C"
     int m33IsZero(double mx[3][3], double accuracy);
     void m33Print(FILE* pfile, const char* name, double mx[3][3]);
     int m33Inverse(double mx[3][3], double result[3][3]);
+    /**
+     * @brief Compute the three singular values in descending order.
+     * @param mx Input matrix, preserved unless result overlaps its storage.
+     * @param result Three nonnegative singular values, in the same units as mx.
+     * @note Non-finite input produces three NaNs. The output may alias a row of mx.
+     */
     void m33SingularValues(double mx[3][3], double result[3]);
+    /**
+     * @brief Compute the real parts of the three eigenvalues in descending order.
+     * @param mx Finite input 3x3 matrix, preserved unless result overlaps its storage.
+     * @param result Three real parts, in the same units as mx; may overlap mx.
+     * @note Exactly symmetric matrices use Jacobi rotations to retain accuracy
+     * near repeated eigenvalues. Other matrices use their characteristic polynomial.
+     * A complex-conjugate pair contributes its repeated real part; imaginary parts
+     * are not returned. Symmetry is checked exactly, without a tolerance.
+     */
     void m33EigenValues(double mx[3][3], double result[3]);
+    /**
+     * @brief Compute the condition number from the largest and smallest singular values.
+     * @param mx Input matrix, preserved by this function.
+     * @return The largest singular value divided by the smallest (dimensionless).
+     * @note A zero smallest singular value gives infinity when the largest is nonzero.
+     * The zero matrix and non-finite input give NaN.
+     */
     double m33ConditionNumber(double mx[3][3]);
     void m33PrintScreen(const char* name, double mx[3][3]);
 
@@ -955,6 +977,14 @@ extern "C"
     void m99SetZero(double result[9][9]);
 
     /* additional routines */
+    /**
+     * @brief Compute real parts of the roots of x^3 + a[2]*x^2 + a[1]*x + a[0] = 0.
+     * @param a Three finite coefficients in ascending order, excluding the monic leading coefficient.
+     * @param result Three real parts; may overlap a. The output is not sorted.
+     * @note For one real root and a complex-conjugate pair, result[0] is the real root
+     * and result[1] and result[2] are the pair's real part. Imaginary parts are not returned.
+     * All three outputs are roots when all roots are real, including repeated roots.
+     */
     void cubicRoots(double a[3], double result[3]);
 
     double safeAcos(double x);

@@ -41,7 +41,7 @@ add_executable(test_linearInterpolation test_linearInterpolation.cpp)
 target_link_libraries(test_linearInterpolation GTest::gtest_main)
 target_link_libraries(test_linearInterpolation ArchitectureUtilities)
 
-add_executable(test_linearAlgebra test_linearAlgebra.cpp test_linearAlgebraComparisons.cpp)
+add_executable(test_linearAlgebra test_linearAlgebra.cpp test_linearAlgebraComparisons.cpp test_linearAlgebraSvd.cpp)
 target_link_libraries(test_linearAlgebra GTest::gtest_main)
 target_link_libraries(test_linearAlgebra ArchitectureUtilities)
 
@@ -70,6 +70,15 @@ foreach(regression
        arithmeticStorage
     outerProductStorage submatrixTraversal perpendicularRange)
     add_test(NAME LinearAlgebraContracts.${regression} COMMAND test_linearAlgebraContracts ${regression})
+endforeach()
+
+add_executable(test_linearAlgebraRoots test_linearAlgebraRoots.c)
+set_target_properties(test_linearAlgebraRoots PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraRoots ArchitectureUtilities)
+foreach(regression
+    cubicSmallTerm cubicSmallRealRoot cubicKnownRoots cubicComplexConvention cubicOverlap
+    eigenDiagonal eigenJacobiPairs eigenRotatedSpectra eigenNonsymmetric eigenOverlap)
+    add_test(NAME LinearAlgebraRoots.${regression} COMMAND test_linearAlgebraRoots ${regression})
 endforeach()
 
 add_executable(test_linearAlgebraArithmetic test_linearAlgebraArithmetic.c)
