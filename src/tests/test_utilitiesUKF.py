@@ -486,3 +486,29 @@ def test_empty_matrix_inverse(module):
     finally:
         module.delete_doubleArray(source)
         module.delete_doubleArray(destination)
+
+
+@pytest.mark.parametrize("module", [inertialUKF, sunlineSuKF])
+def test_lu_back_solve_small_right_hand_side(module):
+    """Back-solve a right-hand side whose entries are all below 1 in magnitude."""
+    matrix = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
+    rhs = [0.3, 0.2, 0.1]
+    source = module.new_doubleArray(9)
+    lu = module.new_doubleArray(9)
+    row_swaps = module.new_intArray(3)
+    b = module.new_doubleArray(3)
+    x = module.new_doubleArray(3)
+    try:
+        for i, value in enumerate(matrix):
+            module.doubleArray_setitem(source, i, value)
+        for i, value in enumerate(rhs):
+            module.doubleArray_setitem(b, i, value)
+        assert module.ukfLUD(source, 3, 3, lu, row_swaps) == 0
+        assert module.ukfLUBckSlv(lu, 3, 3, row_swaps, b, x) == 0
+        solution = [module.doubleArray_getitem(x, i) for i in range(3)]
+        expected = numpy.linalg.solve(numpy.reshape(matrix, (3, 3)), rhs)
+        numpy.testing.assert_allclose(solution, expected, rtol=0.0, atol=1.0e-14)
+    finally:
+        for array in (source, lu, b, x):
+            module.delete_doubleArray(array)
+        module.delete_intArray(row_swaps)

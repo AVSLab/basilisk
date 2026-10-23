@@ -1,0 +1,1 @@
+- Fixed the C ``ukfLUBckSlv()`` utility returning a wrong solution when the first nonzero entry of the pivoted right-hand side was below 1 in magnitude.
