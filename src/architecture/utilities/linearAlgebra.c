@@ -20,25 +20,149 @@
 #include "linearAlgebra.h"
 #include "architecture/utilities/bsk_Print.h"
 
+#include <float.h>
 #include <math.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double) * (dim)))
 
+/* Check before multiplying dimensions, including the byte count used by memory operations. */
+static int dimensionsFit(size_t rows, size_t columns, size_t capacity)
+{
+    if (rows != 0 && columns > capacity / rows) {
+        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimensions exceed the available capacity.");
+        return 0;
+    }
+    return 1;
+}
+
+/* Counts must already have passed dimensionsFit. Subtract addresses to avoid overflowing an end address. */
+static int buffersOverlap(const void* first, size_t firstCount, const void* second, size_t secondCount)
+{
+    if (firstCount == 0 || secondCount == 0) {
+        return 0;
+    }
+    uintptr_t firstAddress = (uintptr_t)first;
+    uintptr_t secondAddress = (uintptr_t)second;
+    if (firstAddress <= secondAddress) {
+        return secondAddress - firstAddress < firstCount * sizeof(double);
+    }
+    return firstAddress - secondAddress < secondCount * sizeof(double);
+}
+
+/* Return a safe traversal direction, or zero when the inputs require opposite directions. */
+static int arithmeticDirection(const double* first, const double* second, size_t count, double* result)
+{
+    int firstOverlaps = buffersOverlap(first, count, result, count);
+    int secondOverlaps = buffersOverlap(second, count, result, count);
+    int forward = (!firstOverlaps || (uintptr_t)result <= (uintptr_t)first) &&
+                  (!secondOverlaps || (uintptr_t)result <= (uintptr_t)second);
+    int backward = (!firstOverlaps || (uintptr_t)result >= (uintptr_t)first) &&
+                   (!secondOverlaps || (uintptr_t)result >= (uintptr_t)second);
+    return forward ? 1 : (backward ? -1 : 0);
+}
+
+enum VectorOperation
+{
+    VECTOR_ADD,
+    VECTOR_SUBTRACT,
+    VECTOR_MULTIPLY
+};
+
+/* Only conflicting overlap needs scratch space. Save the smaller endangered input portion,
+ * then traverse in the direction that preserves the other input. Check capacity before writing.
+ */
+static void conflictingArithmetic(const double* first,
+                                  const double* second,
+                                  size_t count,
+                                  double* result,
+                                  enum VectorOperation operation)
+{
+    const double* lower = (uintptr_t)first < (uintptr_t)result ? first : second;
+    const double* upper = lower == first ? second : first;
+    size_t lowerOffset = ((uintptr_t)result - (uintptr_t)lower) / sizeof(double);
+    size_t upperOffset = ((uintptr_t)upper - (uintptr_t)result) / sizeof(double);
+    int forward = lowerOffset >= upperOffset;
+    const double* savedInput = forward ? lower : upper;
+    size_t savedStart = forward ? lowerOffset : 0;
+    size_t savedCount = count - (forward ? lowerOffset : upperOffset);
+    if (!dimensionsFit(1, savedCount, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return;
+    }
+    double saved[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    MOVE_DOUBLE(savedInput + savedStart, savedCount, saved);
+    for (size_t step = 0; step < count; step++) {
+        size_t i = forward ? step : count - 1 - step;
+        int useSaved = i >= savedStart && i - savedStart < savedCount;
+        double a = first == savedInput && useSaved ? saved[i - savedStart] : first[i];
+        double b = second == savedInput && useSaved ? saved[i - savedStart] : second[i];
+        switch (operation) {
+            case VECTOR_ADD:
+                result[i] = a + b;
+                break;
+            case VECTOR_SUBTRACT:
+                result[i] = a - b;
+                break;
+            case VECTOR_MULTIPLY:
+                result[i] = a * b;
+                break;
+        }
+    }
+}
+
+/* Both row strides are at least the copied width. Rows moving left are safe in forward
+ * order; rows moving right are safe in reverse order, even when the strides differ.
+ */
+static void copyMatrixBlock(const double* source,
+                            size_t sourceStride,
+                            double* result,
+                            size_t resultStride,
+                            size_t rows,
+                            size_t columns)
+{
+    for (size_t row = 0; row < rows; row++) {
+        if ((uintptr_t)(result + row * resultStride) <= (uintptr_t)(source + row * sourceStride)) {
+            MOVE_DOUBLE(source + row * sourceStride, columns, result + row * resultStride);
+        }
+    }
+    for (size_t row = rows; row-- > 0;) {
+        if ((uintptr_t)(result + row * resultStride) > (uintptr_t)(source + row * sourceStride)) {
+            MOVE_DOUBLE(source + row * sourceStride, columns, result + row * resultStride);
+        }
+    }
+}
+
+/* NaNs sort last in either direction; equal values retain their input order. */
+static int sortOutOfOrder(double first, double second, int descending)
+{
+    return !isnan(second) && (isnan(first) || (descending ? first < second : first > second));
+}
+
 void vElementwiseMult(double* v1, size_t dim, double* v2, double* result)
 {
-    size_t i;
-    for (i = 0; i < dim; i++) {
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    int direction = arithmeticDirection(v1, v2, dim, result);
+    if (direction == 0) {
+        conflictingArithmetic(v1, v2, dim, result, VECTOR_MULTIPLY);
+        return;
+    }
+    for (size_t step = 0; step < dim; step++) {
+        size_t i = direction > 0 ? step : dim - 1 - step;
         result[i] = v1[i] * v2[i];
     }
 }
 
 void vCopy(double* v, size_t dim, double* result)
 {
-    size_t i;
-    for (i = 0; i < dim; i++) {
-        result[i] = v[i];
+    if (!dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    if (dim > 0) {
+        MOVE_DOUBLE(v, dim, result);
     }
 }
 
@@ -60,24 +184,47 @@ void vSetOnes(double* v, size_t dim)
 
 void vAdd(double* v1, size_t dim, double* v2, double* result)
 {
-    size_t i;
-    for (i = 0; i < dim; i++) {
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    int direction = arithmeticDirection(v1, v2, dim, result);
+    if (direction == 0) {
+        conflictingArithmetic(v1, v2, dim, result, VECTOR_ADD);
+        return;
+    }
+    for (size_t step = 0; step < dim; step++) {
+        size_t i = direction > 0 ? step : dim - 1 - step;
         result[i] = v1[i] + v2[i];
     }
 }
 
 void vSubtract(double* v1, size_t dim, double* v2, double* result)
 {
-    size_t i;
-    for (i = 0; i < dim; i++) {
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    int direction = arithmeticDirection(v1, v2, dim, result);
+    if (direction == 0) {
+        conflictingArithmetic(v1, v2, dim, result, VECTOR_SUBTRACT);
+        return;
+    }
+    for (size_t step = 0; step < dim; step++) {
+        size_t i = direction > 0 ? step : dim - 1 - step;
         result[i] = v1[i] - v2[i];
     }
 }
 
 void vScale(double scaleFactor, double* v, size_t dim, double* result)
 {
-    size_t i;
-    for (i = 0; i < dim; i++) {
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    /* memmove handles either overlap direction without imposing a temporary-buffer limit. */
+    if (v != result && buffersOverlap(v, dim, result, dim)) {
+        MOVE_DOUBLE(v, dim, result);
+        v = result;
+    }
+    for (size_t i = 0; i < dim; i++) {
         result[i] = v[i] * scaleFactor;
     }
 }
@@ -95,6 +242,32 @@ double vDot(double* v1, size_t dim, double* v2)
 
 void vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result)
 {
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    if (dim1 == 1) {
+        vScale(v1[0], v2, dim2, result);
+        return;
+    }
+    if (dim2 == 1) {
+        vScale(v2[0], v1, dim1, result);
+        return;
+    }
+    size_t firstCount = buffersOverlap(v1, dim1, result, dim1 * dim2) ? dim1 : 0;
+    size_t secondCount = buffersOverlap(v2, dim2, result, dim1 * dim2) ? dim2 : 0;
+    if (!dimensionsFit(1, firstCount, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(1, secondCount, LINEAR_ALGEBRA_MAX_ARRAY_SIZE - firstCount)) {
+        return;
+    }
+    double saved[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (firstCount != 0) {
+        MOVE_DOUBLE(v1, firstCount, saved);
+        v1 = saved;
+    }
+    if (secondCount != 0) {
+        MOVE_DOUBLE(v2, secondCount, saved + firstCount);
+        v2 = saved + firstCount;
+    }
     double* m_result = (double*)result;
 
     size_t i;
@@ -108,15 +281,16 @@ void vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* resul
 
 void vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result)
 {
+    if (dim2 == 0 || !dimensionsFit(1, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     size_t dim11 = 1;
     size_t dim12 = dim1;
     size_t dim22 = dim2;
     double* m_mx1 = (double*)v;
     double* m_mx2 = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim11 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -135,15 +309,16 @@ void vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result)
 
 void vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result)
 {
+    if (dim1 == 0 || !dimensionsFit(1, dim1, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     size_t dim11 = 1;
     size_t dim12 = dim2;
     size_t dim22 = dim1;
     double* m_mx1 = (double*)v;
     double* m_mx2 = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim11 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -152,7 +327,7 @@ void vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result)
         for (j = 0; j < dim22; j++) {
             m_result[MXINDEX(dim22, i, j)] = 0.0;
             for (k = 0; k < dim12; k++) {
-                m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, i, k)] * m_mx2[MXINDEX(dim22, j, k)];
+                m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, i, k)] * m_mx2[MXINDEX(dim12, j, k)];
             }
         }
     }
@@ -167,11 +342,18 @@ double vNorm(double* v, size_t dim)
 
 double vMax(double* array, size_t dim)
 {
+    if (dim == 0) {
+        BSK_PRINT(MSG_ERROR, "%s", "Cannot find the maximum of an empty vector.");
+        return (double)NAN;
+    }
     size_t i;
     double result;
 
     result = array[0];
-    for (i = 1; i < dim; i++) {
+    for (i = 0; i < dim; i++) {
+        if (isnan(array[i])) {
+            return (double)NAN;
+        }
         if (array[i] > result) {
             result = array[i];
         }
@@ -181,11 +363,18 @@ double vMax(double* array, size_t dim)
 
 double vMaxAbs(double* array, size_t dim)
 {
+    if (dim == 0) {
+        BSK_PRINT(MSG_ERROR, "%s", "Cannot find the maximum absolute value of an empty vector.");
+        return (double)NAN;
+    }
     size_t i;
     double result;
 
     result = fabs(array[0]);
-    for (i = 1; i < dim; i++) {
+    for (i = 0; i < dim; i++) {
+        if (isnan(array[i])) {
+            return (double)NAN;
+        }
         if (fabs(array[i]) > result) {
             result = fabs(array[i]);
         }
@@ -195,9 +384,16 @@ double vMaxAbs(double* array, size_t dim)
 
 void vNormalize(double* v, size_t dim, double* result)
 {
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double norm = vNorm(v, dim);
 
-    if (norm > DB0_EPS) {
+    if (!isfinite(norm)) {
+        for (size_t i = 0; i < dim; i++) {
+            result[i] = (double)NAN;
+        }
+    } else if (norm > DB0_EPS) {
         vScale(1.0 / norm, v, dim, result);
     } else {
         vSetZero(result, dim);
@@ -206,9 +402,14 @@ void vNormalize(double* v, size_t dim, double* result)
 
 int vIsEqual(double* v1, size_t dim, double* v2, double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) > accuracy) {
+        /* Require the inclusive bound to hold; NaN differences must not compare equal. */
+        if (!(fabs(v1[i] - v2[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -217,10 +418,14 @@ int vIsEqual(double* v1, size_t dim, double* v2, double accuracy)
 
 int vIsZero(double* v, size_t dim, double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t i;
     int result = 1;
     for (i = 0; i < dim; i++) {
-        if (fabs(v[i]) > accuracy) {
+        if (!(fabs(v[i]) <= accuracy)) {
             result = 0;
             break;
         }
@@ -242,19 +447,25 @@ void vPrint(FILE* pFile, const char* name, double* v, size_t dim)
     fprintf(pFile, "];\n");
 }
 
-/*I hope you allocated the output prior to calling this!*/
 void vSort(double* Input, double* Output, size_t dim)
 {
-    size_t i, j;
-    memcpy(Output, Input, dim * sizeof(double));
-    for (i = 0; i < dim; i++) {
-        for (j = 0; j < dim - 1; j++) {
-            if (Output[j] > Output[j + 1]) {
-                double temp = Output[j + 1];
-                Output[j + 1] = Output[j];
-                Output[j] = temp;
+    if (dim == 0 || !dimensionsFit(1, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    MOVE_DOUBLE(Input, dim, Output);
+    /* Entries after the last swap are already sorted; a pass with no swaps finishes early. */
+    size_t end = dim;
+    while (end > 1) {
+        size_t lastSwap = 0;
+        for (size_t i = 1; i < end; i++) {
+            if (sortOutOfOrder(Output[i - 1], Output[i], 0)) {
+                double temporary = Output[i];
+                Output[i] = Output[i - 1];
+                Output[i - 1] = temporary;
+                lastSwap = i;
             }
         }
+        end = lastSwap;
     }
 }
 
@@ -275,20 +486,18 @@ void v2SetZero(double v[2])
 
 void v2Copy(double v[2], double result[2])
 {
-    size_t dim = 2;
-    size_t i;
-    for (i = 0; i < dim; i++) {
-        result[i] = v[i];
-    }
+    MOVE_DOUBLE(v, 2, result);
 }
 
 void v2Scale(double scaleFactor, double v[2], double result[2])
 {
+    double temporary[2];
     size_t dim = 2;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v[i] * scaleFactor;
+        temporary[i] = v[i] * scaleFactor;
     }
+    MOVE_DOUBLE(temporary, 2, result);
 }
 
 double v2Dot(double v1[2], double v2[2])
@@ -304,10 +513,14 @@ double v2Dot(double v1[2], double v2[2])
 
 int v2IsEqual(double v1[2], double v2[2], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 2;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) > accuracy) {
+        if (!(fabs(v1[i] - v2[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -316,10 +529,14 @@ int v2IsEqual(double v1[2], double v2[2], double accuracy)
 
 int v2IsZero(double v[2], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 2;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v[i]) > accuracy) {
+        if (!(fabs(v[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -328,20 +545,24 @@ int v2IsZero(double v[2], double accuracy)
 
 void v2Add(double v1[2], double v2[2], double result[2])
 {
+    double temporary[2];
     size_t dim = 2;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v1[i] + v2[i];
+        temporary[i] = v1[i] + v2[i];
     }
+    MOVE_DOUBLE(temporary, 2, result);
 }
 
 void v2Subtract(double v1[2], double v2[2], double result[2])
 {
+    double temporary[2];
     size_t dim = 2;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v1[i] - v2[i];
+        temporary[i] = v1[i] - v2[i];
     }
+    MOVE_DOUBLE(temporary, 2, result);
 }
 
 double v2Norm(double v[2])
@@ -352,7 +573,11 @@ double v2Norm(double v[2])
 void v2Normalize(double v[2], double result[2])
 {
     double norm = v2Norm(v);
-    if (norm > DB0_EPS) {
+    if (!isfinite(norm)) {
+        for (size_t i = 0; i < 2; i++) {
+            result[i] = (double)NAN;
+        }
+    } else if (norm > DB0_EPS) {
         v2Scale(1. / norm, v, result);
     } else {
         v2SetZero(result);
@@ -368,11 +593,7 @@ void v3Set(double v0, double v1, double v2, double result[3])
 
 void v3Copy(double v[3], double result[3])
 {
-    size_t dim = 3;
-    size_t i;
-    for (i = 0; i < dim; i++) {
-        result[i] = v[i];
-    }
+    MOVE_DOUBLE(v, 3, result);
 }
 
 void v3SetZero(double v[3])
@@ -386,29 +607,35 @@ void v3SetZero(double v[3])
 
 void v3Add(double v1[3], double v2[3], double result[3])
 {
+    double temporary[3];
     size_t dim = 3;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v1[i] + v2[i];
+        temporary[i] = v1[i] + v2[i];
     }
+    MOVE_DOUBLE(temporary, 3, result);
 }
 
 void v3Subtract(double v1[3], double v2[3], double result[3])
 {
+    double temporary[3];
     size_t dim = 3;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v1[i] - v2[i];
+        temporary[i] = v1[i] - v2[i];
     }
+    MOVE_DOUBLE(temporary, 3, result);
 }
 
 void v3Scale(double scaleFactor, double v[3], double result[3])
 {
+    double temporary[3];
     size_t dim = 3;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v[i] * scaleFactor;
+        temporary[i] = v[i] * scaleFactor;
     }
+    MOVE_DOUBLE(temporary, 3, result);
 }
 
 double v3Dot(double v1[3], double v2[3])
@@ -418,12 +645,18 @@ double v3Dot(double v1[3], double v2[3])
 
 void v3OuterProduct(double v1[3], double v2[3], double result[3][3])
 {
+    /* Preserve both inputs before writing output that may overlap either vector. */
+    double v1c[3];
+    double v2c[3];
+    v3Copy(v1, v1c);
+    v3Copy(v2, v2c);
+
     size_t dim = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim; i++) {
         for (j = 0; j < dim; j++) {
-            result[i][j] = v1[i] * v2[j];
+            result[i][j] = v1c[i] * v2c[j];
         }
     }
 }
@@ -476,7 +709,11 @@ double v3Norm(double v[3])
 void v3Normalize(double v[3], double result[3])
 {
     double norm = v3Norm(v);
-    if (norm > DB0_EPS) {
+    if (!isfinite(norm)) {
+        for (size_t i = 0; i < 3; i++) {
+            result[i] = (double)NAN;
+        }
+    } else if (norm > DB0_EPS) {
         v3Scale(1. / norm, v, result);
     } else {
         v3SetZero(result);
@@ -485,10 +722,14 @@ void v3Normalize(double v[3], double result[3])
 
 int v3IsEqual(double v1[3], double v2[3], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 3;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) > accuracy) {
+        if (!(fabs(v1[i] - v2[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -497,12 +738,38 @@ int v3IsEqual(double v1[3], double v2[3], double accuracy)
 
 int v3IsEqualRel(double v1[3], double v2[3], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 3;
     size_t i;
-    double norm;
-    norm = v3Norm(v1);
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) / norm > accuracy) {
+        if (!isfinite(v1[i]) || !isfinite(v2[i])) {
+            return 0;
+        }
+    }
+
+    double scale = hypot(hypot(v1[0], v1[1]), v1[2]);
+    if (scale == 0.0 || accuracy == 0.0) {
+        return v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2];
+    }
+
+    double scaledNorm = 1.0;
+    if (!isfinite(scale) || fpclassify(scale) == FP_SUBNORMAL) {
+        /* Keep the norm factored to avoid overflow and rounding in the subnormal range. */
+        scale = fmax(fmax(fabs(v1[0]), fabs(v1[1])), fabs(v1[2]));
+        scaledNorm = hypot(hypot(v1[0] / scale, v1[1] / scale), v1[2] / scale);
+    }
+    for (i = 0; i < dim; i++) {
+        double difference = fabs(v1[i] - v2[i]);
+        /* Subtract before scaling to preserve nearby values, unless subtraction overflows. */
+        double error = (isfinite(difference) ? difference / scale : fabs(v1[i] / scale - v2[i] / scale)) / scaledNorm;
+        if (isinf(error) && isfinite(difference) && scaledNorm > 1.0) {
+            /* A tiny scale can overflow the first division even when the final error is finite. */
+            error = (difference / scaledNorm) / scale;
+        }
+        if (!(error <= accuracy)) {
             return 0;
         }
     }
@@ -511,10 +778,14 @@ int v3IsEqualRel(double v1[3], double v2[3], double accuracy)
 
 int v3IsZero(double v[3], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 3;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v[i]) > accuracy) {
+        if (!(fabs(v[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -548,32 +819,45 @@ void v3Cross(double v1[3], double v2[3], double result[3])
 
 void v3Perpendicular(double v[3], double result[3])
 {
-    if (fabs(v[0]) > DB0_EPS) {
-        result[0] = -(v[1] + v[2]) / v[0];
-        result[1] = 1;
-        result[2] = 1;
-    } else if (fabs(v[1]) > DB0_EPS) {
-        result[0] = 1;
-        result[1] = -(v[0] + v[2]) / v[1];
-        result[2] = 1;
-    } else {
-        result[0] = 1;
-        result[1] = 1;
-        result[2] = -(v[0] + v[1]) / v[2];
+    /* Preserve the zero-vector result without evaluating 0/0. */
+    if (v[0] == 0.0 && v[1] == 0.0 && v[2] == 0.0) {
+        v3SetZero(result);
+        return;
     }
-    v3Normalize(result, result);
+
+    /* Preserve unread input components when result aliases v. */
+    double perpendicular[3];
+    if (fabs(v[0]) > DB0_EPS) {
+        perpendicular[0] = -(v[1] + v[2]) / v[0];
+        perpendicular[1] = 1;
+        perpendicular[2] = 1;
+    } else if (fabs(v[1]) > DB0_EPS) {
+        perpendicular[0] = 1;
+        perpendicular[1] = -(v[0] + v[2]) / v[1];
+        perpendicular[2] = 1;
+    } else {
+        perpendicular[0] = 1;
+        perpendicular[1] = 1;
+        perpendicular[2] = -(v[0] + v[1]) / v[2];
+    }
+    v3Normalize(perpendicular, result);
 }
 
 void v3Tilde(double v[3], double result[3][3])
 {
+    /* Preserve the input before writing output that may overlap it. */
+    const double v0 = v[0];
+    const double v1 = v[1];
+    const double v2 = v[2];
+
     result[0][0] = 0.0;
-    result[0][1] = -v[2];
-    result[0][2] = v[1];
-    result[1][0] = v[2];
+    result[0][1] = -v2;
+    result[0][2] = v1;
+    result[1][0] = v2;
     result[1][1] = 0.0;
-    result[1][2] = -v[0];
-    result[2][0] = -v[1];
-    result[2][1] = v[0];
+    result[1][2] = -v0;
+    result[2][0] = -v1;
+    result[2][1] = v0;
     result[2][2] = 0.0;
 }
 
@@ -581,13 +865,13 @@ void v3Sort(double v[3], double result[3])
 {
     double temp;
     v3Copy(v, result);
-    if (result[0] < result[1]) {
+    if (sortOutOfOrder(result[0], result[1], 1)) {
         temp = result[0];
         result[0] = result[1];
         result[1] = temp;
     }
-    if (result[1] < result[2]) {
-        if (result[0] < result[2]) {
+    if (sortOutOfOrder(result[1], result[2], 1)) {
+        if (sortOutOfOrder(result[0], result[2], 1)) {
             temp = result[2];
             result[2] = result[1];
             result[1] = result[0];
@@ -615,11 +899,7 @@ void v4Set(double v0, double v1, double v2, double v3, double result[4])
 
 void v4Copy(double v[4], double result[4])
 {
-    size_t dim = 4;
-    size_t i;
-    for (i = 0; i < dim; i++) {
-        result[i] = v[i];
-    }
+    MOVE_DOUBLE(v, 4, result);
 }
 
 void v4SetZero(double v[4])
@@ -649,10 +929,14 @@ double v4Norm(double v[4])
 
 int v4IsEqual(double v1[4], double v2[4], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 4;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) > accuracy) {
+        if (!(fabs(v1[i] - v2[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -661,10 +945,14 @@ int v4IsEqual(double v1[4], double v2[4], double accuracy)
 
 int v4IsZero(double v[4], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 4;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v[i]) > accuracy) {
+        if (!(fabs(v[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -683,11 +971,7 @@ void v6Set(double v0, double v1, double v2, double v3, double v4, double v5, dou
 
 void v6Copy(double v[6], double result[6])
 {
-    size_t dim = 6;
-    size_t i;
-    for (i = 0; i < dim; i++) {
-        result[i] = v[i];
-    }
+    MOVE_DOUBLE(v, 6, result);
 }
 
 double v6Dot(double v1[6], double v2[6])
@@ -703,31 +987,43 @@ double v6Dot(double v1[6], double v2[6])
 
 void v6Scale(double scaleFactor, double v[6], double result[6])
 {
+    double temporary[6];
     size_t dim = 6;
     size_t i;
     for (i = 0; i < dim; i++) {
-        result[i] = v[i] * scaleFactor;
+        temporary[i] = v[i] * scaleFactor;
     }
+    MOVE_DOUBLE(temporary, 6, result);
 }
 
 void v6OuterProduct(double v1[6], double v2[6], double result[6][6])
 {
+    /* Preserve both inputs before writing output that may overlap either vector. */
+    double v1c[6];
+    double v2c[6];
+    v6Copy(v1, v1c);
+    v6Copy(v2, v2c);
+
     size_t dim = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim; i++) {
         for (j = 0; j < dim; j++) {
-            result[i][j] = v1[i] * v2[j];
+            result[i][j] = v1c[i] * v2c[j];
         }
     }
 }
 
 int v6IsEqual(double v1[6], double v2[6], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim = 6;
     size_t i;
     for (i = 0; i < dim; i++) {
-        if (fabs(v1[i] - v2[i]) > accuracy) {
+        if (!(fabs(v1[i] - v2[i]) <= accuracy)) {
             return 0;
         }
     }
@@ -769,15 +1065,11 @@ void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result)
 
 void mCopy(void* mx, size_t dim1, size_t dim2, void* result)
 {
-    double* m_mx = (double*)mx;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            m_result[MXINDEX(dim2, i, j)] = m_mx[MXINDEX(dim2, i, j)];
-        }
+    if (!dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    if (dim1 > 0 && dim2 > 0) {
+        MOVE_DOUBLE(mx, dim1 * dim2, result);
     }
 }
 
@@ -809,25 +1101,33 @@ void mSetIdentity(void* result, size_t dim1, size_t dim2)
 
 void mDiag(void* v, size_t dim, void* result)
 {
+    if (!dimensionsFit(dim, dim, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double* m_v = (double*)v;
     double* m_result = (double*)result;
 
+    /* Preserve the input in the first output row. Fill rows backwards to avoid overwriting unread values. */
+    vCopy(m_v, dim, m_result);
+
     size_t i;
     size_t j;
-    for (i = 0; i < dim; i++) {
+    for (i = dim; i > 0; i--) {
+        size_t row = i - 1;
+        double diagonal = m_result[row];
         for (j = 0; j < dim; j++) {
-            m_result[MXINDEX(dim, i, j)] = (i == j) ? m_v[i] : 0.0;
+            m_result[MXINDEX(dim, row, j)] = (row == j) ? diagonal : 0.0;
         }
     }
 }
 
 void mTranspose(void* mx, size_t dim1, size_t dim2, void* result)
 {
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return;
+    }
     double* m_mx = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim1 * dim2 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -842,56 +1142,38 @@ void mTranspose(void* mx, size_t dim1, size_t dim2, void* result)
 
 void mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
 {
-    double* m_mx1 = (double*)mx1;
-    double* m_mx2 = (double*)mx2;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] + m_mx2[MXINDEX(dim2, i, j)];
-        }
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
     }
+    vAdd(mx1, dim1 * dim2, mx2, result);
 }
 
 void mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
 {
-    double* m_mx1 = (double*)mx1;
-    double* m_mx2 = (double*)mx2;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] - m_mx2[MXINDEX(dim2, i, j)];
-        }
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
     }
+    vSubtract(mx1, dim1 * dim2, mx2, result);
 }
 
 void mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result)
 {
-    double* m_mx = (double*)mx;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            m_result[MXINDEX(dim2, i, j)] = scaleFactor * m_mx[MXINDEX(dim2, i, j)];
-        }
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
     }
+    vScale(scaleFactor, mx, dim1 * dim2, result);
 }
 
 void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
+    if (dim11 == 0 || dim22 == 0 || !dimensionsFit(dim11, dim22, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim11, dim12, SIZE_MAX / sizeof(double)) ||
+        !dimensionsFit(dim21, dim22, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim11 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -900,11 +1182,26 @@ void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size
         BSK_PRINT(MSG_ERROR, "%s", "Error: mMultM dimensions don't match.");
         return;
     }
-    for (i = 0; i < dim11; i++) {
-        for (j = 0; j < dim22; j++) {
-            m_result[MXINDEX(dim22, i, j)] = 0.0;
+    /* Contiguous row updates help wider products; retain the small-matrix dot-product loop. */
+    if (dim12 >= 8 && dim22 >= 8) {
+        for (i = 0; i < dim11; i++) {
+            for (j = 0; j < dim22; j++) {
+                m_result[MXINDEX(dim22, i, j)] = 0.0;
+            }
             for (k = 0; k < dim12; k++) {
-                m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, i, k)] * m_mx2[MXINDEX(dim22, k, j)];
+                double value = m_mx1[MXINDEX(dim12, i, k)];
+                for (j = 0; j < dim22; j++) {
+                    m_result[MXINDEX(dim22, i, j)] += value * m_mx2[MXINDEX(dim22, k, j)];
+                }
+            }
+        }
+    } else {
+        for (i = 0; i < dim11; i++) {
+            for (j = 0; j < dim22; j++) {
+                m_result[MXINDEX(dim22, i, j)] = 0.0;
+                for (k = 0; k < dim12; k++) {
+                    m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, i, k)] * m_mx2[MXINDEX(dim22, k, j)];
+                }
             }
         }
     }
@@ -914,12 +1211,14 @@ void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size
 
 void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
+    if (dim12 == 0 || dim22 == 0 || !dimensionsFit(dim12, dim22, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim11, dim12, SIZE_MAX / sizeof(double)) ||
+        !dimensionsFit(dim21, dim22, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim12 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -928,11 +1227,26 @@ void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, siz
         BSK_PRINT(MSG_ERROR, "%s", "Error: mtMultM dimensions don't match.");
         return;
     }
-    for (i = 0; i < dim12; i++) {
-        for (j = 0; j < dim22; j++) {
-            m_result[MXINDEX(dim22, i, j)] = 0.0;
+    /* Contiguous row updates help wider products; retain the small-matrix dot-product loop. */
+    if (dim11 >= 8 && dim22 >= 8) {
+        for (i = 0; i < dim12; i++) {
+            for (j = 0; j < dim22; j++) {
+                m_result[MXINDEX(dim22, i, j)] = 0.0;
+            }
             for (k = 0; k < dim11; k++) {
-                m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, k, i)] * m_mx2[MXINDEX(dim22, k, j)];
+                double value = m_mx1[MXINDEX(dim12, k, i)];
+                for (j = 0; j < dim22; j++) {
+                    m_result[MXINDEX(dim22, i, j)] += value * m_mx2[MXINDEX(dim22, k, j)];
+                }
+            }
+        }
+    } else {
+        for (i = 0; i < dim12; i++) {
+            for (j = 0; j < dim22; j++) {
+                m_result[MXINDEX(dim22, i, j)] = 0.0;
+                for (k = 0; k < dim11; k++) {
+                    m_result[MXINDEX(dim22, i, j)] += m_mx1[MXINDEX(dim12, k, i)] * m_mx2[MXINDEX(dim22, k, j)];
+                }
             }
         }
     }
@@ -942,12 +1256,14 @@ void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, siz
 
 void mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
+    if (dim11 == 0 || dim21 == 0 || !dimensionsFit(dim11, dim21, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim11, dim12, SIZE_MAX / sizeof(double)) ||
+        !dimensionsFit(dim21, dim22, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim11 * dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -970,12 +1286,14 @@ void mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, siz
 
 void mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
+    if (dim12 == 0 || dim21 == 0 || !dimensionsFit(dim12, dim21, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim11, dim12, SIZE_MAX / sizeof(double)) ||
+        !dimensionsFit(dim21, dim22, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim12 * dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -998,15 +1316,16 @@ void mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, si
 
 void mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
 {
+    if (dim1 == 0 || !dimensionsFit(1, dim1, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     size_t dim11 = dim1;
     size_t dim12 = dim2;
     size_t dim22 = 1;
     double* m_mx1 = (double*)mx;
     double* m_mx2 = (double*)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim11 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -1025,15 +1344,16 @@ void mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
 
 void mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
 {
+    if (dim2 == 0 || !dimensionsFit(1, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
     size_t dim11 = dim1;
     size_t dim12 = dim2;
     size_t dim22 = 1;
     double* m_mx1 = (double*)mx;
     double* m_mx2 = (double*)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim12 * dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     size_t i;
     size_t j;
@@ -1189,6 +1509,10 @@ int mInverse(void* mx, size_t dim, void* result)
 
 int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
 
@@ -1196,7 +1520,7 @@ int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(m_mx1[MXINDEX(dim2, i, j)] - m_mx2[MXINDEX(dim2, i, j)]) > accuracy) {
+            if (!(fabs(m_mx1[MXINDEX(dim2, i, j)] - m_mx2[MXINDEX(dim2, i, j)]) <= accuracy)) {
                 return 0;
             }
         }
@@ -1206,13 +1530,17 @@ int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
 
 int mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     double* m_mx = (double*)mx;
 
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(m_mx[MXINDEX(dim2, i, j)]) > accuracy) {
+            if (!(fabs(m_mx[MXINDEX(dim2, i, j)]) <= accuracy)) {
                 return 0;
             }
         }
@@ -1271,17 +1599,18 @@ void mGetSubMatrix(void* mx,
                    size_t dim2Result,
                    void* result)
 {
-    (void)dim1;
-    double* m_mx = (double*)mx;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = dim1Start; i < dim1Start + dim1Result; i++) {
-        for (j = dim2Start; j < dim2Start + dim2Result; j++) {
-            m_result[MXINDEX(dim2Result, i - dim1Start, j - dim2Start)] = m_mx[MXINDEX(dim2, i, j)];
-        }
+    if (dim1Result == 0 || dim2Result == 0) {
+        return;
     }
+    if (dim1Start > dim1 || dim2Start > dim2 || dim1Result > dim1 - dim1Start || dim2Result > dim2 - dim2Start) {
+        BSK_PRINT(MSG_ERROR, "%s", "Requested submatrix lies outside the input matrix.");
+        return;
+    }
+    if (!dimensionsFit(dim1, dim2, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    const double* source = (double*)mx + MXINDEX(dim2, dim1Start, dim2Start);
+    copyMatrixBlock(source, dim2, result, dim2Result, dim1Result, dim2Result);
 }
 
 void mSetSubMatrix(void* mx,
@@ -1293,17 +1622,19 @@ void mSetSubMatrix(void* mx,
                    size_t dim1Start,
                    size_t dim2Start)
 {
-    (void)dim1Result;
-    double* m_mx = (double*)mx;
-    double* m_result = (double*)result;
-
-    size_t i;
-    size_t j;
-    for (i = dim1Start; i < dim1Start + dim1; i++) {
-        for (j = dim2Start; j < dim2Start + dim2; j++) {
-            m_result[MXINDEX(dim2Result, i, j)] = m_mx[MXINDEX(dim2, i - dim1Start, j - dim2Start)];
-        }
+    if (dim1 == 0 || dim2 == 0) {
+        return;
     }
+    if (dim1Start > dim1Result || dim2Start > dim2Result || dim1 > dim1Result - dim1Start ||
+        dim2 > dim2Result - dim2Start) {
+        BSK_PRINT(MSG_ERROR, "%s", "Requested submatrix lies outside the output matrix.");
+        return;
+    }
+    if (!dimensionsFit(dim1Result, dim2Result, SIZE_MAX / sizeof(double))) {
+        return;
+    }
+    double* destination = (double*)result + MXINDEX(dim2Result, dim1Start, dim2Start);
+    copyMatrixBlock(mx, dim2, destination, dim2Result, dim1, dim2);
 }
 
 void m22Set(double m00, double m01, double m10, double m11, double m[2][2])
@@ -1316,15 +1647,7 @@ void m22Set(double m00, double m01, double m10, double m11, double m[2][2])
 
 void m22Copy(double mx[2][2], double result[2][2])
 {
-    size_t dim1 = 2;
-    size_t dim2 = 2;
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            result[i][j] = mx[i][j];
-        }
-    }
+    MOVE_DOUBLE(mx, 2 * 2, result);
 }
 
 void m22SetZero(double result[2][2])
@@ -1369,41 +1692,47 @@ void m22Transpose(double mx[2][2], double result[2][2])
 
 void m22Add(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
+    double temporary[2][2];
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] + mx2[i][j];
+            temporary[i][j] = mx1[i][j] + mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 4, result);
 }
 
 void m22Subtract(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
+    double temporary[2][2];
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] - mx2[i][j];
+            temporary[i][j] = mx1[i][j] - mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 4, result);
 }
 
 void m22Scale(double scaleFactor, double mx[2][2], double result[2][2])
 {
+    double temporary[2][2];
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = scaleFactor * mx[i][j];
+            temporary[i][j] = scaleFactor * mx[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 4, result);
 }
 
 void m22MultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
@@ -1527,13 +1856,17 @@ double m22Determinant(double mx[2][2])
 
 int m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx1[i][j] - mx2[i][j]) > accuracy) {
+            if (!(fabs(mx1[i][j] - mx2[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -1543,13 +1876,17 @@ int m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy)
 
 int m22IsZero(double mx[2][2], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx[i][j]) > accuracy) {
+            if (!(fabs(mx[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -1633,15 +1970,7 @@ void m33Set(double m00,
 
 void m33Copy(double mx[3][3], double result[3][3])
 {
-    size_t dim1 = 3;
-    size_t dim2 = 3;
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            result[i][j] = mx[i][j];
-        }
-    }
+    MOVE_DOUBLE(mx, 3 * 3, result);
 }
 
 void m33SetZero(double result[3][3])
@@ -1686,41 +2015,47 @@ void m33Transpose(double mx[3][3], double result[3][3])
 
 void m33Add(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
+    double temporary[3][3];
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] + mx2[i][j];
+            temporary[i][j] = mx1[i][j] + mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 9, result);
 }
 
 void m33Subtract(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
+    double temporary[3][3];
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] - mx2[i][j];
+            temporary[i][j] = mx1[i][j] - mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 9, result);
 }
 
 void m33Scale(double scaleFactor, double mx[3][3], double result[3][3])
 {
+    double temporary[3][3];
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = scaleFactor * mx[i][j];
+            temporary[i][j] = scaleFactor * mx[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 9, result);
 }
 
 void m33MultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
@@ -1845,13 +2180,17 @@ double m33Determinant(double mx[3][3])
 
 int m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx1[i][j] - mx2[i][j]) > accuracy) {
+            if (!(fabs(mx1[i][j] - mx2[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -1861,13 +2200,17 @@ int m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy)
 
 int m33IsZero(double mx[3][3], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx[i][j]) > accuracy) {
+            if (!(fabs(mx[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -2022,15 +2365,7 @@ void m44Set(double m00,
 
 void m44Copy(double mx[4][4], double result[4][4])
 {
-    size_t dim1 = 4;
-    size_t dim2 = 4;
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            result[i][j] = mx[i][j];
-        }
-    }
+    MOVE_DOUBLE(mx, 4 * 4, result);
 }
 
 void m44SetZero(double result[4][4])
@@ -2086,13 +2421,17 @@ double m44Determinant(double mx[4][4])
 
 int m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 4;
     size_t dim2 = 4;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx1[i][j] - mx2[i][j]) > accuracy) {
+            if (!(fabs(mx1[i][j] - mx2[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -2260,15 +2599,7 @@ void m66Set(double m00,
 
 void m66Copy(double mx[6][6], double result[6][6])
 {
-    size_t dim1 = 6;
-    size_t dim2 = 6;
-    size_t i;
-    size_t j;
-    for (i = 0; i < dim1; i++) {
-        for (j = 0; j < dim2; j++) {
-            result[i][j] = mx[i][j];
-        }
-    }
+    MOVE_DOUBLE(mx, 6 * 6, result);
 }
 
 void m66SetZero(double result[6][6])
@@ -2313,65 +2644,83 @@ void m66Transpose(double mx[6][6], double result[6][6])
 
 void m66Get33Matrix(size_t row, size_t col, double m[6][6], double mij[3][3])
 {
+    if (row > 1 || col > 1) {
+        BSK_PRINT(MSG_ERROR, "%s", "A 6x6 matrix block index must be 0 or 1.");
+        return;
+    }
+    double block[3][3];
     size_t i;
     size_t j;
-    /* WARNING! Doesn't error check that row = 0,1,N-1 and col = 0,1,N-1 */
+    /* Read the entire block before writing output that may overlap m. */
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            mij[i][j] = m[row * 3 + i][col * 3 + j];
+            block[i][j] = m[row * 3 + i][col * 3 + j];
         }
     }
+    m33Copy(block, mij);
 }
 
 void m66Set33Matrix(size_t row, size_t col, double mij[3][3], double m[6][6])
 {
+    if (row > 1 || col > 1) {
+        BSK_PRINT(MSG_ERROR, "%s", "A 6x6 matrix block index must be 0 or 1.");
+        return;
+    }
+    double block[3][3];
     size_t i;
     size_t j;
-    /* WARNING! Doesn't error check that row = 0,1,N-1 and col = 0,1,N-1 */
+    /* Preserve the input before writing matrix entries that may overlap it. */
+    m33Copy(mij, block);
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            m[row * 3 + i][col * 3 + j] = mij[i][j];
+            m[row * 3 + i][col * 3 + j] = block[i][j];
         }
     }
 }
 
 void m66Scale(double scaleFactor, double mx[6][6], double result[6][6])
 {
+    double temporary[6][6];
     size_t dim1 = 6;
     size_t dim2 = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = scaleFactor * mx[i][j];
+            temporary[i][j] = scaleFactor * mx[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 36, result);
 }
 
 void m66Add(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
+    double temporary[6][6];
     size_t dim1 = 6;
     size_t dim2 = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] + mx2[i][j];
+            temporary[i][j] = mx1[i][j] + mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 36, result);
 }
 
 void m66Subtract(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
+    double temporary[6][6];
     size_t dim1 = 6;
     size_t dim2 = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            result[i][j] = mx1[i][j] - mx2[i][j];
+            temporary[i][j] = mx1[i][j] - mx2[i][j];
         }
     }
+    MOVE_DOUBLE(temporary, 36, result);
 }
 
 void m66MultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
@@ -2476,13 +2825,17 @@ void m66tMultV6(double mx[6][6], double v[6], double result[6])
 
 int m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 6;
     size_t dim2 = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx1[i][j] - mx2[i][j]) > accuracy) {
+            if (!(fabs(mx1[i][j] - mx2[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -2492,13 +2845,17 @@ int m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy)
 
 int m66IsZero(double mx[6][6], double accuracy)
 {
+    if (!isfinite(accuracy) || accuracy < 0.0) {
+        return 0;
+    }
+
     size_t dim1 = 6;
     size_t dim2 = 6;
     size_t i;
     size_t j;
     for (i = 0; i < dim1; i++) {
         for (j = 0; j < dim2; j++) {
-            if (fabs(mx[i][j]) > accuracy) {
+            if (!(fabs(mx[i][j]) <= accuracy)) {
                 return 0;
             }
         }
@@ -2578,7 +2935,5 @@ double safeAsin(double x)
 
 double safeSqrt(double x)
 {
-    if (x < 0.0)
-        return 0.0;
-    return sqrt(x);
+    return sqrt(isless(x, 0.0) ? 0.0 : x);
 }
