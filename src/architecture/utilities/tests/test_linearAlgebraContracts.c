@@ -34,6 +34,249 @@
         }                                                                                                              \
     } while (0)
 
+/** @brief Reject singular integer matrices even when elimination leaves a nonzero pivot. */
+static int singularInverse(void)
+{
+    const double cases[][9] = {
+        { 10, 11, -5, 11, 13, -7, -5, -7, 5 }, /* A positive-semidefinite rank-two Gram matrix. */
+        { 13, 9, 4, 9, 10, 6, 4, 6, 4 },
+        { -5, -5, 1, -1, 4, 4, -6, -1, 5 }, /* Last row is the sum of the first two. */
+        { 1, 1, 1, 3, 3, 3, 0, 1, 2 }
+    };
+    const size_t permutations[][3] = { { 0, 1, 2 }, { 0, 2, 1 }, { 1, 0, 2 }, { 1, 2, 0 }, { 2, 0, 1 }, { 2, 1, 0 } };
+    const size_t offsets[] = { 0, 4, 5, 6, 14 };
+    for (size_t test = 0; test < sizeof(cases) / sizeof(cases[0]); test++) {
+        for (size_t permutation = 0; permutation < 6; permutation++) {
+            for (size_t output = 0; output < sizeof(offsets) / sizeof(offsets[0]); output++) {
+                double storage[24], original[24];
+                for (size_t i = 0; i < 24; i++) {
+                    storage[i] = 123.0;
+                }
+                for (size_t row = 0; row < 3; row++) {
+                    for (size_t col = 0; col < 3; col++) {
+                        storage[5 + row * 3 + col] = cases[test][permutations[permutation][row] * 3 + col];
+                    }
+                }
+                memcpy(original, storage, sizeof(storage));
+                feclearexcept(FE_ALL_EXCEPT);
+                CHECK(mInverse(storage + 5, 3, storage + offsets[output]) == 1);
+                CHECK(fetestexcept(FE_INVALID | FE_DIVBYZERO) == 0);
+                for (size_t i = 0; i < 24; i++) {
+                    double expected = i >= offsets[output] && i < offsets[output] + 9 ? 0.0 : original[i];
+                    CHECK(storage[i] == expected);
+                }
+            }
+        }
+    }
+    /* Fused subtraction can leave a nonzero residual even for these proportional rows. */
+    double pair[] = { 1, 1, 3, 3 };
+    double output[4];
+    CHECK(mInverse(pair, 2, output) == 1);
+    for (size_t i = 0; i < 4; i++) {
+        CHECK(output[i] == 0.0);
+    }
+    return 0;
+}
+
+/** @brief Include elimination growth and propagated roundoff in singularity checks. */
+static int singularInverseGrowth(void)
+{
+    double matrix[] = {
+        7, 7,  -3, -5, 2,  5, -3, 3, -8, 8,  6,  4, 5, 8,  -7,  2,  6,  -7,
+        3, -1, 6,  -5, -2, 5, -5, 3, -7, -4, -2, 6, 1, 13, -19, 11, 14, 13
+    }; /* Last row is the first row plus twice the second row. */
+    double inverse[36];
+    CHECK(mInverse(matrix, 6, inverse) == 1);
+    for (size_t i = 0; i < 36; i++) {
+        CHECK(inverse[i] == 0.0);
+    }
+    double scaled[] = { -2, -1, -8, -3, -1.75, 1, -26, -15, 0 };
+    const double rowScales[] = { 1, 1, 8192 };
+    const double columnScales[] = { 0x1p23, 32, 24576 };
+    for (size_t row = 0; row < 3; row++) {
+        for (size_t col = 0; col < 3; col++) {
+            scaled[row * 3 + col] *= rowScales[row] * columnScales[col];
+        }
+    }
+    CHECK(mInverse(scaled, 3, inverse) == 1);
+    for (size_t i = 0; i < 9; i++) {
+        CHECK(inverse[i] == 0.0);
+    }
+    return 0;
+}
+
+/** @brief Retain valid small pivots in graded diagonal and triangular matrices. */
+static int inversePivotScales(void)
+{
+    const double small = 0x1p-60;
+    const double large = 0x1p60;
+    const double offDiagonal = 0x1p30;
+    double cases[][9] = { { small, 0, 0, 0, large, 0, 0, 0, 1 },
+                          { 1, offDiagonal, 0, 0, 1, 0, 0, 0, 1 },
+                          { offDiagonal, 1, 0, offDiagonal, 2, 0, 0, 0, 1 },
+                          { 0, 0, small, large, 0, 0, 0, 1, 0 } };
+    for (size_t test = 0; test < sizeof(cases) / sizeof(cases[0]); test++) {
+        double inverse[9];
+        CHECK(mInverse(cases[test], 3, inverse) == 0);
+        for (size_t row = 0; row < 3; row++) {
+            for (size_t col = 0; col < 3; col++) {
+                double left = 0.0, right = 0.0;
+                for (size_t inner = 0; inner < 3; inner++) {
+                    left += cases[test][row * 3 + inner] * inverse[inner * 3 + col];
+                    right += inverse[row * 3 + inner] * cases[test][inner * 3 + col];
+                }
+                CHECK(left == (row == col ? 1.0 : 0.0));
+                CHECK(right == (row == col ? 1.0 : 0.0));
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Distinguish cancellation at roundoff from resolvable pivots without truncating determinants. */
+static int inverseRankBoundary(void)
+{
+    double matrix[] = { 1, 1, 1, 1 + DBL_EPSILON };
+    double inverse[4], cofactors[4];
+    CHECK(mInverse(matrix, 2, inverse) == 1);
+    CHECK(mDeterminant(matrix, 2) == DBL_EPSILON);
+    mCofactor(matrix, 2, cofactors);
+    CHECK(cofactors[0] == matrix[3] && cofactors[1] == -1.0 && cofactors[2] == -1.0 && cofactors[3] == 1.0);
+    double delta = 64.0 * DBL_EPSILON;
+    matrix[3] = 1.0 + delta;
+    CHECK(mInverse(matrix, 2, inverse) == 0);
+    CHECK(inverse[0] == 1.0 + 1.0 / delta);
+    CHECK(inverse[1] == -1.0 / delta && inverse[2] == -1.0 / delta && inverse[3] == 1.0 / delta);
+    return 0;
+}
+
+/** @brief Check inverse status, both identities, and storage boundaries for overlapping small matrices. */
+static int checkConditionInverse(const double* matrix, size_t dim, int expectedStatus)
+{
+    const size_t offsets[] = { 0, 16, 17, 18, 34 };
+    for (size_t layout = 0; layout < sizeof(offsets) / sizeof(offsets[0]); layout++) {
+        double storage[52], saved[52];
+        for (size_t i = 0; i < 52; i++) {
+            storage[i] = 123.0;
+        }
+        memcpy(storage + 17, matrix, dim * dim * sizeof(double));
+        memcpy(saved, storage, sizeof(storage));
+        double* inverse = storage + offsets[layout];
+        feclearexcept(FE_ALL_EXCEPT);
+        CHECK(mInverse(storage + 17, dim, inverse) == expectedStatus);
+        CHECK(fetestexcept(FE_INVALID | FE_DIVBYZERO) == 0);
+        for (size_t i = 0; i < 52; i++) {
+            CHECK((i >= offsets[layout] && i < offsets[layout] + dim * dim) || storage[i] == saved[i]);
+        }
+        for (size_t row = 0; row < dim; row++) {
+            for (size_t col = 0; col < dim; col++) {
+                if (expectedStatus) {
+                    CHECK(inverse[row * dim + col] == 0.0);
+                } else {
+                    double left = 0.0, right = 0.0;
+                    for (size_t inner = 0; inner < dim; inner++) {
+                        left += matrix[row * dim + inner] * inverse[inner * dim + col];
+                        right += inverse[row * dim + inner] * matrix[inner * dim + col];
+                    }
+                    CHECK(isfinite(left) && fabs(left - (row == col ? 1.0 : 0.0)) < 2e-13);
+                    CHECK(isfinite(right) && fabs(right - (row == col ? 1.0 : 0.0)) < 2e-13);
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Reject exactly dependent integer rows and columns that can pass the LU pivot guard. */
+static int inverseConditionSingular(void)
+{
+    const double original[16] = { 3, -7, 10, -8, -4, -10, 4, 3, -6, -4, -4, 6, -5, -27, 18, -2 };
+    /* The last row equals the first row plus twice the second row. Different scales
+     * expose the regression with and without fused multiply-add instructions. */
+    const double scales[] = { 7, 10, 1, 0.125, 1024 };
+    for (size_t scale = 0; scale < sizeof(scales) / sizeof(scales[0]); scale++) {
+        for (size_t shift = 0; shift < 4; shift++) {
+            for (size_t transpose = 0; transpose < 2; transpose++) {
+                double matrix[16];
+                for (size_t row = 0; row < 4; row++) {
+                    for (size_t col = 0; col < 4; col++) {
+                        matrix[transpose ? col * 4 + row : row * 4 + col] =
+                            scales[scale] * original[((row + shift) % 4) * 4 + col];
+                    }
+                }
+                CHECK(checkConditionInverse(matrix, 4, 1) == 0);
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Reject poor scaled conditioning even when individual pivots and the determinant are large. */
+static int inverseConditionBoundary(void)
+{
+    for (int exponent = 23; exponent <= 25; exponent++) {
+        double matrix[16];
+        mSetIdentity(matrix, 4, 4);
+        for (size_t row = 0; row < 3; row++) {
+            matrix[row * 4 + row + 1] = ldexp(1.0, exponent);
+        }
+        /* After row and column scaling, rcond = 1 / (2 * (2*q*q + q + 1)),
+         * where q = 2^exponent. It crosses 4*DBL_EPSILON at exponent 24. */
+        CHECK(checkConditionInverse(matrix, 4, exponent >= 24) == 0);
+    }
+    const size_t dimensions[] = { 2, 4, 16, 64 };
+    for (size_t test = 0; test < sizeof(dimensions) / sizeof(dimensions[0]); test++) {
+        size_t dim = dimensions[test];
+        for (size_t accepts = 0; accepts < 2; accepts++) {
+            double matrix[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+            mSetIdentity(matrix, dim, dim);
+            double delta = (accepts ? 8.0 : 3.0) * (double)dim * DBL_EPSILON;
+            matrix[1] = matrix[dim] = 1.0;
+            matrix[dim + 1] = 1.0 + delta;
+            CHECK(mInverse(matrix, dim, matrix) == (accepts ? 0 : 1));
+            if (accepts) {
+                CHECK(matrix[0] == 1.0 + 1.0 / delta);
+                CHECK(matrix[1] == -1.0 / delta && matrix[dim] == -1.0 / delta);
+                CHECK(matrix[dim + 1] == 1.0 / delta);
+            } else {
+                CHECK(mIsZero(matrix, dim, dim, 0.0));
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Preserve valid inverses under independent row and column scaling, including overlapping buffers. */
+static int inverseConditionScales(void)
+{
+    const double small = 0x1p-60, large = 0x1p60;
+    const double cases[][4] = { { small, 0, 0, large },
+                                { 0, small, large, 0 },
+                                { 1, 0x1p30, 0, 1 },
+                                { 0x1p30, 1, 0x1p30, 2 },
+                                { 0x1p-500, 0, 0, 0x1p500 } };
+    for (size_t test = 0; test < sizeof(cases) / sizeof(cases[0]); test++) {
+        CHECK(checkConditionInverse(cases[test], 2, 0) == 0);
+    }
+    const double rowScales[] = { 0x1p-20, 0x1p20 };
+    const double columnScales[] = { 0x1p15, 0x1p-15 };
+    const double scales[] = { 0.125, 1, 1024 };
+    for (size_t test = 0; test < sizeof(scales) / sizeof(scales[0]); test++) {
+        double matrix[4];
+        for (size_t row = 0; row < 2; row++) {
+            for (size_t col = 0; col < 2; col++) {
+                matrix[row * 2 + col] = (row == col ? 2.0 : 1.0) * rowScales[row] * columnScales[col] * scales[test];
+            }
+        }
+        CHECK(checkConditionInverse(matrix, 2, 0) == 0);
+    }
+    const double scalars[] = { -3, nextafter(DB0_EPS, 1.0), 1e308 };
+    for (size_t test = 0; test < sizeof(scalars) / sizeof(scalars[0]); test++) {
+        CHECK(checkConditionInverse(scalars + test, 1, 0) == 0);
+    }
+    return 0;
+}
+
 /** @brief Exercise every generic binary arithmetic entry point. */
 static void binaryOperation(size_t operation, double* first, double* second, size_t count, double* result)
 {
@@ -236,13 +479,17 @@ int main(int argc, char** argv)
     {
         const char* name;
         int (*run)(void);
-    } tests[] = {
-
-        { "arithmeticStorage", arithmeticStorage },
-        { "outerProductStorage", outerProductStorage },
-        { "submatrixTraversal", submatrixTraversal },
-        { "perpendicularRange", perpendicularRange }
-    };
+    } tests[] = { { "singularInverse", singularInverse },
+                  { "singularInverseGrowth", singularInverseGrowth },
+                  { "inversePivotScales", inversePivotScales },
+                  { "inverseRankBoundary", inverseRankBoundary },
+                  { "inverseConditionSingular", inverseConditionSingular },
+                  { "inverseConditionBoundary", inverseConditionBoundary },
+                  { "inverseConditionScales", inverseConditionScales },
+                  { "arithmeticStorage", arithmeticStorage },
+                  { "outerProductStorage", outerProductStorage },
+                  { "submatrixTraversal", submatrixTraversal },
+                  { "perpendicularRange", perpendicularRange } };
     int found = 0;
     for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
         if (argc == 1 || strcmp(argv[1], tests[i].name) == 0) {

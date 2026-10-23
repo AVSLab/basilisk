@@ -437,7 +437,42 @@ extern "C"
     int v6IsEqual(double v1[6], double v2[6], double accuracy);
 
     /* NxM matrices */
+    /**
+     * @brief Compute the least-squares inverse using column-pivoted Householder QR.
+     * @param mx Input matrix in contiguous row-major storage.
+     * @param dim1 Number of input rows.
+     * @param dim2 Number of input columns.
+     * @param result Output matrix with dim2 rows and dim1 columns; may overlap mx.
+     * @note Requires dim1 >= dim2 and a finite, numerically full-column-rank matrix.
+     * Both dim1 * dim2 and dim2 * dim2 must fit LINEAR_ALGEBRA_MAX_ARRAY_SIZE.
+     * Invalid dimensions are logged and leave result unchanged. An empty input causes
+     * no memory access; pointers may be null.
+     * @note Rank is rejected when a pivot column norm is at most DBL_EPSILON * dim1
+     * times the largest original column norm. The squared product of the R diagonal
+     * must also exceed DB0_EPS, preserving the absolute Gram-determinant cutoff.
+     * Failure of these checks, nonfinite input or pivot norms, or nonfinite inverse
+     * entries is logged and zeros result. Overflow of the determinant-related product
+     * alone does not imply failure if the remaining checks pass.
+     * This routine does not compute a rank-deficient pseudoinverse.
+     */
     void mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result);
+    /**
+     * @brief Compute the minimum-norm inverse using column-pivoted Householder QR of the transpose.
+     * @param mx Input matrix in contiguous row-major storage.
+     * @param dim1 Number of input rows.
+     * @param dim2 Number of input columns.
+     * @param result Output matrix with dim2 rows and dim1 columns; may overlap mx.
+     * @note Requires dim1 <= dim2 and a finite, numerically full-row-rank matrix.
+     * Both dim1 * dim2 and dim1 * dim1 must fit LINEAR_ALGEBRA_MAX_ARRAY_SIZE.
+     * Invalid dimensions are logged and leave result unchanged. An empty input causes
+     * no memory access; pointers may be null.
+     * @note The rank and determinant checks are those of mLeastSquaresInverse applied
+     * to the transpose, using dim2 for the rank tolerance's dimension factor.
+     * Failure of these checks, nonfinite input or pivot norms, or nonfinite inverse
+     * entries is logged and zeros result. Overflow of the determinant-related product
+     * alone does not imply failure if the remaining checks pass.
+     * This routine does not compute a rank-deficient pseudoinverse.
+     */
     void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result);
     /**
      * @brief Copy a matrix, allowing overlapping input and output storage.
@@ -590,8 +625,54 @@ extern "C"
      */
     void mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result);
     double mTrace(void* mx, size_t dim);
+    /**
+     * @brief Compute the determinant of a square row-major matrix using pivoted LU.
+     * @param mx Input matrix.
+     * @param dim Number of rows and columns.
+     * @return Determinant, or NaN after logging invalid dimensions.
+     * @note The (dim - 1) squared minor must fit LINEAR_ALGEBRA_MAX_ARRAY_SIZE.
+     * For dim == 0, returns zero without accessing mx, preserving the existing convention.
+     * Scalar and 2-by-2 inputs use direct formulas. No singularity tolerance is applied.
+     * The LU pivot product uses a separate binary exponent to avoid intermediate range loss.
+     * Elimination arithmetic and a final determinant outside the double range can still lose range.
+     */
     double mDeterminant(void* mx, size_t dim);
+    /**
+     * @brief Compute the cofactor matrix, allowing overlapping input and output.
+     * @param mx Input square row-major matrix.
+     * @param dim Number of rows and columns.
+     * @param result Output square row-major matrix.
+     * @note dim * dim must fit LINEAR_ALGEBRA_MAX_ARRAY_SIZE. Invalid dimensions are logged
+     * and leave result unchanged. For dim == 0, no memory is accessed and pointers may be null.
+     * Minors are evaluated independently, including for singular input matrices.
+     */
     void mCofactor(void* mx, size_t dim, void* result);
+    /**
+     * @brief Invert a square row-major matrix using pivoted LU, allowing overlapping input and output.
+     * @param mx Input matrix.
+     * @param dim Number of rows and columns.
+     * @param result Output inverse; zeroed on numerical failure.
+     * @return Zero on success, one for numerical failure or invalid dimensions.
+     * @note dim * dim must fit LINEAR_ALGEBRA_MAX_ARRAY_SIZE. Invalid dimensions, including
+     * dim == 0, are logged and leave result unchanged without accessing either pointer.
+     * @note The absolute determinant must exceed DB0_EPS; this existing cutoff is not
+     * scale invariant. A pivot is also rejected when its magnitude is at most
+     * DBL_EPSILON * dim times its row's rounding scale. For P * mx = L * U, that scale
+     * is the sum of absolute entries in the original permuted row, plus
+     * sum(k < i, abs(L[i,k]) * sum(j >= k, abs(U[k,j]))) for pivot U[i,i]. This includes
+     * elimination growth while preserving graded diagonal matrices.
+     * @note A final condition check uses B[i,j] = mx[i,j] / r[i] / c[j], where r[i]
+     * is the largest absolute entry in row i and c[j] is the largest absolute entry
+     * in column j after row scaling. With X the computed inverse, the scaled inverse
+     * estimate is Y[i,j] = c[i] * X[i,j] * r[j]. The reciprocal condition estimate
+     * 1 / (norm_inf(B) * norm_inf(Y)) must exceed dim * DBL_EPSILON, where norm_inf
+     * is the maximum absolute row sum. Scaling is used only for this check; it does
+     * not change accepted inverse values. This policy can reject mathematically
+     * invertible matrices near numerical singularity and is not an exact rank test.
+     * @note Failed numerical checks, nonfinite input or inverse entries, and nonfinite
+     * condition-check norms are logged and zero result. Overflow of the determinant
+     * alone does not imply failure if the remaining checks pass.
+     */
     int mInverse(void* mx, size_t dim, void* result);
     /**
      * @brief Compare corresponding elements using an absolute tolerance.
@@ -723,6 +804,17 @@ extern "C"
      */
     int m22IsZero(double mx[2][2], double accuracy);
     void m22Print(FILE* pFile, const char* name, double mx[2][2]);
+    /**
+     * @brief Invert a fixed-size square matrix, allowing overlapping input and output.
+     * @param mx Input matrix.
+     * @param result Output inverse; zeroed on failure and allowed to overlap mx.
+     * @return Zero on success, one on failure.
+     * @note The absolute determinant must exceed both DB0_EPS and a roundoff bound:
+     * DBL_EPSILON times the matrix dimension squared times the sum of absolute determinant
+     * expansion terms. This rejects cancellation at roundoff while retaining graded diagonal
+     * matrices. Numerically singular matrices and nonfinite input, determinant, roundoff bound,
+     * or inverse entries are logged as failures. The direct inverse formula is retained.
+     */
     int m22Inverse(double mx[2][2], double result[2][2]);
     void m22PrintScreen(const char* name, double mx[2][2]);
 
@@ -795,6 +887,17 @@ extern "C"
      */
     int m33IsZero(double mx[3][3], double accuracy);
     void m33Print(FILE* pfile, const char* name, double mx[3][3]);
+    /**
+     * @brief Invert a fixed-size square matrix, allowing overlapping input and output.
+     * @param mx Input matrix.
+     * @param result Output inverse; zeroed on failure and allowed to overlap mx.
+     * @return Zero on success, one on failure.
+     * @note The absolute determinant must exceed both DB0_EPS and a roundoff bound:
+     * DBL_EPSILON times the matrix dimension squared times the sum of absolute determinant
+     * expansion terms. This rejects cancellation at roundoff while retaining graded diagonal
+     * matrices. Numerically singular matrices and nonfinite input, determinant, roundoff bound,
+     * or inverse entries are logged as failures. The direct inverse formula is retained.
+     */
     int m33Inverse(double mx[3][3], double result[3][3]);
     /**
      * @brief Compute the three singular values in descending order.
@@ -859,6 +962,17 @@ extern "C"
      * @note NaN and infinity are rejected in the input or tolerance.
      */
     int m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy);
+    /**
+     * @brief Invert a fixed-size square matrix, allowing overlapping input and output.
+     * @param mx Input matrix.
+     * @param result Output inverse; zeroed on failure and allowed to overlap mx.
+     * @return Zero on success, one on failure.
+     * @note The absolute determinant must exceed both DB0_EPS and a roundoff bound:
+     * DBL_EPSILON times the matrix dimension squared times the sum of absolute determinant
+     * expansion terms. This rejects cancellation at roundoff while retaining graded diagonal
+     * matrices. Numerically singular matrices and nonfinite input, determinant, roundoff bound,
+     * or inverse entries are logged as failures. The direct inverse formula is retained.
+     */
     int m44Inverse(double mx[4][4], double result[4][4]);
 
     /* 6x6 matrices */
