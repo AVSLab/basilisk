@@ -20,6 +20,7 @@
 #include "rigidBodyKinematics.h"
 
 #include "architecture/utilities/bsk_Print.h"
+#include "astroConstants.h"
 #include "linearAlgebra.h"
 #include "math.h"
 #include <string.h>
@@ -3802,12 +3803,12 @@ double wrapToPi(double x)
     if (!isfinite(x)) {
         return nan("");
     }
-    const double twoPi = 2.0 * M_PI; // [rad]
+    const double twoPi = 2.0 * MPI; // [rad]
     double wrapped = fmod(x, twoPi);
-    if (wrapped > M_PI) {
+    if (wrapped > MPI) {
         return wrapped - twoPi;
     }
-    if (wrapped < -M_PI) {
+    if (wrapped < -MPI) {
         return wrapped + twoPi;
     }
     return wrapped;

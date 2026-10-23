@@ -338,10 +338,10 @@ double M2E(double M, double e)
 
     /* Let libm reduce the angle: remainder(M, 2*pi) loses the small offset near
        whole revolutions, which is amplified when eccentricity approaches one. */
-    double reducedMean = fabs(M) <= M_PI ? M : atan2(sin(M), cos(M));
+    double reducedMean = fabs(M) <= MPI ? M : atan2(sin(M), cos(M));
     double mean = fabs(reducedMean);
     double lower = mean;
-    double upper = M_PI; // [rad]
+    double upper = MPI; // [rad]
     double anomaly = mean;
     const double relativeTolerance = 4.0 * DBL_EPSILON;
     for (int count = 0; count < 200; ++count) {
@@ -460,7 +460,7 @@ void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
     double anomaly = elements->f;
     double pHat[3], qHat[3];
     double radius, radialSpeed, parameter;
-    if (!isfinite(mu) || mu <= 0.0 || !isfinite(a) || !isfinite(e) || e < 0.0 || !isfinite(i) || i < 0.0 || i > M_PI ||
+    if (!isfinite(mu) || mu <= 0.0 || !isfinite(a) || !isfinite(e) || e < 0.0 || !isfinite(i) || i < 0.0 || i > MPI ||
         !isfinite(node) || !isfinite(periapsis) || !isfinite(anomaly)) {
         goto invalid;
     }
@@ -491,7 +491,7 @@ void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
             radialSpeed = copysign(sqrt(mu / -a) / tanh(0.5 * fabs(anomaly)), anomaly);
         } else {
             radius = elements->rmag;
-            if (!isfinite(radius) || radius <= 0.0 || (anomaly != 0.0 && anomaly != M_PI)) {
+            if (!isfinite(radius) || radius <= 0.0 || (anomaly != 0.0 && anomaly != MPI)) {
                 goto invalid;
             }
             radialSpeed = sqrt(2.0 * (mu / radius)) * (anomaly == 0.0 ? 1.0 : -1.0);
@@ -640,7 +640,7 @@ void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
     nodeMagnitude = hypot(nHat[0], nHat[1]);
     if (nodeMagnitude <= singularityTolerance) {
         v3Set(1.0, 0.0, 0.0, nHat);
-        elements->i = hHat[2] >= 0.0 ? 0.0 : M_PI; // [rad]
+        elements->i = hHat[2] >= 0.0 ? 0.0 : MPI; // [rad]
     } else {
         v3Scale(1.0 / nodeMagnitude, nHat, nHat);
         elements->i = atan2(nodeMagnitude, hHat[2]);
@@ -656,9 +656,9 @@ void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
     double* angles[3] = { &elements->Omega, &elements->omega, &elements->f };
     for (int index = 0; index < 3; ++index) {
         if (*angles[index] < 0.0) {
-            *angles[index] += 2.0 * M_PI;
+            *angles[index] += 2.0 * MPI;
         }
-        if (*angles[index] >= 2.0 * M_PI) {
+        if (*angles[index] >= 2.0 * MPI) {
             *angles[index] = 0.0; // [rad]; rounding can reach the upper endpoint
         }
     }
@@ -667,12 +667,12 @@ void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
         if (scaledEnergy > 0.0) {
             elements->f = atan2(radialSpeed * sqrt(scaledEnergy), 1.0 - scaledEnergy);
             if (elements->f < 0.0) {
-                elements->f += 2.0 * M_PI;
+                elements->f += 2.0 * MPI;
             }
         } else if (scaledEnergy < 0.0) {
             elements->f = copysign(2.0 * asinh(sqrt(-0.5 * scaledEnergy)), radialSpeed);
         } else {
-            elements->f = radialSpeed >= 0.0 ? 0.0 : M_PI; // [rad]; radial direction flag
+            elements->f = radialSpeed >= 0.0 ? 0.0 : MPI; // [rad]; radial direction flag
         }
     }
     if (!isfinite(elements->a) || !isfinite(elements->alpha) || !isfinite(elements->e) ||
@@ -1058,7 +1058,7 @@ void solarRad(double A, double m, double* sunvec, double* arvec)
 static int validEllipticElements(const ClassicElements* elements)
 {
     return isfinite(elements->a) && elements->a > 0.0 && isfinite(elements->e) && elements->e >= 0.0 &&
-           elements->e < 1.0 && isfinite(elements->i) && elements->i >= 0.0 && elements->i <= M_PI &&
+           elements->e < 1.0 && isfinite(elements->i) && elements->i >= 0.0 && elements->i <= MPI &&
            isfinite(elements->Omega) && isfinite(elements->omega) && isfinite(elements->f);
 }
 
@@ -1091,9 +1091,9 @@ static void clMeanOscMapImpl(double req,
     double omega = elements->omega;
     // Reflection across the x-z plane preserves J2 dynamics. Work in the
     // prograde frame to resolve inclination near pi in the sin(i/2) recovery.
-    int retrograde = i > M_PI / 2.0;
+    int retrograde = i > MPI / 2.0;
     if (retrograde) {
-        i = M_PI - i;
+        i = MPI - i;
         Omega = -Omega;
     }
     if (fabs(1.0 - 5.0 * cos(i) * cos(i)) <= sqrt(DBL_EPSILON)) {
@@ -1196,7 +1196,7 @@ static void clMeanOscMapImpl(double req,
 
     elements_p->a = ap;
     elements_p->e = ep;
-    elements_p->i = retrograde ? M_PI - ip : ip;
+    elements_p->i = retrograde ? MPI - ip : ip;
     elements_p->Omega = retrograde ? -Omegap : Omegap;
     elements_p->omega = omegap;
     elements_p->f = fp;
@@ -1600,7 +1600,7 @@ void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho
  */
 void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
 {
-    if (!isfinite(elements->i) || elements->i < 0.0 || elements->i > M_PI) {
+    if (!isfinite(elements->i) || elements->i < 0.0 || elements->i > MPI) {
         clMeanOscMapChecked(req, J2, elements, elements_p, sgn);
         return;
     }
@@ -1627,7 +1627,7 @@ void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicEleme
  */
 void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
 {
-    if (!isfinite(elements_cl->i) || elements_cl->i < 0.0 || elements_cl->i > M_PI) {
+    if (!isfinite(elements_cl->i) || elements_cl->i < 0.0 || elements_cl->i > MPI) {
         clElem2eqElemChecked(elements_cl, elements_eq);
         return;
     }

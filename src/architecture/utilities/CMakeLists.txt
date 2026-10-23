@@ -17,6 +17,7 @@ foreach(source_file IN LISTS moduleId)
 endforeach()
 
 add_library(ArchitectureUtilities STATIC ${basilisk_src})
+set_target_properties(ArchitectureUtilities PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
 # Find and link cfitsio
 find_package(cfitsio REQUIRED)
 target_link_libraries(ArchitectureUtilities PUBLIC cfitsio::cfitsio)
