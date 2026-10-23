@@ -963,3 +963,91 @@ TEST(LinearAlgebra, vtMultMtTallMatrixInPlace)
     EXPECT_DOUBLE_EQ(matrix[1][0], 6.0);
     EXPECT_DOUBLE_EQ(matrix[1][1], 5.0);
 }
+
+/** @brief Preserve cubic results without raising invalid-operation or divide-by-zero exceptions. */
+TEST(LinearAlgebra, cubicRootsFloatingPointExceptions)
+{
+    struct CubicCase
+    {
+        double coefficients[3];
+        double expected[3];
+    };
+    CubicCase cases[] = {
+        { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } },      // x^3
+        { { -1.0, 3.0, -3.0 }, { 1.0, 1.0, 1.0 } },    // (x - 1)^3
+        { { -6.0, 11.0, -6.0 }, { 3.0, 1.0, 2.0 } },   // (x - 1)(x - 2)(x - 3)
+        { { -2.0, 5.0, -4.0 }, { 2.0, 1.0, 1.0 } },    // (x - 1)^2(x - 2)
+        { { -8.0, 17.0, -10.0 }, { 8.0, 1.0, 1.0 } },  // (x - 1)^2(x - 8)
+        { { 8.0, 17.0, 10.0 }, { -8.0, -1.0, -1.0 } }, // (x + 1)^2(x + 8)
+        // For complex pairs, preserve the existing real-part outputs in slots 1 and 2.
+        { { -1.0, 0.0, 0.0 }, { 1.0, -0.5, -0.5 } }, // x^3 - 1
+        { { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0 } },    // x^3 + x
+        { { 4.0, -2.0, 0.0 }, { -2.0, 1.0, 1.0 } },  // (x + 2)(x^2 - 2x + 2)
+    };
+
+    // Also run without optimization: an optimizer may remove an unused invalid operation.
+    for (auto& test : cases) {
+        SCOPED_TRACE(::testing::PrintToString(test.coefficients));
+        double result[3] = {};
+        std::fenv_t environment;
+        ASSERT_EQ(std::feholdexcept(&environment), 0);
+        cubicRoots(test.coefficients, result);
+        const int exceptions = std::fetestexcept(FE_INVALID | FE_DIVBYZERO);
+        ASSERT_EQ(std::fesetenv(&environment), 0);
+
+        EXPECT_EQ(exceptions, 0);
+        for (size_t i = 0; i < 3; i++) {
+            EXPECT_NEAR(result[i], test.expected[i], 1e-14);
+        }
+    }
+}
+
+/** @brief Identity eigenvalues exercise the triple-root cubic path without floating-point exceptions. */
+TEST(LinearAlgebra, m33EigenValuesIdentityFloatingPointExceptions)
+{
+    double matrix[3][3] = { { 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 } };
+    double result[3] = {};
+    std::fenv_t environment;
+    ASSERT_EQ(std::feholdexcept(&environment), 0);
+    m33EigenValues(matrix, result);
+    const int exceptions = std::fetestexcept(FE_INVALID | FE_DIVBYZERO);
+    ASSERT_EQ(std::fesetenv(&environment), 0);
+
+    EXPECT_EQ(exceptions, 0);
+    for (double value : result) {
+        EXPECT_DOUBLE_EQ(value, 1.0);
+    }
+}
+
+/** @brief Repeated diagonal eigenvalues remain finite when the cubic discriminant rounds below zero. */
+TEST(LinearAlgebra, m33EigenValuesRepeatedRoots)
+{
+    struct EigenCase
+    {
+        double diagonal[3];
+        double expected[3];
+    };
+    const EigenCase cases[] = {
+        { { 1.0, 1.0, 8.0 }, { 8.0, 1.0, 1.0 } },       { { 1.0, 8.0, 1.0 }, { 8.0, 1.0, 1.0 } },
+        { { 8.0, 1.0, 1.0 }, { 8.0, 1.0, 1.0 } },       { { -1.0, -1.0, -8.0 }, { -1.0, -1.0, -8.0 } },
+        { { -1.0, -8.0, -1.0 }, { -1.0, -1.0, -8.0 } }, { { -8.0, -1.0, -1.0 }, { -1.0, -1.0, -8.0 } },
+    };
+
+    for (const auto& test : cases) {
+        SCOPED_TRACE(::testing::PrintToString(test.diagonal));
+        double matrix[3][3] = { { test.diagonal[0], 0.0, 0.0 },
+                                { 0.0, test.diagonal[1], 0.0 },
+                                { 0.0, 0.0, test.diagonal[2] } };
+        double result[3] = {};
+        std::fenv_t environment;
+        ASSERT_EQ(std::feholdexcept(&environment), 0);
+        m33EigenValues(matrix, result);
+        const int exceptions = std::fetestexcept(FE_INVALID | FE_DIVBYZERO);
+        ASSERT_EQ(std::fesetenv(&environment), 0);
+
+        EXPECT_EQ(exceptions, 0);
+        for (size_t i = 0; i < 3; i++) {
+            EXPECT_NEAR(result[i], test.expected[i], 1e-14);
+        }
+    }
+}

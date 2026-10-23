@@ -2268,33 +2268,170 @@ int m33Inverse(double mx[3][3], double result[3][3])
 
 void m33SingularValues(double mx[3][3], double result[3])
 {
+    double matrix[3][3];
+    double scale = 0.0;
     double sv[3];
-    double a[3];
-    double mxtmx[3][3];
-    int i;
 
-    m33tMultM33(mx, mx, mxtmx);
-
-    /* Compute characteristic polynomial */
-    a[0] = -m33Determinant(mxtmx);
-    a[1] = mxtmx[0][0] * mxtmx[1][1] - mxtmx[0][1] * mxtmx[1][0] + mxtmx[0][0] * mxtmx[2][2] -
-           mxtmx[0][2] * mxtmx[2][0] + mxtmx[1][1] * mxtmx[2][2] - mxtmx[1][2] * mxtmx[2][1];
-    a[2] = -mxtmx[0][0] - mxtmx[1][1] - mxtmx[2][2];
-
-    /* Solve cubic equation */
-    cubicRoots(a, sv);
-
-    /* take square roots */
-    for (i = 0; i < 3; i++) {
-        sv[i] = sqrt(sv[i]);
+    /* Read all input before writing result, which may overlap mx. */
+    for (int row = 0; row < 3; row++) {
+        for (int column = 0; column < 3; column++) {
+            if (!isfinite(mx[row][column])) {
+                v3Set(nan(""), nan(""), nan(""), result);
+                return;
+            }
+            scale = fmax(scale, fabs(mx[row][column]));
+        }
+    }
+    if (scale == 0.0) {
+        v3SetZero(result);
+        return;
+    }
+    /* Scale small matrices up, but only scale large matrices down enough to leave
+       room for rotations. Dividing every matrix by its largest entry could erase
+       representable small singular values in matrices with a wide dynamic range. */
+    if (scale >= 1.0) {
+        scale = scale > DBL_MAX / 4.0 ? 4.0 : 1.0;
+    }
+    for (int row = 0; row < 3; row++) {
+        for (int column = 0; column < 3; column++) {
+            matrix[row][column] = mx[row][column] / scale;
+        }
     }
 
-    /* order roots */
+    /* One-sided Jacobi rotations orthogonalize the columns without forming mx^T mx.
+       Scaling and hypot avoid squaring the input scale or its condition number.
+       Bound the number of sweeps, stopping early when the columns are orthogonal
+       to within the rounding error of a three-component dot product. */
+    for (int sweep = 0; sweep < 30; sweep++) {
+        int rotated = 0;
+        for (int first = 0; first < 2; first++) {
+            for (int second = first + 1; second < 3; second++) {
+                int larger = first;
+                int smaller = second;
+                double largeNorm = hypot(hypot(matrix[0][first], matrix[1][first]), matrix[2][first]);
+                double smallNorm = hypot(hypot(matrix[0][second], matrix[1][second]), matrix[2][second]);
+                if (largeNorm < smallNorm) {
+                    larger = second;
+                    smaller = first;
+                    double temporary = largeNorm;
+                    largeNorm = smallNorm;
+                    smallNorm = temporary;
+                }
+                if (smallNorm == 0.0) {
+                    continue;
+                }
+
+                double correlation = 0.0;
+                for (int row = 0; row < 3; row++) {
+                    correlation += (matrix[row][larger] / largeNorm) * (matrix[row][smaller] / smallNorm);
+                }
+                if (fabs(correlation) <= 3.0 * DBL_EPSILON) {
+                    continue;
+                }
+
+                /* Compute the 2x2 Jacobi rotation from norm ratios and the normalized dot product. */
+                double ratio = smallNorm / largeNorm;
+                double difference = (1.0 - ratio) * (1.0 + ratio);
+                double crossTerm = 2.0 * ratio * correlation;
+                double tangentOverRatio = 2.0 * correlation / (difference + hypot(difference, crossTerm));
+                double tangent = ratio * tangentOverRatio;
+                double cosine = 1.0 / hypot(1.0, tangent);
+                double sine = cosine * tangent;
+                for (int row = 0; row < 3; row++) {
+                    double largeValue = matrix[row][larger];
+                    double smallValue = matrix[row][smaller];
+                    matrix[row][larger] = cosine * largeValue + sine * smallValue;
+                    /* Factor sine * largeValue to retain the correction even when ratio underflows. */
+                    matrix[row][smaller] =
+                        cosine * (smallValue - tangentOverRatio * (largeValue / largeNorm) * smallNorm);
+                }
+                rotated = 1;
+            }
+        }
+        if (!rotated) {
+            break;
+        }
+    }
+
+    for (int column = 0; column < 3; column++) {
+        sv[column] = hypot(hypot(matrix[0][column], matrix[1][column]), matrix[2][column]) * scale;
+    }
     v3Sort(sv, result);
+}
+
+/* Symmetric Jacobi rotations avoid the loss of accuracy from a characteristic
+   polynomial near repeated eigenvalues. Only exactly symmetric inputs use this path. */
+static void m33SymmetricEigenValues(double mx[3][3], double result[3])
+{
+    double matrix[3][3];
+    double scale = 0.0;
+    for (int row = 0; row < 3; row++) {
+        for (int column = 0; column < 3; column++) {
+            if (!isfinite(mx[row][column])) {
+                v3Set(nan(""), nan(""), nan(""), result);
+                return;
+            }
+            scale = fmax(scale, fabs(mx[row][column]));
+        }
+    }
+    if (mx[0][1] == 0.0 && mx[0][2] == 0.0 && mx[1][2] == 0.0) {
+        double diagonal[3] = { mx[0][0], mx[1][1], mx[2][2] };
+        v3Sort(diagonal, result);
+        return;
+    }
+    /* Normalize before taking differences or rotating. The nonzero off-diagonal
+       entry above guarantees a positive scale. Preserve mx until all reads finish. */
+    for (int row = 0; row < 3; row++) {
+        for (int column = 0; column < 3; column++) {
+            matrix[row][column] = mx[row][column] / scale;
+        }
+    }
+
+    /* Each sweep visits all three pairs. Stop when their off-diagonal entries
+       are negligible at double precision, with a fixed bound on the work. */
+    for (int sweep = 0; sweep < 12; sweep++) {
+        int rotated = 0;
+        for (int first = 0; first < 2; first++) {
+            for (int second = first + 1; second < 3; second++) {
+                double offDiagonal = matrix[first][second];
+                if (fabs(offDiagonal) <= DBL_EPSILON * (fabs(matrix[first][first]) + fabs(matrix[second][second]))) {
+                    matrix[first][second] = matrix[second][first] = 0.0;
+                    continue;
+                }
+                /* This form keeps |tangent| <= 1 and avoids subtracting nearby values. */
+                double difference = 0.5 * (matrix[second][second] - matrix[first][first]);
+                double tangent = offDiagonal / (difference + copysign(hypot(difference, offDiagonal), difference));
+                double cosine = 1.0 / hypot(1.0, tangent);
+                double sine = tangent * cosine;
+
+                matrix[first][first] -= tangent * offDiagonal;
+                matrix[second][second] += tangent * offDiagonal;
+                matrix[first][second] = matrix[second][first] = 0.0;
+                for (int row = 0; row < 3; row++) {
+                    if (row != first && row != second) {
+                        double firstValue = matrix[row][first];
+                        double secondValue = matrix[row][second];
+                        matrix[row][first] = matrix[first][row] = cosine * firstValue - sine * secondValue;
+                        matrix[row][second] = matrix[second][row] = sine * firstValue + cosine * secondValue;
+                    }
+                }
+                rotated = 1;
+            }
+        }
+        if (!rotated) {
+            break;
+        }
+    }
+    double eigenvalues[3] = { matrix[0][0] * scale, matrix[1][1] * scale, matrix[2][2] * scale };
+    v3Sort(eigenvalues, result);
 }
 
 void m33EigenValues(double mx[3][3], double result[3])
 {
+    if (mx[0][1] == mx[1][0] && mx[0][2] == mx[2][0] && mx[1][2] == mx[2][1]) {
+        m33SymmetricEigenValues(mx, result);
+        return;
+    }
     double sv[3];
     double a[3];
 
@@ -2884,7 +3021,8 @@ void cubicRoots(double a[3], double result[3])
     double a2d3 = a[2] / 3.0;
     double Q = (3.0 * a[1] - a2sq) / 9.0;
     double R = (a[2] * (9 * a[1] - 2 * a2sq) - 27 * a[0]) / 54.0;
-    double RdsqrtnQ3 = R / sqrt(-Q * Q * Q);
+    /* Evaluate this ratio only when the trigonometric branch can use it. */
+    double RdsqrtnQ3 = Q < 0.0 ? R / sqrt(-Q * Q * Q) : 0.0;
 
     if (Q < 0.0 && fabs(RdsqrtnQ3) < 1.0) {
         /* A = 2*sqrt(-Q)
@@ -2905,12 +3043,21 @@ void cubicRoots(double a[3], double result[3])
         result[2] = A * (temp1 + temp2) - a2d3;
     } else {
         double D = Q * Q * Q + R * R;
+        /* D is nonnegative in this branch, but roundoff near repeated roots can make it negative. */
+        if (D < 0.0) {
+            D = 0.0;
+        }
         double sqrtD = sqrt(D);
-        double S = cbrt(R + sqrtD);
-        double T = cbrt(R - sqrtD);
+        /* Choose the larger cube-root argument, then use S*T = -Q to avoid
+           cancellation in the smaller argument R +/- sqrtD. */
+        double S = cbrt(R + copysign(sqrtD, R));
+        double T = S != 0.0 ? -Q / S : 0.0;
+        /* When Q is positive, S and T have opposite signs. Their sum follows
+           from S^3 + T^3 = 2R without subtracting nearly equal cube roots. */
+        double sum = Q > 0.0 ? 2.0 * R / (S * S + Q + T * T) : S + T;
 
-        result[0] = -a2d3 + (S + T);
-        result[1] = -a2d3 - 0.5 * (S + T);
+        result[0] = -a2d3 + sum;
+        result[1] = -a2d3 - 0.5 * sum;
         result[2] = result[1];
     }
 }
