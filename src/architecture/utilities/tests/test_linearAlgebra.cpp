@@ -964,6 +964,134 @@ TEST(LinearAlgebra, vtMultMtTallMatrixInPlace)
     EXPECT_DOUBLE_EQ(matrix[1][1], 5.0);
 }
 
+/** @brief A scalar matrix has cofactor one, including when its entry is zero. */
+TEST(LinearAlgebra, mCofactorScalar)
+{
+    const double values[] = { 2.0, -4.0, 0.0 };
+    for (double value : values) {
+        SCOPED_TRACE(value);
+        double matrix[1] = { value };
+        double result[1] = {};
+
+        mCofactor(matrix, 1, result);
+        EXPECT_DOUBLE_EQ(result[0], 1.0);
+        EXPECT_DOUBLE_EQ(matrix[0], value);
+
+        mCofactor(matrix, 1, matrix);
+        EXPECT_DOUBLE_EQ(matrix[0], 1.0);
+    }
+}
+
+/** @brief Invert positive and negative scalars with separate and aliased output. */
+TEST(LinearAlgebra, mInverseScalar)
+{
+    const double values[] = { 2.0, -4.0 };
+    const double expected[] = { 0.5, -0.25 };
+    for (size_t i = 0; i < 2; i++) {
+        SCOPED_TRACE(values[i]);
+        double matrix[1] = { values[i] };
+        double result[1] = {};
+
+        EXPECT_EQ(mInverse(matrix, 1, result), 0);
+        EXPECT_DOUBLE_EQ(result[0], expected[i]);
+        EXPECT_DOUBLE_EQ(matrix[0], values[i]);
+
+        EXPECT_EQ(mInverse(matrix, 1, matrix), 0);
+        EXPECT_DOUBLE_EQ(matrix[0], expected[i]);
+    }
+}
+
+/** @brief Preserve the failure status and zero output at and below the singularity threshold. */
+TEST(LinearAlgebra, mInverseScalarSingularityThreshold)
+{
+    const double belowThreshold = std::nextafter(DB0_EPS, 0.0);
+    const double values[] = { 0.0, -0.0, belowThreshold, -belowThreshold, DB0_EPS, -DB0_EPS };
+    for (double value : values) {
+        SCOPED_TRACE(value);
+        double matrix[1] = { value };
+        double result[1] = { 1234.0 };
+
+        EXPECT_EQ(mInverse(matrix, 1, result), 1);
+        EXPECT_DOUBLE_EQ(result[0], 0.0);
+        EXPECT_DOUBLE_EQ(matrix[0], value);
+
+        EXPECT_EQ(mInverse(matrix, 1, matrix), 1);
+        EXPECT_DOUBLE_EQ(matrix[0], 0.0);
+    }
+}
+
+/** @brief Scalars immediately outside the singularity threshold remain invertible. */
+TEST(LinearAlgebra, mInverseScalarAboveSingularityThreshold)
+{
+    const double aboveThreshold = std::nextafter(DB0_EPS, 2.0 * DB0_EPS);
+    const double values[] = { aboveThreshold, -aboveThreshold };
+    for (double value : values) {
+        SCOPED_TRACE(value);
+        double matrix[1] = { value };
+        double result[1] = {};
+
+        EXPECT_EQ(mInverse(matrix, 1, result), 0);
+        EXPECT_DOUBLE_EQ(result[0], 1.0 / value);
+        EXPECT_DOUBLE_EQ(matrix[0], value);
+
+        EXPECT_EQ(mInverse(matrix, 1, matrix), 0);
+        EXPECT_DOUBLE_EQ(matrix[0], 1.0 / value);
+    }
+}
+
+/** @brief A single-column least-squares inverse uses the reciprocal of its scalar Gram matrix. */
+TEST(LinearAlgebra, mLeastSquaresInverseSingleColumn)
+{
+    double matrix[3] = { 3.0, -4.0, 0.0 };
+    double result[3] = {};
+
+    mLeastSquaresInverse(matrix, 3, 1, result);
+    EXPECT_DOUBLE_EQ(result[0], 0.12);
+    EXPECT_DOUBLE_EQ(result[1], -0.16);
+    EXPECT_DOUBLE_EQ(result[2], 0.0);
+
+    mLeastSquaresInverse(matrix, 3, 1, matrix);
+    EXPECT_DOUBLE_EQ(matrix[0], 0.12);
+    EXPECT_DOUBLE_EQ(matrix[1], -0.16);
+    EXPECT_DOUBLE_EQ(matrix[2], 0.0);
+}
+
+/** @brief A single-row minimum-norm inverse uses the reciprocal of its scalar Gram matrix. */
+TEST(LinearAlgebra, mMinimumNormInverseSingleRow)
+{
+    double matrix[3] = { 3.0, -4.0, 0.0 };
+    double result[3] = {};
+
+    mMinimumNormInverse(matrix, 1, 3, result);
+    EXPECT_DOUBLE_EQ(result[0], 0.12);
+    EXPECT_DOUBLE_EQ(result[1], -0.16);
+    EXPECT_DOUBLE_EQ(result[2], 0.0);
+
+    mMinimumNormInverse(matrix, 1, 3, matrix);
+    EXPECT_DOUBLE_EQ(matrix[0], 0.12);
+    EXPECT_DOUBLE_EQ(matrix[1], -0.16);
+    EXPECT_DOUBLE_EQ(matrix[2], 0.0);
+}
+
+/** @brief Preserve nonsymmetric two-by-two cofactors and in-place inversion. */
+TEST(LinearAlgebra, mInverseTwoByTwo)
+{
+    double matrix[2][2] = { { 0.0, 2.0 }, { 4.0, 6.0 } };
+    double cofactor[2][2] = {};
+
+    mCofactor(matrix, 2, cofactor);
+    EXPECT_DOUBLE_EQ(cofactor[0][0], 6.0);
+    EXPECT_DOUBLE_EQ(cofactor[0][1], -4.0);
+    EXPECT_DOUBLE_EQ(cofactor[1][0], -2.0);
+    EXPECT_DOUBLE_EQ(cofactor[1][1], 0.0);
+
+    EXPECT_EQ(mInverse(matrix, 2, matrix), 0);
+    EXPECT_DOUBLE_EQ(matrix[0][0], -0.75);
+    EXPECT_DOUBLE_EQ(matrix[0][1], 0.25);
+    EXPECT_DOUBLE_EQ(matrix[1][0], 0.5);
+    EXPECT_DOUBLE_EQ(matrix[1][1], 0.0);
+}
+
 /** @brief Preserve cubic results without raising invalid-operation or divide-by-zero exceptions. */
 TEST(LinearAlgebra, cubicRootsFloatingPointExceptions)
 {

@@ -28,6 +28,14 @@
 
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double) * (dim)))
 
+/* Keep small factorization work arrays consistent with the public storage limit. */
+enum
+{
+    maxSquareDimension = 64
+};
+_Static_assert(maxSquareDimension* maxSquareDimension == LINEAR_ALGEBRA_MAX_ARRAY_SIZE,
+               "Update the factorization dimension when changing the array capacity.");
+
 /* Check before multiplying dimensions, including the byte count used by memory operations. */
 static int dimensionsFit(size_t rows, size_t columns, size_t capacity)
 {
@@ -132,6 +140,16 @@ static void copyMatrixBlock(const double* source,
             MOVE_DOUBLE(source + row * sourceStride, columns, result + row * resultStride);
         }
     }
+}
+
+static int arrayIsFinite(const double* values, size_t count)
+{
+    for (size_t i = 0; i < count; i++) {
+        if (!isfinite(values[i])) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 /* NaNs sort last in either direction; equal values retain their input order. */
@@ -1030,37 +1048,152 @@ int v6IsEqual(double v1[6], double v2[6], double accuracy)
     return 1;
 }
 
+/* Invert a tall matrix using column-pivoted Householder QR. Dimensions are checked by the callers.
+ * Transposing on input and output lets the same routine handle a wide minimum-norm inverse.
+ */
+static void qrInverse(const double* mx, size_t rows, size_t columns, int transpose, double* result)
+{
+    double qr[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double inverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double tau[maxSquareDimension];
+    size_t permutation[maxSquareDimension];
+    for (size_t row = 0; row < rows; row++) {
+        for (size_t col = 0; col < columns; col++) {
+            double value = mx[transpose ? col * rows + row : row * columns + col];
+            if (!isfinite(value)) {
+                goto failure;
+            }
+            qr[row * columns + col] = value;
+        }
+    }
+    for (size_t col = 0; col < columns; col++) {
+        permutation[col] = col;
+    }
+
+    double rankTolerance = 0.0;
+    double diagonalProduct = 1.0;
+    for (size_t step = 0; step < columns; step++) {
+        size_t pivot = step;
+        double norm = 0.0;
+        for (size_t col = step; col < columns; col++) {
+            double columnNorm = 0.0;
+            for (size_t row = step; row < rows; row++) {
+                columnNorm = hypot(columnNorm, qr[row * columns + col]);
+            }
+            if (columnNorm > norm) {
+                norm = columnNorm;
+                pivot = col;
+            }
+        }
+        if (step == 0) {
+            rankTolerance = DBL_EPSILON * (double)rows * norm;
+        }
+        if (!isfinite(norm) || norm <= rankTolerance) {
+            goto failure;
+        }
+        if (pivot != step) {
+            for (size_t row = 0; row < rows; row++) {
+                double value = qr[row * columns + step];
+                qr[row * columns + step] = qr[row * columns + pivot];
+                qr[row * columns + pivot] = value;
+            }
+            size_t index = permutation[step];
+            permutation[step] = permutation[pivot];
+            permutation[pivot] = index;
+        }
+
+        /* Store R on and above the diagonal, and the reflector tail below it. */
+        double first = qr[step * columns + step];
+        double diagonal = -copysign(norm, first);
+        tau[step] = 1.0 - first / diagonal;
+        for (size_t row = step + 1; row < rows; row++) {
+            qr[row * columns + step] = (qr[row * columns + step] / diagonal) / (-tau[step]);
+        }
+        qr[step * columns + step] = diagonal;
+        for (size_t col = step + 1; col < columns; col++) {
+            double projection = qr[step * columns + col];
+            for (size_t row = step + 1; row < rows; row++) {
+                projection += qr[row * columns + step] * qr[row * columns + col];
+            }
+            projection *= tau[step];
+            qr[step * columns + col] -= projection;
+            for (size_t row = step + 1; row < rows; row++) {
+                qr[row * columns + col] -= qr[row * columns + step] * projection;
+            }
+        }
+        diagonalProduct *= diagonal;
+    }
+    /* Preserve the absolute determinant cutoff previously applied to the Gram matrix. */
+    if (!(diagonalProduct * diagonalProduct > DB0_EPS)) {
+        goto failure;
+    }
+
+    /* Start with [R^-1, 0], then apply the reflectors from the right to form R^-1 Q^T. */
+    mSetZero(inverse, columns, rows);
+    for (size_t col = 0; col < columns; col++) {
+        for (size_t row = columns; row-- > 0;) {
+            double value = row == col ? 1.0 : 0.0;
+            for (size_t inner = row + 1; inner < columns; inner++) {
+                value -= qr[row * columns + inner] * inverse[inner * rows + col];
+            }
+            inverse[row * rows + col] = value / qr[row * columns + row];
+        }
+    }
+    for (size_t step = columns; step-- > 0;) {
+        for (size_t row = 0; row < columns; row++) {
+            double projection = inverse[row * rows + step];
+            for (size_t col = step + 1; col < rows; col++) {
+                projection += inverse[row * rows + col] * qr[col * columns + step];
+            }
+            projection *= tau[step];
+            inverse[row * rows + step] -= projection;
+            for (size_t col = step + 1; col < rows; col++) {
+                inverse[row * rows + col] -= projection * qr[col * columns + step];
+            }
+        }
+    }
+    for (size_t i = 0; i < rows * columns; i++) {
+        if (!isfinite(inverse[i])) {
+            goto failure;
+        }
+    }
+    for (size_t row = 0; row < columns; row++) {
+        for (size_t col = 0; col < rows; col++) {
+            result[transpose ? col * columns + permutation[row] : permutation[row] * rows + col] =
+                inverse[row * rows + col];
+        }
+    }
+    return;
+
+failure:
+    BSK_PRINT(MSG_ERROR, "%s", "Error: rectangular inverse is singular, below the determinant cutoff, or nonfinite");
+    mSetZero(result, rows, columns);
+}
+
 void mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result)
 {
-    /*
-     * Computes the least squares inverse.
-     */
-    double* m_result = (double*)result;
-    double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    double mxGrammian[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    double mxGrammianInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-
-    mTranspose(mx, dim1, dim2, mxTranspose);
-    mMultM(mxTranspose, dim2, dim1, mx, dim1, dim2, mxGrammian);
-    mInverse(mxGrammian, dim2, mxGrammianInverse);
-    mMultM(mxGrammianInverse, dim2, dim2, mxTranspose, dim2, dim1, m_result);
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim2, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return;
+    }
+    if (dim1 < dim2) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: least-squares inverse requires at least as many rows as columns");
+        return;
+    }
+    qrInverse(mx, dim1, dim2, 0, result);
 }
 
 void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result)
 {
-    /*
-     * Computes the minumum norm inverse.
-     */
-    double* m_mx = (double*)mx;
-    double* m_result = (double*)result;
-    double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    double mxMxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    double mxMxTransposeInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-
-    mTranspose(m_mx, dim1, dim2, mxTranspose);
-    mMultM(m_mx, dim1, dim2, mxTranspose, dim2, dim1, mxMxTranspose);
-    mInverse(mxMxTranspose, dim1, mxMxTransposeInverse);
-    mMultM(mxTranspose, dim2, dim1, mxMxTransposeInverse, dim1, dim1, m_result);
+    if (dim1 == 0 || dim2 == 0 || !dimensionsFit(dim1, dim2, LINEAR_ALGEBRA_MAX_ARRAY_SIZE) ||
+        !dimensionsFit(dim1, dim1, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return;
+    }
+    if (dim1 > dim2) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: minimum-norm inverse requires at least as many columns as rows");
+        return;
+    }
+    qrInverse(mx, dim2, dim1, 1, result);
 }
 
 void mCopy(void* mx, size_t dim1, size_t dim2, void* result)
@@ -1383,50 +1516,169 @@ double mTrace(void* mx, size_t dim)
     return result;
 }
 
-double mDeterminant(void* mx, size_t dim)
+/* Factor a private matrix copy as P*A = L*U, recording row swaps when requested.
+ * The returned determinant includes the permutation sign; no singularity tolerance is applied here.
+ */
+static double luDecompose(double* lu, size_t dim, size_t* pivots)
 {
-    double* m_mx = (double*)mx;
-
-    size_t i;
-    size_t j;
-    size_t k;
-    size_t ii;
-    double result = 0;
-    double mxTemp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if ((dim - 1) * (dim - 1) > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
-
-    if (dim < 1) {
-        return 0;
-    } else if (dim == 1) {
-        result = m_mx[MXINDEX(dim, 0, 0)];
-    } else if (dim == 2) {
-        result =
-            m_mx[MXINDEX(dim, 0, 0)] * m_mx[MXINDEX(dim, 1, 1)] - m_mx[MXINDEX(dim, 1, 0)] * m_mx[MXINDEX(dim, 0, 1)];
-    } else {
-        for (k = 0; k < dim; k++) {
-            for (i = 1; i < dim; i++) {
-                ii = 0;
-                for (j = 0; j < dim; j++) {
-                    if (j == k) {
-                        continue;
-                    }
-                    mxTemp[MXINDEX(dim - 1, i - 1, ii)] = m_mx[MXINDEX(dim, i, j)];
-                    ii++;
-                }
-            }
-            double cofactorSign = k % 2 == 0 ? 1.0 : -1.0;
-            result += cofactorSign * m_mx[MXINDEX(dim, 0, k)] * mDeterminant(mxTemp, dim - 1);
+    for (size_t i = 0; i < dim * dim; i++) {
+        if (!isfinite(lu[i])) {
+            return (double)NAN;
         }
     }
-    return (result);
+    double determinant = 1.0;
+    int determinantExponent = 0;
+    for (size_t step = 0; step < dim; step++) {
+        size_t pivot = step;
+        for (size_t row = step + 1; row < dim; row++) {
+            if (fabs(lu[row * dim + step]) > fabs(lu[pivot * dim + step])) {
+                pivot = row;
+            }
+        }
+        if (pivots != NULL) {
+            pivots[step] = pivot;
+        }
+        if (lu[pivot * dim + step] == 0.0) {
+            return 0.0;
+        }
+        if (pivot != step) {
+            for (size_t col = 0; col < dim; col++) {
+                double value = lu[step * dim + col];
+                lu[step * dim + col] = lu[pivot * dim + col];
+                lu[pivot * dim + col] = value;
+            }
+            determinant = -determinant;
+        }
+        double diagonal = lu[step * dim + step];
+        if (!isfinite(diagonal)) {
+            return (double)NAN;
+        }
+        /* Keep the pivot product normalized; apply its accumulated scale only at the end. */
+        int diagonalExponent;
+        int productExponent;
+        double diagonalFraction = frexp(diagonal, &diagonalExponent);
+        determinant = frexp(determinant * diagonalFraction, &productExponent);
+        determinantExponent += diagonalExponent + productExponent;
+        for (size_t row = step + 1; row < dim; row++) {
+            lu[row * dim + step] /= diagonal;
+            for (size_t col = step + 1; col < dim; col++) {
+                lu[row * dim + col] -= lu[row * dim + step] * lu[step * dim + col];
+            }
+        }
+    }
+    return ldexp(determinant, determinantExponent);
+}
+
+/* Roundoff can leave nonzero pivots for singular matrices. Bound the row's rounding scale
+ * with its original magnitude and the absolute elimination terms, including growth in U.
+ * This preserves graded diagonal matrices. Determinants and cofactors do not use this check.
+ */
+static int luPivotsAreReliable(const double* matrix, const double* lu, const size_t* pivots, size_t dim)
+{
+    size_t permutation[maxSquareDimension];
+    double upperRowMagnitude[maxSquareDimension];
+    for (size_t row = 0; row < dim; row++) {
+        permutation[row] = row;
+        upperRowMagnitude[row] = 0.0;
+        for (size_t col = row; col < dim; col++) {
+            upperRowMagnitude[row] += fabs(lu[row * dim + col]);
+        }
+    }
+    for (size_t row = 0; row < dim; row++) {
+        size_t originalRow = permutation[row];
+        permutation[row] = permutation[pivots[row]];
+        permutation[pivots[row]] = originalRow;
+    }
+    for (size_t row = 0; row < dim; row++) {
+        double scale = 0.0;
+        for (size_t col = 0; col < dim; col++) {
+            scale += fabs(matrix[permutation[row] * dim + col]);
+        }
+        for (size_t inner = 0; inner < row; inner++) {
+            scale += fabs(lu[row * dim + inner]) * upperRowMagnitude[inner];
+        }
+        if (!(fabs(lu[row * dim + row]) > DBL_EPSILON * (double)dim * scale)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/* Sum the magnitudes of determinant expansion terms for the fixed-size inverse checks.
+ * Only dimensions two through four use this helper, so minors fit in a 3x3 local array.
+ */
+static double fixedDeterminantMagnitude(const double* matrix, size_t dim)
+{
+    if (dim == 2) {
+        return fabs(matrix[0]) * fabs(matrix[3]) + fabs(matrix[1]) * fabs(matrix[2]);
+    }
+    double magnitude = 0.0;
+    for (size_t col = 0; col < dim; col++) {
+        if (matrix[col] == 0.0) {
+            continue;
+        }
+        double minor[3 * 3];
+        size_t entry = 0;
+        for (size_t row = 1; row < dim; row++) {
+            for (size_t inner = 0; inner < dim; inner++) {
+                if (inner != col) {
+                    minor[entry++] = matrix[row * dim + inner];
+                }
+            }
+        }
+        magnitude += fabs(matrix[col]) * fixedDeterminantMagnitude(minor, dim - 1);
+    }
+    return magnitude;
+}
+
+/* A dimension-squared margin covers rounding in the fixed determinant formulas.
+ * Scaling by their absolute terms detects cancellation while retaining graded diagonals.
+ */
+static int fixedInverseDeterminantIsReliable(const double* matrix, size_t dim, double determinant)
+{
+    return fabs(determinant) > DBL_EPSILON * (double)(dim * dim) * fixedDeterminantMagnitude(matrix, dim);
+}
+
+/* Retain the direct scalar and 2-by-2 formulas; larger determinants consume their workspace. */
+static double determinantInPlace(double* matrix, size_t dim)
+{
+    if (dim == 1) {
+        return matrix[0];
+    }
+    if (dim == 2) {
+        return matrix[0] * matrix[3] - matrix[2] * matrix[1];
+    }
+    return luDecompose(matrix, dim, NULL);
+}
+
+double mDeterminant(void* mx, size_t dim)
+{
+    if (dim == 0) {
+        return 0.0;
+    }
+    if (!dimensionsFit(dim, dim, SIZE_MAX / sizeof(double)) ||
+        !dimensionsFit(dim - 1, dim - 1, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return (double)NAN;
+    }
+    /* The existing minor-based limit permits one more row and column than the inverse limit. */
+    double lu[(maxSquareDimension + 1) * (maxSquareDimension + 1)];
+    MOVE_DOUBLE(mx, dim * dim, lu);
+    return determinantInPlace(lu, dim);
 }
 
 void mCofactor(void* mx, size_t dim, void* result)
 {
-    /* The (j,i)th cofactor of A is defined as (-1)^(i + j)*det(A_(i,j))
+    if (dim == 0 || !dimensionsFit(dim, dim, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return;
+    }
+    /* The (i,j)th cofactor of A is defined as (-1)^(i + j)*det(A_(i,j))
        where A_(i,j) is the submatrix of A obtained from A by removing the ith row and jth column */
+    if (dim == 1) {
+        /* Removing the only row and column leaves an empty minor with determinant one. */
+        ((double*)result)[0] = 1.0;
+        return;
+    }
+
     size_t i;
     size_t i0;
     size_t i1;
@@ -1437,9 +1689,6 @@ void mCofactor(void* mx, size_t dim, void* result)
     double m_mxij[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double det;
-    if (dim * dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
-    }
 
     for (i = 0; i < dim; i++) {
         for (j = 0; j < dim; j++) {
@@ -1461,7 +1710,7 @@ void mCofactor(void* mx, size_t dim, void* result)
             }
 
             /* Calculate the determinant */
-            det = mDeterminant(m_mxij, dim - 1);
+            det = determinantInPlace(m_mxij, dim - 1);
 
             /* Fill in the elements of the cofactor */
             double cofactorSign = (i + j) % 2 == 0 ? 1.0 : -1.0;
@@ -1472,39 +1721,130 @@ void mCofactor(void* mx, size_t dim, void* result)
     MOVE_DOUBLE(m_result, dim * dim, result);
 }
 
+/* Equilibrate for the condition check only: B[i,j] = A[i,j] / rowScale[i] / columnScale[j].
+ * Save the scales and infinity norm before overlapping output can overwrite the input.
+ */
+static double inverseConditionScales(const double* matrix, size_t dim, double* rowScale, double* columnScale)
+{
+    for (size_t row = 0; row < dim; row++) {
+        rowScale[row] = 0.0;
+        for (size_t col = 0; col < dim; col++) {
+            rowScale[row] = fmax(rowScale[row], fabs(matrix[row * dim + col]));
+        }
+        if (!(rowScale[row] > 0.0)) {
+            return (double)NAN;
+        }
+    }
+    for (size_t col = 0; col < dim; col++) {
+        columnScale[col] = 0.0;
+        for (size_t row = 0; row < dim; row++) {
+            columnScale[col] = fmax(columnScale[col], fabs(matrix[row * dim + col]) / rowScale[row]);
+        }
+        if (!(columnScale[col] > 0.0)) {
+            return (double)NAN;
+        }
+    }
+    double norm = 0.0;
+    for (size_t row = 0; row < dim; row++) {
+        double rowSum = 0.0;
+        for (size_t col = 0; col < dim; col++) {
+            rowSum += (fabs(matrix[row * dim + col]) / rowScale[row]) / columnScale[col];
+        }
+        norm = fmax(norm, rowSum);
+    }
+    return norm;
+}
+
+/* inv(B)[i,j] = columnScale[i] * inv(A)[i,j] * rowScale[j]. Use the computed inverse
+ * to estimate rcond(B) without another factorization or matrix-sized work array.
+ */
+static int inverseConditionIsReliable(const double* inverse,
+                                      size_t dim,
+                                      const double* rowScale,
+                                      const double* columnScale,
+                                      double matrixNorm)
+{
+    double inverseNorm = 0.0;
+    for (size_t row = 0; row < dim; row++) {
+        double rowSum = 0.0;
+        for (size_t col = 0; col < dim; col++) {
+            double value = fabs(inverse[row * dim + col]);
+            /* Column scales are at most one. Order the products to avoid an
+             * intermediate overflow or premature rounding to zero. */
+            rowSum +=
+                value > 1.0 ? (value * columnScale[row]) * rowScale[col] : (value * rowScale[col]) * columnScale[row];
+        }
+        if (!isfinite(rowSum)) {
+            return 0;
+        }
+        inverseNorm = fmax(inverseNorm, rowSum);
+    }
+    /* Divide separately so the product of the norms cannot overflow. */
+    return inverseNorm > 0.0 && (1.0 / matrixNorm) / inverseNorm > (double)dim * DBL_EPSILON;
+}
+
 int mInverse(void* mx, size_t dim, void* result)
 {
-    /* Inverse of a square matrix A with non zero determinant is adjoint matrix divided by determinant */
-    /* The adjoint matrix is the square matrix X such that the (i,j)th entry of X is the (j,i)th cofactor of A */
-
-    size_t i;
-    size_t j;
-    int status = 0;
-    double det = mDeterminant(mx, dim);
-    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    if (dim * dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE) {
-        BSK_PRINT(MSG_ERROR, "%s", "Linear Algebra library array dimension input is too large.");
+    if (dim == 0) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: cannot invert an empty matrix");
+        return 1;
+    }
+    if (!dimensionsFit(dim, dim, LINEAR_ALGEBRA_MAX_ARRAY_SIZE)) {
+        return 1;
+    }
+    double lu[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    size_t pivots[maxSquareDimension];
+    MOVE_DOUBLE(mx, dim * dim, lu);
+    double det = luDecompose(lu, dim, pivots);
+    if (!(fabs(det) > DB0_EPS) || !luPivotsAreReliable(mx, lu, pivots, dim)) {
+        goto failure;
+    }
+    double rowScale[maxSquareDimension], columnScale[maxSquareDimension];
+    double matrixNorm = inverseConditionScales(mx, dim, rowScale, columnScale);
+    if (!isfinite(matrixNorm)) {
+        goto failure;
     }
 
-    if (fabs(det) > DB0_EPS) {
-        /* Find adjoint matrix */
-        double m_adjoint[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-        mCofactor(mx, dim, m_adjoint);
-        mTranspose(m_adjoint, dim, dim, m_adjoint);
-        /* Find inverse */
-        mScale(1.0 / det, m_adjoint, dim, dim, m_result);
-    } else {
-        BSK_PRINT(MSG_ERROR, "%s", "Error: cannot invert singular matrix");
-        for (i = 0; i < dim; i++) {
-            for (j = 0; j < dim; j++) {
-                m_result[MXINDEX(dim, i, j)] = 0.0;
+    /* All input is now in lu, so the output can be used directly even when it overlaps mx. */
+    double* inverse = result;
+    mSetIdentity(inverse, dim, dim);
+    for (size_t step = 0; step < dim; step++) {
+        for (size_t col = 0; col < dim; col++) {
+            double value = inverse[step * dim + col];
+            inverse[step * dim + col] = inverse[pivots[step] * dim + col];
+            inverse[pivots[step] * dim + col] = value;
+        }
+    }
+    /* Solve L*Y = P and U*inverse = Y for all columns of the identity. */
+    for (size_t row = 0; row < dim; row++) {
+        for (size_t inner = 0; inner < row; inner++) {
+            for (size_t col = 0; col < dim; col++) {
+                inverse[row * dim + col] -= lu[row * dim + inner] * inverse[inner * dim + col];
             }
         }
-        status = 1;
     }
+    for (size_t row = dim; row-- > 0;) {
+        for (size_t inner = row + 1; inner < dim; inner++) {
+            for (size_t col = 0; col < dim; col++) {
+                inverse[row * dim + col] -= lu[row * dim + inner] * inverse[inner * dim + col];
+            }
+        }
+        for (size_t col = 0; col < dim; col++) {
+            inverse[row * dim + col] /= lu[row * dim + row];
+            if (!isfinite(inverse[row * dim + col])) {
+                goto failure;
+            }
+        }
+    }
+    if (!inverseConditionIsReliable(inverse, dim, rowScale, columnScale, matrixNorm)) {
+        goto failure;
+    }
+    return 0;
 
-    MOVE_DOUBLE(m_result, dim * dim, result);
-    return status;
+failure:
+    BSK_PRINT(MSG_ERROR, "%s", "Error: cannot invert numerically singular or nonfinite matrix");
+    mSetZero(result, dim, dim);
+    return 1;
 }
 
 int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
@@ -1917,20 +2257,30 @@ void m22Print(FILE* pFile, const char* name, double mx[2][2])
 
 int m22Inverse(double mx[2][2], double result[2][2])
 {
+    if (!arrayIsFinite((double*)mx, 4)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 2x2 matrix inverse input");
+        m22SetZero(result);
+        return 1;
+    }
     double det = m22Determinant(mx);
     double detInv;
     double m_result[2][2];
     int status = 0;
 
-    if (fabs(det) > DB0_EPS) {
+    if (isfinite(det) && fabs(det) > DB0_EPS && fixedInverseDeterminantIsReliable((double*)mx, 2, det)) {
         detInv = 1.0 / det;
         m_result[0][0] = mx[1][1] * detInv;
         m_result[0][1] = -mx[0][1] * detInv;
         m_result[1][0] = -mx[1][0] * detInv;
         m_result[1][1] = mx[0][0] * detInv;
     } else {
-        BSK_PRINT(MSG_ERROR, "%s", "Error: singular 2x2 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "%s", "Error: numerically singular or nonfinite 2x2 matrix inverse");
         m22Set(0.0, 0.0, 0.0, 0.0, m_result);
+        status = 1;
+    }
+    if (!arrayIsFinite((double*)m_result, 4)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 2x2 matrix inverse result");
+        m22SetZero(m_result);
         status = 1;
     }
     m22Copy(m_result, result);
@@ -2241,12 +2591,17 @@ void m33Print(FILE* pFile, const char* name, double mx[3][3])
 
 int m33Inverse(double mx[3][3], double result[3][3])
 {
+    if (!arrayIsFinite((double*)mx, 9)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 3x3 matrix inverse input");
+        m33SetZero(result);
+        return 1;
+    }
     double det = m33Determinant(mx);
     double detInv;
     double m_result[3][3];
     int status = 0;
 
-    if (fabs(det) > DB0_EPS) {
+    if (isfinite(det) && fabs(det) > DB0_EPS && fixedInverseDeterminantIsReliable((double*)mx, 3, det)) {
         detInv = 1.0 / det;
         m_result[0][0] = (mx[1][1] * mx[2][2] - mx[1][2] * mx[2][1]) * detInv;
         m_result[0][1] = -(mx[0][1] * mx[2][2] - mx[0][2] * mx[2][1]) * detInv;
@@ -2258,8 +2613,13 @@ int m33Inverse(double mx[3][3], double result[3][3])
         m_result[2][1] = -(mx[0][0] * mx[2][1] - mx[0][1] * mx[2][0]) * detInv;
         m_result[2][2] = (mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]) * detInv;
     } else {
-        BSK_PRINT(MSG_ERROR, "%s", "Error: singular 3x3 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "%s", "Error: numerically singular or nonfinite 3x3 matrix inverse");
         m33Set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, m_result);
+        status = 1;
+    }
+    if (!arrayIsFinite((double*)m_result, 9)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 3x3 matrix inverse result");
+        m33SetZero(m_result);
         status = 1;
     }
     m33Copy(m_result, result);
@@ -2578,12 +2938,17 @@ int m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy)
 
 int m44Inverse(double mx[4][4], double result[4][4])
 {
+    if (!arrayIsFinite((double*)mx, 16)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 4x4 matrix inverse input");
+        m44SetZero(result);
+        return 1;
+    }
     double det = m44Determinant(mx);
     double detInv;
     double m_result[4][4];
     int status = 0;
 
-    if (fabs(det) > DB0_EPS) {
+    if (isfinite(det) && fabs(det) > DB0_EPS && fixedInverseDeterminantIsReliable((double*)mx, 4, det)) {
         detInv = 1.0 / det;
         m_result[0][0] =
             (mx[1][2] * mx[2][3] * mx[3][1] - mx[1][3] * mx[2][2] * mx[3][1] + mx[1][3] * mx[2][1] * mx[3][2] -
@@ -2650,8 +3015,13 @@ int m44Inverse(double mx[4][4], double result[4][4])
              mx[0][0] * mx[1][2] * mx[2][1] - mx[0][1] * mx[1][0] * mx[2][2] + mx[0][0] * mx[1][1] * mx[2][2]) *
             detInv;
     } else {
-        BSK_PRINT(MSG_ERROR, "%s", "Error: singular 4x4 matrix inverse");
+        BSK_PRINT(MSG_ERROR, "%s", "Error: numerically singular or nonfinite 4x4 matrix inverse");
         m44Set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, m_result);
+        status = 1;
+    }
+    if (!arrayIsFinite((double*)m_result, 16)) {
+        BSK_PRINT(MSG_ERROR, "%s", "Error: nonfinite 4x4 matrix inverse result");
+        m44SetZero(m_result);
         status = 1;
     }
     m44Copy(m_result, result);

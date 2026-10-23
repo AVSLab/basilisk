@@ -65,6 +65,11 @@ static int emptyOperations(void)
     mGetSubMatrix(NULL, 0, 0, 0, 0, SIZE_MAX, 0, NULL);
     mSetSubMatrix(NULL, 0, SIZE_MAX, NULL, 0, 0, 0, 0);
     mSetSubMatrix(NULL, SIZE_MAX, 0, NULL, 0, 0, 0, 0);
+    mCofactor(NULL, 0, NULL);
+    CHECK(mDeterminant(NULL, 0) == 0.0);
+    CHECK(mInverse(NULL, 0, NULL) == 1);
+    mLeastSquaresInverse(NULL, 0, SIZE_MAX, NULL);
+    mMinimumNormInverse(NULL, SIZE_MAX, 0, NULL);
     return 0;
 }
 
@@ -121,6 +126,15 @@ static int scratchLimits(void)
     mtMultM(NULL, 1, 65, NULL, 1, 65, &output);
     mMultMt(NULL, 65, 1, NULL, 65, 1, &output);
     mtMultMt(NULL, 1, 65, NULL, 65, 1, &output);
+    mCofactor(NULL, 65, &output);
+    CHECK(mInverse(NULL, 65, &output) == 1);
+    CHECK(isnan(mDeterminant(NULL, 66)));
+    /* Input fits, but the square intermediate does not. */
+    mLeastSquaresInverse(NULL, 1, 65, &output);
+    mMinimumNormInverse(NULL, 65, 1, &output);
+    /* Square intermediate fits, but the input transpose does not. */
+    mLeastSquaresInverse(NULL, tooMany, 1, &output);
+    mMinimumNormInverse(NULL, 1, tooMany, &output);
     CHECK(output == 19.0);
     return 0;
 }
@@ -137,6 +151,11 @@ static int dimensionOverflow(void)
     mCopy(NULL, 1, tooManyBytes, &output);
     mDiag(NULL, SIZE_MAX, &output);
     mTranspose(NULL, SIZE_MAX, 2, &output);
+    mCofactor(NULL, SIZE_MAX, &output);
+    CHECK(mInverse(NULL, SIZE_MAX, &output) == 1);
+    CHECK(isnan(mDeterminant(NULL, SIZE_MAX)));
+    mLeastSquaresInverse(NULL, SIZE_MAX, 2, &output);
+    mMinimumNormInverse(NULL, 2, SIZE_MAX, &output);
     /* Small output does not make unrepresentable input shapes valid. */
     vtMultM(NULL, NULL, tooManyBytes, 1, &output);
     vtMultMt(NULL, NULL, 1, tooManyBytes, &output);
@@ -486,6 +505,58 @@ static int largeSubmatrix(void)
     return 0;
 }
 
+/** @brief Validate both rectangular inverse helpers at the full input capacity. */
+static int rectangularInverseBoundary(void)
+{
+    double matrix[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double inverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    enum
+    {
+        rows = LINEAR_ALGEBRA_MAX_ARRAY_SIZE / 2
+    };
+    for (size_t row = 0; row < rows; row++) {
+        matrix[2 * row] = row % 2 == 0 ? 1.0 : 0.0;
+        matrix[2 * row + 1] = row % 2 == 1 ? 1.0 : 0.0;
+    }
+    mLeastSquaresInverse(matrix, rows, 2, inverse);
+    for (size_t row = 0; row < rows; row++) {
+        CHECK(fabs(inverse[row] - matrix[2 * row] * (2.0 / (double)rows)) < 1e-16);
+        CHECK(fabs(inverse[rows + row] - matrix[2 * row + 1] * (2.0 / (double)rows)) < 1e-16);
+    }
+    mTranspose(matrix, rows, 2, matrix);
+    mMinimumNormInverse(matrix, 2, rows, inverse);
+    for (size_t row = 0; row < rows; row++) {
+        CHECK(fabs(inverse[2 * row] - matrix[row] * (2.0 / (double)rows)) < 1e-16);
+        CHECK(fabs(inverse[2 * row + 1] - matrix[rows + row] * (2.0 / (double)rows)) < 1e-16);
+    }
+    return 0;
+}
+
+/** @brief Check existing determinant, cofactor, inverse, and singular-output conventions. */
+static int squareMatrixConventions(void)
+{
+    double matrix[3][3] = { { 2, 1, 0 }, { 0, 3, 1 }, { 0, 0, 4 } };
+    double cofactor[3][3];
+    const double expected[3][3] = { { 12, 0, 0 }, { -4, 8, 0 }, { 1, -2, 6 } };
+    CHECK(mDeterminant(matrix, 3) == 24.0);
+    mCofactor(matrix, 3, cofactor);
+    for (size_t row = 0; row < 3; row++) {
+        for (size_t col = 0; col < 3; col++) {
+            CHECK(cofactor[row][col] == expected[row][col]);
+        }
+    }
+    CHECK(mInverse(matrix, 3, matrix) == 0);
+    for (size_t row = 0; row < 3; row++) {
+        for (size_t col = 0; col < 3; col++) {
+            CHECK(fabs(matrix[row][col] - expected[col][row] / 24.0) < 1e-15);
+        }
+    }
+    mSetZero(matrix, 3, 3);
+    CHECK(mInverse(matrix, 3, cofactor) == 1);
+    CHECK(mIsZero(cofactor, 3, 3, 0.0));
+    return 0;
+}
+
 /** @brief Run one named regression, or all regressions when no name is supplied. */
 int main(int argc, char** argv)
 {
@@ -493,23 +564,22 @@ int main(int argc, char** argv)
     {
         const char* name;
         int (*run)(void);
-    } tests[] = {
-        { "emptyOperations", emptyOperations },
-        { "emptyReductions", emptyReductions },
-        { "safeSquareRoot", safeSquareRoot },
-        { "scratchLimits", scratchLimits },
-        { "dimensionOverflow", dimensionOverflow },
-        { "submatrixBounds", submatrixBounds },
-        { "blockIndices", blockIndices },
-        { "emptyInnerProducts", emptyInnerProducts },
-        { "capacityBoundary", capacityBoundary },
-        { "largeProductInputs", largeProductInputs },
-        { "outerProductOverlap", outerProductOverlap },
-        { "largeOuterProduct", largeOuterProduct },
-        { "submatrixOverlap", submatrixOverlap },
-        { "largeSubmatrix", largeSubmatrix },
-
-    };
+    } tests[] = { { "emptyOperations", emptyOperations },
+                  { "emptyReductions", emptyReductions },
+                  { "safeSquareRoot", safeSquareRoot },
+                  { "scratchLimits", scratchLimits },
+                  { "dimensionOverflow", dimensionOverflow },
+                  { "submatrixBounds", submatrixBounds },
+                  { "blockIndices", blockIndices },
+                  { "emptyInnerProducts", emptyInnerProducts },
+                  { "capacityBoundary", capacityBoundary },
+                  { "largeProductInputs", largeProductInputs },
+                  { "outerProductOverlap", outerProductOverlap },
+                  { "largeOuterProduct", largeOuterProduct },
+                  { "submatrixOverlap", submatrixOverlap },
+                  { "largeSubmatrix", largeSubmatrix },
+                  { "rectangularInverseBoundary", rectangularInverseBoundary },
+                  { "squareMatrixConventions", squareMatrixConventions } };
     int failures = 0;
     int selected = 0;
     for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {

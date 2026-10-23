@@ -436,6 +436,206 @@ static int sortPatterns(void)
     return 0;
 }
 
+/** @brief Adapt fixed inverse APIs to a common storage layout. */
+static int fixedInverse(size_t dim, double* input, double* output)
+{
+    switch (dim) {
+        case 2:
+            return m22Inverse((double (*)[2])input, (double (*)[2])output);
+        case 3:
+            return m33Inverse((double (*)[3])input, (double (*)[3])output);
+        default:
+            return m44Inverse((double (*)[4])input, (double (*)[4])output);
+    }
+}
+
+/** @brief Reject nonfinite entries at every input position, including with overlapping output. */
+static int fixedInverseNonfinite(void)
+{
+    const double invalid[] = { nan(""), (double)INFINITY, -(double)INFINITY };
+    for (size_t dim = 2; dim <= 4; dim++) {
+        for (size_t entry = 0; entry < dim * dim; entry++) {
+            for (size_t kind = 0; kind < 3; kind++) {
+                for (size_t offset = 0; offset < 3; offset++) {
+                    double storage[20];
+                    mSetIdentity(storage + 1, dim, dim);
+                    storage[1 + entry] = invalid[kind];
+                    feclearexcept(FE_ALL_EXCEPT);
+                    CHECK(fixedInverse(dim, storage + 1, storage + offset) == 1);
+                    CHECK(mIsZero(storage + offset, dim, dim, 0.0));
+                    CHECK(fetestexcept(FE_INVALID | FE_DIVBYZERO) == 0);
+                }
+            }
+        }
+        double matrix[16], output[16];
+        mSetIdentity(matrix, dim, dim);
+        matrix[0] = 0.1;
+        matrix[1] = DBL_MAX;
+        CHECK(fixedInverse(dim, matrix, output) == 1);
+        CHECK(mIsZero(output, dim, dim, 0.0));
+        mSetIdentity(matrix, dim, dim);
+        for (size_t i = 0; i < dim; i++)
+            matrix[i * dim + i] = DBL_MAX;
+        CHECK(fixedInverse(dim, matrix, output) == 1);
+        CHECK(mIsZero(output, dim, dim, 0.0));
+    }
+    return 0;
+}
+
+/** @brief Preserve finite inverse values, threshold decisions, and ordinary in-place behavior. */
+static int fixedInverseFinite(void)
+{
+    for (size_t dim = 2; dim <= 4; dim++) {
+        for (size_t offset = 0; offset < 3; offset++) {
+            double storage[20], original[16];
+            mSetIdentity(original, dim, dim);
+            for (size_t i = 0; i < dim; i++) {
+                original[i * dim + i] = (double)i + 1.0;
+                if (i + 1 < dim)
+                    original[i * dim + i + 1] = 0.5;
+            }
+            memcpy(storage + 1, original, dim * dim * sizeof(double));
+            CHECK(fixedInverse(dim, storage + 1, storage + offset) == 0);
+            for (size_t row = 0; row < dim; row++) {
+                for (size_t col = 0; col < dim; col++) {
+                    double value = 0.0;
+                    for (size_t k = 0; k < dim; k++)
+                        value += original[row * dim + k] * storage[offset + k * dim + col];
+                    CHECK(fabs(value - (row == col ? 1.0 : 0.0)) < 2e-15);
+                }
+            }
+        }
+        const double diagonal[] = { 0, DB0_EPS, -DB0_EPS, nextafter(DB0_EPS, 1), -nextafter(DB0_EPS, 1) };
+        for (size_t entry = 0; entry < 5; entry++) {
+            double matrix[16];
+            mSetIdentity(matrix, dim, dim);
+            matrix[0] = diagonal[entry];
+            CHECK(fixedInverse(dim, matrix, matrix) == (entry < 3 ? 1 : 0));
+            if (entry < 3)
+                CHECK(mIsZero(matrix, dim, dim, 0.0));
+            else
+                CHECK(fabs(matrix[0] * diagonal[entry] - 1.0) < 2e-15);
+        }
+    }
+    return 0;
+}
+
+/** @brief Check fixed-size inverse status, both inverse identities, and overlapping output boundaries. */
+static int checkFixedInverse(size_t dim, const double* matrix, int expectedStatus)
+{
+    const size_t offsets[] = { 0, 16, 17, 18, 34 };
+    for (size_t offset = 0; offset < sizeof(offsets) / sizeof(offsets[0]); offset++) {
+        double storage[52], saved[52];
+        for (size_t i = 0; i < 52; i++) {
+            storage[i] = 123.0;
+        }
+        memcpy(storage + 17, matrix, dim * dim * sizeof(double));
+        memcpy(saved, storage, sizeof(storage));
+        double* inverse = storage + offsets[offset];
+        feclearexcept(FE_ALL_EXCEPT);
+        CHECK(fixedInverse(dim, storage + 17, inverse) == expectedStatus);
+        CHECK(fetestexcept(FE_INVALID | FE_DIVBYZERO) == 0);
+        for (size_t i = 0; i < 52; i++) {
+            CHECK((i >= offsets[offset] && i < offsets[offset] + dim * dim) || storage[i] == saved[i]);
+        }
+        for (size_t row = 0; row < dim; row++) {
+            for (size_t col = 0; col < dim; col++) {
+                if (expectedStatus != 0) {
+                    CHECK(inverse[row * dim + col] == 0.0);
+                } else {
+                    double left = 0.0, right = 0.0;
+                    for (size_t inner = 0; inner < dim; inner++) {
+                        left += matrix[row * dim + inner] * inverse[inner * dim + col];
+                        right += inverse[row * dim + inner] * matrix[inner * dim + col];
+                    }
+                    double expected = row == col ? 1.0 : 0.0;
+                    CHECK(isfinite(left) && fabs(left - expected) < 2e-13);
+                    CHECK(isfinite(right) && fabs(right - expected) < 2e-13);
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Reject dependent decimal-valued rows and columns despite nonzero rounded determinants. */
+static int fixedInverseSingular(void)
+{
+    const double cases[3][16] = {
+        { 0.1, 0.1, 0.1, 0.1 },
+        { 0.2, 0.4, -0.4, 0.8, -0.2, -0.8, 0.2, 0.4, -0.4 },
+        { -0.9, 0.4, -0.8, 0.1, -0.6, 0.7, -0.2, 0.4, 0.3, -0.1, 0.3, -0.3, -0.9, 0.4, -0.8, 0.1 }
+    };
+    for (size_t dim = 2; dim <= 4; dim++) {
+        for (size_t proportional = 0; proportional < 2; proportional++) {
+            for (size_t shift = 0; shift < dim; shift++) {
+                for (size_t transpose = 0; transpose < 2; transpose++) {
+                    double matrix[16];
+                    for (size_t row = 0; row < dim; row++) {
+                        size_t sourceRow = (row + shift) % dim;
+                        double factor = 1.0;
+                        if (proportional && sourceRow == dim - 1) {
+                            sourceRow = 0;
+                            factor = 2.0;
+                        }
+                        for (size_t col = 0; col < dim; col++) {
+                            matrix[transpose ? col * dim + row : row * dim + col] =
+                                factor * cases[dim - 2][sourceRow * dim + col];
+                        }
+                    }
+                    CHECK(checkFixedInverse(dim, matrix, 1) == 0);
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+/** @brief Reject cancellation at roundoff while retaining a resolvable nearby pivot. */
+static int fixedInverseRankBoundary(void)
+{
+    const double differences[] = { DBL_EPSILON, 64.0 * DBL_EPSILON, 0x1p-24 };
+    for (size_t dim = 2; dim <= 4; dim++) {
+        for (size_t test = 0; test < sizeof(differences) / sizeof(differences[0]); test++) {
+            double matrix[16];
+            mSetIdentity(matrix, dim, dim);
+            matrix[1] = matrix[dim] = 1.0;
+            matrix[dim + 1] = 1.0 + differences[test];
+            CHECK(checkFixedInverse(dim, matrix, test == 0 ? 1 : 0) == 0);
+        }
+    }
+    /* Forming a dependent row can itself round: the determinant must still be rejected. */
+    double matrix[16] = { 0.3, -0.7, 1.0, -0.8, -0.4, -1.0, 0.4, 0.3, -0.6, -0.4, -0.4, 0.6, 0, 0, 0, 0 };
+    for (size_t col = 0; col < 4; col++) {
+        matrix[12 + col] = matrix[col] + 2.0 * matrix[4 + col];
+    }
+    CHECK(checkFixedInverse(4, matrix, 1) == 0);
+    return 0;
+}
+
+/** @brief Preserve graded diagonal, triangular, and pivoted full-rank inverses. */
+static int fixedInversePivotScales(void)
+{
+    const double pairs[][4] = { { 0x1p-60, 0, 0, 0x1p60 },
+                                { 0, 0x1p-60, 0x1p60, 0 },
+                                { 1, 0x1p30, 0, 1 },
+                                { 0x1p30, 1, 0x1p30, 2 },
+                                { 0, 2, 1, 3 } };
+    for (size_t dim = 2; dim <= 4; dim++) {
+        for (size_t test = 0; test < sizeof(pairs) / sizeof(pairs[0]); test++) {
+            double matrix[16];
+            mSetIdentity(matrix, dim, dim);
+            for (size_t row = 0; row < 2; row++) {
+                for (size_t col = 0; col < 2; col++) {
+                    matrix[row * dim + col] = pairs[test][row * 2 + col];
+                }
+            }
+            CHECK(checkFixedInverse(dim, matrix, 0) == 0);
+        }
+    }
+    return 0;
+}
+
 /** @brief Check all four matrix products against independent multiplication, including overlap. */
 static int multiplicationFamilies(void)
 {
@@ -517,7 +717,11 @@ int main(int argc, char** argv)
         { "sortNonfinite", sortNonfinite },
         { "sortThreeNonfinite", sortThreeNonfinite },
         { "sortPatterns", sortPatterns },
-
+        { "fixedInverseNonfinite", fixedInverseNonfinite },
+        { "fixedInverseFinite", fixedInverseFinite },
+        { "fixedInverseSingular", fixedInverseSingular },
+        { "fixedInverseRankBoundary", fixedInverseRankBoundary },
+        { "fixedInversePivotScales", fixedInversePivotScales },
         { "multiplicationFamilies", multiplicationFamilies },
     };
     for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {

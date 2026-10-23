@@ -52,7 +52,7 @@ foreach(regression
     emptyOperations emptyReductions safeSquareRoot scratchLimits dimensionOverflow
     submatrixBounds blockIndices emptyInnerProducts capacityBoundary largeProductInputs
     outerProductOverlap largeOuterProduct submatrixOverlap largeSubmatrix
-     )
+    rectangularInverseBoundary squareMatrixConventions)
     add_test(NAME LinearAlgebraSafety.${regression} COMMAND test_linearAlgebraSafety ${regression})
 endforeach()
 
@@ -66,8 +66,8 @@ if(UNIX)
     target_link_libraries(test_linearAlgebraContracts PRIVATE m)
 endif()
 foreach(regression
-
-       arithmeticStorage
+    singularInverse singularInverseGrowth inversePivotScales inverseRankBoundary
+    inverseConditionSingular inverseConditionBoundary inverseConditionScales arithmeticStorage
     outerProductStorage submatrixTraversal perpendicularRange)
     add_test(NAME LinearAlgebraContracts.${regression} COMMAND test_linearAlgebraContracts ${regression})
 endforeach()
@@ -81,6 +81,17 @@ foreach(regression
     add_test(NAME LinearAlgebraRoots.${regression} COMMAND test_linearAlgebraRoots ${regression})
 endforeach()
 
+add_executable(test_linearAlgebraFactorizations test_linearAlgebraFactorizations.c)
+set_target_properties(test_linearAlgebraFactorizations PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraFactorizations ArchitectureUtilities)
+foreach(regression
+    determinantKnown determinantBoundary determinantRange cofactorRange nearlyDependentSquare inversePivoting inverseBoundary
+    inverseOverlap inverseFailures cofactorSingular cofactorOverlap leastSquaresKnown minimumNormKnown
+    rectangularNearDependent rectangularPivoting rectangularSquare rectangularOverlap rectangularRankFailure
+    rectangularPolicies rectangularBoundary nonfiniteInverse)
+    add_test(NAME LinearAlgebraFactorizations.${regression} COMMAND test_linearAlgebraFactorizations ${regression})
+endforeach()
+
 add_executable(test_linearAlgebraArithmetic test_linearAlgebraArithmetic.c)
 set_target_properties(test_linearAlgebraArithmetic PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
 target_link_libraries(test_linearAlgebraArithmetic ArchitectureUtilities)
@@ -91,8 +102,8 @@ foreach(regression
     mAddOverlap mSubtractOverlap mScaleOverlap m22AddOverlap m22SubtractOverlap m22ScaleOverlap
     m33AddOverlap m33SubtractOverlap m33ScaleOverlap m66AddOverlap m66SubtractOverlap m66ScaleOverlap
     largeArithmetic arithmeticDimensions maximumNonfinite normalizationPolicy sortNonfinite
-    sortThreeNonfinite sortPatterns
-       multiplicationFamilies)
+    sortThreeNonfinite sortPatterns fixedInverseNonfinite fixedInverseFinite
+    fixedInverseSingular fixedInverseRankBoundary fixedInversePivotScales multiplicationFamilies)
     add_test(NAME LinearAlgebraArithmetic.${regression} COMMAND test_linearAlgebraArithmetic ${regression})
 endforeach()
 
