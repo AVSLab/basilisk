@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1644: The C ``ukfLUBckSlv()`` utility could return a wrong solution when the first nonzero entry of
+  the pivoted right-hand side was below 1 in magnitude, because it cast that entry to ``int`` before testing it for
+  zero. No module calls it, and ``ukfMatInv()``, which back-solves unit vectors, was not affected.
+
 - GitHub issue 1638: With ``setUseApHistory(True)``, the :ref:`msisAtmosphere` module omitted the UT and longitude
   dependent magnetic activity term of NRLMSISE-00, because ``globe7()`` cast its coefficient to ``int`` before
   testing it for zero. The density and temperature errors grew with the 3-hour Ap and exceeded 20 % and 100 K at some

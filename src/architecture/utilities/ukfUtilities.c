@@ -210,7 +210,7 @@ int32_t ukfLUBckSlv(double* sourceMat, int32_t nRow, int32_t nCol, int32_t* indx
             for (j = ii; j <= i - 1; j++) {
                 sum -= sourceMat[i * nRow + j] * destMat[j];
             }
-        } else if ((int)sum) {
+        } else if (sum != 0) {
             ii = i;
         }
         destMat[i] = sum;
