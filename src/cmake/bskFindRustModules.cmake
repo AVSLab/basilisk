@@ -16,6 +16,7 @@
 
 include_guard(GLOBAL)
 include(bskAddRustModuleSources)
+include(bskRustBuildOutput)
 
 function(_bsk_find_cargo OUT_VAR)
   find_program(_BSK_CARGO_EXECUTABLE NAMES cargo)
@@ -285,7 +286,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     get_filename_component(TARGET_NAME "${PARENT_DIR}" NAME)
 
     if("${TARGET_NAME}" IN_LIST EXCLUDED_BSK_TARGETS)
-      message("Skipped Target: ${TARGET_NAME}")
+      message(VERBOSE "Skipped Target: ${TARGET_NAME}")
       continue()
     endif()
 
@@ -303,6 +304,9 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       OUT_BUILD_TARGET_VAR _rust_build_target
       CARGO_ENV             ${_rust_cargo_env}
     )
+    # The shared helper returns Corrosion's concrete <crate>-static target.
+    string(REGEX REPLACE "-static$" "" _rust_target "${_rust_link_target}")
+    bsk_configure_rust_build_output("${_rust_target}")
 
     # Corrosion names its imported CMake library after the Cargo [lib]
     # target. Use an internal name for the SWIG target to avoid colliding

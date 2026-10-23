@@ -84,6 +84,11 @@ The script accepts the following options to customize this process.
       - None
       - If set, prevents Conan, CMake dependency fetching, and Cargo from accessing the network. Every selected
         dependency must already exist in the local caches; see :ref:`offlineBuild`.
+    * - ``verbose``
+      -
+      - False
+      - Shows the full Conan command, dependency details, and verbose CMake configuration messages.
+        See :ref:`buildOutput`.
     * - ``buildProject``
       - Boolean
       - True
@@ -154,6 +159,35 @@ Compilation database export is enabled by default with supported generators. To 
 
 Disabling export also removes an existing ``compile_commands.json`` from the configured build directory during
 Conan generation, so clangd cannot keep reading that stale database.
+
+.. _buildOutput:
+
+Build Output
+------------
+The build script uses Conan's ``notice`` verbosity by default. Profile dumps, dependency graphs, and routine
+generator details are suppressed, while package installation notices, deprecation warnings, and errors remain
+visible. Conan still prints ``Already installed!`` notices for cached packages. CMake dependency discovery uses
+``REQUIRED QUIET`` to hide routine target declarations while retaining errors for missing required packages.
+CMake also uses ``NOTICE`` level by default, displaying a compact summary of the compilers, language tools,
+optional features, strict-warning setting, and build directory. Compiler probes, module discovery, and other
+routine configuration details are hidden. Warnings, deprecations, errors, and compiler diagnostics remain visible.
+Verbose output is off unless requested.
+
+Rust builds show a concise label for each module. Routine Cargo ``Compiling`` and ``Finished`` lines are hidden
+until a diagnostic or other unrecognized stderr output appears; the remaining output is then retained in full
+to preserve diagnostic context. Cargo manifest warnings, build-script warnings, compiler diagnostics, and failure
+status are preserved. Cargo's ``--quiet`` option is not used because it suppresses some of those warnings.
+
+To show dependency details and the full Conan command for troubleshooting, use::
+
+    python3 conanfile.py --verbose
+
+This also enables verbose CMake configuration output for that invocation; the next normal invocation returns to
+``NOTICE`` level. The script selects CMake's log level on the command line without changing its cached setting.
+``CONAN_LOG_LEVEL`` can override Conan's default verbosity, but explicit ``--verbose`` takes precedence
+over that environment variable. Neither setting suppresses compiler diagnostics. The verbosity flag also applies
+when the build script creates a missing MuJoCo package.
+For Rust modules, ``--verbose`` also passes through Cargo's full output.
 
 .. _offlineBuild:
 

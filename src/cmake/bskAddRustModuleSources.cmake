@@ -113,8 +113,30 @@ function(_bsk_load_corrosion)
     GIT_TAG ${BSK_CORROSION_GIT_TAG}
     SOURCE_DIR "${_corrosion_source_dir}"
     BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/corrosion-build"
+    # Populate first so the build uses a local copy with concise Cargo labels.
+    SOURCE_SUBDIR bsk-populate-only
   )
   FetchContent_MakeAvailable(Corrosion)
+
+  # Corrosion 0.6.1 has no COMMENT on its Cargo build command and no public
+  # option to supply one. Patch only the build-directory copy of this pinned
+  # integration; leave the shared source cache unchanged.
+  set(_corrosion_build_source "${CMAKE_BINARY_DIR}/_deps/corrosion-source")
+  file(COPY "${_corrosion_source_dir}/" DESTINATION "${_corrosion_build_source}"
+       PATTERN ".git" EXCLUDE)
+  set(_corrosion_cmake "${_corrosion_build_source}/cmake/Corrosion.cmake")
+  file(READ "${_corrosion_cmake}" _corrosion_code)
+  set(_cargo_target_start [=[        _cargo-build_${target_name}
+        # Build crate]=])
+  string(FIND "${_corrosion_code}" "${_cargo_target_start}" _cargo_target_position)
+  if(_cargo_target_position EQUAL -1)
+    message(FATAL_ERROR "The pinned Corrosion Cargo build rule changed; review the build-output label patch.")
+  endif()
+  string(REPLACE "${_cargo_target_start}" [=[        _cargo-build_${target_name}
+        COMMENT "Building Rust module ${target_name}"
+        # Build crate]=] _corrosion_code "${_corrosion_code}")
+  file(WRITE "${_corrosion_cmake}" "${_corrosion_code}")
+  add_subdirectory("${_corrosion_build_source}" "${CMAKE_BINARY_DIR}/_deps/corrosion-build")
 endfunction()
 
 # Read the Cargo package that owns a manifest without parsing Cargo.toml.
@@ -335,6 +357,7 @@ function(bsk_add_rust_module_sources)
       "-DBSK_RUST_INTERFACE=${RUST_INTERFACE}"
       -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskEnsureRustBindings.cmake"
     BYPRODUCTS "${_bindings_trigger}"
+    COMMENT "Checking generated Rust bindings for '${RUST_TARGET}'"
     VERBATIM
   )
   add_dependencies(

@@ -73,6 +73,7 @@ NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
 BASILISK_BUILD_MARKER = ".basilisk-build-root"
 CMAKE_CACHE_FILE = "CMakeCache.txt"
 OFFLINE_CONAN_CONF = "user.basilisk:offline"
+VERBOSE_CONAN_CONF = "user.basilisk:verbose"
 BASILISK_FETCHCONTENT_CACHE_DIR = REPOSITORY_ROOT / ".bsk-cache" / "fetchcontent"
 BASILISK_VERSION = (REPOSITORY_ROOT / "docs" / "source" / "bskVersion.txt").read_text(
     encoding="utf-8"
@@ -476,6 +477,7 @@ def create_conan_build_command(
 ) -> list[str]:
     """Create the single Conan command used to install dependencies and build Basilisk."""
     offline = bool(getattr(arguments, "offline", False))
+    verbose = bool(getattr(arguments, "verbose", False))
     command = [
         sys.executable,
         "-m",
@@ -490,6 +492,10 @@ def create_conan_build_command(
         "-s:b",
         "compiler.cppstd=17",
     ]
+    command.extend([
+        "-vverbose" if verbose else "-vnotice",
+        "-c", f"{VERBOSE_CONAN_CONF}={verbose}",
+    ])
     if offline:
         command.extend(["--no-remote", "-c", f"{OFFLINE_CONAN_CONF}=True"])
     if platform_name != "nt":
@@ -528,9 +534,13 @@ def create_conan_build_command(
 def create_conan_build_environment(
         offline: bool,
         environment: Optional[dict[str, str]] = None,
+        verbose: bool = False,
 ) -> dict[str, str]:
-    """Create the Conan subprocess environment, including strict Cargo offline mode."""
+    """Preserve environment overrides unless explicit verbose or offline mode requires one."""
     build_environment = (os.environ if environment is None else environment).copy()
+    if verbose:
+        # Conan gives its environment variable precedence over command-line verbosity.
+        build_environment["CONAN_LOG_LEVEL"] = "verbose"
     if offline:
         build_environment["CARGO_NET_OFFLINE"] = "true"
     return build_environment
@@ -758,7 +768,9 @@ class BasiliskConan(ConanFile):
 
         cmake = CMake(self)
         print(statusColor + "Configuring cmake..." + endColor)
-        cmake.configure()
+        verbose = self.conf.get(VERBOSE_CONAN_CONF, default=False, check_type=bool)
+        # Keep warnings and the build summary visible; verbose details apply to this run only.
+        cmake.configure(cli_args=["--log-level=VERBOSE" if verbose else "--log-level=NOTICE"])
 
         if self.options.get_safe("buildProject"):
             print(statusColor + "\nCompiling Basilisk..." + endColor)
@@ -836,6 +848,7 @@ def is_conan_package_available(ref: str):
 def conan_create_mujoco(
         offline: bool = False,
         print_fn: Optional[Callable[[str], None]] = print,
+        verbose: bool = False,
 ):
     """
     Create the MuJoCo package locally when it is absent during an online build.
@@ -857,10 +870,12 @@ def conan_create_mujoco(
                 "conans.conan",
                 "create",
                 ".",
+                "-vverbose" if verbose else "-vnotice",
                 "-s",
                 "compiler.cppstd=17",
             ],
             cwd=REPOSITORY_ROOT / "libs" / "mujoco",
+            env=create_conan_build_environment(offline, verbose=verbose),
             check=True,
         )
     else:
@@ -868,22 +883,15 @@ def conan_create_mujoco(
             print_fn(f"Package {ref} already available, skipping creation.")
 
 if __name__ == "__main__":
-    # make sure conan is configured to use the libstdc++11 by default
-    # XXX: This needs to be run before dispatching to Conan (i.e. outside of the
-    # ConanFile object), because it affects the configuration of the first run.
-    # (Running it here fixes https://github.com/AVSLab/basilisk/issues/525)
-    try:
-        subprocess.check_output([sys.executable, "-m", "conans.conan", "profile", "detect", "--exist-ok"])
-    except:
-        # if profile already exists the above command returns an error.  Just ignore in this
-        # case.  We don't want to overwrite an existing profile file
-        pass
-    print(statusColor + "Checking conan configuration:" + endColor + " Done")
-
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
+    parser.add_argument(
+        "--verbose",
+        help="show the full Conan command, dependency details, and verbose CMake configuration",
+        action="store_true",
+    )
     parser.add_argument(
         "--offline",
         help="use only previously cached Conan, CMake, and Cargo dependencies",
@@ -899,6 +907,19 @@ if __name__ == "__main__":
         parser.add_argument("--" + opt, help="using flag option for " + opt, default=value[1],
                             action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
+
+    buildEnvironment = create_conan_build_environment(args.offline, verbose=args.verbose)
+    # Detect a profile before dispatching to Conan, preserving an existing profile.
+    try:
+        subprocess.check_output(
+            [sys.executable, "-m", "conans.conan", "profile", "detect", "--exist-ok",
+             "-vverbose" if args.verbose else "-vnotice"],
+            env=buildEnvironment,
+        )
+    except subprocess.CalledProcessError:
+        # Preserve the existing behavior; Conan will report an unusable profile at build time.
+        pass
+    print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     # set the build destination folder
     # buildFolderName = 'dist3/conan'
@@ -919,7 +940,7 @@ if __name__ == "__main__":
     # If we're missing MuJoCo, create the conan package
     if args.mujoco:
         try:
-            conan_create_mujoco(offline=args.offline)
+            conan_create_mujoco(offline=args.offline, verbose=args.verbose)
         except RuntimeError as error:
             print(f"{failColor}Error: {error}{endColor}")
             sys.exit(1)
@@ -931,8 +952,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(statusColor + "Running conan build:" + endColor)
-    print(shlex.join(buildCmd))
-    buildEnvironment = create_conan_build_environment(args.offline)
+    if args.verbose:
+        print(shlex.join(buildCmd))
     try:
         subprocess.run(buildCmd, check=True, env=buildEnvironment, cwd=REPOSITORY_ROOT)
     except subprocess.CalledProcessError as error:

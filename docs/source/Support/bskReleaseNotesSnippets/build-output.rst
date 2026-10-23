@@ -1,0 +1,1 @@
+- Reduced routine Conan, CMake, and Cargo output while preserving warnings, errors, and failure status; added a compact configuration summary, concise Rust build labels, and ``python3 conanfile.py --verbose`` to restore detailed output. Build support-file links now create their destination first and exclude ``.DS_Store`` metadata. See :ref:`buildOutput`.
