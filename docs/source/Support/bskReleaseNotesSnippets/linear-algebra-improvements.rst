@@ -1,0 +1,1 @@
+- Improved the correctness, numerical stability, buffer safety, and performance of :ref:`linearAlgebra` while retaining its pure-C implementation and public API; expanded regression tests and API documentation (GitHub issue 1646). ``ArchitectureUtilities`` now requires a C11-capable compiler.
