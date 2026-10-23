@@ -11,6 +11,14 @@ Version |release|
   the pivoted right-hand side was below 1 in magnitude, because it cast that entry to ``int`` before testing it for
   zero. No module calls it, and ``ukfMatInv()``, which back-solves unit vectors, was not affected.
 
+- GitHub issue 1646: The :ref:`linearAlgebra` utilities had correctness and memory-safety defects in
+  rectangular matrix operations, overlapping-buffer use, comparisons, zero and
+  empty inputs, matrix inverses, and root and spectral calculations. These are
+  corrected while retaining the pure-C implementation and public API. Matrices
+  near numerical singularity may now be rejected by inverse routines; see the
+  API documentation for the numerical checks, supported dimensions, overlap
+  rules, and remaining numerical limits.
+
 - GitHub issue 1638: With ``setUseApHistory(True)``, the :ref:`msisAtmosphere` module omitted the UT and longitude
   dependent magnetic activity term of NRLMSISE-00, because ``globe7()`` cast its coefficient to ``int`` before
   testing it for zero. The density and temperature errors grew with the 3-hour Ap and exceeded 20 % and 100 K at some
