@@ -66,6 +66,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args: |
+            CONAN_ARGS=--opNav True --mujoco True --verbose
           push: true
           platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}

@@ -1,4 +1,4 @@
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED QUIET)
 if (OpenCV_FOUND)
   set_property(TARGET opencv::opencv PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${DIRECTORIES})
   target_link_libraries(${TARGET_NAME} PRIVATE opencv::opencv)

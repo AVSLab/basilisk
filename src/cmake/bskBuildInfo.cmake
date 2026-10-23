@@ -372,6 +372,11 @@ function(bsk_generate_build_info package_directory)
 
   _bsk_wire_build_info_targets("${CMAKE_SOURCE_DIR}")
 
+  bsk_print_build_summary("${_rustc_version}")
+endfunction()
+
+# Keep routine configuration output useful even when STATUS messages are hidden.
+function(bsk_print_build_summary rust_version)
   if(CMAKE_CONFIGURATION_TYPES)
     set(_configuration_description "multi-config")
     if(BSK_CONAN_BUILD_TYPE)
@@ -381,9 +386,24 @@ function(bsk_generate_build_info package_directory)
     set(_configuration_description "${CMAKE_BUILD_TYPE}")
   endif()
 
-  message(STATUS "Basilisk build toolchain:")
-  message(STATUS "  C compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
-  message(STATUS "  C++ compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
-  message(STATUS "  Generator: ${CMAKE_GENERATOR}")
-  message(STATUS "  Configuration: ${_configuration_description}")
+  set(_language_tools "Python: ${Python3_VERSION} | SWIG: ${SWIG_VERSION}")
+  if(BUILD_RUST_MODULES)
+    string(APPEND _language_tools " | Rust: ${rust_version}")
+  endif()
+  foreach(_option BUILD_VIZINTERFACE BUILD_OPNAV BUILD_MUJOCO BUILD_RUST_MODULES BSK_STRICT_WARNINGS)
+    if(${_option})
+      set(_summary_${_option} ON)
+    else()
+      set(_summary_${_option} OFF)
+    endif()
+  endforeach()
+  message(NOTICE
+    "Basilisk configuration: ${_configuration_description} / ${CMAKE_GENERATOR}\n"
+    "  C: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} | C++: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}\n"
+    "  ${_language_tools}\n"
+    "  Features: Vizard=${_summary_BUILD_VIZINTERFACE}, OpNav=${_summary_BUILD_OPNAV}, MuJoCo=${_summary_BUILD_MUJOCO}, Rust=${_summary_BUILD_RUST_MODULES}\n"
+    "  Strict compiler warnings: ${_summary_BSK_STRICT_WARNINGS}\n"
+    "  Build directory: ${CMAKE_BINARY_DIR}")
+  message(VERBOSE "C compiler: ${CMAKE_C_COMPILER}")
+  message(VERBOSE "C++ compiler: ${CMAKE_CXX_COMPILER}")
 endfunction()

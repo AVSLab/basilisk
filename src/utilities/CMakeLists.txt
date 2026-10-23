@@ -3,6 +3,6 @@
 
 
 if (BUILD_VIZINTERFACE)
-	message(STATUS "Generating Protobuffers")
+	message(VERBOSE "Generating Protobuf interfaces")
 	add_subdirectory("vizProtobuffer")
 endif()

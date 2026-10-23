@@ -4,7 +4,7 @@ if(APPLE AND NOT TARGET mujoco::mujoco)
   unset(CONAN_FRAMEWORK_mujoco_FOUND CACHE)
 endif()
 
-find_package(mujoco REQUIRED)
+find_package(mujoco REQUIRED QUIET)
 
 if (mujoco_FOUND)
   if(TARGET_NAME)
