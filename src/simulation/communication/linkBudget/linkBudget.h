@@ -72,6 +72,8 @@ struct AttenuationLookupTable
  */
 class LinkBudget : public SysModel
 {
+    friend class LinkBudgetTestAccess; // Native regression tests inspect the atmospheric integration internals.
+
   public:
     LinkBudget();
     ~LinkBudget() = default;
