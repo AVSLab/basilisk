@@ -111,7 +111,7 @@ class KeplerianOrbit
     double true_anomaly_rate{};
     double orbital_period{};
     double orbital_energy{};
-    double v_infinity{}; //!< Reserved legacy storage; retained to preserve the native class layout.
+    [[maybe_unused]] double v_infinity{}; //!< Reserved legacy storage; retained to preserve the native class layout.
     double orbit_radius{};
     double radial_rate{};
     double r_apogee{};

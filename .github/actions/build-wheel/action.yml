@@ -134,7 +134,7 @@ runs:
         output-dir: ${{ inputs.output-dir }}
       env:
         CIBW_TEST_SKIP: "*"
-        CONAN_ARGS: ${{ inputs.conan-args }}
+        CONAN_ARGS: "${{ inputs.conan-args }} --verbose"
 
     - name: Build selected wheel
       if: ${{ inputs.cibw-build != '' }}
@@ -144,7 +144,7 @@ runs:
       env:
         CIBW_BUILD: ${{ inputs.cibw-build }}
         CIBW_TEST_SKIP: "*"
-        CONAN_ARGS: ${{ inputs.conan-args }}
+        CONAN_ARGS: "${{ inputs.conan-args }} --verbose"
 
     - name: Verify wheel license files
       shell: bash

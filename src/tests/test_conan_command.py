@@ -23,6 +23,7 @@ import importlib.util
 import os
 from pathlib import Path
 import runpy
+import shlex
 import shutil
 import sys
 from unittest.mock import Mock
@@ -100,8 +101,9 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
 
 @pytest.mark.parametrize("script_path_kind", ["absolute", "relative"])
 @pytest.mark.parametrize("export_option", [None, False], ids=["default", "disabled"])
+@pytest.mark.parametrize("verbose", [False, True], ids=["notice", "verbose"])
 def test_script_builds_repository_from_another_directory(
-        conanfile_module, tmp_path, monkeypatch, script_path_kind, export_option,
+        conanfile_module, tmp_path, monkeypatch, capsys, script_path_kind, export_option, verbose,
 ):
     """Resolve the recipe at dispatch while keeping external paths relative to the caller."""
     repo_root = Path(__file__).resolve().parents[2]
@@ -132,6 +134,9 @@ def test_script_builds_repository_from_another_directory(
     ]
     if export_option is not None:
         arguments.extend(["--exportCompileCommands", str(export_option)])
+    if verbose:
+        arguments.append("--verbose")
+    monkeypatch.setenv("CONAN_LOG_LEVEL", "warning")
     monkeypatch.setattr(sys, "argv", arguments)
     monkeypatch.setattr(sys, "path", sys.path.copy())
     monkeypatch.setattr(conanfile_module.subprocess, "check_output", Mock(return_value=b""))
@@ -156,6 +161,10 @@ def test_script_builds_repository_from_another_directory(
     )
     assert subprocess_options["check"] is True
     assert subprocess_options["env"]["CARGO_NET_OFFLINE"] == "true"
+    assert subprocess_options["env"]["CONAN_LOG_LEVEL"] == ("verbose" if verbose else "warning")
+    assert ("-vverbose" if verbose else "-vnotice") in command
+    assert f"{conanfile_module.VERBOSE_CONAN_CONF}={verbose}" in option_values(command, "-c")
+    assert (shlex.join(command) in capsys.readouterr().out) == verbose
     assert Path.cwd() == caller_directory
 
 
@@ -295,3 +304,19 @@ def test_offline_mujoco_requires_a_cached_package(conanfile_module, monkeypatch)
         conanfile_module.conan_create_mujoco(offline=True, print_fn=None)
 
     assert create_calls == []
+
+
+@pytest.mark.parametrize("verbose", [False, True])
+def test_mujoco_creation_uses_requested_verbosity(conanfile_module, monkeypatch, verbose):
+    """Apply the same output policy when a missing MuJoCo package must be created."""
+    monkeypatch.setattr(conanfile_module, "is_conan_package_available", lambda reference: False)
+    monkeypatch.setenv("CONAN_LOG_LEVEL", "warning")
+    process = Mock()
+    monkeypatch.setattr(conanfile_module.subprocess, "run", process)
+
+    conanfile_module.conan_create_mujoco(print_fn=None, verbose=verbose)
+
+    command = process.call_args.args[0]
+    assert ("-vverbose" if verbose else "-vnotice") in command
+    assert process.call_args.kwargs["env"]["CONAN_LOG_LEVEL"] == ("verbose" if verbose else "warning")
+    assert process.call_args.kwargs["check"] is True

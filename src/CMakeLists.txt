@@ -86,8 +86,8 @@ set(SWIG_USE_SWIG_DEPENDENCIES ON)
 # Set the Python module library to be linked to.
 set(PYTHON3_MODULE Python3::Module)
 if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
-  message(STATUS "Requested Py_LIMITED_API=${PY_LIMITED_API}")
-  message(STATUS "(Refer to https://docs.python.org/3/c-api/stable.html#limited-c-api for details)")
+  message(VERBOSE "Requested Py_LIMITED_API=${PY_LIMITED_API}")
+  message(VERBOSE "(Refer to https://docs.python.org/3/c-api/stable.html#limited-c-api for details)")
 
   if(NOT Python3_Development.SABIModule_FOUND)
     message(FATAL_ERROR "Could not find the required Python3 Stable ABI module!")
@@ -110,39 +110,47 @@ endif()
 #
 function(create_symlinks destinationPath)
   # Do nothing if building in-source
-  if(${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  if("${CMAKE_CURRENT_BINARY_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     return()
   endif()
 
-  foreach(filePath ${ARGN})
-    get_filename_component(fileName ${filePath} NAME)
+  file(MAKE_DIRECTORY "${destinationPath}")
+  # Retire Finder metadata copied by earlier builds without touching the source.
+  file(REMOVE "${destinationPath}/.DS_Store")
+  foreach(filePath IN LISTS ARGN)
+    get_filename_component(fileName "${filePath}" NAME)
+    if(fileName STREQUAL ".DS_Store")
+      continue()
+    endif()
 
-    # Get OS dependent path to use in `execute_process`
-    file(TO_NATIVE_PATH "${destinationPath}/${fileName}" link)
-    file(TO_NATIVE_PATH "${filePath}" target)
+    # Native paths passed as arguments must not contain shell escape characters.
+    set(linkPath "${destinationPath}/${fileName}")
+    cmake_path(NATIVE_PATH linkPath link)
+    cmake_path(NATIVE_PATH filePath target)
 
     # Delete the files from the dist directory, and instead just link them to the files in source
-    file(REMOVE ${destinationPath}/${fileName})
+    file(REMOVE "${destinationPath}/${fileName}")
 
     if(UNIX)
-      set(command ln -s ${target} ${link})
-    elseif(IS_DIRECTORY ${target})
-      message("Creating Directory Symbolic Link")
-      set(command cmd.exe /c mklink /D ${link} ${target})
+      set(command ln -s "${target}" "${link}")
+    elseif(IS_DIRECTORY "${target}")
+      message(VERBOSE "Creating Directory Symbolic Link")
+      set(command cmd.exe /c mklink /D "${link}" "${target}")
     else()
-      # message(target)
-      set(command cmd.exe /c mklink ${link} ${target})
+      set(command cmd.exe /c mklink "${link}" "${target}")
     endif()
 
     execute_process(
       COMMAND ${command}
       RESULT_VARIABLE result
+      OUTPUT_VARIABLE output
       ERROR_VARIABLE output)
 
     # If the symlink is unsuccessful, then copy the file directly into dist
     if(NOT ${result} EQUAL 0)
-      file(COPY ${target} DESTINATION ${destinationPath})
-      message("Could not create symbolic link for: ${target} --> ${output}.  Copied instead")
+      file(COPY "${filePath}" DESTINATION "${destinationPath}")
+      string(STRIP "${output}" output)
+      message(WARNING "Could not create symbolic link for ${target}: ${output}. Copied instead.")
     endif()
 
   endforeach(filePath)
@@ -180,7 +188,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     file(RELATIVE_PATH PARENT_DIR "${INIT_DIRECTORY}" "${PARENT_DIRECTORY}")
 
     if(${PARENT_DIR_NAME} IN_LIST EXCLUDED_BSK_LIBRARIES)
-      message("Skipped Package Library: ${PARENT_DIR_NAME}")
+      message(VERBOSE "Skipped Package Library: ${PARENT_DIR_NAME}")
         continue()
     endif()
 
@@ -217,7 +225,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     set(PACKAGE_IMPLEMENTATION_FILES ${C_FILES})
     list(FILTER PACKAGE_IMPLEMENTATION_FILES INCLUDE REGEX "\\.(c|cpp)$")
     if(NOT PACKAGE_IMPLEMENTATION_FILES)
-      message(STATUS "Skipped Header-Only Package Library: ${PARENT_DIR_NAME}")
+      message(VERBOSE "Skipped Header-Only Package Library: ${PARENT_DIR_NAME}")
       continue()
     endif()
 
@@ -240,7 +248,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # If the library directory has a Custom.cmake, include that
     set(PACKAGE_CUSTOM_FILE "${LIB_DIR}/Custom.cmake")
     if(PACKAGE_CUSTOM_FILE IN_LIST BSK_CUSTOM_CMAKE_FILES)
-      message(STATUS "Including custom Custom.cmake for package lib: ${LIB_DIR}")
+      message(VERBOSE "Including custom Custom.cmake for package lib: ${LIB_DIR}")
       include("${PACKAGE_CUSTOM_FILE}")
     endif()
 
@@ -516,7 +524,7 @@ function(bsk_include_wrapper_custom_files TARGET_FILE TARGET_NAME PARENT_DIR MOD
     "${EXTERNAL_MODULES_PATH}"
     "${BSK_CUSTOM_CMAKE_FILES}")
   foreach(CUSTOM_FILE IN LISTS CUSTOM_FILES)
-    message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+    message(VERBOSE "Including custom Custom.cmake for: ${TARGET_FILE}")
     include("${CUSTOM_FILE}")
   endforeach()
 endfunction(bsk_include_wrapper_custom_files)
@@ -527,7 +535,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
 
     if(${TARGET_NAME} IN_LIST EXCLUDED_BSK_TARGETS)
-      message("Skipped Target: ${TARGET_NAME}")
+      message(VERBOSE "Skipped Target: ${TARGET_NAME}")
         continue()
     endif()
 
@@ -724,7 +732,7 @@ endif()
 
 
 # TODO: Remove the global link-libraries call
-find_package(Eigen3 CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED QUIET)
 # The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search
 # path. Related to Eigen being a header only library.
 if(DEFINED Eigen3_INCLUDE_DIRS_DEBUG)
@@ -908,7 +916,7 @@ endif()
 
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt Manually create list of libraries
 # depending on system
-find_package(cspice REQUIRED CONFIG)
+find_package(cspice REQUIRED QUIET CONFIG)
 set(library_dependencies cspice::cspice)
 if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")

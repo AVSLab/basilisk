@@ -41,6 +41,72 @@ add_executable(test_linearInterpolation test_linearInterpolation.cpp)
 target_link_libraries(test_linearInterpolation GTest::gtest_main)
 target_link_libraries(test_linearInterpolation ArchitectureUtilities)
 
+add_executable(test_linearAlgebra test_linearAlgebra.cpp test_linearAlgebraComparisons.cpp test_linearAlgebraSvd.cpp)
+target_link_libraries(test_linearAlgebra GTest::gtest_main)
+target_link_libraries(test_linearAlgebra ArchitectureUtilities)
+
+add_executable(test_linearAlgebraSafety test_linearAlgebraSafety.c)
+set_target_properties(test_linearAlgebraSafety PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraSafety ArchitectureUtilities)
+foreach(regression
+    emptyOperations emptyReductions safeSquareRoot scratchLimits dimensionOverflow
+    submatrixBounds blockIndices emptyInnerProducts capacityBoundary largeProductInputs
+    outerProductOverlap largeOuterProduct submatrixOverlap largeSubmatrix
+    rectangularInverseBoundary squareMatrixConventions)
+    add_test(NAME LinearAlgebraSafety.${regression} COMMAND test_linearAlgebraSafety ${regression})
+endforeach()
+
+add_executable(test_linearAlgebraContracts test_linearAlgebraContracts.c ../linearAlgebra.c)
+set_target_properties(test_linearAlgebraContracts PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+# Link the C implementation independently: introducing a heap dependency must fail this target's link.
+target_compile_definitions(test_linearAlgebraContracts PRIVATE
+    malloc=bskForbiddenMalloc calloc=bskForbiddenCalloc realloc=bskForbiddenRealloc
+    free=bskForbiddenFree aligned_alloc=bskForbiddenAlignedAlloc)
+if(UNIX)
+    target_link_libraries(test_linearAlgebraContracts PRIVATE m)
+endif()
+foreach(regression
+    singularInverse singularInverseGrowth inversePivotScales inverseRankBoundary
+    inverseConditionSingular inverseConditionBoundary inverseConditionScales arithmeticStorage
+    outerProductStorage submatrixTraversal perpendicularRange)
+    add_test(NAME LinearAlgebraContracts.${regression} COMMAND test_linearAlgebraContracts ${regression})
+endforeach()
+
+add_executable(test_linearAlgebraRoots test_linearAlgebraRoots.c)
+set_target_properties(test_linearAlgebraRoots PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraRoots ArchitectureUtilities)
+foreach(regression
+    cubicSmallTerm cubicSmallRealRoot cubicKnownRoots cubicComplexConvention cubicOverlap
+    eigenDiagonal eigenJacobiPairs eigenRotatedSpectra eigenNonsymmetric eigenOverlap)
+    add_test(NAME LinearAlgebraRoots.${regression} COMMAND test_linearAlgebraRoots ${regression})
+endforeach()
+
+add_executable(test_linearAlgebraFactorizations test_linearAlgebraFactorizations.c)
+set_target_properties(test_linearAlgebraFactorizations PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraFactorizations ArchitectureUtilities)
+foreach(regression
+    determinantKnown determinantBoundary determinantRange cofactorRange nearlyDependentSquare inversePivoting inverseBoundary
+    inverseOverlap inverseFailures cofactorSingular cofactorOverlap leastSquaresKnown minimumNormKnown
+    rectangularNearDependent rectangularPivoting rectangularSquare rectangularOverlap rectangularRankFailure
+    rectangularPolicies rectangularBoundary nonfiniteInverse)
+    add_test(NAME LinearAlgebraFactorizations.${regression} COMMAND test_linearAlgebraFactorizations ${regression})
+endforeach()
+
+add_executable(test_linearAlgebraArithmetic test_linearAlgebraArithmetic.c)
+set_target_properties(test_linearAlgebraArithmetic PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_link_libraries(test_linearAlgebraArithmetic ArchitectureUtilities)
+foreach(regression
+    vElementwiseMultOverlap vAddOverlap vSubtractOverlap vScaleOverlap vNormalizeOverlap
+    v2AddOverlap v2SubtractOverlap v2ScaleOverlap v2NormalizeOverlap
+    v3AddOverlap v3SubtractOverlap v3ScaleOverlap v3NormalizeOverlap v6ScaleOverlap
+    mAddOverlap mSubtractOverlap mScaleOverlap m22AddOverlap m22SubtractOverlap m22ScaleOverlap
+    m33AddOverlap m33SubtractOverlap m33ScaleOverlap m66AddOverlap m66SubtractOverlap m66ScaleOverlap
+    largeArithmetic arithmeticDimensions maximumNonfinite normalizationPolicy sortNonfinite
+    sortThreeNonfinite sortPatterns fixedInverseNonfinite fixedInverseFinite
+    fixedInverseSingular fixedInverseRankBoundary fixedInversePivotScales multiplicationFamilies)
+    add_test(NAME LinearAlgebraArithmetic.${regression} COMMAND test_linearAlgebraArithmetic ${regression})
+endforeach()
+
 add_executable(test_bilinearInterpolation test_bilinearInterpolation.cpp)
 target_link_libraries(test_bilinearInterpolation GTest::gtest_main)
 target_link_libraries(test_bilinearInterpolation ArchitectureUtilities)
@@ -72,6 +138,7 @@ gtest_discover_tests(test_stateExtrapolation)
 gtest_discover_tests(test_avsEigenMRP)
 gtest_discover_tests(test_avsEigenSupport)
 gtest_discover_tests(test_linearInterpolation)
+gtest_discover_tests(test_linearAlgebra)
 gtest_discover_tests(test_bilinearInterpolation)
 gtest_discover_tests(test_bskLogging)
 gtest_discover_tests(test_utcTime)
