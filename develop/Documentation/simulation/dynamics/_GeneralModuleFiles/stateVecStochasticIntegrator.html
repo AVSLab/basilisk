@@ -1,0 +1,756 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: stateVecStochasticIntegrator &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: stochasticRKIntegratorBase" href="stochasticRKIntegratorBase.html" />
+    <link rel="prev" title="C++ Module: stateVecIntegrator" href="stateVecIntegrator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: stateVecStochasticIntegrator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stateVecStochasticIntegrator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-statevecstochasticintegrator">
+<span id="statevecstochasticintegrator"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: stateVecStochasticIntegrator<a class="headerlink" href="#c-module-statevecstochasticintegrator" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<p>Shared by the modules in this folder.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTestDynamics/index.html"><span class="doc">_UnitTestDynamics</span></a></p></li>
+<li><p><a class="reference internal" href="BodyToHubInfo.html"><span class="doc">BodyToHubInfo</span></a></p></li>
+<li><p><a class="reference internal" href="fuelSlosh.html"><span class="doc">fuelSlosh</span></a></p></li>
+<li><p><a class="reference internal" href="gravityModel.html"><span class="doc">gravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="interpolator.html"><span class="doc">interpolator</span></a></p></li>
+<li><p><a class="reference internal" href="pointMassGravityModel.html"><span class="doc">pointMassGravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="RWConfigPayload.html"><span class="doc">RWConfigPayload</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticNoiseGenerator.html"><span class="doc">stochasticNoiseGenerator</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticTableauValidation.html"><span class="doc">stochasticTableauValidation</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticWeakRandomVariables.html"><span class="doc">stochasticWeakRandomVariables</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRA.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRA</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRI.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRI</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorWeakSIESME.html"><span class="doc">svIntegratorWeakSIESME</span></a></p></li>
+<li><p><a class="reference internal" href="THROperation.html"><span class="doc">THROperation</span></a></p></li>
+<li><p><a class="reference internal" href="THRSimConfig.html"><span class="doc">THRSimConfig</span></a></p></li>
+<li><p><a class="reference internal" href="THRTimePair.html"><span class="doc">THRTimePair</span></a></p></li>
+</ul>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">StateVecStochasticIntegrator</span></code> supplies the flat storage and candidate operations
+shared by native stochastic methods. Models continue to register local noise counts
+and write diffusion tangents through <code class="docutils literal notranslate"><span class="pre">StateData</span></code>; they do not manage packed buffers.</p>
+<p>During binding, shared local endpoints are assigned to global noise slots. Each slot
+has a contiguous range of <code class="docutils literal notranslate"><span class="pre">StochasticNoiseBinding</span></code> records and packed tangent values.
+Mappings back to state-local order preserve the order of special-policy increments.
+The class also owns step-entry rollback, accepted intermediate state, candidate scratch,
+and a drift baseline for sparse per-source trials.</p>
+<p>Candidate phases describe which scratch operations are valid. A complete candidate
+can become an intermediate base; sparse candidates reuse a common drift baseline;
+all-Euclidean final candidates may accumulate terms before one scatter. Live states
+are restored from the sparse baseline if callbacks changed them, including states
+outside the previous noise slot.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StochasticRKIntegratorBase</span></code> adds generator ownership and output buffers.
+<code class="docutils literal notranslate"><span class="pre">FlatStochasticWorkspace</span></code> provides reusable method stages. See
+<a class="reference internal" href="../../../../Learn/makingModules/advancedTopics/integratorArchitecture.html#integratorarchitecture"><span class="std std-ref">Dynamics state and integrator architecture</span></a> for the three noise orderings and rollback limits.</p>
+<hr class="docutils" />
+<p>Shared noise topology and stochastic candidate construction. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv426StochasticObjectDescriptor">
+<span id="_CPPv326StochasticObjectDescriptor"></span><span id="_CPPv226StochasticObjectDescriptor"></span><span class="target" id="state_vec_stochastic_integrator_8h_1abd5b68a4132bb9ee104a534faa5f7d65"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticObjectDescriptor</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="flatStateBinding.html#_CPPv420FlatObjectDescriptor" title="FlatObjectDescriptor"><span class="n"><span class="pre">FlatObjectDescriptor</span></span></a><a class="headerlink" href="#_CPPv426StochasticObjectDescriptor" title="Link to this definition"></a><br /></dt>
+<dd><p>Stochastic methods reuse the same live-buffer metadata as deterministic RK. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv425StochasticStateDescriptor">
+<span id="_CPPv325StochasticStateDescriptor"></span><span id="_CPPv225StochasticStateDescriptor"></span><span class="target" id="state_vec_stochastic_integrator_8h_1acef64fc2543213325f82eee06424b0c6"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticStateDescriptor</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="flatStateBinding.html#_CPPv419FlatStateDescriptor" title="FlatStateDescriptor"><span class="n"><span class="pre">FlatStateDescriptor</span></span></a><a class="headerlink" href="#_CPPv425StochasticStateDescriptor" title="Link to this definition"></a><br /></dt>
+<dd><p>Stochastic methods reuse state shapes and offsets from the common binding. </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422StochasticNoiseBinding">
+<span id="_CPPv322StochasticNoiseBinding"></span><span id="_CPPv222StochasticNoiseBinding"></span><span id="StochasticNoiseBinding"></span><span class="target" id="struct_stochastic_noise_binding"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticNoiseBinding</span></span></span><a class="headerlink" href="#_CPPv422StochasticNoiseBinding" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateVecStochasticIntegrator.h&gt;</em></div>
+<p>One state-local diffusion tangent assigned to a global noise slot. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22StochasticNoiseBinding15boundStateIndexE">
+<span id="_CPPv3N22StochasticNoiseBinding15boundStateIndexE"></span><span id="_CPPv2N22StochasticNoiseBinding15boundStateIndexE"></span><span id="StochasticNoiseBinding::boundStateIndex__s"></span><span class="target" id="struct_stochastic_noise_binding_1aaeedf7f5428894a187d07036859d7387"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">boundStateIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22StochasticNoiseBinding15boundStateIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>State descriptor affected by this endpoint. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22StochasticNoiseBinding12packedOffsetE">
+<span id="_CPPv3N22StochasticNoiseBinding12packedOffsetE"></span><span id="_CPPv2N22StochasticNoiseBinding12packedOffsetE"></span><span id="StochasticNoiseBinding::packedOffset__s"></span><span class="target" id="struct_stochastic_noise_binding_1a01ca00a07af730a930655d100980ff91"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packedOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22StochasticNoiseBinding12packedOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First tangent scalar in packed global-slot storage. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22StochasticNoiseBinding11scalarCountE">
+<span id="_CPPv3N22StochasticNoiseBinding11scalarCountE"></span><span id="_CPPv2N22StochasticNoiseBinding11scalarCountE"></span><span id="StochasticNoiseBinding::scalarCount__s"></span><span class="target" id="struct_stochastic_noise_binding_1ab6492b5c3e8661706986abe552b1b3b9"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22StochasticNoiseBinding11scalarCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of tangent scalars for this endpoint. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22StochasticNoiseBinding8liveDataE">
+<span id="_CPPv3N22StochasticNoiseBinding8liveDataE"></span><span id="_CPPv2N22StochasticNoiseBinding8liveDataE"></span><span id="StochasticNoiseBinding::liveData__doubleCP"></span><span class="target" id="struct_stochastic_noise_binding_1a5475a12568245d62525f3cd4dc220806"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">liveData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N22StochasticNoiseBinding8liveDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed tangent pointer in the finalized registry. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419StochasticNoiseSlot">
+<span id="_CPPv319StochasticNoiseSlot"></span><span id="_CPPv219StochasticNoiseSlot"></span><span id="StochasticNoiseSlot"></span><span class="target" id="struct_stochastic_noise_slot"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticNoiseSlot</span></span></span><a class="headerlink" href="#_CPPv419StochasticNoiseSlot" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateVecStochasticIntegrator.h&gt;</em></div>
+<p>A finalized global noise source and its packed diffusion range. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19StochasticNoiseSlot12bindingBeginE">
+<span id="_CPPv3N19StochasticNoiseSlot12bindingBeginE"></span><span id="_CPPv2N19StochasticNoiseSlot12bindingBeginE"></span><span id="StochasticNoiseSlot::bindingBegin__s"></span><span class="target" id="struct_stochastic_noise_slot_1a97be83554898bb1ca3501e00274506f3"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bindingBegin</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19StochasticNoiseSlot12bindingBeginE" title="Link to this definition"></a><br /></dt>
+<dd><p>First endpoint in the noise-binding vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19StochasticNoiseSlot12bindingCountE">
+<span id="_CPPv3N19StochasticNoiseSlot12bindingCountE"></span><span id="_CPPv2N19StochasticNoiseSlot12bindingCountE"></span><span id="StochasticNoiseSlot::bindingCount__s"></span><span class="target" id="struct_stochastic_noise_slot_1aa07d988ecb1210290d9d24e429ca8f9b"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bindingCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19StochasticNoiseSlot12bindingCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Endpoints sharing this global process. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19StochasticNoiseSlot11packedBeginE">
+<span id="_CPPv3N19StochasticNoiseSlot11packedBeginE"></span><span id="_CPPv2N19StochasticNoiseSlot11packedBeginE"></span><span id="StochasticNoiseSlot::packedBegin__s"></span><span class="target" id="struct_stochastic_noise_slot_1aa316531f848eabd19b63b250ab486c63"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packedBegin</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19StochasticNoiseSlot11packedBeginE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar of this slot in a packed diffusion buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19StochasticNoiseSlot11packedCountE">
+<span id="_CPPv3N19StochasticNoiseSlot11packedCountE"></span><span id="_CPPv2N19StochasticNoiseSlot11packedCountE"></span><span id="StochasticNoiseSlot::packedCount__s"></span><span class="target" id="struct_stochastic_noise_slot_1a1c2cb2026f491c19dd927b2ec639c7f9"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packedCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19StochasticNoiseSlot11packedCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sum of tangent sizes for all endpoints in this slot. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv428StateVecStochasticIntegrator">
+<span id="_CPPv328StateVecStochasticIntegrator"></span><span id="_CPPv228StateVecStochasticIntegrator"></span><span id="StateVecStochasticIntegrator"></span><span class="target" id="class_state_vec_stochastic_integrator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateVecStochasticIntegrator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N28StateVecStochasticIntegrator18StateVecIntegratorEP13DynamicObject" title="StateVecStochasticIntegrator::StateVecIntegrator"><span class="n"><span class="pre">StateVecIntegrator</span></span></a><a class="headerlink" href="#_CPPv428StateVecStochasticIntegrator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateVecStochasticIntegrator.h&gt;</em></div>
+<p>Flat topology and candidate operations shared by stochastic numerical methods. </p>
+<p>State layout follows registration order. Global noise slots are assigned by the binding’s canonical traversal and group shared endpoints. Packed diffusion buffers follow global-slot order, but updates to each state follow its local source order; special policies may have noncommuting increments.</p>
+<p>This base owns reusable candidate/rollback storage and mappings between those orders. <a class="reference internal" href="stochasticRKIntegratorBase.html#class_stochastic_r_k_integrator_base"><span class="std std-ref">StochasticRKIntegratorBase</span></a> adds generator output; concrete methods supply recurrences and stage storage. The protected API serves those methods. Dynamics modules only register states and supply drift/diffusion callbacks. Rollback restores state values, not RNG position or external callback effects. </p>
+<p>Subclassed by <a class="reference internal" href="stochasticRKIntegratorBase.html#class_stochastic_r_k_integrator_base"><span class="std std-ref">StochasticRKIntegratorBase</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator18StateVecIntegratorEP13DynamicObject">
+<span id="_CPPv3N28StateVecStochasticIntegrator18StateVecIntegratorEP13DynamicObject"></span><span id="_CPPv2N28StateVecStochasticIntegrator18StateVecIntegratorEP13DynamicObject"></span><span id="StateVecStochasticIntegrator::StateVecIntegrator__DynamicObjectP"></span><span class="target" id="class_state_vec_stochastic_integrator_1a2e71bdc71d4d62fd8f7661ce3c1484df"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateVecIntegrator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator18StateVecIntegratorEP13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct an integrator for its future owning dynamics object. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22bindStochasticTopologyEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator22bindStochasticTopologyEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator22bindStochasticTopologyEv"></span><span id="StateVecStochasticIntegrator::bindStochasticTopology"></span><span class="target" id="class_state_vec_stochastic_integrator_1a1aada88c1e165d262a33f2e5e853b886"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bindStochasticTopology</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22bindStochasticTopologyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Lazily builds immutable flat stochastic topology and scratch. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator30resetStochasticTopologyBindingEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator30resetStochasticTopologyBindingEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator30resetStochasticTopologyBindingEv"></span><span id="StateVecStochasticIntegrator::resetStochasticTopologyBinding"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab3622198703d24996e41ef80be25053c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetStochasticTopologyBinding</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator30resetStochasticTopologyBindingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Discards an incomplete topology binding after method-scratch failure. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator26validateStochasticTopologyEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator26validateStochasticTopologyEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator26validateStochasticTopologyEv"></span><span id="StateVecStochasticIntegrator::validateStochasticTopologyC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a782ab59b5771fa001990c354b4381d9b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateStochasticTopology</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator26validateStochasticTopologyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Validates that dynamic-object and manager topology remains bound. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator16globalNoiseCountEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator16globalNoiseCountEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator16globalNoiseCountEv"></span><span id="StateVecStochasticIntegrator::globalNoiseCountC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a237fa138cede1613a2dfa89f60162a54"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">globalNoiseCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator16globalNoiseCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the number of global noise sources in the bound topology. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator26stochasticStateDescriptorsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator26stochasticStateDescriptorsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator26stochasticStateDescriptorsEv"></span><span id="StateVecStochasticIntegrator::stochasticStateDescriptorsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a7b4a69319423d38121ea1c6160c381e6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv425StochasticStateDescriptor" title="StochasticStateDescriptor"><span class="n"><span class="pre">StochasticStateDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticStateDescriptors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator26stochasticStateDescriptorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow state metadata in flat registration order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator27stochasticObjectDescriptorsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator27stochasticObjectDescriptorsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator27stochasticObjectDescriptorsEv"></span><span id="StateVecStochasticIntegrator::stochasticObjectDescriptorsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1acd577eda12f661d1a5e3889fb8e7a27a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv426StochasticObjectDescriptor" title="StochasticObjectDescriptor"><span class="n"><span class="pre">StochasticObjectDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticObjectDescriptors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator27stochasticObjectDescriptorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow live object buffer descriptors. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator23stochasticNoiseBindingsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator23stochasticNoiseBindingsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator23stochasticNoiseBindingsEv"></span><span id="StateVecStochasticIntegrator::stochasticNoiseBindingsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a39043b90690aaebf80daefce3c9ff3ab"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv422StochasticNoiseBinding" title="StochasticNoiseBinding"><span class="n"><span class="pre">StochasticNoiseBinding</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticNoiseBindings</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator23stochasticNoiseBindingsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow state-local endpoints grouped by global source. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator20stochasticNoiseSlotsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator20stochasticNoiseSlotsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator20stochasticNoiseSlotsEv"></span><span id="StateVecStochasticIntegrator::stochasticNoiseSlotsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a3178e9a82c428d8fd380afde0227374a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv419StochasticNoiseSlot" title="StochasticNoiseSlot"><span class="n"><span class="pre">StochasticNoiseSlot</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticNoiseSlots</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator20stochasticNoiseSlotsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow independent global sources and their packed ranges. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator25stochasticLocalNoiseSlotsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator25stochasticLocalNoiseSlotsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator25stochasticLocalNoiseSlotsEv"></span><span id="StateVecStochasticIntegrator::stochasticLocalNoiseSlotsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab80b78c3be23077baef7031b38c67c3f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticLocalNoiseSlots</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator25stochasticLocalNoiseSlotsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow local endpoint to global source mappings. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator33stochasticLocalNoisePackedOffsetsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator33stochasticLocalNoisePackedOffsetsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator33stochasticLocalNoisePackedOffsetsEv"></span><span id="StateVecStochasticIntegrator::stochasticLocalNoisePackedOffsetsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1aeca3687fc30ebc8fbff2a208ce4f5d0b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticLocalNoisePackedOffsets</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator33stochasticLocalNoisePackedOffsetsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow local endpoint to packed tangent mappings. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22gatherStochasticStatesEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator22gatherStochasticStatesEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator22gatherStochasticStatesEv"></span><span id="StateVecStochasticIntegrator::gatherStochasticStates"></span><span class="target" id="class_state_vec_stochastic_integrator_1a30a216c9eac7158a58e5af30cbbe8f5c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22gatherStochasticStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Captures the accepted state for rollback. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator22gatherStochasticStatesERN5Eigen8VectorXdE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator22gatherStochasticStatesERN5Eigen8VectorXdE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator22gatherStochasticStatesERN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::gatherStochasticStates__Eigen::VectorXdRC"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab9758399f130f313364960dc40949682"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator22gatherStochasticStatesERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live object buffer segments into caller-owned flat storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator23scatterStochasticStatesERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator23scatterStochasticStatesERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator23scatterStochasticStatesERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::scatterStochasticStates__Eigen::VectorXdCRC"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab074183166ab24d037c6601993adfbb4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scatterStochasticStates</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator23scatterStochasticStatesERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies caller-owned flat storage into live object buffer segments. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator23restoreStochasticStatesEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator23restoreStochasticStatesEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator23restoreStochasticStatesEv"></span><span id="StateVecStochasticIntegrator::restoreStochasticStatesC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a30f6861d73b6e5960e34027b73869038"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">restoreStochasticStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator23restoreStochasticStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Restores the accepted state after a failed attempted step. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::buildStochasticCandidateInPlace__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1a72b9f9c1ba102a4799138a58714dc6c5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticCandidateInPlace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds and scatters a candidate in descriptor-local noise order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t">
+<span id="_CPPv3N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="_CPPv2N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="StateVecStochasticIntegrator::buildStochasticCandidateInPlace__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR.s.s"></span><span class="target" id="class_state_vec_stochastic_integrator_1a08afafd0f549ad9ccf9beaf6a2ddb7a2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticCandidateInPlace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotBegin</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotEnd</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator31buildStochasticCandidateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds and scatters a candidate using only a global noise-slot range. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator37applyStochasticDiffusionUpdateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator37applyStochasticDiffusionUpdateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator37applyStochasticDiffusionUpdateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::applyStochasticDiffusionUpdateInPlace__Eigen::VectorXdCR.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1a7dd1c3a0586e031b8027c787de42f678"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyStochasticDiffusionUpdateInPlace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator37applyStochasticDiffusionUpdateInPlaceERKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies packed diffusion increments in descriptor-local noise order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator31applyStochasticNoiseSlotInPlaceERKN5Eigen8VectorXdE6size_td">
+<span id="_CPPv3N28StateVecStochasticIntegrator31applyStochasticNoiseSlotInPlaceERKN5Eigen8VectorXdE6size_td"></span><span id="_CPPv2N28StateVecStochasticIntegrator31applyStochasticNoiseSlotInPlaceERKN5Eigen8VectorXdE6size_td"></span><span id="StateVecStochasticIntegrator::applyStochasticNoiseSlotInPlace__Eigen::VectorXdCR.s.double"></span><span class="target" id="class_state_vec_stochastic_integrator_1a67092fedaaa52a61bcdf0374cb853339"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyStochasticNoiseSlotInPlace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotIndex</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pseudoStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator31applyStochasticNoiseSlotInPlaceERKN5Eigen8VectorXdE6size_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies one packed global noise slot to the live state. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator27gatherStochasticDerivativesEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator27gatherStochasticDerivativesEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator27gatherStochasticDerivativesEv"></span><span id="StateVecStochasticIntegrator::gatherStochasticDerivatives"></span><span class="target" id="class_state_vec_stochastic_integrator_1afaa77b2a4454ed297b71446bcb59fcb6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticDerivatives</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator27gatherStochasticDerivativesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Captures the current drift values in flat buffer order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator27gatherStochasticDerivativesERN5Eigen8VectorXdE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator27gatherStochasticDerivativesERN5Eigen8VectorXdE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator27gatherStochasticDerivativesERN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::gatherStochasticDerivatives__Eigen::VectorXdRC"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab2120e5f2563514b72b530dd568d5450"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticDerivatives</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator27gatherStochasticDerivativesERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live derivative buffer segments into caller-owned flat storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator27gatherStochasticDerivativesEPdN5Eigen5IndexE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator27gatherStochasticDerivativesEPdN5Eigen5IndexE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator27gatherStochasticDerivativesEPdN5Eigen5IndexE"></span><span id="StateVecStochasticIntegrator::gatherStochasticDerivatives__doubleP.Eigen::IndexC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a323ebcd171c9cb88e92486d762a14d1e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">output</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">outputSize</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator27gatherStochasticDerivativesEPdN5Eigen5IndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live drift values into caller-owned contiguous storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator26gatherStochasticDiffusionsEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator26gatherStochasticDiffusionsEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator26gatherStochasticDiffusionsEv"></span><span id="StateVecStochasticIntegrator::gatherStochasticDiffusions"></span><span class="target" id="class_state_vec_stochastic_integrator_1abbc237602bd1a277064a56c235ad3bf4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticDiffusions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator26gatherStochasticDiffusionsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Captures all diffusion tangents in packed global-slot storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator26gatherStochasticDiffusionsERN5Eigen8VectorXdE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator26gatherStochasticDiffusionsERN5Eigen8VectorXdE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator26gatherStochasticDiffusionsERN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::gatherStochasticDiffusions__Eigen::VectorXdRC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a4bcb3b34a32eb4be87dbbb69d42429d6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStochasticDiffusions</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator26gatherStochasticDiffusionsERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live diffusion tangents into caller-owned packed storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator27buildEulerMaruyamaCandidateEdRKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator27buildEulerMaruyamaCandidateEdRKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator27buildEulerMaruyamaCandidateEdRKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::buildEulerMaruyamaCandidate__double.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1ad9ebb9fcd23ff9e363b10d745aafc33c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildEulerMaruyamaCandidate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator27buildEulerMaruyamaCandidateEdRKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies one flat Euler-Maruyama candidate in local state-noise order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator29advanceEuclideanEulerMaruyamaEdRKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator29advanceEuclideanEulerMaruyamaEdRKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator29advanceEuclideanEulerMaruyamaEdRKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::advanceEuclideanEulerMaruyama__double.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1aafe8990aaf958125793c6cd14e8ce1ca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">advanceEuclideanEulerMaruyama</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator29advanceEuclideanEulerMaruyamaEdRKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates Euclidean states from captured drift and live diffusion, without packing diffusion or scattering. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only valid when every state uses ordinary vector addition. The captured drift remains independent of writes made by the diffusion callback. </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t">
+<span id="_CPPv3N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="_CPPv2N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="StateVecStochasticIntegrator::buildStochasticCandidate__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR.s.s"></span><span class="target" id="class_state_vec_stochastic_integrator_1a515d9469673743580b718f7164ce553f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotBegin</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotEnd</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds and scatters a candidate directly from packed work buffers. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::buildStochasticCandidate__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1a7b6e896f493801348b84bf222e0a5fbf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator24buildStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds a candidate using every global noise slot. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator31beginStochasticSparseCandidatesERKN5Eigen8VectorXdERKN5Eigen8VectorXdEd">
+<span id="_CPPv3N28StateVecStochasticIntegrator31beginStochasticSparseCandidatesERKN5Eigen8VectorXdERKN5Eigen8VectorXdEd"></span><span id="_CPPv2N28StateVecStochasticIntegrator31beginStochasticSparseCandidatesERKN5Eigen8VectorXdERKN5Eigen8VectorXdEd"></span><span id="StateVecStochasticIntegrator::beginStochasticSparseCandidates__Eigen::VectorXdCR.Eigen::VectorXdCR.double"></span><span class="target" id="class_state_vec_stochastic_integrator_1af8e754a202fd616607c720886d215e62"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beginStochasticSparseCandidates</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator31beginStochasticSparseCandidatesERKN5Eigen8VectorXdERKN5Eigen8VectorXdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds and scatters the drift baseline for sparse per-slot candidates. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator33buildStochasticNoiseSlotCandidateERKN5Eigen8VectorXdEd6size_t">
+<span id="_CPPv3N28StateVecStochasticIntegrator33buildStochasticNoiseSlotCandidateERKN5Eigen8VectorXdEd6size_t"></span><span id="_CPPv2N28StateVecStochasticIntegrator33buildStochasticNoiseSlotCandidateERKN5Eigen8VectorXdEd6size_t"></span><span id="StateVecStochasticIntegrator::buildStochasticNoiseSlotCandidate__Eigen::VectorXdCR.double.s"></span><span class="target" id="class_state_vec_stochastic_integrator_1a5a4a7d3e80e0ec6f182aa8fcb6d6103c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticNoiseSlotCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pseudoStep</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator33buildStochasticNoiseSlotCandidateERKN5Eigen8VectorXdEd6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Restores the sparse baseline and scatters one noise-slot candidate. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator25acceptStochasticCandidateEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator25acceptStochasticCandidateEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator25acceptStochasticCandidateEv"></span><span id="StateVecStochasticIntegrator::acceptStochasticCandidate"></span><span class="target" id="class_state_vec_stochastic_integrator_1a4ed36e8a81fd0cc3aec390d9ddfeef56"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">acceptStochasticCandidate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator25acceptStochasticCandidateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Makes the last packed candidate the base for a subsequent update. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator32stochasticUpdatesAreAllEuclideanEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator32stochasticUpdatesAreAllEuclideanEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator32stochasticUpdatesAreAllEuclideanEv"></span><span id="StateVecStochasticIntegrator::stochasticUpdatesAreAllEuclideanC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a2793a7d84b4d6654b762afcf9e3aad18"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stochasticUpdatesAreAllEuclidean</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator32stochasticUpdatesAreAllEuclideanEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Whether every bound state uses ordinary vector addition. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator31beginAllEuclideanFinalCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator31beginAllEuclideanFinalCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator31beginAllEuclideanFinalCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::beginAllEuclideanFinalCandidate__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1a7bb3422dac3317f017bede8a774f2de1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beginAllEuclideanFinalCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator31beginAllEuclideanFinalCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Starts an unscattered final candidate for an all-Euclidean topology. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator32appendAllEuclideanFinalCandidateERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3N28StateVecStochasticIntegrator32appendAllEuclideanFinalCandidateERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2N28StateVecStochasticIntegrator32appendAllEuclideanFinalCandidateERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::appendAllEuclideanFinalCandidate__Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR"></span><span class="target" id="class_state_vec_stochastic_integrator_1aeb76e237f47f276916c5c5fe34f35f66"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendAllEuclideanFinalCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator32appendAllEuclideanFinalCandidateERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Appends one ordered term to an all-Euclidean final candidate. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator32commitAllEuclideanFinalCandidateEv">
+<span id="_CPPv3N28StateVecStochasticIntegrator32commitAllEuclideanFinalCandidateEv"></span><span id="_CPPv2N28StateVecStochasticIntegrator32commitAllEuclideanFinalCandidateEv"></span><span id="StateVecStochasticIntegrator::commitAllEuclideanFinalCandidate"></span><span class="target" id="class_state_vec_stochastic_integrator_1a16ee5c3292bea266c55eeae45fc0b74b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">commitAllEuclideanFinalCandidate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator32commitAllEuclideanFinalCandidateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Scatters the completed all-Euclidean final candidate once. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator23stochasticAcceptedStateEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator23stochasticAcceptedStateEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator23stochasticAcceptedStateEv"></span><span id="StateVecStochasticIntegrator::stochasticAcceptedStateC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a58e0bab596c5c442d5f1a51560f2ff88"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticAcceptedState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator23stochasticAcceptedStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow the method’s current base; step-entry rollback remains separate. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator27stochasticPackedDerivativesEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator27stochasticPackedDerivativesEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator27stochasticPackedDerivativesEv"></span><span id="StateVecStochasticIntegrator::stochasticPackedDerivativesC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a28958dbc41724f2f81cbf81a1d084e0b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticPackedDerivatives</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator27stochasticPackedDerivativesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow the most recently captured flat drift. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator26stochasticPackedDiffusionsEv">
+<span id="_CPPv3NK28StateVecStochasticIntegrator26stochasticPackedDiffusionsEv"></span><span id="_CPPv2NK28StateVecStochasticIntegrator26stochasticPackedDiffusionsEv"></span><span id="StateVecStochasticIntegrator::stochasticPackedDiffusionsC"></span><span class="target" id="class_state_vec_stochastic_integrator_1a8ddcc944a4da0f49d2456c4c74173c54"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">stochasticPackedDiffusions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator26stochasticPackedDiffusionsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow the most recently captured packed tangents. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator29buildStochasticDriftCandidateERK25StochasticStateDescriptor15ConstMatrixView15ConstMatrixViewd17MutableMatrixView">
+<span id="_CPPv3N28StateVecStochasticIntegrator29buildStochasticDriftCandidateERK25StochasticStateDescriptor15ConstMatrixView15ConstMatrixViewd17MutableMatrixView"></span><span id="_CPPv2N28StateVecStochasticIntegrator29buildStochasticDriftCandidateERK25StochasticStateDescriptor15ConstMatrixView15ConstMatrixViewd17MutableMatrixView"></span><span id="StateVecStochasticIntegrator::buildStochasticDriftCandidate__StochasticStateDescriptorCR.ConstMatrixView.ConstMatrixView.double.MutableMatrixView"></span><span class="target" id="class_state_vec_stochastic_integrator_1aee57a4b8960722e2fd42c6f2295546c3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildStochasticDriftCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv425StochasticStateDescriptor" title="StochasticStateDescriptor"><span class="n"><span class="pre">StochasticStateDescriptor</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">descriptor</span></span>, <a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">base</span></span>, <a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <a class="reference internal" href="stateData.html#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator29buildStochasticDriftCandidateERK25StochasticStateDescriptor15ConstMatrixView15ConstMatrixViewd17MutableMatrixView" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds one policy-aware drift candidate. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator29applyStochasticNoiseIncrementERK25StochasticStateDescriptor17MutableMatrixView15ConstMatrixViewd">
+<span id="_CPPv3N28StateVecStochasticIntegrator29applyStochasticNoiseIncrementERK25StochasticStateDescriptor17MutableMatrixView15ConstMatrixViewd"></span><span id="_CPPv2N28StateVecStochasticIntegrator29applyStochasticNoiseIncrementERK25StochasticStateDescriptor17MutableMatrixView15ConstMatrixViewd"></span><span id="StateVecStochasticIntegrator::applyStochasticNoiseIncrement__StochasticStateDescriptorCR.MutableMatrixView.ConstMatrixView.double"></span><span class="target" id="class_state_vec_stochastic_integrator_1ab728561d52d86062057a3ecdd455e350"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyStochasticNoiseIncrement</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv425StochasticStateDescriptor" title="StochasticStateDescriptor"><span class="n"><span class="pre">StochasticStateDescriptor</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">descriptor</span></span>, <a class="reference internal" href="stateData.html#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span>, <a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">diffusion</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pseudoStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator29applyStochasticNoiseIncrementERK25StochasticStateDescriptor17MutableMatrixView15ConstMatrixViewd" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies one policy-aware diffusion increment. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator32applyStochasticNoiseInLocalOrderERK25StochasticStateDescriptor17MutableMatrixViewRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t">
+<span id="_CPPv3N28StateVecStochasticIntegrator32applyStochasticNoiseInLocalOrderERK25StochasticStateDescriptor17MutableMatrixViewRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="_CPPv2N28StateVecStochasticIntegrator32applyStochasticNoiseInLocalOrderERK25StochasticStateDescriptor17MutableMatrixViewRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="StateVecStochasticIntegrator::applyStochasticNoiseInLocalOrder__StochasticStateDescriptorCR.MutableMatrixView.Eigen::VectorXdCR.Eigen::VectorXdCR.s.s"></span><span class="target" id="class_state_vec_stochastic_integrator_1ad4f4d2b23e00c49784fe93328e009985"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyStochasticNoiseInLocalOrder</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv425StochasticStateDescriptor" title="StochasticStateDescriptor"><span class="n"><span class="pre">StochasticStateDescriptor</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">descriptor</span></span>, <a class="reference internal" href="stateData.html#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotBegin</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotEnd</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator32applyStochasticNoiseInLocalOrderERK25StochasticStateDescriptor17MutableMatrixViewRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies selected global sources in the descriptor’s local noise order. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-static-functions">Protected Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator26validateStochasticTimeStepEd">
+<span id="_CPPv3N28StateVecStochasticIntegrator26validateStochasticTimeStepEd"></span><span id="_CPPv2N28StateVecStochasticIntegrator26validateStochasticTimeStepEd"></span><span id="StateVecStochasticIntegrator::validateStochasticTimeStep__double"></span><span class="target" id="class_state_vec_stochastic_integrator_1aa5bc156bf32c443561aa6c2b9d7f5676"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateStochasticTimeStep</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator26validateStochasticTimeStepEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Reject invalid stochastic step sizes before state or RNG mutation. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE"></span><span class="target" id="class_state_vec_stochastic_integrator_1a26ad2abdf228fdac975a567f9f858af0"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CandidateAssemblyPhase</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Which candidate operations are valid for the reusable scratch. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase4IdleE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22CandidateAssemblyPhase4IdleE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22CandidateAssemblyPhase4IdleE"></span><span class="target" id="class_state_vec_stochastic_integrator_1a26ad2abdf228fdac975a567f9f858af0ae599161956d626eda4cb0a5ffb85271c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Idle</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase4IdleE" title="Link to this definition"></a><br /></dt>
+<dd><p>No complete candidate is available for acceptance. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase5ReadyE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22CandidateAssemblyPhase5ReadyE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22CandidateAssemblyPhase5ReadyE"></span><span class="target" id="class_state_vec_stochastic_integrator_1a26ad2abdf228fdac975a567f9f858af0ae7d31fc0602fb2ede144d18cdffd816b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ready</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase5ReadyE" title="Link to this definition"></a><br /></dt>
+<dd><p>A full candidate can become the next working base. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase6SparseE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22CandidateAssemblyPhase6SparseE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22CandidateAssemblyPhase6SparseE"></span><span class="target" id="class_state_vec_stochastic_integrator_1a26ad2abdf228fdac975a567f9f858af0a7407fb7e6a4df6392aaabd2368157312"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Sparse</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase6SparseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Per-slot trials share sparseBaselineState. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase14EuclideanFinalE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22CandidateAssemblyPhase14EuclideanFinalE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22CandidateAssemblyPhase14EuclideanFinalE"></span><span class="target" id="class_state_vec_stochastic_integrator_1a26ad2abdf228fdac975a567f9f858af0a4bfc4673df89ce832f64a4132eeeb569"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EuclideanFinal</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase14EuclideanFinalE" title="Link to this definition"></a><br /></dt>
+<dd><p>Ordered terms are accumulating before one final scatter. </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator24writeStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t">
+<span id="_CPPv3N28StateVecStochasticIntegrator24writeStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="_CPPv2N28StateVecStochasticIntegrator24writeStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t"></span><span id="StateVecStochasticIntegrator::writeStochasticCandidate__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::VectorXdCR.Eigen::VectorXdCR.s.s"></span><span class="target" id="class_state_vec_stochastic_integrator_1abb2645ea86d518021d6181802aaf9eec"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeStochasticCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotBegin</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slotEnd</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator24writeStochasticCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdRKN5Eigen8VectorXdERKN5Eigen8VectorXdE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Fill candidateState without scattering, preserving each state’s local noise order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK28StateVecStochasticIntegrator28diffusionInputsMatchTopologyERKN5Eigen8VectorXdERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK28StateVecStochasticIntegrator28diffusionInputsMatchTopologyERKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK28StateVecStochasticIntegrator28diffusionInputsMatchTopologyERKN5Eigen8VectorXdERKN5Eigen8VectorXdE"></span><span id="StateVecStochasticIntegrator::diffusionInputsMatchTopology__Eigen::VectorXdCR.Eigen::VectorXdCRC"></span><span class="target" id="class_state_vec_stochastic_integrator_1acbd844326874b70bb010f3ac6c0359ec"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionInputsMatchTopology</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">diffusions</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">globalPseudoSteps</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK28StateVecStochasticIntegrator28diffusionInputsMatchTopologyERKN5Eigen8VectorXdERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Check packed tangent and pseudo-step sizes against the binding. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator11flatBindingE">
+<span id="_CPPv3N28StateVecStochasticIntegrator11flatBindingE"></span><span id="_CPPv2N28StateVecStochasticIntegrator11flatBindingE"></span><span id="StateVecStochasticIntegrator::flatBinding__FlatStateBinding"></span><span class="target" id="class_state_vec_stochastic_integrator_1a6d680132bc59f86f391c9c7fa18cad48"></span><a class="reference internal" href="flatStateBinding.html#_CPPv416FlatStateBinding" title="FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flatBinding</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator11flatBindingE" title="Link to this definition"></a><br /></dt>
+<dd><p>Owns descriptors and borrows finalized buffers/policies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator13noiseBindingsE">
+<span id="_CPPv3N28StateVecStochasticIntegrator13noiseBindingsE"></span><span id="_CPPv2N28StateVecStochasticIntegrator13noiseBindingsE"></span><span id="StateVecStochasticIntegrator::noiseBindings__std::vector:StochasticNoiseBinding:"></span><span class="target" id="class_state_vec_stochastic_integrator_1aafe0f18b000f0d9c221365060d870709"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv422StochasticNoiseBinding" title="StochasticNoiseBinding"><span class="n"><span class="pre">StochasticNoiseBinding</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseBindings</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator13noiseBindingsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Endpoints grouped by global source. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator10noiseSlotsE">
+<span id="_CPPv3N28StateVecStochasticIntegrator10noiseSlotsE"></span><span id="_CPPv2N28StateVecStochasticIntegrator10noiseSlotsE"></span><span id="StateVecStochasticIntegrator::noiseSlots__std::vector:StochasticNoiseSlot:"></span><span class="target" id="class_state_vec_stochastic_integrator_1a6031ba59d65f0c011b2ed19e4480d94e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv419StochasticNoiseSlot" title="StochasticNoiseSlot"><span class="n"><span class="pre">StochasticNoiseSlot</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseSlots</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator10noiseSlotsE" title="Link to this definition"></a><br /></dt>
+<dd><p>One packed range per independent global process. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22localNoiseToGlobalSlotE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22localNoiseToGlobalSlotE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22localNoiseToGlobalSlotE"></span><span id="StateVecStochasticIntegrator::localNoiseToGlobalSlot__std::vector:s:"></span><span class="target" id="class_state_vec_stochastic_integrator_1a7af5395cbc0ef436bb32de5240326b25"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localNoiseToGlobalSlot</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22localNoiseToGlobalSlotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local endpoint -&gt; shared/global process index. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator24localNoiseToPackedOffsetE">
+<span id="_CPPv3N28StateVecStochasticIntegrator24localNoiseToPackedOffsetE"></span><span id="_CPPv2N28StateVecStochasticIntegrator24localNoiseToPackedOffsetE"></span><span id="StateVecStochasticIntegrator::localNoiseToPackedOffset__std::vector:s:"></span><span class="target" id="class_state_vec_stochastic_integrator_1ae57ac6b1240bb1216fee5659cff1919d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localNoiseToPackedOffset</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator24localNoiseToPackedOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local endpoint -&gt; packed tangent offset. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator18localNoiseLiveDataE">
+<span id="_CPPv3N28StateVecStochasticIntegrator18localNoiseLiveDataE"></span><span id="_CPPv2N28StateVecStochasticIntegrator18localNoiseLiveDataE"></span><span id="StateVecStochasticIntegrator::localNoiseLiveData__std::vector:doubleCP:"></span><span class="target" id="class_state_vec_stochastic_integrator_1a1b2678915bc5752fffb390a683445ab9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localNoiseLiveData</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator18localNoiseLiveDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local endpoint -&gt; live tangent for direct updates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator13rollbackStateE">
+<span id="_CPPv3N28StateVecStochasticIntegrator13rollbackStateE"></span><span id="_CPPv2N28StateVecStochasticIntegrator13rollbackStateE"></span><span id="StateVecStochasticIntegrator::rollbackState__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1a2e5a95f90f4a27db185b2d198fef5aad"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rollbackState</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator13rollbackStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>State at attempted-step entry, preserved until the step completes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator12workingStateE">
+<span id="_CPPv3N28StateVecStochasticIntegrator12workingStateE"></span><span id="_CPPv2N28StateVecStochasticIntegrator12workingStateE"></span><span id="StateVecStochasticIntegrator::workingState__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1ae6a1621494946baf964c78a1d05d4220"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">workingState</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator12workingStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Accepted intermediate candidate when a method advances its own base. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator14candidateStateE">
+<span id="_CPPv3N28StateVecStochasticIntegrator14candidateStateE"></span><span id="_CPPv2N28StateVecStochasticIntegrator14candidateStateE"></span><span id="StateVecStochasticIntegrator::candidateState__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1a6604358b7b82650864d9ab0aa4053429"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">candidateState</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator14candidateStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Reusable destination for complete, sparse, or final assembly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator19sparseBaselineStateE">
+<span id="_CPPv3N28StateVecStochasticIntegrator19sparseBaselineStateE"></span><span id="_CPPv2N28StateVecStochasticIntegrator19sparseBaselineStateE"></span><span id="StateVecStochasticIntegrator::sparseBaselineState__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1ae24d68903a3b85924137febfd97aa432"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sparseBaselineState</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator19sparseBaselineStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift-only baseline reused by per-source trials. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator17packedDerivativesE">
+<span id="_CPPv3N28StateVecStochasticIntegrator17packedDerivativesE"></span><span id="_CPPv2N28StateVecStochasticIntegrator17packedDerivativesE"></span><span id="StateVecStochasticIntegrator::packedDerivatives__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1a9b906c339178c2eeb3cadce63188b322"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packedDerivatives</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator17packedDerivativesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Captured drift in flat registration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator16packedDiffusionsE">
+<span id="_CPPv3N28StateVecStochasticIntegrator16packedDiffusionsE"></span><span id="_CPPv2N28StateVecStochasticIntegrator16packedDiffusionsE"></span><span id="StateVecStochasticIntegrator::packedDiffusions__Eigen::VectorXd"></span><span class="target" id="class_state_vec_stochastic_integrator_1afd220e9bdc1ba05bb24414cedea53773"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packedDiffusions</span></span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator16packedDiffusionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Captured tangents in global-slot order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator22workingStateIsRollbackE">
+<span id="_CPPv3N28StateVecStochasticIntegrator22workingStateIsRollbackE"></span><span id="_CPPv2N28StateVecStochasticIntegrator22workingStateIsRollbackE"></span><span id="StateVecStochasticIntegrator::workingStateIsRollback__b"></span><span class="target" id="class_state_vec_stochastic_integrator_1a063101622dcb12970fd6d63300218895"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">workingStateIsRollback</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator22workingStateIsRollbackE" title="Link to this definition"></a><br /></dt>
+<dd><p>Selects rollbackState until an intermediate candidate is accepted. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator16activeSparseSlotE">
+<span id="_CPPv3N28StateVecStochasticIntegrator16activeSparseSlotE"></span><span id="_CPPv2N28StateVecStochasticIntegrator16activeSparseSlotE"></span><span id="StateVecStochasticIntegrator::activeSparseSlot__s"></span><span class="target" id="class_state_vec_stochastic_integrator_1a2dd67fa58c255f8c959f7d3aa9affd36"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">activeSparseSlot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">static_cast</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator16activeSparseSlotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Previous perturbed scratch slot; size_t(-1) means none. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28StateVecStochasticIntegrator14candidatePhaseE">
+<span id="_CPPv3N28StateVecStochasticIntegrator14candidatePhaseE"></span><span id="_CPPv2N28StateVecStochasticIntegrator14candidatePhaseE"></span><span id="StateVecStochasticIntegrator::candidatePhase__CandidateAssemblyPhase"></span><span class="target" id="class_state_vec_stochastic_integrator_1aea28dc6c3d10eafa78959c4ecbac5533"></span><a class="reference internal" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE" title="StateVecStochasticIntegrator::CandidateAssemblyPhase"><span class="n"><span class="pre">CandidateAssemblyPhase</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">candidatePhase</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhaseE" title="StateVecStochasticIntegrator::CandidateAssemblyPhase"><span class="n"><span class="pre">CandidateAssemblyPhase</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N28StateVecStochasticIntegrator22CandidateAssemblyPhase4IdleE" title="StateVecStochasticIntegrator::CandidateAssemblyPhase::Idle"><span class="n"><span class="pre">Idle</span></span></a><a class="headerlink" href="#_CPPv4N28StateVecStochasticIntegrator14candidatePhaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Validity of candidateState. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stateVecIntegrator.html" class="btn btn-neutral float-left" title="C++ Module: stateVecIntegrator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stochasticRKIntegratorBase.html" class="btn btn-neutral float-right" title="C++ Module: stochasticRKIntegratorBase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

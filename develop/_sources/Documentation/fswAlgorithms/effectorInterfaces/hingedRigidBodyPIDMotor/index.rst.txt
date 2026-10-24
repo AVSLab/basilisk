@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_hingedRigidBodyPIDMotor:
+
+hingedRigidBodyPIDMotor
+=======================
+
+:doc:`Module documentation <hingedRigidBodyPIDMotor>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

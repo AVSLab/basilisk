@@ -1,0 +1,598 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_moduleInputMessageLifetime &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_moduleInputMessageLifetime</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_moduleInputMessageLifetime</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1"># Distributed under the ISC license; see LICENSE.</span>
+
+<span class="sd">"""Check source lifetimes for subscriptions created inside module methods."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">formationBarycenter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span>
+
+
+<span class="c1"># Module, class, configuration method, retained-reader vector, message type.</span>
+<span class="n">CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"exponentialAtmosphere"</span><span class="p">,</span> <span class="s2">"ExponentialAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"msisAtmosphere"</span><span class="p">,</span> <span class="s2">"MsisAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"tabularAtmosphere"</span><span class="p">,</span> <span class="s2">"TabularAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"magneticFieldCenteredDipole"</span><span class="p">,</span> <span class="s2">"MagneticFieldCenteredDipole"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"magneticFieldWMM"</span><span class="p">,</span> <span class="s2">"MagneticFieldWMM"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zeroWindModel"</span><span class="p">,</span> <span class="s2">"ZeroWindModel"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"eclipse"</span><span class="p">,</span> <span class="s2">"Eclipse"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"positionInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"groundLocation"</span><span class="p">,</span> <span class="s2">"GroundLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"spacecraftLocation"</span><span class="p">,</span> <span class="s2">"SpacecraftLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"stripLocation"</span><span class="p">,</span> <span class="s2">"StripLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"spacecraftChargingEquilibrium"</span><span class="p">,</span> <span class="s2">"SpacecraftChargingEquilibrium"</span><span class="p">,</span> <span class="s2">"addSpacecraft"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"msmForceTorque"</span><span class="p">,</span> <span class="s2">"MsmForceTorque"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="s2">"scStateInMsgs"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"eclipse"</span><span class="p">,</span> <span class="s2">"Eclipse"</span><span class="p">,</span> <span class="s2">"addPlanetToModel"</span><span class="p">,</span> <span class="s2">"planetInMsgs"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ephemerisConverter"</span><span class="p">,</span> <span class="s2">"EphemerisConverter"</span><span class="p">,</span> <span class="s2">"addSpiceInputMsg"</span><span class="p">,</span> <span class="s2">"spiceInMsgs"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Additional configuration paths; the optional final entry selects an overload.</span>
+<span class="n">CASES</span> <span class="o">+=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"simpleBattery"</span><span class="p">,</span> <span class="s2">"SimpleBattery"</span><span class="p">,</span> <span class="s2">"addPowerNodeToModel"</span><span class="p">,</span> <span class="s2">"nodePowerUseInMsgs"</span><span class="p">,</span> <span class="s2">"PowerNodeUsageMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"simplePowerMonitor"</span><span class="p">,</span> <span class="s2">"SimplePowerMonitor"</span><span class="p">,</span> <span class="s2">"addPowerNodeToModel"</span><span class="p">,</span> <span class="s2">"nodePowerUseInMsgs"</span><span class="p">,</span> <span class="s2">"PowerNodeUsageMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"simpleStorageUnit"</span><span class="p">,</span> <span class="s2">"SimpleStorageUnit"</span><span class="p">,</span> <span class="s2">"addDataNodeToModel"</span><span class="p">,</span> <span class="s2">"nodeDataUseInMsgs"</span><span class="p">,</span> <span class="s2">"DataNodeUsageMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"partitionedStorageUnit"</span><span class="p">,</span> <span class="s2">"PartitionedStorageUnit"</span><span class="p">,</span> <span class="s2">"addDataNodeToModel"</span><span class="p">,</span> <span class="s2">"nodeDataUseInMsgs"</span><span class="p">,</span> <span class="s2">"DataNodeUsageMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"simpleTransmitter"</span><span class="p">,</span> <span class="s2">"SimpleTransmitter"</span><span class="p">,</span> <span class="s2">"addStorageUnitToTransmitter"</span><span class="p">,</span> <span class="s2">"storageUnitInMsgs"</span><span class="p">,</span> <span class="s2">"DataStorageStatusMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"spaceToGroundTransmitter"</span><span class="p">,</span> <span class="s2">"SpaceToGroundTransmitter"</span><span class="p">,</span> <span class="s2">"addStorageUnitToTransmitter"</span><span class="p">,</span> <span class="s2">"storageUnitInMsgs"</span><span class="p">,</span> <span class="s2">"DataStorageStatusMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"spaceToGroundTransmitter"</span><span class="p">,</span> <span class="s2">"SpaceToGroundTransmitter"</span><span class="p">,</span> <span class="s2">"addAccessMsgToTransmitter"</span><span class="p">,</span> <span class="s2">"groundLocationAccessInMsgs"</span><span class="p">,</span> <span class="s2">"AccessMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"mappingInstrument"</span><span class="p">,</span> <span class="s2">"MappingInstrument"</span><span class="p">,</span> <span class="s2">"addMappingPoint"</span><span class="p">,</span> <span class="s2">"accessInMsgs"</span><span class="p">,</span> <span class="s2">"AccessMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"simpleAntenna"</span><span class="p">,</span> <span class="s2">"SimpleAntenna"</span><span class="p">,</span> <span class="s2">"addPlanetToModel"</span><span class="p">,</span> <span class="s2">"planetInMsgs"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"vizInterface"</span><span class="p">,</span> <span class="s2">"VizInterface"</span><span class="p">,</span> <span class="s2">"addCamMsgToModule"</span><span class="p">,</span> <span class="s2">"cameraConfInMsgs"</span><span class="p">,</span> <span class="s2">"CameraConfigMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"albedo"</span><span class="p">,</span> <span class="s2">"Albedo"</span><span class="p">,</span> <span class="s2">"addPlanetandAlbedoAverageModel"</span><span class="p">,</span> <span class="s2">"planets"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"albedo"</span><span class="p">,</span> <span class="s2">"Albedo"</span><span class="p">,</span> <span class="s2">"addPlanetandAlbedoAverageModel"</span><span class="p">,</span> <span class="s2">"planets"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"albedo"</span><span class="p">,</span> <span class="s2">"Albedo"</span><span class="p">,</span> <span class="s2">"addPlanetandAlbedoDataModel"</span><span class="p">,</span> <span class="s2">"planets"</span><span class="p">,</span> <span class="s2">"SpicePlanetStateMsg"</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">PRIVATE_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"smallBodyNavEKF"</span><span class="p">,</span> <span class="s2">"SmallBodyNavEKF"</span><span class="p">,</span> <span class="s2">"addThrusterToFilter"</span><span class="p">,</span> <span class="s2">"THROutputMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"thrusterDynamicEffector"</span><span class="p">,</span> <span class="s2">"ThrusterDynamicEffector"</span><span class="p">,</span> <span class="s2">"addThruster"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"thrusterStateEffector"</span><span class="p">,</span> <span class="s2">"ThrusterStateEffector"</span><span class="p">,</span> <span class="s2">"addThruster"</span><span class="p">,</span> <span class="s2">"SCStatesMsg"</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_source</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Supply the additional configuration required by each connection API."""</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"MsmForceTorque"</span><span class="p">:</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">npList2EigenXdVector</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">source</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="n">positions</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"addMappingPoint"</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addMappingPoint</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">"testData"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"addThruster"</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.THRSimConfig</span><span class="w"> </span><span class="kn">import</span> <span class="n">THRSimConfig</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">THRSimConfig</span><span class="p">(),</span> <span class="n">source</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"addPlanetandAlbedoDataModel"</span><span class="p">:</span>
+        <span class="c1"># The file is only opened during Reset; this test checks registration.</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addPlanetandAlbedoDataModel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"unused.csv"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">variant</span> <span class="o">==</span> <span class="s2">"grid"</span><span class="p">:</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># [-] albedo</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">average</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">source</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_reader</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Access a stored reader, including readers nested inside planet entries."""</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">planetMsg</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"planets"</span> <span class="k">else</span> <span class="n">entry</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_payload_marker</span><span class="p">(</span><span class="n">message_name</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a distinguishable payload field and value, with units below."""</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"SCStatesMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"r_BN_N"</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+        <span class="s2">"SpicePlanetStateMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"PositionVector"</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+        <span class="s2">"PowerNodeUsageMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"netPower"</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>  <span class="c1"># [W]</span>
+        <span class="s2">"DataNodeUsageMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"baudRate"</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>  <span class="c1"># [bit/s]</span>
+        <span class="s2">"DataStorageStatusMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"storageLevel"</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>  <span class="c1"># [bit]</span>
+        <span class="s2">"AccessMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"slantRange"</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>  <span class="c1"># [m]</span>
+        <span class="s2">"CameraConfigMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"cameraID"</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="n">message_name</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_configuration_retains_and_releases_sources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_configuration_retains_and_releases_sources">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"release"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"destroy"</span><span class="p">,</span> <span class="s2">"unsubscribe"</span><span class="p">,</span> <span class="s2">"replace"</span><span class="p">,</span> <span class="s2">"clear"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="n">CASES</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"-"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">case</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">*</span><span class="n">case</span><span class="p">[</span><span class="mi">5</span><span class="p">:]])</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_configuration_retains_and_releases_sources</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="n">release</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Native readers retain local inputs through growth and release them afterward.</span>
+
+<span class="sd">    Check weak references before reading so the unfixed code fails without</span>
+<span class="sd">    dereferencing freed storage. Distinct payloads and timestamps also verify</span>
+<span class="sd">    that every reader retains its own source after vector reallocation.</span>
+<span class="sd">    """</span>
+    <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">message_name</span> <span class="o">=</span> <span class="n">case</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">"vizInterface"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"vizInterface"</span><span class="p">):</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">"Requires Basilisk built with --vizInterface True"</span><span class="p">)</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s2">"fswAlgorithms"</span> <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">"smallBodyNavEKF"</span> <span class="k">else</span> <span class="s2">"simulation"</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk."</span> <span class="o">+</span> <span class="n">package</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">message_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">messaging</span><span class="p">,</span> <span class="n">message_name</span><span class="p">)</span>
+    <span class="n">payload_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">messaging</span><span class="p">,</span> <span class="n">message_name</span> <span class="o">+</span> <span class="s2">"Payload"</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"addSpacecraft"</span> <span class="k">else</span> <span class="mi">8</span>
+    <span class="n">source_refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">expected_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">payload_field</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_payload_marker</span><span class="p">(</span><span class="n">message_name</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">payload_type</span><span class="p">()</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">payload_field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">message_type</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">source_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+        <span class="n">expected_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_add_source</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="n">case</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span>
+        <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">),</span> <span class="s2">"C++ retained a pointer to a collected input"</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">expected_values</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">_reader</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">)(),</span> <span class="n">payload_field</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_reader</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">timeWritten</span><span class="p">()</span> <span class="o">==</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">10</span>
+
+    <span class="k">if</span> <span class="n">release</span> <span class="o">==</span> <span class="s2">"unsubscribe"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+            <span class="n">_reader</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">release</span> <span class="o">==</span> <span class="s2">"replace"</span><span class="p">:</span>
+        <span class="n">replacement</span> <span class="o">=</span> <span class="n">message_type</span><span class="p">()</span>
+        <span class="n">replacement_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+            <span class="n">_reader</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">replacement</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">replacement_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">release</span> <span class="o">==</span> <span class="s2">"clear"</span><span class="p">:</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">),</span> <span class="s2">"Readers leaked their former sources"</span>
+    <span class="k">if</span> <span class="n">release</span> <span class="o">==</span> <span class="s2">"replace"</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">model</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">replacement_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_copied_reader_outlives_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_copied_reader_outlives_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_copied_reader_outlives_module</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A copied native reader retains the source after its module is destroyed."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">eclipse</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">eclipse</span><span class="o">.</span><span class="n">Eclipse</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+    <span class="n">source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgReader</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">positionInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">source</span><span class="p">,</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_formation_retains_both_inputs">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_formation_retains_both_inputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_formation_retains_both_inputs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""The barycenter method retains both inputs and produces the expected state."""</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">formationBarycenter</span><span class="o">.</span><span class="n">FormationBarycenter</span><span class="p">()</span>
+    <span class="n">nav_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+    <span class="n">nav_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">nav_payload</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+    <span class="n">config_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">config_payload</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">nav</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nav_payload</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">config_payload</span><span class="p">)</span>
+    <span class="n">nav_ref</span><span class="p">,</span> <span class="n">config_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">nav</span><span class="p">),</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">nav</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">nav</span><span class="p">,</span> <span class="n">config</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">nav_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">SelfInit</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">nav_payload</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">,</span> <span class="n">nav_payload</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">nav_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_rejected_input_is_not_retained">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_rejected_input_is_not_retained">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rejected_input_is_not_retained</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Rejecting a third charging-model spacecraft preserves both prior inputs."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraftChargingEquilibrium</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">spacecraftChargingEquilibrium</span><span class="o">.</span><span class="n">SpacecraftChargingEquilibrium</span><span class="p">()</span>
+    <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">(),</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">second</span><span class="p">)</span>
+    <span class="n">rejected</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+    <span class="n">rejected_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">rejected</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">rejected</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">rejected</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">rejected_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">scStateInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">scStateInMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">second</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_private_facet_readers_retain_sources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_private_facet_readers_retain_sources">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_private_facet_readers_retain_sources</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Private facet readers keep temporary inputs alive through native reads."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">facetSRPDynamicEffector</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">facetSRPDynamicEffector</span><span class="o">.</span><span class="n">FacetSRPDynamicEffector</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setNumArticulatedFacets</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">source_refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">index</span>  <span class="c1"># [rad]</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">source_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">ReadMessages</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_private_thruster_readers_retain_sources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_private_thruster_readers_retain_sources">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="n">PRIVATE_CASES</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">PRIVATE_CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_private_thruster_readers_retain_sources</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Private readers retain distinct inputs through growth and module destruction."""</span>
+    <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">message_name</span> <span class="o">=</span> <span class="n">case</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s2">"fswAlgorithms"</span> <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">"smallBodyNavEKF"</span> <span class="k">else</span> <span class="s2">"simulation"</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk."</span> <span class="o">+</span> <span class="n">package</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">source_refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">messaging</span><span class="p">,</span> <span class="n">message_name</span><span class="p">)()</span>
+        <span class="n">source_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+        <span class="n">_add_source</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_thruster_without_attached_body_still_supported">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_thruster_without_attached_body_still_supported">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name,class_name"</span><span class="p">,</span> <span class="p">[</span><span class="n">case</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">PRIVATE_CASES</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_thruster_without_attached_body_still_supported</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The original one-argument overload still registers a hub-mounted thruster."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.THRSimConfig</span><span class="w"> </span><span class="kn">import</span> <span class="n">THRSimConfig</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">THRSimConfig</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">thrusterData</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">thrusterOutMsgs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_pending_facet_readers_retain_sources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_pending_facet_readers_retain_sources">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"configure_first"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"copy_reader"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_pending_facet_readers_retain_sources</span><span class="p">(</span><span class="n">configure_first</span><span class="p">,</span> <span class="n">copy_reader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Pending and active facet readers preserve retention in either setup order."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">facetedSpacecraftModel</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">facetedSpacecraftModel</span><span class="o">.</span><span class="n">FacetedSpacecraftModel</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="k">if</span> <span class="n">configure_first</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setNumTotalFacets</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">source_refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">index</span>  <span class="c1"># [rad]</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">source_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span>
+
+    <span class="c1"># Configure or reconfigure the active list from the privately stored requests.</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setNumTotalFacets</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">articulatedFacetDataInMsgs</span><span class="p">[</span><span class="n">index</span><span class="p">]()</span><span class="o">.</span><span class="n">theta</span> <span class="o">==</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">index</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">articulatedFacetDataInMsgs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">),</span> <span class="s2">"Pending readers still need their sources"</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setNumTotalFacets</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">copy_reader</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgReader</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">articulatedFacetDataInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">if</span> <span class="n">copy_reader</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">source_refs</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">reader</span><span class="p">()</span><span class="o">.</span><span class="n">theta</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_refs</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_retains_sources_after_duplicate_registration">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_downlink_retains_sources_after_duplicate_registration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_retains_sources_after_duplicate_registration</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A rejected duplicate must not replace the retention on another reader."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">downlinkHandling</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">source_refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DataStorageStatusMsgPayload</span><span class="p">()</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">storageLevel</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># [bit]</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DataStorageStatusMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">source_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">source_refs</span><span class="p">[</span><span class="mi">0</span><span class="p">]())</span> <span class="ow">is</span> <span class="kc">False</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">availableDataBits</span> <span class="o">==</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">count</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">source_refs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_rejects_invalid_reader_without_retaining_sources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_downlink_rejects_invalid_reader_without_retaining_sources">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_rejects_invalid_reader_without_retaining_sources</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""The internal reader entry point rejects mismatched and null sources."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">downlinkHandling</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DataStorageStatusMsg</span><span class="p">()</span>
+    <span class="n">other</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DataStorageStatusMsg</span><span class="p">()</span>
+    <span class="n">source_ref</span><span class="p">,</span> <span class="n">other_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">_addStorageUnitReader</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">source</span><span class="p">,</span> <span class="n">other</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">other_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_albedo_retention_with_shared_base_bindings">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_albedo_retention_with_shared_base_bindings">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"import_order"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"albedo, earthRadiationModel"</span><span class="p">,</span> <span class="s2">"earthRadiationModel, albedo"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_retention_with_shared_base_bindings</span><span class="p">(</span><span class="n">import_order</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Both radiation wrappers must agree on the shared planet-vector type."""</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">import gc</span>
+<span class="s2">import weakref</span>
+<span class="s2">from Basilisk.simulation import </span><span class="si">{</span><span class="n">import_order</span><span class="si">}</span>
+<span class="s2">from Basilisk.architecture import messaging</span>
+
+<span class="s2">model = albedo.Albedo()</span>
+<span class="s2">payload = messaging.SpicePlanetStateMsgPayload()</span>
+<span class="s2">payload.PositionVector = [1.0, 2.0, 3.0]  # [m]</span>
+<span class="s2">source = messaging.SpicePlanetStateMsg().write(payload)</span>
+<span class="s2">source_ref = weakref.ref(source)</span>
+<span class="s2">model.addPlanetandAlbedoAverageModel(source)</span>
+<span class="s2">del source</span>
+<span class="s2">gc.collect()</span>
+<span class="s2">assert source_ref() is not None</span>
+<span class="s2">assert list(model.planets[0].planetMsg().PositionVector) == [1.0, 2.0, 3.0]</span>
+<span class="s2">model.planets.clear()</span>
+<span class="s2">gc.collect()</span>
+<span class="s2">assert source_ref() is None</span>
+<span class="s2">"""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">script</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span></div>
+
+
+
+<div class="viewcode-block" id="test_mapping_rejects_input_without_replacing_retention">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_moduleInputMessageLifetime.html#test_moduleInputMessageLifetime.test_mapping_rejects_input_without_replacing_retention">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_mapping_rejects_input_without_replacing_retention</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A rejected mapping name leaves the previously registered source intact."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mappingInstrument</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">mappingInstrument</span><span class="o">.</span><span class="n">MappingInstrument</span><span class="p">()</span>
+    <span class="n">accepted</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccessMsg</span><span class="p">()</span>
+    <span class="n">rejected</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccessMsg</span><span class="p">()</span>
+    <span class="n">accepted_ref</span><span class="p">,</span> <span class="n">rejected_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">accepted</span><span class="p">),</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">rejected</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">addMappingPoint</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="s2">"valid"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">addMappingPoint</span><span class="p">(</span><span class="n">rejected</span><span class="p">,</span> <span class="s2">"x"</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">accepted</span><span class="p">,</span> <span class="n">rejected</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">accepted_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">rejected_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">accessInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">accepted_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

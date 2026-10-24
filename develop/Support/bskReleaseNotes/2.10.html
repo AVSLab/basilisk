@@ -1,0 +1,348 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.10 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.9 Release Notes" href="2.9.html" />
+    <link rel="prev" title="Version 2.11 Release Notes" href="2.11.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.10 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.10.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-10-release-notes">
+<h1>Version 2.10 Release Notes<a class="headerlink" href="#version-2-10-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-10-2-may-7-2026">
+<span id="bsk-release-2-10-2"></span><h2>Version 2.10.2 (May 7, 2026)<a class="headerlink" href="#version-2-10-2-may-7-2026" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/communication/linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a> pointing-loss frame handling so <code class="docutils literal notranslate"><span class="pre">AntennaLogMsgPayload.sigma_AN</span></code> antenna orientations are interpreted consistently with <a class="reference internal" href="../../Documentation/simulation/communication/simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">C++ Module: simpleAntenna</span></a>.</p></li>
+<li><p>Fixed a <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> <code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> image request regression that could stop OpNav scenarios when communicating with Vizard.</p></li>
+</ul>
+</section>
+<section id="version-2-10-1-april-26-2026">
+<span id="bsk-release-2-10-1"></span><h2>Version 2.10.1 (April 26, 2026)<a class="headerlink" href="#version-2-10-1-april-26-2026" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Updated SWIG dependency support to allow compatible latest SWIG releases while excluding SWIG 4.4.0 due to compile regressions observed during testing.  If you are getting lots of <code class="docutils literal notranslate"><span class="pre">builtin</span> <span class="pre">type</span> <span class="pre">swigvarlink</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">__module__</span> <span class="pre">attribute</span></code> warnings upgrade to SWIG 4.4.1</p></li>
+<li><p>Cleaned up pytest resource handling so parallel test runs with pytest-xdist and pytest-rerunfailures no longer report unclosed socket warnings.</p></li>
+<li><p>Fixed a potential stack buffer overflow in <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> by rejecting default celestial body names that exceed the fixed SPICE payload name storage.</p></li>
+<li><p>Fixed a potential heap buffer overflow in <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/instrument/mappingInstrument/mappingInstrument.html#mappinginstrument"><span class="std std-ref">C++ Module: mappingInstrument</span></a> by rejecting mapping point names that exceed the fixed data node name storage.</p></li>
+<li><p>Fixed a potential format string vulnerability in <a class="reference internal" href="../../Documentation/simulation/environment/dentonFluxModel/dentonFluxModel.html#dentonfluxmodel"><span class="std std-ref">C++ Module: dentonFluxModel</span></a> when reporting missing Denton data files.</p></li>
+<li><p>Hardened Basilisk module string handling and logging against fixed-buffer overflow and format-string misuse.</p></li>
+<li><p>Hardened build and helper utilities against shell command injection, unsafe temporary file cleanup, unbounded downloads, and malformed image buffer lengths.</p></li>
+</ul>
+</section>
+<section id="version-2-10-0-april-2-2026">
+<span id="bsk-release-2-10-0"></span><h2>Version 2.10.0 (April 2, 2026)<a class="headerlink" href="#version-2-10-0-april-2-2026" title="Link to this heading"></a></h2>
+<section id="compatibility-and-migration">
+<h3>Compatibility and migration<a class="headerlink" href="#compatibility-and-migration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Removed deprecated <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiSphereVector</span></code> support; use <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiShapeVector</span></code>.</p></li>
+<li><p>Removed deprecated <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiSphere</span></code> and <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiSphereInfo</span></code> aliases; use <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiShape</span></code> and <code class="docutils literal notranslate"><span class="pre">vizInterface.MultiShapeInfo</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dragDynamicEffector</span></code>, <code class="docutils literal notranslate"><span class="pre">facetDragDynamicEffector</span></code>, and <code class="docutils literal notranslate"><span class="pre">cannonballDrag</span></code> now accept an optional <code class="docutils literal notranslate"><span class="pre">windVelInMsg</span></code> (<a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/WindMsgPayload.html#windmsgpayload"><span class="std std-ref">WindMsgPayload</span></a>) to compute atmosphere-relative drag velocity; supersedes the former <code class="docutils literal notranslate"><span class="pre">useAtmosphereRelativeVelocity</span></code>/<code class="docutils literal notranslate"><span class="pre">planetOmega_N</span></code> flags.</p></li>
+<li><p>Removed Python 3.8 support from the build and CI configuration, and marked Python 3.9 support as deprecated for removal after March 2027.</p></li>
+<li><p>Deprecated the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> optional flag <code class="docutils literal notranslate"><span class="pre">show_plots</span></code>.</p></li>
+</ul>
+</section>
+<section id="build-installation-and-ci">
+<h3>Build, installation, and CI<a class="headerlink" href="#build-installation-and-ci" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added a <code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code> to build Basilisk container images. See <a class="reference internal" href="../../Build/containers.html#bskcontainers"><span class="std std-ref">Containers</span></a> for usage details.</p></li>
+<li><p>Prebuilt multi-architecture (<code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code>, <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>) container images are now published to GHCR on each release tag.</p></li>
+<li><p>Added Python 3.14 support across packaging and CI.</p></li>
+<li><p>Updated platform install guides to document Basilisk support for Python 3.14.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">sccache</span></code> compiler caching to CI builds to speed up incremental C++ compilation. See <a class="reference internal" href="../../Build/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a> for how to use <code class="docutils literal notranslate"><span class="pre">sccache</span></code> locally.</p></li>
+<li><p>Updated Python packaging metadata to use the PEP 639 license fields and require a newer setuptools version that supports them.</p></li>
+<li><p>Added an <code class="docutils literal notranslate"><span class="pre">examples</span></code> optional dependency set so users can install example-only Python packages with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;bsk[examples]&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[examples]&quot;</span></code>.</p></li>
+<li><p>Added a matching <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span> <span class="pre">--examples</span> <span class="pre">True</span></code> build option for source checkouts, with example dependencies enabled by default and <code class="docutils literal notranslate"><span class="pre">--examples</span> <span class="pre">False</span></code> available to skip them.</p></li>
+<li><p>Removed the default <code class="docutils literal notranslate"><span class="pre">--clean</span></code> flag from <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> to allow for incremental pip wheel builds.</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> to pass <code class="docutils literal notranslate"><span class="pre">compiler.cstd=gnu17</span></code> during Conan build step to avoid <code class="docutils literal notranslate"><span class="pre">cspice/0067</span></code>
+build failures on newer GCC 15 based Linux toolchains.</p></li>
+</ul>
+</section>
+<section id="simulation-framework-and-module-development">
+<h3>Simulation framework and module development<a class="headerlink" href="#simulation-framework-and-module-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added documentation for the <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> extension system, covering how to install,
+write, and distribute out-of-tree Basilisk extensions as standard Python wheels.</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">PythonVariableLogger</span></code> to resume logging correctly after <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>, reject negative <code class="docutils literal notranslate"><span class="pre">min_log_period</span></code> values, and support indexed access for logged names that collide with class attributes such as <code class="docutils literal notranslate"><span class="pre">times</span></code>.</p></li>
+</ul>
+</section>
+<section id="spacecraft-dynamics-and-effectors">
+<h3>Spacecraft dynamics and effectors<a class="headerlink" href="#spacecraft-dynamics-and-effectors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">C++ Module: reactionWheelStateEffector</span></a> mixed-model wheel logging so theta outputs are indexed correctly when balanced and jitter wheel models are used together.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/simulation/deviceInterface/facetedSpacecraftModel/facetedSpacecraftModel.html#facetedspacecraftmodel"><span class="std std-ref">C++ Module: facetedSpacecraftModel</span></a> module to convert spacecraft facet geometry from the local facet frames to the spacecraft hub body frame. The module supports both fixed facets and single-axis articulating facets.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/simulation/deviceInterface/facetedSpacecraftProjectedArea/facetedSpacecraftProjectedArea.html#facetedspacecraftprojectedarea"><span class="std std-ref">C++ Module: facetedSpacecraftProjectedArea</span></a> module to compute the per-facet and total projected area of a faceted spacecraft model using a provided heading direction vector. The module supports three heading configuration options: direct general heading, Sun direction heading, and spacecraft inertial velocity heading.</p></li>
+<li><p>Added optional <code class="docutils literal notranslate"><span class="pre">sunEclipseInMsg</span></code> input to <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> so that eclipse shadow conditions scale the SRP force and torque by the illumination factor.</p></li>
+</ul>
+</section>
+<section id="environment-gravity-and-ephemerides">
+<h3>Environment, gravity, and ephemerides<a class="headerlink" href="#environment-gravity-and-ephemerides" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Updated <a class="reference internal" href="../../Documentation/utilities/tleHandling.html#tlehandling"><span class="std std-ref">tleHandling</span></a> to map TLE mean elements in TEME to Basilisk osculating elements in J2000/ICRS and to generate TLEs using an SGP4-consistent mean-element iteration.</p></li>
+<li><p>Fixed how the gravity spherical harmonic coefficient are loaded in <code class="docutils literal notranslate"><span class="pre">loadGravFromFile()</span></code>.  They were hard coded to 2nd order.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/utilities/tleHandling.html#tlehandling"><span class="std std-ref">tleHandling</span></a> TLE parsing to fail explicitly on unsupported catalog-ID encodings.</p></li>
+<li><p>Added tests in <code class="docutils literal notranslate"><span class="pre">test_readTLE.py</span></code> to validate rejection of unsupported catalog-ID encoding.</p></li>
+<li><p>Updated <a class="reference internal" href="../../examples/scenarioDragDeorbit.html#scenariodragdeorbit"><span class="std std-ref">scenarioDragDeorbit</span></a>, <a class="reference internal" href="../../examples/scenarioDragRendezvous.html#scenariodragrendezvous"><span class="std std-ref">scenarioDragRendezvous</span></a>, <a class="reference internal" href="../../examples/scenarioAerocapture.html#scenarioaerocapture"><span class="std std-ref">scenarioAerocapture</span></a>, and <a class="reference internal" href="../../examples/scenarioStochasticDragSpacecraft.html#scenariostochasticdragspacecraft"><span class="std std-ref">scenarioStochasticDragSpacecraft</span></a> to illustrate optional use of wind velocity input.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/environment/_GeneralModuleFiles/windBase.html#windbase"><span class="std std-ref">C++ Module: windBase</span></a> abstract base class and <a class="reference internal" href="../../Documentation/simulation/environment/ZeroWindModel/zeroWindModel.html#zerowindmodel"><span class="std std-ref">C++ Module: zeroWindModel</span></a> concrete implementation. The base class now handles co-rotating atmosphere calculations, while the zero wind model represents conditions with no additional wind perturbations beyond atmospheric co-rotation.</p></li>
+<li><p>Added missing docstring to <code class="docutils literal notranslate"><span class="pre">gravBodyFactory.createSpiceInterface()</span></code> that prevented it from being built.</p></li>
+<li><p>Added a detailed note for <code class="docutils literal notranslate"><span class="pre">spicePlanetFrames</span></code> describing default <code class="docutils literal notranslate"><span class="pre">IAU_*</span></code> behavior, supported alternatives such as <code class="docutils literal notranslate"><span class="pre">ITRF93</span></code> and <code class="docutils literal notranslate"><span class="pre">J2000</span></code>, and how frame-association FK kernels interact with this setting.</p></li>
+<li><p>Improved <code class="docutils literal notranslate"><span class="pre">gravityEffector</span></code> gravity-coefficient loading to always include the requested highest degree and consistently enforce <code class="docutils literal notranslate"><span class="pre">maxDeg</span></code> truncation.</p></li>
+<li><p>Updated spherical-harmonic coefficient parsing to map values by explicit <code class="docutils literal notranslate"><span class="pre">(degree,</span> <span class="pre">order)</span></code> indices, handle missing entries as zero-filled terms, and reject duplicate or malformed rows.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/environment/spacecraftChargingEquilibrium/spacecraftChargingEquilibrium.html#spacecraftchargingequilibrium"><span class="std std-ref">C++ Module: spacecraftChargingEquilibrium</span></a> module to solve coupled servicer/target equilibrium potentials with electron-beam current coupling.</p></li>
+<li><p>TLE parsing fixed to be robust to file ending issues between LF and CRLF.</p></li>
+<li><p>Updated the World Magnetic Model (WMM) Coefficients file to the 2025 version.</p></li>
+</ul>
+</section>
+<section id="sensors-and-flight-software">
+<h3>Sensors and flight software<a class="headerlink" href="#sensors-and-flight-software" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/formationFlying/hillFrameRelativeControl/hillFrameRelativeControl.html#hillframerelativecontrol"><span class="std std-ref">C++ Module: hillFrameRelativeControl</span></a>, a Hill-frame PD controller that computes an inertial force command to track deputy relative position and velocity with respect to a chief spacecraft.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrJointCompensation/thrJointCompensation.html#thrjointcompensation"><span class="std std-ref">C++ Module: thrJointCompensation</span></a>, a module to compute the motor torques required to
+prevent joint acceleration during thruster firing for systems with attached thruster arms.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrJointCompensation/thrJointCompensation.html#thrjointcompensation"><span class="std std-ref">C++ Module: thrJointCompensation</span></a> hinged joint control sign convention so that the computed compensation torque is applied in the correct direction.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a> to support the strip imaging mode.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">C Module: locationPointing</span></a> to include the new strip imaging mode.</p></li>
+<li><p>Added new tests in <code class="docutils literal notranslate"><span class="pre">test_locationPointing.py</span></code> to verify the new strip imaging mode.</p></li>
+<li><p>Created new message <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/StripStateMsgPayload.html#stripstatemsgpayload"><span class="std std-ref">StripStateMsgPayload</span></a> to interface <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">C Module: locationPointing</span></a> with the new <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a>.</p></li>
+<li><p>Added the scenario <a class="reference internal" href="../../examples/scenarioStripImaging.html#scenariostripimaging"><span class="std std-ref">scenarioStripImaging</span></a> showing how to perform strip imaging tasks.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/communication/linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a>, a communication module that computes link Carrier-to-Noise Ratio (CNR) between two antennas including FSPL and optional atmospheric, pointing, and frequency-offset losses.</p></li>
+<li><p>Warnings for not connected messages of types: <code class="docutils literal notranslate"><span class="pre">sunInMsg</span></code>, <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code>, <code class="docutils literal notranslate"><span class="pre">sunEclipseInMsg</span></code> in
+the <a class="reference internal" href="../../Documentation/simulation/communication/simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">C++ Module: simpleAntenna</span></a> module for ground based antennas are not raised anymore.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/formationFlying/inertialCartFeedback/inertialCartFeedback.html#inertialcartfeedback"><span class="std std-ref">C++ Module: inertialCartFeedback</span></a> module to compute an inertial-frame relative motion feedback control force</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/orbElemOffset/orbElemOffset.html#orbelemoffset"><span class="std std-ref">C++ Module: orbElemOffset</span></a>, a classical orbital element combiner that applies element offsets to a baseline orbit and
+supports optional interpretation of the anomaly offset as a mean-anomaly increment.</p></li>
+</ul>
+</section>
+<section id="mujoco-and-stochastic-integration">
+<h3>MuJoCo and stochastic integration<a class="headerlink" href="#mujoco-and-stochastic-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added support for stochastic dynamics (dynamics driven by Stochastic Differential Equations).</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added stochastic dynamics support in core dynamics infrastructure (<code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code>, <code class="docutils literal notranslate"><span class="pre">StateData</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code>), including diffusion propagation APIs and support for shared noise sources.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added diffusion dynamics task support to <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> via <code class="docutils literal notranslate"><span class="pre">AddModelToDiffusionDynamicsTask()</span></code> for
+MuJoCo systems with stochastic state dynamics.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added stochastic integrator base classes <code class="docutils literal notranslate"><span class="pre">StateVecStochasticIntegrator</span></code>.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <code class="docutils literal notranslate"><span class="pre">svIntegratorWeakStochasticRungeKutta</span></code> to support stochastic integrator implementations.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorMayurama.html#svstochasticintegratormayurama"><span class="std std-ref">svStochasticIntegratorMayurama</span></a> (Euler-Mayurama), a 1-weak/1-strong stochastic integrator.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added two stochastic integrators: <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorW2Ito1.html#svstochasticintegratorw2ito1"><span class="std std-ref">svStochasticIntegratorW2Ito1</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorW2Ito2.html#svstochasticintegratorw2ito2"><span class="std std-ref">svStochasticIntegratorW2Ito2</span></a>. These are 2-weak-order stochastic integrators.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added MuJoCo models (<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.html#meanrevertingnoise"><span class="std std-ref">C++ Module: meanRevertingNoise</span></a>, <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/stochasticAtmDensity/stochasticAtmDensity.html#stochasticatmdensity"><span class="std std-ref">C++ Module: stochasticAtmDensity</span></a>, and
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/stochasticDragCoeff/stochasticDragCoeff.html#stochasticdragcoeff"><span class="std std-ref">C++ Module: stochasticDragCoeff</span></a>) to model mean-reverting stochastic processes in dynamics-task modules.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../Documentation/simulation/dynamics/meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html#meanrevertingnoisestateeffector"><span class="std std-ref">C++ Module: meanRevertingNoiseStateEffector</span></a>, a generic spacecraft state effector that propagates a scalar
+Ornstein-Uhlenbeck mean-reverting stochastic state.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../examples/mujoco/scenarioStochasticDrag.html#scenariostochasticdrag"><span class="std std-ref">scenarioStochasticDrag</span></a> and <a class="reference internal" href="../../examples/scenarioStochasticDragSpacecraft.html#scenariostochasticdragspacecraft"><span class="std std-ref">scenarioStochasticDragSpacecraft</span></a>, which illustrate how to
+use a state driven by stochastic dynamics to model randomly evolving atmospheric density (and thus drag force).
+The former scenario uses MuJoCo dynamics and the latter spacecraft dynamics.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added optional density correction support to <a class="reference internal" href="../../Documentation/simulation/dynamics/dragEffector/dragDynamicEffector.html#dragdynamiceffector"><span class="std std-ref">C++ Module: dragDynamicEffector</span></a> through
+<code class="docutils literal notranslate"><span class="pre">densityCorrectionStateName</span></code>, allowing drag density to be computed as
+<code class="docutils literal notranslate"><span class="pre">(1</span> <span class="pre">+</span> <span class="pre">correction)</span> <span class="pre">*</span> <span class="pre">neutralDensity</span></code> using a user-selected scalar state.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.html#throntimetoforce"><span class="std std-ref">C++ Module: thrOnTimeToForce</span></a> module to convert thruster on-times to thruster forces for use in MuJoCo scenes</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/mujoco/scenarioThrArmControl.html#scenariothrarmcontrol"><span class="std std-ref">scenarioThrArmControl</span></a>, a MuJoCo example scenario for spacecraft control using thruster arms.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/DragGeometryMsgPayload.html#draggeometrymsgpayload"><span class="std std-ref">DragGeometryMsgPayload</span></a>, which contains geometry information of a body necessary to
+compute the drag acting on such body.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/forceTorque/cannonballDrag/cannonballDrag.html#cannonballdrag"><span class="std std-ref">C++ Module: cannonballDrag</span></a>, a model intended to be used with MuJoCo dynamics to model
+cannonball aerodynamic drag forces and torques acting on bodies.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/linearTimeInvariantSystem.html#lineartimeinvariantsystem"><span class="std std-ref">C++ Module: linearTimeInvariantSystem</span></a>. This module implements a linear time-invariant
+system using state-space representation. It can be used to model linear systems in the dynamics task of
+<code class="docutils literal notranslate"><span class="pre">MJScene</span></code>. This model is abstract: subclasses must specify how the input vector is
+read from input messages, and the output vector is written to output messages. Subclasses
+can be implemented in Python.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/singleActuatorLTI.html#singleactuatorlti"><span class="std std-ref">singleActuatorLTI</span></a>: a single-input single-output subclass of <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/linearTimeInvariantSystem.html#lineartimeinvariantsystem"><span class="std std-ref">C++ Module: linearTimeInvariantSystem</span></a>
+whose input and output is a <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#singleactuatormsgpayload"><span class="std std-ref">SingleActuatorMsgPayload</span></a>.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/forceAtSiteLTI.html#forceatsitelti"><span class="std std-ref">forceAtSiteLTI</span></a>: a subclass of <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/linearTimeInvariantSystem.html#lineartimeinvariantsystem"><span class="std std-ref">C++ Module: linearTimeInvariantSystem</span></a> whose input vector
+is read from a <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#forceatsitemsgpayload"><span class="std std-ref">ForceAtSiteMsgPayload</span></a> and output vector is written to a <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#forceatsitemsgpayload"><span class="std std-ref">ForceAtSiteMsgPayload</span></a>.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/cmdForceInertialToForceAtSite/cmdForceInertialToForceAtSite.html#cmdforceinertialtoforceatsite"><span class="std std-ref">CmdForceInertialToForceAtSite</span></a>, a module that rotates inertial-frame force
+commands into a site-fixed <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#forceatsitemsgpayload"><span class="std std-ref">ForceAtSiteMsgPayload</span></a>.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/orbitalElementControl.html#orbitalelementcontrol"><span class="std std-ref">OrbitalElementControl</span></a>, a
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/linearTimeInvariantSystem.html#lineartimeinvariantsystem"><span class="std std-ref">C++ Module: linearTimeInvariantSystem</span></a> subclass that computes orbital-element feedback and outputs inertial force commands
+through <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a>.</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioformationflyingwithdrag"><span class="std std-ref">scenarioFormationFlyingWithDrag</span></a>, a MuJoCo example scenario for chief-deputy formation flying in LEO
+with differential cannonball drag and orbital-element feedback control.</p></li>
+</ul>
+</section>
+<section id="visualization-and-data-handling">
+<h3>Visualization and data handling<a class="headerlink" href="#visualization-and-data-handling" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Updated <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> to bind to all network interfaces (<code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>) by default, enabling Vizard connectivity when Basilisk is running inside a container.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">BSK_SUPPORT_DATA_CACHE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">dataFetcher.py</span></code> to allow overriding the default Pooch cache directory for support data files.  See <a class="reference internal" href="../Developer/addSupportData.html#addsupportdata"><span class="std std-ref">Adding Support Data Files</span></a> for details.</p></li>
+<li><p>Local data fetches fall back to using the pooch fetch if local files are not found.</p></li>
+<li><p>No longer prefetch ephemeris data kernels on initial local builds. The data fetcher will handle it.</p></li>
+<li><p>Added <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-6a.html#bskprinciples-6a"><span class="std std-ref">Importing External Data Sources</span></a> to explain how to import Basilisk provided data</p></li>
+</ul>
+</section>
+<section id="documentation-examples-and-validation">
+<h3>Documentation, examples, and validation<a class="headerlink" href="#documentation-examples-and-validation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added a new scenario, <a class="reference internal" href="../../examples/BskSim/scenarios/scenario_FaultList.html#scenario-faultlist"><span class="std std-ref">scenario_FaultList</span></a>, that demonstrates the use of the fault modeling capabilities by selecting faults from <a class="reference internal" href="../../examples/BskSim/models/BSK_Faults.html#bsk-faults"><span class="std std-ref">BSK_Faults</span></a>.</p></li>
+<li><p>Update the developer workflow on how release notes are added.  The new method now adds small release notes RST snippets into <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotesSnippets</span></code> folder.  A README.md file there explains how to do this.</p></li>
+<li><p>Updated documentation on how to use <code class="docutils literal notranslate"><span class="pre">bskExamples</span></code> to download a copy of the tutorial examples</p></li>
+<li><p>Fixed range of grammatical typos in the Basilisk documentation</p></li>
+<li><p>Ensure the HTML documentation figures from the example scenario look more consistent</p></li>
+<li><p>Avoid a memory leak when saving off figures in the CI Unit tests to build the online documentation</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.11.html" class="btn btn-neutral float-left" title="Version 2.11 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.9.html" class="btn btn-neutral float-right" title="Version 2.9 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

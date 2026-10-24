@@ -1,0 +1,10 @@
+.. _SynchClockMsgPayload:
+
+SynchClockMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SynchClockMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,796 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ommHandling &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ommHandling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ommHandling</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#   Orbit Mean-Elements Message (OMM) handling</span>
+<span class="c1">#   Author: robotrocketscience (https://github.com/robotrocketscience)</span>
+<span class="c1">#   Creation Date: September 16, 2026</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Read CCSDS Orbit Mean-Elements Message (OMM) general perturbations data and convert it to</span>
+<span class="sd">osculating classical orbital elements in the Basilisk inertial (J2000/ICRF) frame.</span>
+
+<span class="sd">OMM supports NORAD catalog numbers of up to nine digits, removing the classic numeric</span>
+<span class="sd">TLE field's five-digit restriction. The U.S. Space Force (USSF) assigns catalog numbers;</span>
+<span class="sd">CelesTrak distributes the data. This reader supports IDs through ``999999999`` and</span>
+<span class="sd">preserves them in ``OmmData.noradID``, independently of SGP4's internal identifier. See</span>
+<span class="sd">`CelesTrak's GP format documentation</span>
+<span class="sd">&lt;https://celestrak.org/NORAD/documentation/gp-data-formats.php&gt;`__.</span>
+
+<span class="sd">All four CelesTrak encodings are accepted and auto-detected: XML, JSON, CSV and KVN.  The</span>
+<span class="sd">mean elements are handed to SGP4 exactly as :ref:`tleHandling` does for a TLE, so both paths</span>
+<span class="sd">produce osculating elements through the same propagation and frame conversion. Only the</span>
+<span class="sd">Earth-centered, TEME, UTC, SGP4 profile is supported.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sgp4</span><span class="w"> </span><span class="kn">import</span> <span class="n">omm</span> <span class="k">as</span> <span class="n">sgp4omm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sgp4.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Satrec</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="c1"># The TEME -&gt; J2000 conversion is shared with the TLE reader so both formats land in the</span>
+<span class="c1"># same frame through identical precession, nutation and frame-bias terms.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.tleHandling</span><span class="w"> </span><span class="kn">import</span> <span class="n">_teme2j2000</span>
+
+<span class="c1">#: Fields that :py:func:`sgp4.omm.initialize` dereferences unconditionally.</span>
+<span class="n">_REQUIRED_OMM_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"EPOCH"</span><span class="p">,</span>
+    <span class="s2">"MEAN_MOTION"</span><span class="p">,</span>
+    <span class="s2">"ECCENTRICITY"</span><span class="p">,</span>
+    <span class="s2">"INCLINATION"</span><span class="p">,</span>
+    <span class="s2">"RA_OF_ASC_NODE"</span><span class="p">,</span>
+    <span class="s2">"ARG_OF_PERICENTER"</span><span class="p">,</span>
+    <span class="s2">"MEAN_ANOMALY"</span><span class="p">,</span>
+    <span class="s2">"NORAD_CAT_ID"</span><span class="p">,</span>
+    <span class="s2">"CLASSIFICATION_TYPE"</span><span class="p">,</span>
+    <span class="s2">"OBJECT_ID"</span><span class="p">,</span>
+    <span class="s2">"EPHEMERIS_TYPE"</span><span class="p">,</span>
+    <span class="s2">"ELEMENT_SET_NO"</span><span class="p">,</span>
+    <span class="s2">"REV_AT_EPOCH"</span><span class="p">,</span>
+    <span class="s2">"BSTAR"</span><span class="p">,</span>
+    <span class="s2">"MEAN_MOTION_DOT"</span><span class="p">,</span>
+    <span class="s2">"MEAN_MOTION_DDOT"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">#: Defaults for fields that CelesTrak sometimes omits but SGP4 still requires.</span>
+<span class="n">_OPTIONAL_OMM_DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"CLASSIFICATION_TYPE"</span><span class="p">:</span> <span class="s2">"U"</span><span class="p">,</span>
+    <span class="s2">"OBJECT_ID"</span><span class="p">:</span> <span class="s2">"0000-000A"</span><span class="p">,</span>
+    <span class="s2">"EPHEMERIS_TYPE"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span>
+    <span class="s2">"ELEMENT_SET_NO"</span><span class="p">:</span> <span class="s2">"999"</span><span class="p">,</span>
+    <span class="s2">"REV_AT_EPOCH"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span>
+    <span class="s2">"BSTAR"</span><span class="p">:</span> <span class="s2">"0.0"</span><span class="p">,</span>
+    <span class="s2">"MEAN_MOTION_DOT"</span><span class="p">:</span> <span class="s2">"0.0"</span><span class="p">,</span>
+    <span class="s2">"MEAN_MOTION_DDOT"</span><span class="p">:</span> <span class="s2">"0.0"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#: Supported physical metadata, omitted by CelesTrak's JSON and CSV encodings.</span>
+<span class="n">_SUPPORTED_OMM_METADATA</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"CENTER_NAME"</span><span class="p">:</span> <span class="s2">"EARTH"</span><span class="p">,</span>
+    <span class="s2">"REF_FRAME"</span><span class="p">:</span> <span class="s2">"TEME"</span><span class="p">,</span>
+    <span class="s2">"TIME_SYSTEM"</span><span class="p">:</span> <span class="s2">"UTC"</span><span class="p">,</span>
+    <span class="s2">"MEAN_ELEMENT_THEORY"</span><span class="p">:</span> <span class="s2">"SGP4"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#: Human-readable names for the supported classification codes.</span>
+<span class="n">_CLASSIFICATION_NAMES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"U"</span><span class="p">:</span> <span class="s2">"Unclassified"</span><span class="p">,</span> <span class="s2">"C"</span><span class="p">:</span> <span class="s2">"Classified"</span><span class="p">,</span> <span class="s2">"S"</span><span class="p">:</span> <span class="s2">"Secret"</span><span class="p">}</span>
+
+<span class="c1">#: CCSDS units for numeric fields consumed by this reader; empty tuples forbid units.</span>
+<span class="n">_OMM_FIELD_UNITS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"MEAN_MOTION"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"rev/day"</span><span class="p">,),</span>
+    <span class="s2">"ECCENTRICITY"</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">"INCLINATION"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"deg"</span><span class="p">,),</span>
+    <span class="s2">"RA_OF_ASC_NODE"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"deg"</span><span class="p">,),</span>
+    <span class="s2">"ARG_OF_PERICENTER"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"deg"</span><span class="p">,),</span>
+    <span class="s2">"MEAN_ANOMALY"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"deg"</span><span class="p">,),</span>
+    <span class="s2">"NORAD_CAT_ID"</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">"EPHEMERIS_TYPE"</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">"ELEMENT_SET_NO"</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">"REV_AT_EPOCH"</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="c1"># CCSDS lists inverse Earth radii as both a descriptive unit and the 1/ER symbol.</span>
+    <span class="s2">"BSTAR"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"1/ER"</span><span class="p">,</span> <span class="s2">"1/[Earth radii]"</span><span class="p">),</span>
+    <span class="s2">"MEAN_MOTION_DOT"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"rev/day**2"</span><span class="p">,),</span>
+    <span class="s2">"MEAN_MOTION_DDOT"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"rev/day**3"</span><span class="p">,),</span>
+<span class="p">}</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_OmmFieldWithUnits</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Preserve a numeric field's unit declaration until per-record validation."""</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                          OMM Data Class                                                     #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="OmmData">
+<a class="viewcode-back" href="../Documentation/utilities/ommHandling.html#ommHandling.OmmData">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OmmData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Hold the orbital elements and metadata of a single OMM record.</span>
+
+<span class="sd">    Mirrors :py:class:`Basilisk.utilities.tleHandling.TleData`, with the OMM-only metadata</span>
+<span class="sd">    added and the TLE-only line-format fields dropped.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Required (orbit elements and the time at which they are valid)</span>
+    <span class="n">oe</span><span class="p">:</span> <span class="n">om</span><span class="o">.</span><span class="n">ClassicElements</span>
+    <span class="n">ommEpoch</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span>
+
+    <span class="c1"># Optional metadata</span>
+    <span class="n">satName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"BSK-Sat-00"</span><span class="p">)</span>  <span class="c1"># OBJECT_NAME</span>
+    <span class="n">noradID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"00000"</span><span class="p">)</span>  <span class="c1"># NORAD_CAT_ID; unlike a TLE this may be &gt;= 100000</span>
+    <span class="n">objectID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"0000-000A"</span><span class="p">)</span>  <span class="c1"># international designator, e.g. "1998-067A"</span>
+    <span class="n">classification</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"Unknown"</span><span class="p">)</span>  <span class="c1"># "Unclassified", "Classified", "Secret"</span>
+    <span class="n">revAtEpoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># revolution number at epoch [-]</span>
+    <span class="n">propagator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"0"</span><span class="p">)</span>  <span class="c1"># EPHEMERIS_TYPE: 0 (CelesTrak default) or 2 (SGP4)</span>
+    <span class="n">elemSetNo</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">999</span><span class="p">)</span>  <span class="c1"># element set number [-]</span>
+    <span class="n">meanMotion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># mean motion at epoch [rev/day]</span>
+    <span class="n">nDot</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># first derivative of mean motion [rev/day^2]</span>
+    <span class="n">nDotDot</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># second derivative of mean motion [rev/day^3]</span>
+    <span class="n">bStar</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># B* drag term [1/Earth radii]</span>
+    <span class="n">centerName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"EARTH"</span><span class="p">)</span>  <span class="c1"># CENTER_NAME</span>
+    <span class="n">refFrame</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"TEME"</span><span class="p">)</span>  <span class="c1"># REF_FRAME</span>
+    <span class="n">meanElementTheory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"SGP4"</span><span class="p">)</span>  <span class="c1"># MEAN_ELEMENT_THEORY</span>
+    <span class="n">timeSystem</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"UTC"</span><span class="p">)</span>  <span class="c1"># TIME_SYSTEM of ommEpoch</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Only allow setting attributes that are defined in the dataclass</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot set attribute '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' on OmmData instance"</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                        OMM format detection                                                 #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_detectOmmFormat</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Identify which of the four CelesTrak OMM encodings a file holds.</span>
+
+<span class="sd">    :param text: full text of the OMM file</span>
+<span class="sd">    :return: one of "xml", "json", "csv", "kvn"</span>
+<span class="sd">    """</span>
+    <span class="n">stripped</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stripped</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"satOmm2elem() was given an empty OMM file."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">stripped</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"xml"</span>
+    <span class="k">if</span> <span class="n">stripped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">"[{"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"json"</span>
+
+    <span class="n">firstLine</span> <span class="o">=</span> <span class="n">stripped</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># KVN assigns one field per line; the CSV header is a bare comma-separated field list.</span>
+    <span class="k">if</span> <span class="s2">"="</span> <span class="ow">in</span> <span class="n">firstLine</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"kvn"</span>
+    <span class="k">if</span> <span class="s2">","</span> <span class="ow">in</span> <span class="n">firstLine</span> <span class="ow">and</span> <span class="s2">"EPOCH"</span> <span class="ow">in</span> <span class="n">firstLine</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+        <span class="k">return</span> <span class="s2">"csv"</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">"satOmm2elem() could not determine the OMM format. Expected XML, JSON, CSV or KVN; "</span>
+        <span class="sa">f</span><span class="s2">"the first line was: </span><span class="si">{</span><span class="n">firstLine</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">!r}</span><span class="s2">"</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                          OMM parsers                                                        #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseOmmKvn</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse the CCSDS keyword-value notation (KVN) encoding.</span>
+
+<span class="sd">    Each record starts at a ``CCSDS_OMM_VERS`` key, so a single file may hold many satellites.</span>
+
+<span class="sd">    :param text: full text of the KVN file</span>
+<span class="sd">    :return: list of raw field dictionaries retaining numeric unit declarations</span>
+<span class="sd">    """</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">rawLine</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">rawLine</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># Skip blanks and CCSDS comment lines</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"COMMENT"</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="s2">"="</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">key</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"="</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># Only numeric fields have units; brackets in names are ordinary text.</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_OMM_FIELD_UNITS</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"]"</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"["</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">number</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"["</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">_OmmFieldWithUnits</span><span class="p">(</span><span class="n">number</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">units</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"CCSDS_OMM_VERS"</span> <span class="ow">and</span> <span class="n">current</span><span class="p">:</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">current</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">current</span><span class="p">:</span>
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">records</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseOmmJson</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse the JSON encoding, which CelesTrak serves as a list of flat field objects.</span>
+
+<span class="sd">    Keep every array entry so validation can report malformed records individually</span>
+<span class="sd">    using their original positions in the file.</span>
+
+<span class="sd">    :param text: full text of the JSON file</span>
+<span class="sd">    :return: list of raw JSON records, to be validated and normalized individually</span>
+<span class="sd">    :raises ValueError: if the JSON document is invalid or is not an object or array</span>
+<span class="sd">    """</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">payload</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OMM JSON must contain an object or an array of records."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payload</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseOmmXml</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse the XML (CCSDS NDM) encoding.</span>
+
+<span class="sd">    Retain the available fields of every segment, including those missing metadata</span>
+<span class="sd">    or data, so per-record validation reports their original positions in the file.</span>
+
+<span class="sd">    :param text: full text of the XML file</span>
+<span class="sd">    :return: list of raw field dictionaries retaining numeric unit declarations</span>
+<span class="sd">    """</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">".//segment"</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
+
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">blocks</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"meanElements"</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"tleParameters"</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_OMM_FIELD_UNITS</span> <span class="ow">and</span> <span class="s2">"units"</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">_OmmFieldWithUnits</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"units"</span><span class="p">])</span>
+                <span class="n">fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">records</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseOmmCsv</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse the CSV encoding via the ``sgp4`` reader so the field naming matches upstream.</span>
+
+<span class="sd">    :param text: full text of the CSV file</span>
+<span class="sd">    :return: list of dictionaries of raw OMM field strings</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sgp4omm</span><span class="o">.</span><span class="n">parse_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">text</span><span class="p">)):</span>
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span> <span class="p">(</span><span class="s2">""</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+    <span class="k">return</span> <span class="n">records</span>
+
+
+<span class="n">_OMM_PARSERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"xml"</span><span class="p">:</span> <span class="n">_parseOmmXml</span><span class="p">,</span>
+    <span class="s2">"json"</span><span class="p">:</span> <span class="n">_parseOmmJson</span><span class="p">,</span>
+    <span class="s2">"csv"</span><span class="p">:</span> <span class="n">_parseOmmCsv</span><span class="p">,</span>
+    <span class="s2">"kvn"</span><span class="p">:</span> <span class="n">_parseOmmKvn</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                      OMM field normalization                                                #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseOmmEpoch</span><span class="p">(</span><span class="n">epochStr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse an OMM ISO-8601 epoch, with or without fractional seconds or a trailing "Z".</span>
+
+<span class="sd">    Additional fractional digits are truncated to microseconds, matching the</span>
+<span class="sd">    precision of ``datetime`` and the ``sgp4.omm.initialize`` input. Day-of-year</span>
+<span class="sd">    dates must fall within the stated calendar year.</span>
+
+<span class="sd">    :param epochStr: the raw ``EPOCH`` field</span>
+<span class="sd">    :return: the epoch as a datetime</span>
+<span class="sd">    :raises ValueError: if the epoch is malformed or its date is invalid</span>
+<span class="sd">    """</span>
+    <span class="n">cleaned</span> <span class="o">=</span> <span class="n">epochStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"Zz"</span><span class="p">)</span>
+    <span class="n">whole_seconds</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">fraction</span> <span class="o">=</span> <span class="n">cleaned</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+    <span class="c1"># Validate the entire fraction before trimming so malformed suffixes cannot disappear.</span>
+    <span class="k">if</span> <span class="n">separator</span> <span class="ow">and</span> <span class="n">fraction</span><span class="o">.</span><span class="n">isascii</span><span class="p">()</span> <span class="ow">and</span> <span class="n">fraction</span><span class="o">.</span><span class="n">isdecimal</span><span class="p">():</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">whole_seconds</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">fraction</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="k">for</span> <span class="n">epochFormat</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S"</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M"</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">cleaned</span><span class="p">,</span> <span class="n">epochFormat</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="c1"># CCSDS also permits a day-of-year form, e.g. "2026-259T12:00:00.000"</span>
+    <span class="k">for</span> <span class="n">epochFormat</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"%Y-%jT%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"%Y-%jT%H:%M:%S"</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">cleaned</span><span class="p">,</span> <span class="n">epochFormat</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># strptime rolls day 366 of a non-leap year into the following year.</span>
+        <span class="k">if</span> <span class="n">epoch</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">cleaned</span><span class="p">[:</span><span class="mi">4</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">epoch</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"satOmm2elem() could not parse the OMM EPOCH field: </span><span class="si">{</span><span class="n">epochStr</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_omm_numeric_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Validate numeric OMM fields before constructing metadata or initializing SGP4.</span>
+
+<span class="sd">    Mean motion must be positive, eccentricity must lie in ``[0, 1)``, inclination</span>
+<span class="sd">    in ``[0, 180]`` degrees, and the remaining angles in ``[0, 360]`` degrees.</span>
+<span class="sd">    Drag terms and mean-motion derivatives may be negative but must be finite.</span>
+
+<span class="sd">    :param fields: OMM field strings with required fields and defaults populated</span>
+<span class="sd">    :raises ValueError: if a field is non-finite, malformed, or outside its allowed range</span>
+<span class="sd">    """</span>
+    <span class="n">numeric_fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="s2">"MEAN_MOTION"</span><span class="p">,</span> <span class="s2">"ECCENTRICITY"</span><span class="p">,</span> <span class="s2">"INCLINATION"</span><span class="p">,</span> <span class="s2">"RA_OF_ASC_NODE"</span><span class="p">,</span>
+        <span class="s2">"ARG_OF_PERICENTER"</span><span class="p">,</span> <span class="s2">"MEAN_ANOMALY"</span><span class="p">,</span> <span class="s2">"BSTAR"</span><span class="p">,</span> <span class="s2">"MEAN_MOTION_DOT"</span><span class="p">,</span>
+        <span class="s2">"MEAN_MOTION_DDOT"</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a finite number: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a finite number: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">numeric_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">numeric_fields</span><span class="p">[</span><span class="s2">"MEAN_MOTION"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># [rev/day]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OMM MEAN_MOTION must be positive [rev/day]."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">numeric_fields</span><span class="p">[</span><span class="s2">"ECCENTRICITY"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>  <span class="c1"># [-]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OMM ECCENTRICITY must satisfy 0 &lt;= e &lt; 1."</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">"INCLINATION"</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">),</span>  <span class="c1"># [deg]</span>
+        <span class="p">(</span><span class="s2">"RA_OF_ASC_NODE"</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span>  <span class="c1"># [deg]</span>
+        <span class="p">(</span><span class="s2">"ARG_OF_PERICENTER"</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span>  <span class="c1"># [deg]</span>
+        <span class="p">(</span><span class="s2">"MEAN_ANOMALY"</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span>  <span class="c1"># [deg]</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">numeric_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">upper_bound</span><span class="p">:</span>  <span class="c1"># [deg]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be between 0 and </span><span class="si">{</span><span class="n">upper_bound</span><span class="si">}</span><span class="s2"> [deg]."</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"EPHEMERIS_TYPE"</span><span class="p">,</span> <span class="s2">"ELEMENT_SET_NO"</span><span class="p">,</span> <span class="s2">"REV_AT_EPOCH"</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a non-negative integer: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a non-negative integer: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_omm_physical_metadata</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">omm_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Validate and normalize physical metadata in place for the supported SGP4 profile.</span>
+
+<span class="sd">    CelesTrak JSON and CSV may omit the four fixed metadata fields. XML and KVN</span>
+<span class="sd">    must declare them. Explicitly empty or incompatible declarations are rejected</span>
+<span class="sd">    in every encoding. Ephemeris type 0 is accepted for CelesTrak compatibility;</span>
+<span class="sd">    type 2 explicitly identifies SGP4.</span>
+
+<span class="sd">    :param fields: normalized field strings with numeric fields already validated</span>
+<span class="sd">    :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)</span>
+<span class="sd">    :raises ValueError: if physical metadata is missing or unsupported</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">_SUPPORTED_OMM_METADATA</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">omm_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"csv"</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is required for </span><span class="si">{</span><span class="n">omm_format</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> records."</span><span class="p">)</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">expected</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported OMM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">!r}</span><span class="s2">; expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"EPHEMERIS_TYPE"</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Unsupported OMM EPHEMERIS_TYPE: </span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="s1">'EPHEMERIS_TYPE'</span><span class="p">]</span><span class="si">!r}</span><span class="s2">; "</span>
+            <span class="s2">"expected 0 (CelesTrak default) or 2 (SGP4)."</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalizeOmmFields</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">omm_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Validate one OMM record and normalize its fields for ``sgp4.omm.initialize``.</span>
+
+<span class="sd">    :param fields: raw OMM field dictionary</span>
+<span class="sd">    :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)</span>
+<span class="sd">    :return: a normalized copy safe to hand to SGP4</span>
+<span class="sd">    :raises ValueError: if the record is not a field dictionary or its fields are invalid</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM record must be a field object, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+    <span class="c1"># Check declared units before discarding them or supplying optional defaults.</span>
+    <span class="c1"># Validation stays inside the per-record error handler for XML and KVN alike.</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_OmmFieldWithUnits</span><span class="p">):</span>
+            <span class="n">supported_units</span> <span class="o">=</span> <span class="n">_OMM_FIELD_UNITS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_units</span><span class="p">:</span>
+                <span class="n">expected</span> <span class="o">=</span> <span class="s2">" or "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supported_units</span><span class="p">)</span> <span class="k">if</span> <span class="n">supported_units</span> <span class="k">else</span> <span class="s2">"no unit declaration"</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Unsupported OMM </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> units: </span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">units</span><span class="si">!r}</span><span class="s2">; expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OMM </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has a unit declaration but no numeric value."</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># JSON also delivers native numbers and nulls.</span>
+        <span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">_OPTIONAL_OMM_DEFAULTS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_REQUIRED_OMM_FIELDS</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"satOmm2elem() found an OMM record missing required field(s): </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Validate the external ID before replacing it in the private SGP4 input.</span>
+    <span class="n">catalog_id</span> <span class="o">=</span> <span class="n">normalized</span><span class="p">[</span><span class="s2">"NORAD_CAT_ID"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_id</span><span class="o">.</span><span class="n">isascii</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">catalog_id</span><span class="o">.</span><span class="n">isdecimal</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: </span><span class="si">{</span><span class="n">catalog_id</span><span class="si">!r}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="n">_validate_omm_numeric_fields</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+    <span class="n">_normalize_omm_physical_metadata</span><span class="p">(</span><span class="n">normalized</span><span class="p">,</span> <span class="n">omm_format</span><span class="p">)</span>
+
+    <span class="n">classification_code</span> <span class="o">=</span> <span class="n">normalized</span><span class="p">[</span><span class="s2">"CLASSIFICATION_TYPE"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">classification_code</span><span class="o">.</span><span class="n">isascii</span><span class="p">()</span> <span class="ow">or</span> <span class="n">classification_code</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CLASSIFICATION_NAMES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Unsupported OMM CLASSIFICATION_TYPE: </span><span class="si">{</span><span class="n">normalized</span><span class="p">[</span><span class="s1">'CLASSIFICATION_TYPE'</span><span class="p">]</span><span class="si">!r}</span><span class="s2">; "</span>
+            <span class="s2">"expected U, C, or S."</span>
+        <span class="p">)</span>
+    <span class="n">normalized</span><span class="p">[</span><span class="s2">"CLASSIFICATION_TYPE"</span><span class="p">]</span> <span class="o">=</span> <span class="n">classification_code</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+    <span class="c1"># sgp4.omm.initialize() parses EPOCH with a strict "%Y-%m-%dT%H:%M:%S.%f" format.</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">_parseOmmEpoch</span><span class="p">(</span><span class="n">normalized</span><span class="p">[</span><span class="s2">"EPOCH"</span><span class="p">])</span>
+    <span class="n">normalized</span><span class="p">[</span><span class="s2">"EPOCH"</span><span class="p">]</span> <span class="o">=</span> <span class="n">epoch</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># The OBJECT_ID slice taken by sgp4 assumes the "YYYY-NNNP" international designator.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized</span><span class="p">[</span><span class="s2">"OBJECT_ID"</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">normalized</span><span class="p">[</span><span class="s2">"OBJECT_ID"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_OPTIONAL_OMM_DEFAULTS</span><span class="p">[</span><span class="s2">"OBJECT_ID"</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">normalized</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ommFields2Data</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OmmData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Build an :py:class:`OmmData` from a normalized OMM field dictionary.</span>
+
+<span class="sd">    The osculating elements are filled in later by :py:func:`_convertOmmMean2osculating`.</span>
+
+<span class="sd">    :param fields: normalized OMM field dictionary</span>
+<span class="sd">    :param epoch: the parsed OMM epoch</span>
+<span class="sd">    :return: the populated OmmData, with a placeholder ``oe``</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">OmmData</span><span class="p">(</span>
+        <span class="n">oe</span><span class="o">=</span><span class="n">om</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">(),</span>
+        <span class="n">ommEpoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+        <span class="n">satName</span><span class="o">=</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"OBJECT_NAME"</span><span class="p">,</span> <span class="s2">"BSK-Sat-00"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"BSK-Sat-00"</span><span class="p">,</span>
+        <span class="n">noradID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"NORAD_CAT_ID"</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">objectID</span><span class="o">=</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"OBJECT_ID"</span><span class="p">,</span> <span class="s2">"0000-000A"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">classification</span><span class="o">=</span><span class="n">_CLASSIFICATION_NAMES</span><span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="s2">"CLASSIFICATION_TYPE"</span><span class="p">]],</span>
+        <span class="n">revAtEpoch</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"REV_AT_EPOCH"</span><span class="p">]),</span>
+        <span class="n">propagator</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"EPHEMERIS_TYPE"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">elemSetNo</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"ELEMENT_SET_NO"</span><span class="p">]),</span>
+        <span class="n">meanMotion</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"MEAN_MOTION"</span><span class="p">]),</span>  <span class="c1"># [rev/day]</span>
+        <span class="n">nDot</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"MEAN_MOTION_DOT"</span><span class="p">]),</span>  <span class="c1"># [rev/day^2]</span>
+        <span class="n">nDotDot</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"MEAN_MOTION_DDOT"</span><span class="p">]),</span>  <span class="c1"># [rev/day^3]</span>
+        <span class="n">bStar</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"BSTAR"</span><span class="p">]),</span>  <span class="c1"># [1/Earth radii]</span>
+        <span class="n">centerName</span><span class="o">=</span><span class="n">fields</span><span class="p">[</span><span class="s2">"CENTER_NAME"</span><span class="p">],</span>
+        <span class="n">refFrame</span><span class="o">=</span><span class="n">fields</span><span class="p">[</span><span class="s2">"REF_FRAME"</span><span class="p">],</span>
+        <span class="n">meanElementTheory</span><span class="o">=</span><span class="n">fields</span><span class="p">[</span><span class="s2">"MEAN_ELEMENT_THEORY"</span><span class="p">],</span>
+        <span class="n">timeSystem</span><span class="o">=</span><span class="n">fields</span><span class="p">[</span><span class="s2">"TIME_SYSTEM"</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#           Conversion of OMM (mean OE in TEME frame) -&gt; osculating OE in J2000/ICRS frame                    #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convertOmmMean2osculating</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ommData</span><span class="p">:</span> <span class="n">OmmData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">om</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert OMM mean orbital elements (NORAD/SGP4) to the osculating elements Basilisk uses.</span>
+
+<span class="sd">    sgp4MeanOE -&gt; SGP4 -&gt; state vector -&gt; osculating OE</span>
+
+<span class="sd">    Mirrors :py:func:`Basilisk.utilities.tleHandling._convertMean2osculating`; the only</span>
+<span class="sd">    difference is that the SGP4 record is initialized from OMM fields rather than two lines.</span>
+
+<span class="sd">    Propagation uses SGP4's stored initialization epoch, avoiding a separate calendar</span>
+<span class="sd">    conversion that could shift the propagation time.</span>
+
+<span class="sd">    :param fields: normalized OMM field dictionary</span>
+<span class="sd">    :param ommData: the OmmData carrying the epoch and identifiers, used for error reporting</span>
+<span class="sd">    :return: osculating classical orbital elements in the Basilisk inertial frame</span>
+<span class="sd">    """</span>
+    <span class="c1"># SGP4 limits its internal Alpha-5 ID to 339999, but the ID does not affect</span>
+    <span class="c1"># propagation. Preserve the real catalog number in fields and ommData.</span>
+    <span class="n">sgp4_fields</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">NORAD_CAT_ID</span><span class="o">=</span><span class="s2">"0"</span><span class="p">)</span>
+    <span class="n">satellite</span> <span class="o">=</span> <span class="n">Satrec</span><span class="p">()</span>
+
+    <span class="c1"># Propagate to epoch to get the True Equator, Mean Equinox (TEME) state vector.</span>
+    <span class="c1"># Extreme finite inputs can still exceed the backend's numerical capacity.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sgp4omm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">satellite</span><span class="p">,</span> <span class="n">sgp4_fields</span><span class="p">)</span>
+        <span class="n">e</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">satellite</span><span class="o">.</span><span class="n">sgp4</span><span class="p">(</span><span class="n">satellite</span><span class="o">.</span><span class="n">jdsatepoch</span><span class="p">,</span> <span class="n">satellite</span><span class="o">.</span><span class="n">jdsatepochF</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OverflowError</span><span class="p">,</span> <span class="ne">ZeroDivisionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"SGP4 numerical failure for satellite </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">satName</span><span class="si">}</span><span class="s2"> with NORAD ID "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">noradID</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
+    <span class="k">if</span> <span class="n">e</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"SGP4 propagation failed for satellite </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">satName</span><span class="si">}</span><span class="s2"> with NORAD ID "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">noradID</span><span class="si">}</span><span class="s2"> at epoch </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">ommEpoch</span><span class="si">}</span><span class="s2">. Error code: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Convert km -&gt; m for Basilisk</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">r_teme_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># [m]</span>
+        <span class="n">v_teme_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># [m/s]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">r_teme_m</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v_teme_m</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"SGP4 produced a non-finite state in SI units for satellite </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">satName</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"with NORAD ID </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">noradID</span><span class="si">}</span><span class="s2"> at epoch </span><span class="si">{</span><span class="n">ommData</span><span class="o">.</span><span class="n">ommEpoch</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Convert TEME -&gt; J2000/ICRF (Basilisk inertial frame)</span>
+    <span class="n">r_m</span><span class="p">,</span> <span class="n">v_m</span> <span class="o">=</span> <span class="n">_teme2j2000</span><span class="p">(</span><span class="n">r_teme_m</span><span class="p">,</span> <span class="n">v_teme_m</span><span class="p">,</span> <span class="n">ommData</span><span class="o">.</span><span class="n">ommEpoch</span><span class="p">)</span>
+
+    <span class="c1"># Convert state vector to osculating orbital elements</span>
+    <span class="k">return</span> <span class="n">om</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">MU_EARTH</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">,</span> <span class="n">r_m</span><span class="p">,</span> <span class="n">v_m</span><span class="p">)</span>  <span class="c1"># MU_EARTH km^3/s^2 -&gt; [m^3/s^2]</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                            Public interface                                                 #</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="satOmm2elem">
+<a class="viewcode-back" href="../Documentation/utilities/ommHandling.html#ommHandling.satOmm2elem">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">satOmm2elem</span><span class="p">(</span><span class="n">omm_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert the OMM records of a constellation to osculating orbital elements for each satellite.</span>
+
+<span class="sd">    The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,</span>
+<span class="sd">    including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by</span>
+<span class="sd">    SGP4's internal identifier storage.</span>
+
+<span class="sd">    Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.</span>
+<span class="sd">    Digits beyond microsecond precision are truncated consistently for ``ommEpoch``,</span>
+<span class="sd">    SGP4 initialization and propagation, and frame conversion.</span>
+
+<span class="sd">    Only Earth-centered, TEME, UTC, SGP4 records with ephemeris type 0 (CelesTrak</span>
+<span class="sd">    default) or 2 (SGP4) are supported. JSON and CSV records may omit</span>
+<span class="sd">    ``CENTER_NAME``, ``REF_FRAME``, ``TIME_SYSTEM``, and ``MEAN_ELEMENT_THEORY``;</span>
+<span class="sd">    CelesTrak's EARTH/TEME/UTC/SGP4 defaults then apply. XML and KVN require these</span>
+<span class="sd">    fields explicitly. Empty or incompatible declarations cause the record to</span>
+<span class="sd">    be skipped with a warning before SGP4 is invoked.</span>
+
+<span class="sd">    Numeric XML/KVN unit declarations must match the CCSDS units used by SGP4:</span>
+<span class="sd">    ``deg``, ``rev/day``, ``rev/day**2``, ``rev/day**3``, and inverse Earth radii</span>
+<span class="sd">    (``1/ER`` or ``1/[Earth radii]``) for ``BSTAR``. Dimensionless fields must</span>
+<span class="sd">    omit units. Unsupported declarations cause the record to be skipped;</span>
+<span class="sd">    values are not converted between units. Omitted units use these same conventions.</span>
+
+<span class="sd">    ``CLASSIFICATION_TYPE`` accepts ``U``, ``C``, or ``S`` after trimming whitespace</span>
+<span class="sd">    and normalizing case. Missing or blank values default to ``U``; unsupported</span>
+<span class="sd">    values cause the record to be skipped before SGP4 is invoked.</span>
+
+<span class="sd">    :param omm_path: path to an OMM file holding one or many satellites</span>
+<span class="sd">    :return: ommDataList: list of :py:class:`OmmData`, one per satellite, each carrying the</span>
+<span class="sd">             osculating orbital elements in ``oe`` plus the record's metadata</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">omm_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8-sig"</span><span class="p">)</span> <span class="k">as</span> <span class="n">ommFile</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">ommFile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">ommFormat</span> <span class="o">=</span> <span class="n">_detectOmmFormat</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">_OMM_PARSERS</span><span class="p">[</span><span class="n">ommFormat</span><span class="p">](</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">records</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"satOmm2elem() found no OMM records in </span><span class="si">{</span><span class="n">omm_path</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+    <span class="n">ommDataList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">recordNo</span><span class="p">,</span> <span class="n">rawFields</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">_normalizeOmmFields</span><span class="p">(</span><span class="n">rawFields</span><span class="p">,</span> <span class="n">ommFormat</span><span class="p">)</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">_parseOmmEpoch</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">"EPOCH"</span><span class="p">])</span>
+            <span class="n">ommData</span> <span class="o">=</span> <span class="n">_ommFields2Data</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+            <span class="n">ommData</span><span class="o">.</span><span class="n">oe</span> <span class="o">=</span> <span class="n">_convertOmmMean2osculating</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">ommData</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"WARNING: satOmm2elem() skipped OMM record </span><span class="si">{</span><span class="n">recordNo</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">omm_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">ommDataList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ommData</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ommDataList</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

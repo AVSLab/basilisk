@@ -1,0 +1,512 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced: Naming Effector States &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Integrated Example Scripts" href="../../examples/index.html" />
+    <link rel="prev" title="Advanced: Multithreaded Simulations" href="bskPrinciples-13.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-0.html">What is Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-1.html">Basilisk Process and Task Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2.html">Adding Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2a.html">Execution of Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2b.html">Seeing the Order of Process, Task and Module Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-3.html">Connecting Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-4.html">Recording Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5.html">Creating Stand-Alone Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5a.html">Visualizing Message Connections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6.html">Setting and Recording Module Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6a.html">Importing External Data Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-7.html">Advanced: Redirecting Module Output to Stand-Alone Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-8.html">Advanced: Enabling and Disabling Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-9.html">Advanced: Using <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-10.html">Advanced: Handling <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-11.html">Advanced: Effector Module Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-12.html">Advanced: Stochastic Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-13.html">Advanced: Multithreaded Simulations</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Advanced: Naming Effector States</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+      <li class="breadcrumb-item active">Advanced: Naming Effector States</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/bskPrinciples/bskPrinciples-multiSim.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-naming-effector-states">
+<span id="bskprinciples-multisim"></span><h1>Advanced: Naming Effector States<a class="headerlink" href="#advanced-naming-effector-states" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#which-names-identify-states">Which Names Identify States?</a>
+      </li>
+      
+      <li>
+        <a href="#automatic-names-and-object-lifetimes">Automatic Names and Object Lifetimes</a>
+      </li>
+      
+      <li>
+        <a href="#creating-new-simulations-in-one-python-process">Creating New Simulations in One Python Process</a>
+      </li>
+      
+      <li>
+        <a href="#choosing-repeatable-custom-names">Choosing Repeatable Custom Names</a>
+      </li>
+      
+      <li>
+        <a href="#recording-data-and-connecting-modules">Recording Data and Connecting Modules</a>
+      </li>
+      
+      <li>
+        <a href="#running-the-example">Running the Example</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<aside class="sidebar">
+<p class="sidebar-title">Source Code</p>
+<p>Download the runnable <a class="reference download internal" download="" href="../../_downloads/ac93817b91b6731c12d8fa515606cf3c/bsk-multiSim.py"><code class="xref download docutils literal notranslate"><span class="pre">bsk-multiSim.py</span></code></a>
+example. It prints state names from four short simulations without opening
+any plot windows.</p>
+</aside>
+<p>A state effector adds integrated quantities to a spacecraft, such as a hinged
+panel’s angle and angular rate, a reaction wheel’s speed, or a fuel tank’s mass.
+The spacecraft’s <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynParamManager.html#dynparammanager"><span class="std std-ref">C++ Module: dynParamManager</span></a> stores these quantities as named states.
+Effectors supply default names, so you usually do not need to choose them yourself.
+The available name attributes and default naming conventions depend on the module.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Read automatic names from the effector. Assign custom names when their
+exact text must repeat across simulation builds.</strong> Do not hard-code a
+generated numeric suffix or assume that each simulation starts its counter
+at one.</p>
+</div>
+<p>This tutorial uses <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> to illustrate
+constructor-based automatic naming and optional custom names.</p>
+<section id="which-names-identify-states">
+<h2>Which Names Identify States?<a class="headerlink" href="#which-names-identify-states" title="Link to this heading"></a></h2>
+<p>For a hinged panel, these attributes identify two different integrated states:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Hinged-panel state names</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Quantity stored in the dynamics manager</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">panel.nameOfThetaState</span></code></p></td>
+<td><p>Panel angle, in radians</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">panel.nameOfThetaDotState</span></code></p></td>
+<td><p>Panel angular rate, in radians per second</p></td>
+</tr>
+</tbody>
+</table>
+<p>The Python variable <code class="docutils literal notranslate"><span class="pre">panel</span></code> refers to the effector object. Its <code class="docutils literal notranslate"><span class="pre">ModelTag</span></code>
+labels the module for diagnostics. Neither renaming the Python variable nor
+setting <code class="docutils literal notranslate"><span class="pre">panel.ModelTag</span> <span class="pre">=</span> <span class="pre">&quot;leftPanel&quot;</span></code> changes its state names.</p>
+<p>After initializing the simulation, retrieve a state through its actual name:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="n">angle_state</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaState</span><span class="p">)</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="n">angle_state</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+</pre></div>
+</div>
+<p>This avoids assuming a name such as <code class="docutils literal notranslate"><span class="pre">&quot;hingedRigidBodyTheta1&quot;</span></code>. The state
+storage does not exist until registration during initialization, even when the
+name string is already available.</p>
+</section>
+<section id="automatic-names-and-object-lifetimes">
+<h2>Automatic Names and Object Lifetimes<a class="headerlink" href="#automatic-names-and-object-lifetimes" title="Link to this heading"></a></h2>
+<p>With constructor-based naming, the hinged-body module increments a static
+counter each time a panel is constructed. All instances of that module in the
+same Python process share the counter, including panels belonging to different
+spacecraft or different simulations. The counter records constructions, not
+the number of panels currently alive.</p>
+<p>For example, assuming no earlier panel constructions, two panels receive
+<code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta1</span></code> and <code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta2</span></code>. The next panel receives
+<code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta3</span></code>, even if the first two panels have been destroyed.
+Constructing a panel and then assigning custom names still advances this counter.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Destroying an effector does not reset its naming counter.</strong> The built-in
+effectors that use constructor counters consistently leave them unchanged
+during destruction. New instances continue from the next counter value,
+even after previous instances have been destroyed.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">panel</span></code> removes that Python reference; it does not necessarily destroy
+the underlying effector immediately. A simulation or another object can still
+hold a reference. Forcing <code class="docutils literal notranslate"><span class="pre">gc.collect()</span></code> is not a naming strategy: it does not
+reset the counter or remove references that are still in use.</p>
+</section>
+<section id="creating-new-simulations-in-one-python-process">
+<h2>Creating New Simulations in One Python Process<a class="headerlink" href="#creating-new-simulations-in-one-python-process" title="Link to this heading"></a></h2>
+<p>Repeated builds mean creating new spacecraft and new effectors on each pass
+through a loop. For example, using the builder in the downloadable script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">build_simulation</span><span class="p">(</span><span class="n">custom_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">sim</span>
+</pre></div>
+</div>
+<p>The builder configures the stop time and physical parameters for each run.
+Although these are new simulations, Python and the loaded Basilisk library
+remain alive. Creating a new <code class="docutils literal notranslate"><span class="pre">SimBaseClass</span></code> does not reset static counters.
+An illustrative sequence is:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Two panels constructed per simulation</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Build</p></th>
+<th class="head"><p>Left panel’s angle-state name</p></th>
+<th class="head"><p>Right panel’s angle-state name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>First</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Second</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hingedRigidBodyTheta4</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The starting suffix can be larger in a notebook or test session that has already
+created panels. This does not make the states incorrect: each simulation can
+look them up through its own panels’ name attributes. A lookup that assumes
+<code class="docutils literal notranslate"><span class="pre">&quot;hingedRigidBodyTheta1&quot;</span></code> can fail in the second simulation.</p>
+<p>This pattern occurs in parameter sweeps, optimization loops, tests, notebook
+sessions, and Monte Carlo workers that execute several cases in one Python
+process. Finishing a BSK run does not necessarily terminate its Python process.
+A fresh Python interpreter starts with fresh library state; a forked worker
+can inherit its parent’s counter state. Also, a Basilisk <code class="docutils literal notranslate"><span class="pre">Process</span></code> created
+with <code class="docutils literal notranslate"><span class="pre">CreateNewProcess()</span></code> is a scheduling container, not a new Python process.</p>
+<p>Resetting or continuing the same simulation is a separate operation. Keeping
+the same effector objects does not rerun their constructors or assign new
+constructor-based names. Restoring initial states, random seeds, and recorder
+contents is a separate concern from naming.</p>
+</section>
+<section id="choosing-repeatable-custom-names">
+<h2>Choosing Repeatable Custom Names<a class="headerlink" href="#choosing-repeatable-custom-names" title="Link to this heading"></a></h2>
+<p>Set the names inside the builder, before attaching the effectors and before
+initialization. Give each component a distinct, meaningful prefix:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">left</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+<span class="n">left</span><span class="o">.</span><span class="n">nameOfThetaState</span> <span class="o">=</span> <span class="s2">"leftPanelAngle"</span>
+<span class="n">left</span><span class="o">.</span><span class="n">nameOfThetaDotState</span> <span class="o">=</span> <span class="s2">"leftPanelRate"</span>
+
+<span class="n">right</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+<span class="n">right</span><span class="o">.</span><span class="n">nameOfThetaState</span> <span class="o">=</span> <span class="s2">"rightPanelAngle"</span>
+<span class="n">right</span><span class="o">.</span><span class="n">nameOfThetaDotState</span> <span class="o">=</span> <span class="s2">"rightPanelRate"</span>
+</pre></div>
+</div>
+<p>Every call to the builder can use these same four strings. The user is
+responsible for keeping custom state names unique among all states in a shared
+dynamics manager, including the spacecraft hub and other effector types.
+Giving two panels the same angle-state name does not create two independent
+states. Independent spacecraft with separate managers can reuse the same names.</p>
+<p>Assign every name whose exact text matters to your application. Setting only
+<code class="docutils literal notranslate"><span class="pre">nameOfThetaState</span></code> leaves the angular-rate name automatic. Effectors may also
+publish named properties, such as inertial position and attitude; these have
+their own names and a separate property namespace. Renaming a state does not
+rename its properties. Consult the module documentation for its setters and
+attributes, and set custom property names before attaching dependent effectors.
+Treat names as configuration: do not change them after initialization or after
+another module has copied them for a connection.</p>
+</section>
+<section id="recording-data-and-connecting-modules">
+<h2>Recording Data and Connecting Modules<a class="headerlink" href="#recording-data-and-connecting-modules" title="Link to this heading"></a></h2>
+<p>Prefer an output-message recorder when the effector already publishes the
+quantity you need. For example, the panel’s output contains both angle and rate:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recorder</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamicsTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The recorder can be configured before initialization and is independent of the
+state-name strings. For an internal state without a suitable message, retrieve
+its name from the effector rather than hard-coding a generated suffix.</p>
+<p>With the hinged-panel setup above, state names are available during construction
+and remain unchanged during initialization. A connection configured during
+setup can therefore copy the name from its producing panel. If you use a custom
+name, assign it before making that connection.</p>
+</section>
+<section id="running-the-example">
+<h2>Running the Example<a class="headerlink" href="#running-the-example" title="Link to this heading"></a></h2>
+<p>From the repository root, with Basilisk available in your Python environment:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python docs/source/codeSamples/bsk-multiSim.py</span>
+</pre></div>
+</div>
+<p>The script creates two spring-loaded panels in each spacecraft and executes
+four independent simulations in one interpreter: two with automatic state names,
+then two with custom state names. It prints the angle and rate names for each
+panel, looks up the final states using those names, and reads the same quantities
+from message recorders. Only strings and numerical results are retained between
+runs.</p>
+<p>The automatic-name rows have different suffixes between builds. The custom-name
+rows repeat <code class="docutils literal notranslate"><span class="pre">leftPanelAngle</span></code>, <code class="docutils literal notranslate"><span class="pre">leftPanelRate</span></code>, <code class="docutils literal notranslate"><span class="pre">rightPanelAngle</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">rightPanelRate</span></code>. The physical configuration is identical in all four runs;
+the example’s test checks that the final states agree with the message data and
+with the other runs.</p>
+<p>The builder and repeated-build loop are shown below. No explicit garbage
+collection or counter manipulation is needed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_simulation</span><span class="p">(</span><span class="n">custom_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build a spacecraft with two hinged panels and configure a short run.</span>
+
+<span class="sd">    :param custom_names: Assign repeatable angle and angular-rate state names.</span>
+<span class="sd">    :return: Simulation retaining its vehicle, panels, and message recorders.</span>
+<span class="sd">    """</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dynamics"</span><span class="p">)</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># [s]</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynamicsTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time_step</span><span class="p">)))</span>
+
+    <span class="n">vehicle</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">vehicle</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"vehicle"</span>
+    <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">vehicle</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamicsTask"</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">)</span>
+
+    <span class="n">panels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">recorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">((</span><span class="s2">"leftPanel"</span><span class="p">,</span> <span class="s2">"rightPanel"</span><span class="p">)):</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">label</span>  <span class="c1"># A diagnostic label; this does not rename states.</span>
+        <span class="k">if</span> <span class="n">custom_names</span><span class="p">:</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaState</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">Angle"</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaDotState</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">Rate"</span>
+
+        <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [N m/rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamicsTask"</span><span class="p">,</span> <span class="n">panel</span><span class="p">)</span>
+
+        <span class="c1"># Record messages without depending on any generated state-name strings.</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynamicsTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+        <span class="n">panels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+        <span class="n">recorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recorder</span><span class="p">)</span>
+
+    <span class="c1"># Retain access to the models and recorders for the caller's state lookups.</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">vehicle</span> <span class="o">=</span> <span class="n">vehicle</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">panels</span> <span class="o">=</span> <span class="n">panels</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">recorders</span> <span class="o">=</span> <span class="n">recorders</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [s]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sim</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_cases</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Run two builds per naming choice and print the actual state names.</span>
+
+<span class="sd">    :return: Four dictionaries containing names and final state/message values.</span>
+<span class="sd">        Each numerical array has one row per panel and columns for angle [rad]</span>
+<span class="sd">        and angular rate [rad/s]. No simulation objects are retained.</span>
+<span class="sd">    """</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">custom_names</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">naming</span> <span class="o">=</span> <span class="s2">"custom"</span> <span class="k">if</span> <span class="n">custom_names</span> <span class="k">else</span> <span class="s2">"automatic"</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">naming</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2"> state names: two fresh simulations"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'Build'</span><span class="si">:</span><span class="s2">&lt;7</span><span class="si">}{</span><span class="s1">'Panel'</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}{</span><span class="s1">'Angle state'</span><span class="si">:</span><span class="s2">&lt;32</span><span class="si">}</span><span class="s2">Rate state"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">sim</span> <span class="o">=</span> <span class="n">build_simulation</span><span class="p">(</span><span class="n">custom_names</span><span class="p">)</span>
+            <span class="n">names_before</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaState</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaDotState</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">sim</span><span class="o">.</span><span class="n">panels</span>
+            <span class="p">)</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+            <span class="c1"># Ask these panels for their names; do not guess numeric suffixes.</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaState</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">nameOfThetaDotState</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">sim</span><span class="o">.</span><span class="n">panels</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">angle_name</span><span class="p">,</span> <span class="n">rate_name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">panels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">case</span><span class="si">:</span><span class="s2">&lt;7</span><span class="si">}{</span><span class="n">label</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}{</span><span class="n">angle_name</span><span class="si">:</span><span class="s2">&lt;32</span><span class="si">}{</span><span class="n">rate_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">final_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="n">sim</span><span class="o">.</span><span class="n">vehicle</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">panel_names</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">panel_names</span> <span class="ow">in</span> <span class="n">names</span>
+            <span class="p">])</span>  <span class="c1"># Columns: angle [rad], angular rate [rad/s].</span>
+            <span class="n">message_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="n">recorder</span><span class="o">.</span><span class="n">theta</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">recorder</span><span class="o">.</span><span class="n">thetaDot</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="n">sim</span><span class="o">.</span><span class="n">recorders</span>
+            <span class="p">])</span>  <span class="c1"># Columns: angle [rad], angular rate [rad/s].</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"       Left panel final angle: </span><span class="si">{</span><span class="n">final_states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> rad "</span>
+                  <span class="sa">f</span><span class="s2">"(message: </span><span class="si">{</span><span class="n">message_states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> rad)"</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"custom_names"</span><span class="p">:</span> <span class="n">custom_names</span><span class="p">,</span>
+                <span class="s2">"names_before"</span><span class="p">:</span> <span class="n">names_before</span><span class="p">,</span>
+                <span class="s2">"names"</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span>
+                <span class="s2">"states"</span><span class="p">:</span> <span class="n">final_states</span><span class="p">,</span>
+                <span class="s2">"messages"</span><span class="p">:</span> <span class="n">message_states</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="c1"># Ending a BSK run or dropping its Python reference does not reset</span>
+            <span class="c1"># the hinged-body module's static constructor counter.</span>
+            <span class="k">del</span> <span class="n">sim</span>
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bskPrinciples-13.html" class="btn btn-neutral float-left" title="Advanced: Multithreaded Simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../examples/index.html" class="btn btn-neutral float-right" title="Integrated Example Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

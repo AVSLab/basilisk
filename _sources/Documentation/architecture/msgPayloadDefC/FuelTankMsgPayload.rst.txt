@@ -1,0 +1,10 @@
+.. _FuelTankMsgPayload:
+
+FuelTankMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: FuelTankMsgPayload.h
+   :project: msgPayloadDefC
+

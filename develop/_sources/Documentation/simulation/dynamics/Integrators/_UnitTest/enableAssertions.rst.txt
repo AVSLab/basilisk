@@ -1,0 +1,10 @@
+.. _enableAssertions:
+
+enableAssertions
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: enableAssertions.h
+   :project: _UnitTest
+

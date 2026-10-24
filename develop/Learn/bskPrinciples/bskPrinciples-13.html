@@ -1,0 +1,379 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced: Multithreaded Simulations &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Advanced: Naming Effector States" href="bskPrinciples-multiSim.html" />
+    <link rel="prev" title="Advanced: Stochastic Integration" href="bskPrinciples-12.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-0.html">What is Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-1.html">Basilisk Process and Task Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2.html">Adding Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2a.html">Execution of Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2b.html">Seeing the Order of Process, Task and Module Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-3.html">Connecting Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-4.html">Recording Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5.html">Creating Stand-Alone Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5a.html">Visualizing Message Connections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6.html">Setting and Recording Module Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6a.html">Importing External Data Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-7.html">Advanced: Redirecting Module Output to Stand-Alone Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-8.html">Advanced: Enabling and Disabling Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-9.html">Advanced: Using <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-10.html">Advanced: Handling <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-11.html">Advanced: Effector Module Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-12.html">Advanced: Stochastic Integration</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Advanced: Multithreaded Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-multiSim.html">Advanced: Naming Effector States</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+      <li class="breadcrumb-item active">Advanced: Multithreaded Simulations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/bskPrinciples/bskPrinciples-13.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-multithreaded-simulations">
+<span id="bskprinciples-13"></span><h1>Advanced: Multithreaded Simulations<a class="headerlink" href="#advanced-multithreaded-simulations" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#processes-and-worker-threads">Processes and worker threads</a>
+      </li>
+      
+      <li>
+        <a href="#choosing-independent-work">Choosing independent work</a>
+      </li>
+      
+      <li>
+        <a href="#two-independent-spacecraft">Two independent spacecraft</a>
+      </li>
+      
+      <li>
+        <a href="#assigning-processes-explicitly">Assigning processes explicitly</a>
+      </li>
+      
+      <li>
+        <a href="#reinitialization-ownership-and-shutdown">Reinitialization, ownership, and shutdown</a>
+      </li>
+      
+      <li>
+        <a href="#custom-c-scheduling-code">Custom C++ scheduling code</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<p>This tutorial builds on <a class="reference internal" href="bskPrinciples-1.html#bskprinciples-1"><span class="std std-ref">Basilisk Process and Task Creation</span></a>, <a class="reference internal" href="bskPrinciples-2.html#bskprinciples-2"><span class="std std-ref">Adding Basilisk Modules</span></a>, and
+<a class="reference internal" href="bskPrinciples-5.html#bskprinciples-5"><span class="std std-ref">Creating Stand-Alone Messages</span></a>. Once a simulation has several independent groups of
+modules, Basilisk can execute those groups concurrently on worker threads.
+For example, a constellation simulation can assign each independent spacecraft
+and its associated modules to a separate Basilisk process.</p>
+<section id="processes-and-worker-threads">
+<h2>Processes and worker threads<a class="headerlink" href="#processes-and-worker-threads" title="Link to this heading"></a></h2>
+<p>A Basilisk process is a group of tasks within the same application. The simulation
+assigns each process to one C++ worker thread, and that worker executes the
+process’s tasks and modules in their scheduled order. A worker can execute more
+than one process. Creating additional tasks inside a single process does not
+distribute those tasks across threads.</p>
+<p>The default configuration uses one worker. To request more workers, call
+<code class="docutils literal notranslate"><span class="pre">scSim.TotalSim.resetThreads(num_threads)</span></code> before initializing the simulation.
+The count must be positive. During initialization, Basilisk assigns processes
+without an explicit thread assignment in round-robin order across the workers.</p>
+</section>
+<section id="choosing-independent-work">
+<h2>Choosing independent work<a class="headerlink" href="#choosing-independent-work" title="Link to this heading"></a></h2>
+<p>Processes on different workers must be able to advance independently. Keep
+modules that share mutable state, coupled dynamics, or changing messages on the
+same worker. Each module instance should be scheduled on only one worker.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Basilisk’s standard message reads and writes do not synchronize access
+between worker threads. A process priority does not establish execution order
+across different workers. For example, placing spacecraft dynamics on one
+worker and its message-dependent flight software on another does not provide
+a safe producer-consumer schedule. Keep those processes on the same worker.</p>
+</div>
+<p>Adding workers is useful when there is enough independent computation to offset
+thread coordination costs. More workers than independent processes leaves workers
+idle. Measure runtime for the intended simulation before selecting a thread count;
+the short example below demonstrates configuration, rather than speedup.</p>
+</section>
+<section id="two-independent-spacecraft">
+<h2>Two independent spacecraft<a class="headerlink" href="#two-independent-spacecraft" title="Link to this heading"></a></h2>
+<aside class="sidebar">
+<p class="sidebar-title">Source Code</p>
+<p>Download the runnable example:
+<a class="reference download internal" download="" href="../../_downloads/24279ec764f3b0b1bff08afd72fbbd3c/bsk-13.py"><code class="xref download docutils literal notranslate"><span class="pre">bsk-13.py</span></code></a>.</p>
+</aside>
+<p>This example creates two spacecraft with constant velocities and no applied
+forces. Each spacecraft has its own process, task, and state recorder. The
+recorder runs in the same task as its spacecraft so that reading the state
+message follows the spacecraft update on the same worker.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">num_threads</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="sd">"""Propagate two independent spacecraft on the requested number of workers.</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="sd">    :param num_threads: Positive number of simulation worker threads.</span>
+<span class="linenos">11</span><span class="sd">    """</span>
+<span class="linenos">12</span>    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="linenos">13</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">resetThreads</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
+<span class="linenos">14</span>    <span class="n">time_step</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+<span class="linenos">15</span>    <span class="n">duration</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+<span class="linenos">16</span>    <span class="n">speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+<span class="linenos">17</span>    <span class="n">recorders</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">speed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">speeds</span><span class="p">):</span>
+<span class="linenos">20</span>        <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="sa">f</span><span class="s2">"spacecraftProcess</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="linenos">21</span>        <span class="n">task_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"spacecraftTask</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
+<span class="linenos">22</span>        <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">time_step</span><span class="p">))</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>        <span class="n">body</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+<span class="linenos">25</span>        <span class="n">body</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"spacecraft</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
+<span class="linenos">26</span>        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+<span class="linenos">27</span>        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+<span class="linenos">28</span>        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="linenos">29</span>        <span class="n">body</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+<span class="linenos">30</span>        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>        <span class="n">recorder</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="linenos">33</span>        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">34</span>        <span class="n">recorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recorder</span><span class="p">)</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="linenos">37</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+<span class="linenos">38</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span>    <span class="n">position_tolerance</span> <span class="o">=</span> <span class="mf">1e-12</span>  <span class="c1"># [m]</span>
+<span class="linenos">41</span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">speed</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">recorders</span><span class="p">,</span> <span class="n">speeds</span><span class="p">)):</span>
+<span class="linenos">42</span>        <span class="n">expected_position</span> <span class="o">=</span> <span class="p">[</span><span class="n">speed</span> <span class="o">*</span> <span class="n">duration</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="linenos">43</span>        <span class="n">position</span> <span class="o">=</span> <span class="n">recorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="linenos">44</span>        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">expected_position</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">position_tolerance</span><span class="p">)</span>
+<span class="linenos">45</span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"spacecraft</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: x = </span><span class="si">{</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> m"</span><span class="p">)</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span>
+<span class="linenos">48</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+<span class="linenos">49</span>    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The two processes are automatically assigned to the two workers. The normal
+<code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code>, <code class="docutils literal notranslate"><span class="pre">ConfigureStopTime()</span></code>, and <code class="docutils literal notranslate"><span class="pre">ExecuteSimulation()</span></code>
+calls are unchanged. Both spacecraft start at the origin and propagate for one
+second. Their final positions should therefore be:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>spacecraft0: x = 1.000 m
+spacecraft1: x = 2.000 m
+</pre></div>
+</div>
+<p>The script checks these positions against constant-velocity motion. Calling
+<code class="docutils literal notranslate"><span class="pre">run(num_threads=1)</span></code> runs the same processes on one worker and produces the same
+results. For a larger example, see <a class="reference internal" href="../../examples/MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat_MT.html#scenario-basicorbitmultisat-mt"><span class="std std-ref">scenario_BasicOrbitMultiSat_MT</span></a>.</p>
+</section>
+<section id="assigning-processes-explicitly">
+<h2>Assigning processes explicitly<a class="headerlink" href="#assigning-processes-explicitly" title="Link to this heading"></a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">addProcessToThread()</span></code> when particular processes must share a worker.
+Thread indices start at zero and must be less than the configured thread count.
+For existing dynamics and flight-software processes, the following assignments
+keep both on worker zero:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">resetThreads</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">addProcessToThread</span><span class="p">(</span><span class="n">dynProcess</span><span class="o">.</span><span class="n">processData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">addProcessToThread</span><span class="p">(</span><span class="n">fswProcess</span><span class="o">.</span><span class="n">processData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Make explicit assignments after configuring the pool and before the first
+initialization. Processes that are not assigned explicitly still use automatic
+assignment. Automatic assignment follows the simulation’s process order. For
+explicit assignments, processes are added to a worker in the order of these calls;
+place the producer before its consumer when both are due at the same simulation
+time. Task and module priorities still apply within each process. Priorities do not
+coordinate different workers.</p>
+</section>
+<section id="reinitialization-ownership-and-shutdown">
+<span id="bskthreadownership"></span><h2>Reinitialization, ownership, and shutdown<a class="headerlink" href="#reinitialization-ownership-and-shutdown" title="Link to this heading"></a></h2>
+<p>The simulation owns its worker threads. Calling <code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code> again
+rebuilds the worker pool before resetting the simulation. This clears explicit
+process-to-thread assignments and returns to automatic assignment. Recreate the
+simulation configuration when repeating a run that requires an explicit mapping.
+To continue an existing run without resetting it, set a later stop time and call
+<code class="docutils literal notranslate"><span class="pre">ExecuteSimulation()</span></code> again.</p>
+<p>Resetting or destroying the pool requests shutdown and joins each worker before
+releasing its state. <code class="docutils literal notranslate"><span class="pre">scSim.TotalSim.deleteThreads()</span></code> explicitly releases the
+pool and is safe to call repeatedly, including after a module throws an exception.
+To reuse a deleted pool, call <code class="docutils literal notranslate"><span class="pre">resetThreads(num_threads)</span></code> and then
+<code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code>. Call these lifecycle methods from the simulation’s
+controlling thread, after the current simulation call returns, rather than from
+a module callback.</p>
+<p>Processes, tasks and modules remain borrowed by the C++ scheduler;
+<code class="docutils literal notranslate"><span class="pre">SimulationBaseClass</span></code> retains their Python references. Normal simulation scripts
+configure workers through the methods described above. The internal <code class="docutils literal notranslate"><span class="pre">threadList</span></code>
+and <code class="docutils literal notranslate"><span class="pre">threadContext</span></code> fields are no longer exposed to Python.</p>
+</section>
+<section id="custom-c-scheduling-code">
+<h2>Custom C++ scheduling code<a class="headerlink" href="#custom-c-scheduling-code" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SimModel::threadList</span></code> now contains <code class="docutils literal notranslate"><span class="pre">std::unique_ptr&lt;SimThreadExecution&gt;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">SimThreadExecution::threadContext</span></code> is a <code class="docutils literal notranslate"><span class="pre">std::thread</span></code> value. Use <code class="docutils literal notranslate"><span class="pre">.get()</span></code>
+when borrowing an execution record, and do not manually delete either owned
+object. Compiled extensions must be rebuilt against extension ABI version 3.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">SimThreadExecution::requestStop()</span></code> to request shutdown and wake an idle
+worker. <code class="docutils literal notranslate"><span class="pre">killThread()</span></code> remains available as a compatibility alias with the same
+behavior; a separate <code class="docutils literal notranslate"><span class="pre">unlockThread()</span></code> call is no longer needed. Repeated calls
+through either method release the worker semaphore only on the first stop request.</p>
+<p>A stop request does not join the worker. Keep its execution record alive until
+the worker finishes and has been joined. The execution record’s destructor
+requests shutdown and joins automatically. <code class="docutils literal notranslate"><span class="pre">SimModel::deleteThreads()</span></code> first
+requests shutdown of every worker, then destroys and joins the records, preserving
+the rule that all workers are signaled before any join begins. Call pool lifecycle
+methods from the controlling thread as described above.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bskPrinciples-12.html" class="btn btn-neutral float-left" title="Advanced: Stochastic Integration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bskPrinciples-multiSim.html" class="btn btn-neutral float-right" title="Advanced: Naming Effector States" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

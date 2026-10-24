@@ -1,0 +1,10 @@
+.. _LandmarkMsgPayload:
+
+LandmarkMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: LandmarkMsgPayload.h
+   :project: msgPayloadDefC
+

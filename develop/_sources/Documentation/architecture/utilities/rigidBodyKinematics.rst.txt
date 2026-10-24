@@ -1,0 +1,63 @@
+.. _rigidBodyKinematicsutilities:
+
+rigidBodyKinematics
+===================
+
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+.. _rbkNumericalLimits:
+
+Numerical scope and representation limits
+-----------------------------------------
+
+These limits apply to the C rigid-body kinematics routines, the corresponding
+Python and Numba functions, and the Rust bindings to C. Angles are in radians;
+Euler parameters are scalar-first unit quaternions. Supply valid rotation
+matrices and normalized quaternions: the routines do not generally validate or
+normalize their inputs.
+
+The library uses ordinary double-precision attitude formulas and supports zero
+and small rotations through analytic limits where appropriate. It does not
+guarantee accurate finite results for every finite floating-point input.
+Very large coordinates or rates can overflow intermediate products, and
+extremely small components can underflow. No common exception or non-finite
+output convention is guaranteed outside this numerical scope.
+
+- **Modified Rodrigues parameters (MRPs):** normally maintain a norm at or below
+  one using ``MRPswitch(sigma, 1.0)``. Modest values above one remain supported,
+  including during shadow switching. Conversions retain their documented
+  branches: ``MRP2EP`` can return a negative quaternion scalar and ``MRP2PRV``
+  can return an angle above pi. ``MRPshadow`` always requests the other set;
+  its zero-input shadow is singular, whereas ``MRPswitch`` leaves zero unchanged.
+- **Gibbs vectors (classical Rodrigues parameters):** the representation is
+  singular at a half-turn. Use quaternions or MRPs when a calculation approaches
+  that attitude. This also applies when addition or subtraction produces a
+  half-turn, or when converting unit-norm MRPs to Gibbs vectors. Near these
+  singularities, cancellation can make a small denominator numerically zero;
+  an accurately resolved finite result is not guaranteed.
+- **Principal rotation vectors (PRVs):** prefer the principal representation
+  with angle at most pi when accumulating rotations. The conversion functions
+  retain their existing angle branches and do not automatically reduce every
+  result to this interval. The forward PRV rate map is singular at nonzero full
+  turns; its zero-angle singularity is removable and is handled analytically.
+- **Euler angles:** at a conversion singularity the third angle is set to zero
+  and the observable combined rotation is recovered in the first angle.
+  This preserves the attitude but does not make the Euler rate map nonsingular.
+
+Angle wrapping supports multiple revolutions, but cannot recover angular detail
+already lost to rounding in a very large input. The library does not impose a
+new magnitude cutoff or silently switch representations in rate calculations.
+Choose a well-conditioned representation before evaluating its derivatives;
+an attitude shadow switch also changes the coordinate derivatives.
+
+For Python and Numba input-container and compiled-call requirements, see
+:ref:`numbaModules_rbkn`.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: rigidBodyKinematics.h
+   :project: utilities
+

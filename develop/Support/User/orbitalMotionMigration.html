@@ -1,0 +1,322 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbital Motion Compatibility &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Developer Information" href="../Developer.html" />
+    <link rel="prev" title="Accuracy Comparison with GMAT and Orekit" href="accuracyComparison.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../User.html">User Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="FAQ.html">FAQ - Frequency Asked Questions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="FAQwindows.html">FAQ: Microsoft Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="accuracyComparison.html">Accuracy Comparison with GMAT and Orekit</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Orbital Motion Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../User.html">User Information</a></li>
+      <li class="breadcrumb-item active">Orbital Motion Compatibility</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/User/orbitalMotionMigration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="orbital-motion-compatibility">
+<span id="orbitalmotionmigration"></span><h1>Orbital Motion Compatibility<a class="headerlink" href="#orbital-motion-compatibility" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#preserved-behavior">Preserved behavior</a>
+      </li>
+      
+      <li>
+        <a href="#planet-selection">Planet selection</a>
+      </li>
+      
+      <li>
+        <a href="#checked-domains">Checked domains</a>
+      </li>
+      
+      <li>
+        <a href="#corrections-retained-without-compatibility-fallbacks">Corrections retained without compatibility fallbacks</a>
+      </li>
+      
+      <li>
+        <a href="#regression-coverage">Regression coverage</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<p>The issue 1629 audit compares the orbital utilities, their three SWIG export
+paths, module callers, and tests with the branch’s starting revision
+<code class="docutils literal notranslate"><span class="pre">3193231686</span></code>. Numerical defect corrections remain enabled. Public types,
+representations, signatures, and previously accepted domain behavior are
+preserved as described below.</p>
+<p>The existing methods and conventions remain supported without deprecation
+warnings or a removal schedule. Numerical improvements are available through
+the original method names. Optional checked calls and alternate encodings are
+additions; existing callers do not need to adopt them.</p>
+<section id="preserved-behavior">
+<h2>Preserved behavior<a class="headerlink" href="#preserved-behavior" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Python <code class="docutils literal notranslate"><span class="pre">rv2elem</span></code> retains NumPy <code class="docutils literal notranslate"><span class="pre">float64</span></code> fields <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code>, <code class="docutils literal notranslate"><span class="pre">rmag</span></code>,
+<code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">rPeriap</span></code>, and <code class="docutils literal notranslate"><span class="pre">rApoap</span></code>. Expressions such as
+<code class="docutils literal notranslate"><span class="pre">axis_history</span> <span class="pre">-</span> <span class="pre">elements.a</span></code> continue to work when the history is a list.
+<code class="docutils literal notranslate"><span class="pre">M2E</span></code> and <code class="docutils literal notranslate"><span class="pre">N2H</span></code> retain NumPy scalar results when either argument is a
+NumPy scalar, including their zero-anomaly shortcuts. Zero-dimensional mean
+arrays retain their container type without changing the caller’s input.</p></li>
+<li><p>Python’s default <code class="docutils literal notranslate"><span class="pre">rv2elem</span></code> retains the planar parabolic representation
+<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">-rPeriap,</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">-1</span></code>. Optionally use
+<code class="docutils literal notranslate"><span class="pre">rv2elem(mu,</span> <span class="pre">r,</span> <span class="pre">v,</span> <span class="pre">canonical=True)</span></code> for the C-compatible
+<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">rPeriap</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> representation accepted by <code class="docutils literal notranslate"><span class="pre">elem2rv</span></code>.
+Legacy output can still be passed to <code class="docutils literal notranslate"><span class="pre">elem2rv_parab</span></code>.
+That adapter always interprets <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> as a planar parabola with
+periapsis <code class="docutils literal notranslate"><span class="pre">-a</span></code>, even when auxiliary fields are omitted, unset, or zero.
+Python and SWIG element inputs remain unchanged on repeated calls.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rv2elem_parab</span></code> retains signed node, periapsis, and nonradial true-anomaly
+angles, its circular convention with periapsis at the current position,
+and <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">-rPeriap</span></code> for planar parabolas. The main C <code class="docutils literal notranslate"><span class="pre">rv2elem</span></code>
+retains its nonradial true-anomaly interval [0, 2*pi); the main Python
+function retains its signed hyperbolic anomaly interval.</p></li>
+<li><p>The Python <code class="docutils literal notranslate"><span class="pre">*_parab</span></code> adapters retain inward motion for positive
+<code class="docutils literal notranslate"><span class="pre">sin(E)</span></code> on rectilinear ellipses. When explicitly converting those input
+elements for use with <code class="docutils literal notranslate"><span class="pre">elem2rv</span></code>, negate the radial eccentric anomaly. The canonical
+core uses outward-positive radial E. Rectilinear hyperbolas use the core
+<code class="docutils literal notranslate"><span class="pre">elem2rv</span></code> with outward-positive H; they are distinct from the adapter’s
+original negative-a planar parabolic encoding. Eccentricity one alone never selects a parabola: the angular
+momentum, energy, and documented auxiliary fields distinguish the cases.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KeplerianOrbit</span></code> retains its native member layout, including reserved
+legacy storage. Its public signatures and units are unchanged.</p></li>
+</ul>
+</section>
+<section id="planet-selection">
+<h2>Planet selection<a class="headerlink" href="#planet-selection" title="Link to this heading"></a></h2>
+<p>Ordinary C/C++ calls with three arguments, <code class="docutils literal notranslate"><span class="pre">jPerturb(r,</span> <span class="pre">degree,</span> <span class="pre">acceleration)</span></code>,
+now select Earth safely through the header adapter. Four-argument calls still compile
+and run, and honor the selected planet. All three SWIG bindings retain both
+call forms. Native source calls also accept C compound literals and C++ braced
+initializers as vector arguments. Checked planet selection is available through:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">jPerturbForPlanet</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">acceleration</span><span class="p">,</span><span class="w"> </span><span class="n">CELESTIAL_MARS</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The legacy four-argument native path retains Earth fallback for unknown body
+identifiers and leaves the output unchanged for Sun/Pluto. The corresponding
+Python utility retains its unknown-name Earth fallback, <code class="docutils literal notranslate"><span class="pre">None</span></code> for Sun/Pluto,
+and floating degree cutoffs. Python callers can opt into checked
+selection using <code class="docutils literal notranslate"><span class="pre">orbitalMotion.jPerturb(r,</span> <span class="pre">degree,</span> <span class="pre">planet,</span> <span class="pre">strict=True)</span></code>.
+Checked paths reject unknown bodies and return explicit zero vectors for
+Sun/Pluto’s zero-zonal approximation. Saturn’s previously incorrect Earth
+coefficients are corrected in all paths.</p>
+<p>The historical variadic native symbol remains available for existing
+<strong>explicit-planet</strong> function pointers and binary callers. Such pointers require
+one trailing integer planet identifier. A raw three-argument call to that
+variadic symbol already had undefined behavior because it read an absent
+argument; it cannot be made safe by preserving that binary calling convention.
+Use <code class="docutils literal notranslate"><span class="pre">jPerturbEarth</span></code> for a fixed three-argument pointer. The header dispatch
+makes ordinary three-argument source calls safe when rebuilt.</p>
+</section>
+<section id="checked-domains">
+<h2>Checked domains<a class="headerlink" href="#checked-domains" title="Link to this heading"></a></h2>
+<p>C and Python now provide the additive entry points <code class="docutils literal notranslate"><span class="pre">hillFrameChecked</span></code>,
+<code class="docutils literal notranslate"><span class="pre">hill2rvChecked</span></code>, <code class="docutils literal notranslate"><span class="pre">rv2hillChecked</span></code>, <code class="docutils literal notranslate"><span class="pre">clMeanOscMapChecked</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">clElem2eqElemChecked</span></code>. Supported inputs receive the improved calculations
+through both old and checked names. Checked calls report domain failures as
+NaN outputs with diagnostics in C, or <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> in Python. The old names
+retain historical rejected-domain formulas, sentinel outputs, and exceptions.
+Neither form is deprecated; checked calls are optional.</p>
+<p>Inclination validation is an intentional exception to this compatibility path:
+all element-input APIs require finite inclination in [0, pi], including both
+endpoints. Negative and wrapped inclinations are rejected immediately.
+The constellation example’s documented input remains radians; its main call
+and test now convert 56 degrees explicitly. Optical-navigation test fixtures
+likewise convert 10 degrees. Monte Carlo configurations use nonnegative radian
+inclination bounds; this intentionally changes their former invalid samples. A valid
+inclination can still coincide with a particular coordinate singularity:
+prograde equinoctial elements remain singular at the retrograde equator.</p>
+<p><code class="docutils literal notranslate"><span class="pre">meanOEFeedback</span></code> explicitly uses the checked conversions and stops rather
+than publishing an invalid force after conversion failure. <code class="docutils literal notranslate"><span class="pre">oeStateEphem</span></code>
+uses the fitted conic without snapping near-unit eccentricity to a parabola;
+its positive-periapsis records cannot encode rectilinear states or parabolic
+mean anomaly. These module messages and configuration field names are unchanged.</p>
+</section>
+<section id="corrections-retained-without-compatibility-fallbacks">
+<h2>Corrections retained without compatibility fallbacks<a class="headerlink" href="#corrections-retained-without-compatibility-fallbacks" title="Link to this heading"></a></h2>
+<p>The audit retains corrections to unconverged Kepler roots, singular orbit
+geometry, near-parabolic and rectilinear Cartesian reconstruction, equatorial
+and whole-revolution mean/osculating mapping, zonal coefficients, zero-speed
+drag, characteristic energy, and eclipse disk overlap. Matching an incorrect
+numerical answer is not a supported compatibility mode. <code class="docutils literal notranslate"><span class="pre">KeplerianOrbit.c3</span></code>
+now returns <code class="docutils literal notranslate"><span class="pre">-mu/a</span></code> rather than its erroneous constant zero.</p>
+<p>Explicit failure replaces undefined or unsupported calculations: nonphysical
+conics, unrepresentable states, nonfinite Kepler inputs, nonpositive mass or
+gravity parameters, and unsupported <code class="docutils literal notranslate"><span class="pre">KeplerianOrbit</span></code> conics. In
+particular, the drag helper no longer reads outside a three-vector on invalid
+position input. Callers supplying invalid inputs can observe different error
+types or NaN diagnostics; they must not rely on the previous accidental
+IndexError, uninitialized data, or unconverged output.</p>
+<p>The removed AVS self-check names were test-harness selectors that executed no
+native test; the four real self-check entry points remain. Eclipse corrections
+and debris plotting compatibility preserve their callable interfaces. Forward-anomaly precision
+near the parabolic limit remains outside this change.</p>
+</section>
+<section id="regression-coverage">
+<h2>Regression coverage<a class="headerlink" href="#regression-coverage" title="Link to this heading"></a></h2>
+<p>Compatibility tests exercise NumPy scalar methods and original debris list
+arithmetic; default and canonical parabolic encodings; radial adapter velocity
+signs; input-storage invariance for Python and all SWIG element types; large
+wrapped anomalies against direct trigonometric references; signed and circular
+angle conventions; native/SWIG optional planet
+calls; legacy Sun/Pluto and unknown-body sentinels; fractional degree cutoffs;
+checked versus legacy domain failures; output aliasing; and accepted/rejected
+inclination boundaries. Compatibility tests reject deprecation warnings for
+the preserved APIs. Existing numerical, controller, ephemeris, and scenario
+tests remain part of validation. The optional Vizard-driven OpNav Monte Carlo
+example requires an external renderer and is not exercised by the normal suite;
+its inclination bounds were updated by inspection.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="accuracyComparison.html" class="btn btn-neutral float-left" title="Accuracy Comparison with GMAT and Orekit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Developer.html" class="btn btn-neutral float-right" title="Developer Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+.. _imuSensor:
+
+:module-type:`C++` Module: imuSensor
+====================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+Sensor model to simulate an IMU.
+
+The accelerometer and gyro error states evolve independently according to
+
+.. math::
+
+    \boldsymbol e_{k+1} = A\boldsymbol e_k + P\boldsymbol z_k,
+    \qquad \boldsymbol z_k \sim \mathcal{N}(\boldsymbol 0, I),
+
+where ``PMatrixAccel`` and ``PMatrixGyro`` are matrix square roots of the
+respective process-noise covariance matrices. ``AMatrixAccel`` and
+``AMatrixGyro`` both default to zero, so configuring only a ``PMatrix``
+produces independent white Gaussian measurement noise. The accelerometer and
+gyro use separate repeatable random streams derived from ``RNGSeed``.
+
+Correlated processes and random walks must be configured explicitly with
+``setAMatrixAccel()`` or ``setAMatrixGyro()``. For example, the following
+configuration creates a bounded gyro random walk::
+
+    imu.setAMatrixGyro([[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]])
+    imu.setErrorBoundsGyro([0.01, 0.01, 0.01])  # [rad/s]
+
+Each positive error-bound entry is an exact hard bound on the corresponding
+error state. A non-positive entry disables clipping for that state.
+
+The module
+:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/Basilisk-IMU-20170712.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+The corruption types are outlined in this
+:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
+
+Delta-v Output
+--------------
+``DVFramePlatform`` is the change of the inertial velocity of the sensor due to non-gravitational acceleration
+between two consecutive IMU calls, resolved in the platform frame at the current call:
+
+.. math::
+
+    {}^{P}\Delta\mathbf v_{S} = [PB][BN]_2 \left( \Delta\, {}^{N}\mathbf{DV}_{C/N}
+    + \Delta \left( {}^{N}\mathbf v_{B/N} - {}^{N}\mathbf v_{C/N}
+    + [NB]\, {}^{B}\boldsymbol\omega_{B/N} \times {}^{B}\mathbf r_{S/B} \right) \right)
+
+where :math:`{}^{N}\mathbf{DV}_{C/N}` is ``TotalAccumDV_CN_N`` of the spacecraft state message and
+:math:`\Delta` is the difference between the current and the previous IMU call. The second term is the change of
+the velocity of the sensor relative to the center of mass. For an offset sensor, this term depends on the
+attitude at both calls through the sensor's rotational velocity. The accumulated center-of-mass delta v is
+differenced in inertial coordinates, so changes in attitude do not turn previously accumulated delta v into a
+spurious increment. Because the calculation uses accumulated values and the states at the IMU calls, the IMU
+may run at a slower rate than the dynamics.
+
+The following points apply:
+
+- ``sensorPos_B`` is the sensor position relative to the body frame origin :math:`B`, not to the center of mass.
+  If the center of mass is offset from :math:`B`, a sensor at :math:`B` also senses the rotation of :math:`B`
+  about the center of mass, so its delta v is not zero during a coast.
+- The gravity of :ref:`spacecraft` is evaluated at the center of mass and is uniform across the spacecraft, so
+  the tidal acceleration at a sensor offset from the center of mass is not modeled.
+- The input message must fill ``TotalAccumDV_CN_N``, ``v_BN_N`` and ``v_CN_N`` the way :ref:`spacecraft` does.
+  Other producers of ``SCStatesMsgPayload``, such as :ref:`MJSite`, do not accumulate delta v and set these
+  fields to zero or omit the non-gravitational part, so the delta v output is not meaningful with them.
+- With ``pointMassTranslationalOnly``, :ref:`spacecraft` does not accumulate delta v, so the delta v output is
+  zero even when a force acts on the spacecraft.
+- A velocity changed directly through the spacecraft states, for example an impulsive maneuver applied with
+  ``setState()``, is not part of the accumulated delta v and is not sensed.
+
+.. note::
+
+    On the first run the module outputs a zero'd message.  Only on the 2nd run onwards does the sensor
+    have IMU data. The same applies to the first run after a call to ``Reset()``.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: imuSensor
+
+   input scStateInMsg SCStatesMsgPayload
+      input message name for spacecraft state
+
+   output sensorOutMsg IMUSensorMsgPayload
+      output message name for IMU output data
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: imuSensor.h
+   :project: imuSensor
+

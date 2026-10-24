@@ -1,0 +1,15 @@
+.. _test_hingedRigidBodyDefaultConfig:
+
+test_hingedRigidBodyDefaultConfig
+=================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_hingedRigidBodyDefaultConfig
+   :members:
+   :show-inheritance:
+

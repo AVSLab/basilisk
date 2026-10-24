@@ -1,0 +1,15 @@
+.. _test_magneticFieldWMMStepLag:
+
+test_magneticFieldWMMStepLag
+============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_magneticFieldWMMStepLag
+   :members:
+   :show-inheritance:
+

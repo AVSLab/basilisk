@@ -1,0 +1,10 @@
+.. _svStochasticIntegratorSOSRA:
+
+svStochasticIntegratorSOSRA
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svStochasticIntegratorSOSRA.h
+   :project: Integrators
+

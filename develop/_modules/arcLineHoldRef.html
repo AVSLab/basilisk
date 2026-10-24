@@ -1,0 +1,470 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>arcLineHoldRef &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">arcLineHoldRef</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for arcLineHoldRef</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Fixed-family translation reference with an arc, line, and final hold.</span>
+
+<span class="sd">The reference consists of a circular arc with equal inertial ``x`` and ``z``</span>
+<span class="sd">components, producing a 45-degree out-of-plane trajectory.  A quintic segment</span>
+<span class="sd">connects that arc to a line, followed by a deceleration constrained to the</span>
+<span class="sd">inertial ``y`` axis and a final stationary hold.  Radius, timing, and endpoint</span>
+<span class="sd">values are configurable; the trajectory topology, circle orientation, and</span>
+<span class="sd">deceleration axis are intentionally fixed.</span>
+<span class="sd">The blend endpoint and final hold must both lie on the inertial ``y`` axis.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span><span class="p">,</span> <span class="n">sysModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArcLineHoldRef</span><span class="p">(</span><span class="n">sysModel</span><span class="o">.</span><span class="n">SysModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generate the fixed circular-to-line tracking maneuver.</span>
+
+<span class="sd">    The circular path uses ``r_x = r_z`` and is therefore fixed at 45 degrees</span>
+<span class="sd">    out of the inertial ``x-y`` plane.  The final segment only changes the</span>
+<span class="sd">    inertial ``y`` position.  This module is not a general-purpose trajectory</span>
+<span class="sd">    generator: it does not support arbitrary circle planes, path topologies,</span>
+<span class="sd">    or deceleration directions.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize output messaging and supported maneuver parameters.</span>
+
+<span class="sd">        The supported parameters tune the fixed maneuver family only: circular</span>
+<span class="sd">        radius, segment durations, transition endpoint, and final endpoint.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transRefOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TransRefMsg</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TransRefMsgPayload</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="mf">20.0</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finalPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blendEndPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">=</span> <span class="mf">110.0</span> <span class="o">*</span> <span class="mf">60.0</span>  <span class="c1"># [s]</span>
+
+<div class="viewcode-block" id="ArcLineHoldRef.setRadius">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setRadius">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the radius of the fixed 45-degree out-of-plane circular arc.</span>
+
+<span class="sd">        :param radius: Circular-trajectory radius in meters.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.setFinalPosition">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setFinalPosition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setFinalPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">finalPosition</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the final stationary reference position.</span>
+
+<span class="sd">        The inertial ``x`` and ``z`` components must be zero.</span>
+
+<span class="sd">        :param finalPosition: Final position in meters.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finalPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">finalPosition</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.setBlendEndPosition">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setBlendEndPosition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setBlendEndPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blendEndPosition</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the position at the end of the circle-to-line transition.</span>
+
+<span class="sd">        The following deceleration occurs only along the inertial ``y`` axis,</span>
+<span class="sd">        so the inertial ``x`` and ``z`` components must be zero.</span>
+
+<span class="sd">        :param blendEndPosition: Transition end position in meters.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blendEndPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">blendEndPosition</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.setTCircle">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setTCircle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setTCircle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tCircle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the circular-trajectory duration.</span>
+
+<span class="sd">        :param tCircle: Circular-trajectory duration in seconds.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">=</span> <span class="n">tCircle</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.setTTransition">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setTTransition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setTTransition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tTransition</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the circle-to-line transition duration.</span>
+
+<span class="sd">        :param tTransition: Transition duration in seconds.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">=</span> <span class="n">tTransition</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.setTLinear">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.setTLinear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setTLinear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tLinear</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set the deceleration-segment duration.</span>
+
+<span class="sd">        :param tLinear: Deceleration duration in seconds.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">=</span> <span class="n">tLinear</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.circleStates">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.circleStates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circleStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentTime</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Evaluate the circular portion of the trajectory.</span>
+
+<span class="sd">        :param currentTime: Elapsed trajectory time in seconds.</span>
+<span class="sd">        :return: Position, velocity, and acceleration reference vectors.</span>
+<span class="sd">        """</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">*</span> <span class="n">currentTime</span>  <span class="c1"># [rad]</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+        <span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+            <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+        <span class="p">])</span>  <span class="c1"># [m/s]</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">position</span>  <span class="c1"># [m/s^2]</span>
+        <span class="k">return</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.blendStates">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.blendStates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blendStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsedTime</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Evaluate the quintic circle-to-line transition.</span>
+
+<span class="sd">        :param elapsedTime: Time since transition start in seconds.</span>
+<span class="sd">        :return: Position, velocity, and acceleration reference vectors.</span>
+<span class="sd">        """</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span>  <span class="c1"># [s]</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">positionInitial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rBlendStart</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m]</span>
+            <span class="n">positionFinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rBlendEnd</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m]</span>
+            <span class="n">velocityInitial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vBlendStart</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+            <span class="n">velocityFinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vBlendEnd</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+            <span class="n">accelerationInitial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aBlendStart</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m/s^2]</span>
+            <span class="n">accelerationFinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aBlendEnd</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># [m/s^2]</span>
+
+            <span class="c1"># Quintic coefficients use position in [m] and elapsedTime in [s].</span>
+            <span class="n">coefficient0</span> <span class="o">=</span> <span class="n">positionInitial</span>
+            <span class="n">coefficient1</span> <span class="o">=</span> <span class="n">velocityInitial</span>
+            <span class="n">coefficient2</span> <span class="o">=</span> <span class="n">accelerationInitial</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">coefficient3</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">accelerationInitial</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="n">accelerationFinal</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">-</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">velocityInitial</span> <span class="o">*</span> <span class="n">duration</span>
+                <span class="o">-</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">velocityFinal</span> <span class="o">*</span> <span class="n">duration</span>
+                <span class="o">-</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">positionInitial</span> <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">positionFinal</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">coefficient4</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">1.5</span> <span class="o">*</span> <span class="n">accelerationInitial</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">-</span> <span class="n">accelerationFinal</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">*</span> <span class="n">velocityInitial</span>
+                <span class="o">+</span> <span class="mf">7.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">*</span> <span class="n">velocityFinal</span>
+                <span class="o">+</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">positionInitial</span> <span class="o">-</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">positionFinal</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">4</span>
+            <span class="n">coefficient5</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="n">accelerationInitial</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="n">accelerationFinal</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">*</span> <span class="n">velocityInitial</span>
+                <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">*</span> <span class="n">velocityFinal</span>
+                <span class="o">-</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">positionInitial</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">positionFinal</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span>
+
+            <span class="n">position</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">coefficient0</span> <span class="o">+</span> <span class="n">coefficient1</span> <span class="o">*</span> <span class="n">elapsedTime</span>
+                <span class="o">+</span> <span class="n">coefficient2</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+                <span class="o">+</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">5</span>
+            <span class="p">)</span>
+            <span class="n">velocity</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">coefficient1</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">coefficient2</span> <span class="o">*</span> <span class="n">elapsedTime</span>
+                <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+                <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">4</span>
+            <span class="p">)</span>
+            <span class="n">acceleration</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">2.0</span> <span class="o">*</span> <span class="n">coefficient2</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span>
+                <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span></div>
+
+
+<div class="viewcode-block" id="ArcLineHoldRef.decelStates">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/transGuidance/arcLineHoldRef/arcLineHoldRef.html#arcLineHoldRef.ArcLineHoldRef.decelStates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decelStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsedTime</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Evaluate the final inertial-``y``-axis deceleration segment.</span>
+
+<span class="sd">        :param elapsedTime: Time since deceleration start in seconds.</span>
+<span class="sd">        :return: Position, velocity, and acceleration reference vectors.</span>
+<span class="sd">        """</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+
+        <span class="n">initialVelocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vBlendEnd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+        <span class="n">positionChange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalPosition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rBlendEnd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">coefficient3</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">10.0</span> <span class="o">*</span> <span class="n">positionChange</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">initialVelocity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">coefficient4</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">positionChange</span> <span class="o">+</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">initialVelocity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="n">coefficient5</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">6.0</span> <span class="o">*</span> <span class="n">positionChange</span> <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">initialVelocity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">**</span> <span class="mi">5</span>
+
+        <span class="n">displacement</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initialVelocity</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">+</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+            <span class="o">+</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">5</span>
+        <span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">displacementRate</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initialVelocity</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+            <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="p">)</span>  <span class="c1"># [m/s]</span>
+        <span class="n">displacementAcceleration</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">6.0</span> <span class="o">*</span> <span class="n">coefficient3</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">coefficient4</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">coefficient5</span> <span class="o">*</span> <span class="n">elapsedTime</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+
+        <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rBlendEnd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">displacement</span>
+        <span class="n">velocity</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">displacementRate</span>
+        <span class="n">acceleration</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">displacementAcceleration</span>
+        <span class="k">return</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the fixed-maneuver boundary states before simulation."""</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"radius"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"tCircle"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"tTransition"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"tLinear"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ArcLineHoldRef.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite."</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">endpoint</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"blendEndPosition"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blendEndPosition</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"finalPosition"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalPosition</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"ArcLineHoldRef.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a finite three-component position."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">endpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">endpoint</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"ArcLineHoldRef.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have zero inertial x and z components "</span>
+                    <span class="s2">"because the deceleration and final hold lie on the y axis."</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">"ArcLineHoldRef requires positive transition and deceleration durations."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">"ArcLineHoldRef requires a positive circular-plus-transition duration."</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rBlendStart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vBlendStart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aBlendStart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circleStates</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rBlendEnd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blendEndPosition</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vBlendEnd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aBlendEnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s^2]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Publish the translation reference corresponding to the simulation time."""</span>
+        <span class="n">currentTime</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">*</span> <span class="n">CurrentSimNanos</span>  <span class="c1"># [s]</span>
+
+        <span class="k">if</span> <span class="n">currentTime</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span><span class="p">:</span>
+            <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circleStates</span><span class="p">(</span><span class="n">currentTime</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">currentTime</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span><span class="p">:</span>
+            <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blendStates</span><span class="p">(</span><span class="n">currentTime</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">currentTime</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tLinear</span><span class="p">:</span>
+            <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decelStates</span><span class="p">(</span>
+                <span class="n">currentTime</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tCircle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tTransition</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalPosition</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+            <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">r_RN_N</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">v_RN_N</span> <span class="o">=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">a_RN_N</span> <span class="o">=</span> <span class="n">acceleration</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transRefOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleID</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

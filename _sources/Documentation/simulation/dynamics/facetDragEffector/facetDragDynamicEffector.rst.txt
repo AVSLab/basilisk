@@ -1,0 +1,114 @@
+.. _facetDragDynamicEffector:
+
+:module-type:`C++` Module: facetDragDynamicEffector
+===================================================
+
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+Drag dynamics class used to compute drag effects on spacecraft bodies
+
+This class is used to implement drag dynamic effects on spacecraft using a variety of simple or complex models, which will include
+cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
+drag models.
+For more information see the
+:download:`PDF Description </../../src/simulation/dynamics/facetDragEffector/_Documentation/Basilisk-facet_drag-20190515.pdf>`.
+
+Wind Velocity Input
+--------------------
+When ``windVelInMsg`` is linked to a :ref:`windBase`-derived module (e.g. :ref:`zeroWindModel`),
+the drag model subtracts the air velocity ``v_air_N`` from the spacecraft inertial velocity before
+computing drag, yielding the atmosphere-relative velocity:
+
+.. math::
+
+    \mathbf{v}_{rel} = \mathbf{v}_{sc} - \mathbf{v}_{air}
+
+If ``windVelInMsg`` is not linked, the inertial spacecraft velocity is used directly.
+
+Example setup:
+
+.. code-block:: python
+
+    drag = facetDragDynamicEffector.FacetDragDynamicEffector()
+    drag.addFacet(10.0, 2.2, [1, 0, 0], [0, 0, 0])
+    drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
+
+    # Optional: link a wind model for atmosphere-relative velocity
+    drag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
+
+    scObject.addDynamicEffector(drag)
+    scSim.AddModelToTask(simTaskName, drag)
+
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a drag surface can
+be carried by an appendage instead of the hub. Attach it to the parent state effector rather than
+to the spacecraft::
+
+    stateEff.addDynamicEffector(drag, segment)
+
+The parent's inertial attitude and velocity then replace the hub's in the drag calculation, so a
+panel that rotates or translates relative to the hub sees its own relative wind. Every facet normal
+and facet location passed to ``addFacet()`` is expressed in the parent segment's frame in that
+configuration, not in the hub body frame, and the resulting force and torque are returned about the
+parent frame origin. The ``segment`` argument is omitted for a parent with a single degree of
+freedom.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.
+
+Input Message Timing
+---------------------
+Both ``atmoDensInMsg`` and ``windVelInMsg`` are refreshed only during ``UpdateState()``.
+Because ``Spacecraft::computeForceTorque()`` calls dynamic effectors before the atmosphere
+and wind models receive their next ``UpdateState()``, the drag computation always uses
+the values from the previous time step (zero-initialized on the first step).
+Both inputs are therefore treated as **piecewise-constant** over each integration step.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: facetDragDynamicEffector
+    :caption: Module I/O Messages
+
+    input atmoDensInMsg AtmoPropsMsgPayload
+        input message for atmospheric density information.
+    input windVelInMsg WindMsgPayload
+        (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the spacecraft inertial velocity to obtain the atmosphere-relative velocity.
+
+Initialization and Reset
+------------------------
+When this effector is attached to a spacecraft hub or a state-effector branch, initialization verifies that
+``atmoDensInMsg`` is connected.  The check is performed while linking either the hub states or the branch
+properties, so it does not depend on separately scheduling the effector.
+
+Attachment-time validation does not replace task scheduling for this effector.  Add it to a task so that
+``UpdateState()`` refreshes the cached atmospheric density and optional wind data used during force evaluation.
+
+When the effector is scheduled, its ``Reset()`` repeats the required-message check.
+``Reset()`` does not clear the cached atmosphere, wind, geometry, force, or torque data.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: facetDragDynamicEffector.h
+   :project: facetDragEffector
+

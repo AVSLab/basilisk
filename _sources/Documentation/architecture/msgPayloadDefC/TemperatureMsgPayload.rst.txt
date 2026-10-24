@@ -1,0 +1,10 @@
+.. _TemperatureMsgPayload:
+
+TemperatureMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TemperatureMsgPayload.h
+   :project: msgPayloadDefC
+

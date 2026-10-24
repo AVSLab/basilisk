@@ -1,0 +1,10 @@
+.. _LinkBudgetTypes:
+
+LinkBudgetTypes
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: LinkBudgetTypes.h
+   :project: _GeneralModuleFiles3
+

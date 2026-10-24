@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrusterDynamicEffector:
+
+thrusterDynamicEffector
+=======================
+
+:doc:`Module documentation <thrusterDynamicEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

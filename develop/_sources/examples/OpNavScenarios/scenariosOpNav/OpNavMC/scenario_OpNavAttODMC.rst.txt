@@ -1,0 +1,15 @@
+.. _scenario_OpNavAttODMC:
+
+scenario_OpNavAttODMC
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenario_OpNavAttODMC
+   :members:
+   :show-inheritance:
+

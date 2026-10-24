@@ -1,0 +1,10 @@
+.. _rigidBodyKinematicsutilities:
+
+rigidBodyKinematics
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: rigidBodyKinematics.h
+   :project: utilities
+

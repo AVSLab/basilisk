@@ -1,0 +1,7 @@
+.. _computePolyAcc:
+
+computePolyAcc
+==============
+
+.. bsk-module-guide-end::
+

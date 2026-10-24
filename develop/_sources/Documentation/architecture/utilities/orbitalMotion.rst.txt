@@ -1,0 +1,10 @@
+.. _orbitalMotionutilities:
+
+orbitalMotion
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: orbitalMotion.h
+   :project: utilities
+

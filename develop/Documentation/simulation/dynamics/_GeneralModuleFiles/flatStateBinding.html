@@ -1,0 +1,760 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: flatStateBinding &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: flatStochasticWorkspace" href="flatStochasticWorkspace.html" />
+    <link rel="prev" title="C++ Module: dynParamManager" href="dynParamManager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: flatStateBinding</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/flatStateBinding.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-flatstatebinding">
+<span id="flatstatebinding"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: flatStateBinding<a class="headerlink" href="#c-module-flatstatebinding" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<p>Shared by the modules in this folder.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTestDynamics/index.html"><span class="doc">_UnitTestDynamics</span></a></p></li>
+<li><p><a class="reference internal" href="BodyToHubInfo.html"><span class="doc">BodyToHubInfo</span></a></p></li>
+<li><p><a class="reference internal" href="fuelSlosh.html"><span class="doc">fuelSlosh</span></a></p></li>
+<li><p><a class="reference internal" href="gravityModel.html"><span class="doc">gravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="interpolator.html"><span class="doc">interpolator</span></a></p></li>
+<li><p><a class="reference internal" href="pointMassGravityModel.html"><span class="doc">pointMassGravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="RWConfigPayload.html"><span class="doc">RWConfigPayload</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticNoiseGenerator.html"><span class="doc">stochasticNoiseGenerator</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticTableauValidation.html"><span class="doc">stochasticTableauValidation</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticWeakRandomVariables.html"><span class="doc">stochasticWeakRandomVariables</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRA.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRA</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRI.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRI</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorWeakSIESME.html"><span class="doc">svIntegratorWeakSIESME</span></a></p></li>
+<li><p><a class="reference internal" href="THROperation.html"><span class="doc">THROperation</span></a></p></li>
+<li><p><a class="reference internal" href="THRSimConfig.html"><span class="doc">THRSimConfig</span></a></p></li>
+<li><p><a class="reference internal" href="THRTimePair.html"><span class="doc">THRTimePair</span></a></p></li>
+</ul>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">FlatStateBinding</span></code> is the native bridge from named registered states to integrator
+arithmetic. It owns descriptors and update runs while borrowing finalized registry
+buffers and update policies. Numerical stage buffers belong to the consuming integrator.</p>
+<section id="binding-and-reuse">
+<h2>Binding and reuse<a class="headerlink" href="#binding-and-reuse" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">bind()</span></code> validates state shapes and policies, assigns combined-buffer offsets, and
+coalesces adjacent Euclidean states into contiguous update runs. It also builds the
+state traversal used to assign stochastic noise sources. <code class="docutils literal notranslate"><span class="pre">validate()</span></code> checks object
+identity and finalized storage before an existing binding is
+reused. <code class="docutils literal notranslate"><span class="pre">reset()</span></code> discards metadata after failed preparation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FlatObjectDescriptor</span></code> addresses one object’s live buffers.
+<code class="docutils literal notranslate"><span class="pre">FlatStateDescriptor</span></code> addresses one state in the integrator’s combined buffers.
+<code class="docutils literal notranslate"><span class="pre">FlatUpdateRun</span></code> describes either adjacent states using ordinary vector addition or
+one special-policy state. All offsets count doubles, and matrix views are column-major.
+These offsets must not be confused with registry-local <code class="docutils literal notranslate"><span class="pre">StateLayout</span></code> offsets.</p>
+<p>Gather and scatter operate on already sized buffers and copy complete object buffers.
+Candidate construction combines flat drift and dispatches special updates through the
+registered policy. External policy calls use the supplied callback guard before further
+borrowed-storage access. See <a class="reference internal" href="../../../../Learn/makingModules/advancedTopics/integratorArchitecture.html#integratorarchitecture"><span class="std std-ref">Dynamics state and integrator architecture</span></a> for ownership and call ordering.</p>
+<hr class="docutils" />
+<p>Native descriptors that connect finalized registries to numerical buffers. </p>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420FlatObjectDescriptor">
+<span id="_CPPv320FlatObjectDescriptor"></span><span id="_CPPv220FlatObjectDescriptor"></span><span id="FlatObjectDescriptor"></span><span class="target" id="struct_flat_object_descriptor"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FlatObjectDescriptor</span></span></span><a class="headerlink" href="#_CPPv420FlatObjectDescriptor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;flatStateBinding.h&gt;</em></div>
+<p>One finalized object’s buffers within the integrator’s concatenated buffers. Counts and offsets are in doubles. Live pointers borrow the registry’s committed buffers; binding validation must succeed before any pointer is used. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor6objectE">
+<span id="_CPPv3N20FlatObjectDescriptor6objectE"></span><span id="_CPPv2N20FlatObjectDescriptor6objectE"></span><span id="FlatObjectDescriptor::object__DynamicObjectP"></span><span class="target" id="struct_flat_object_descriptor_1a7c9d1df5d58c281c1c4fb0e15b907430"></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">object</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor6objectE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed dynamics callback target. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor8registryE">
+<span id="_CPPv3N20FlatObjectDescriptor8registryE"></span><span id="_CPPv2N20FlatObjectDescriptor8registryE"></span><span id="FlatObjectDescriptor::registry__StateRegistryP"></span><span class="target" id="struct_flat_object_descriptor_1ab65869251af94c71d087d43b272f4cd5"></span><a class="reference internal" href="stateRegistry.html#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registry</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor8registryE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed registry owning this object’s buffers. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor15firstStateIndexE">
+<span id="_CPPv3N20FlatObjectDescriptor15firstStateIndexE"></span><span id="_CPPv2N20FlatObjectDescriptor15firstStateIndexE"></span><span id="FlatObjectDescriptor::firstStateIndex__s"></span><span class="target" id="struct_flat_object_descriptor_1a3db37ebb64413efe13d5dde5b72e7afb"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstStateIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor15firstStateIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>First entry in the binding’s state-descriptor vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor11stateOffsetE">
+<span id="_CPPv3N20FlatObjectDescriptor11stateOffsetE"></span><span id="_CPPv2N20FlatObjectDescriptor11stateOffsetE"></span><span id="FlatObjectDescriptor::stateOffset__s"></span><span class="target" id="struct_flat_object_descriptor_1ad889aa8307e41c18ed1ac780362f2438"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor11stateOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined state buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor10stateCountE">
+<span id="_CPPv3N20FlatObjectDescriptor10stateCountE"></span><span id="_CPPv2N20FlatObjectDescriptor10stateCountE"></span><span id="FlatObjectDescriptor::stateCount__s"></span><span class="target" id="struct_flat_object_descriptor_1a5b6e963082c949913556a0cb17b8b1b9"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor10stateCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scalars in this object’s live state buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor16derivativeOffsetE">
+<span id="_CPPv3N20FlatObjectDescriptor16derivativeOffsetE"></span><span id="_CPPv2N20FlatObjectDescriptor16derivativeOffsetE"></span><span id="FlatObjectDescriptor::derivativeOffset__s"></span><span class="target" id="struct_flat_object_descriptor_1a95ebbf3d1d3d63a9e608695467f091dd"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor16derivativeOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined derivative buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor15derivativeCountE">
+<span id="_CPPv3N20FlatObjectDescriptor15derivativeCountE"></span><span id="_CPPv2N20FlatObjectDescriptor15derivativeCountE"></span><span id="FlatObjectDescriptor::derivativeCount__s"></span><span class="target" id="struct_flat_object_descriptor_1ab26bd9dbce383eaa08e02d10d43e5050"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor15derivativeCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scalars in this object’s derivative buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor9stateDataE">
+<span id="_CPPv3N20FlatObjectDescriptor9stateDataE"></span><span id="_CPPv2N20FlatObjectDescriptor9stateDataE"></span><span id="FlatObjectDescriptor::stateData__doubleP"></span><span class="target" id="struct_flat_object_descriptor_1a7f01913d60f35c0f59e405be85235d6c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">stateData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor9stateDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed start of this object’s live state buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20FlatObjectDescriptor14derivativeDataE">
+<span id="_CPPv3N20FlatObjectDescriptor14derivativeDataE"></span><span id="_CPPv2N20FlatObjectDescriptor14derivativeDataE"></span><span id="FlatObjectDescriptor::derivativeData__doubleP"></span><span class="target" id="struct_flat_object_descriptor_1a25fdb1d7b606ee603d5fb6eb1372a8bf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">derivativeData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N20FlatObjectDescriptor14derivativeDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed start of this object’s derivative buffer. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419FlatStateDescriptor">
+<span id="_CPPv319FlatStateDescriptor"></span><span id="_CPPv219FlatStateDescriptor"></span><span id="FlatStateDescriptor"></span><span class="target" id="struct_flat_state_descriptor"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FlatStateDescriptor</span></span></span><a class="headerlink" href="#_CPPv419FlatStateDescriptor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;flatStateBinding.h&gt;</em></div>
+<p>One state with shapes and integrator-global offsets resolved at binding time. State, derivative, and diffusion counts may differ for special policies. Noise offsets address the state-local mapping; packed global-slot offsets live in the stochastic binding. No state-name lookup is needed during numerical updates. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor19usesEuclideanUpdateEv">
+<span id="_CPPv3NK19FlatStateDescriptor19usesEuclideanUpdateEv"></span><span id="_CPPv2NK19FlatStateDescriptor19usesEuclideanUpdateEv"></span><span id="FlatStateDescriptor::usesEuclideanUpdateC"></span><span class="target" id="struct_flat_state_descriptor_1ae281c42b306da43a73e8030b60e288b1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">usesEuclideanUpdate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor19usesEuclideanUpdateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Select ordinary vector arithmetic without virtual policy dispatch. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor28usesPerComponentErrorControlEv">
+<span id="_CPPv3NK19FlatStateDescriptor28usesPerComponentErrorControlEv"></span><span id="_CPPv2NK19FlatStateDescriptor28usesPerComponentErrorControlEv"></span><span id="FlatStateDescriptor::usesPerComponentErrorControlC"></span><span class="target" id="struct_flat_state_descriptor_1ac54b1af6b459dd97722f9f7bd15947a4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">usesPerComponentErrorControl</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor28usesPerComponentErrorControlEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Select scalar adaptive thresholds instead of one matrix-norm threshold. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor9stateViewERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK19FlatStateDescriptor9stateViewERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK19FlatStateDescriptor9stateViewERKN5Eigen8VectorXdE"></span><span id="FlatStateDescriptor::stateView__Eigen::VectorXdCRC"></span><span class="target" id="struct_flat_state_descriptor_1a359839a471db41f858c07c6a44cb5525"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateView</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">buffer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor9stateViewERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Maps this state’s values in an already validated flat buffer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor9stateViewERN5Eigen8VectorXdE">
+<span id="_CPPv3NK19FlatStateDescriptor9stateViewERN5Eigen8VectorXdE"></span><span id="_CPPv2NK19FlatStateDescriptor9stateViewERN5Eigen8VectorXdE"></span><span id="FlatStateDescriptor::stateView__Eigen::VectorXdRC"></span><span class="target" id="struct_flat_state_descriptor_1a15614cf711708406fc3113d183b96437"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateView</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">buffer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor9stateViewERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Maps this state’s writable values in an already validated flat buffer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor14derivativeViewERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK19FlatStateDescriptor14derivativeViewERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK19FlatStateDescriptor14derivativeViewERKN5Eigen8VectorXdE"></span><span id="FlatStateDescriptor::derivativeView__Eigen::VectorXdCRC"></span><span class="target" id="struct_flat_state_descriptor_1a6fa26d534e83db80c416a40cde8e4650"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeView</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">buffer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor14derivativeViewERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Maps this state’s drift in an already validated flat buffer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19FlatStateDescriptor13diffusionViewERKN5Eigen8VectorXdE6size_t">
+<span id="_CPPv3NK19FlatStateDescriptor13diffusionViewERKN5Eigen8VectorXdE6size_t"></span><span id="_CPPv2NK19FlatStateDescriptor13diffusionViewERKN5Eigen8VectorXdE6size_t"></span><span id="FlatStateDescriptor::diffusionView__Eigen::VectorXdCR.sC"></span><span class="target" id="struct_flat_state_descriptor_1a82137e3bde0f14997989de480b39ecd7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionView</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">packedOffset</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19FlatStateDescriptor13diffusionViewERKN5Eigen8VectorXdE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Maps a diffusion tangent at its validated packed offset. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor5stateE">
+<span id="_CPPv3N19FlatStateDescriptor5stateE"></span><span id="_CPPv2N19FlatStateDescriptor5stateE"></span><span id="FlatStateDescriptor::state__StateDataP"></span><span class="target" id="struct_flat_state_descriptor_1a637d458ea6e9b5414090a181cadc4bf0"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed stable handle. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor9stateNameE">
+<span id="_CPPv3N19FlatStateDescriptor9stateNameE"></span><span id="_CPPv2N19FlatStateDescriptor9stateNameE"></span><span id="FlatStateDescriptor::stateName__ss"></span><span class="target" id="struct_flat_state_descriptor_1a00bd50706e39f87960fe19c18a8d09fa"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateName</span></span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor9stateNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Registration name, used for diagnostics and tolerance resolution. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor18dynamicObjectIndexE">
+<span id="_CPPv3N19FlatStateDescriptor18dynamicObjectIndexE"></span><span id="_CPPv2N19FlatStateDescriptor18dynamicObjectIndexE"></span><span id="FlatStateDescriptor::dynamicObjectIndex__s"></span><span class="target" id="struct_flat_state_descriptor_1ad9521389f71d4a70a96ea03bfb00ab19"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynamicObjectIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor18dynamicObjectIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>Owning entry in the object-descriptor vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor11stateOffsetE">
+<span id="_CPPv3N19FlatStateDescriptor11stateOffsetE"></span><span id="_CPPv2N19FlatStateDescriptor11stateOffsetE"></span><span id="FlatStateDescriptor::stateOffset__s"></span><span class="target" id="struct_flat_state_descriptor_1ac140619824a5dc215768f8ea3837b5a0"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor11stateOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined state buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor10stateCountE">
+<span id="_CPPv3N19FlatStateDescriptor10stateCountE"></span><span id="_CPPv2N19FlatStateDescriptor10stateCountE"></span><span id="FlatStateDescriptor::stateCount__s"></span><span class="target" id="struct_flat_state_descriptor_1acdb560a1a16d8e4749cb0ccffe010866"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor10stateCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stored state scalars. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor9stateRowsE">
+<span id="_CPPv3N19FlatStateDescriptor9stateRowsE"></span><span id="_CPPv2N19FlatStateDescriptor9stateRowsE"></span><span id="FlatStateDescriptor::stateRows__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1a1ba1f927072262ac7bf8b18144bb372e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor9stateRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in the stored state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor12stateColumnsE">
+<span id="_CPPv3N19FlatStateDescriptor12stateColumnsE"></span><span id="_CPPv2N19FlatStateDescriptor12stateColumnsE"></span><span id="FlatStateDescriptor::stateColumns__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1a502fc2eb6cdc47bc1356c974b4184a0b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateColumns</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor12stateColumnsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in the stored state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor16derivativeOffsetE">
+<span id="_CPPv3N19FlatStateDescriptor16derivativeOffsetE"></span><span id="_CPPv2N19FlatStateDescriptor16derivativeOffsetE"></span><span id="FlatStateDescriptor::derivativeOffset__s"></span><span class="target" id="struct_flat_state_descriptor_1ad6d405c42ed84a98a82edf7c163eaf53"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor16derivativeOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined drift buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor15derivativeCountE">
+<span id="_CPPv3N19FlatStateDescriptor15derivativeCountE"></span><span id="_CPPv2N19FlatStateDescriptor15derivativeCountE"></span><span id="FlatStateDescriptor::derivativeCount__s"></span><span class="target" id="struct_flat_state_descriptor_1a2f42e6db5e1e0ffc99acd1dcf123e38a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor15derivativeCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift scalars. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor14derivativeRowsE">
+<span id="_CPPv3N19FlatStateDescriptor14derivativeRowsE"></span><span id="_CPPv2N19FlatStateDescriptor14derivativeRowsE"></span><span id="FlatStateDescriptor::derivativeRows__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1ae4f849cca1f94f52db1bbd692bc499c9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor14derivativeRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in drift views. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor17derivativeColumnsE">
+<span id="_CPPv3N19FlatStateDescriptor17derivativeColumnsE"></span><span id="_CPPv2N19FlatStateDescriptor17derivativeColumnsE"></span><span id="FlatStateDescriptor::derivativeColumns__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1accd746d5ba712606c1fc3add29aadbca"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeColumns</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor17derivativeColumnsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in drift views. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor14diffusionCountE">
+<span id="_CPPv3N19FlatStateDescriptor14diffusionCountE"></span><span id="_CPPv2N19FlatStateDescriptor14diffusionCountE"></span><span id="FlatStateDescriptor::diffusionCount__s"></span><span class="target" id="struct_flat_state_descriptor_1ae7f838f5a4271964adc774237e7662c4"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor14diffusionCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scalars per local diffusion tangent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor13diffusionRowsE">
+<span id="_CPPv3N19FlatStateDescriptor13diffusionRowsE"></span><span id="_CPPv2N19FlatStateDescriptor13diffusionRowsE"></span><span id="FlatStateDescriptor::diffusionRows__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1ab37d8832fa91d8cf02fbc49763420d9e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor13diffusionRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in tangent views. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor16diffusionColumnsE">
+<span id="_CPPv3N19FlatStateDescriptor16diffusionColumnsE"></span><span id="_CPPv2N19FlatStateDescriptor16diffusionColumnsE"></span><span id="FlatStateDescriptor::diffusionColumns__Eigen::Index"></span><span class="target" id="struct_flat_state_descriptor_1acb7ff5dd1f566008ab92200e72e1ace8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionColumns</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor16diffusionColumnsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in tangent views. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor10noiseCountE">
+<span id="_CPPv3N19FlatStateDescriptor10noiseCountE"></span><span id="_CPPv2N19FlatStateDescriptor10noiseCountE"></span><span id="FlatStateDescriptor::noiseCount__s"></span><span class="target" id="struct_flat_state_descriptor_1aeeb2a9a3ce8f8f027b95143ddc19abce"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor10noiseCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local noise endpoints for this state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor16localNoiseOffsetE">
+<span id="_CPPv3N19FlatStateDescriptor16localNoiseOffsetE"></span><span id="_CPPv2N19FlatStateDescriptor16localNoiseOffsetE"></span><span id="FlatStateDescriptor::localNoiseOffset__s"></span><span class="target" id="struct_flat_state_descriptor_1a6a711ff61841f44a367ffa71d30a9eba"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localNoiseOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor16localNoiseOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First entry in concatenated local-noise mappings. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor10updateKindE">
+<span id="_CPPv3N19FlatStateDescriptor10updateKindE"></span><span id="_CPPv2N19FlatStateDescriptor10updateKindE"></span><span id="FlatStateDescriptor::updateKind__StateUpdateKind"></span><span class="target" id="struct_flat_state_descriptor_1a424e3ce336283c7a195be1140dabfb63"></span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateKind</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="stateData.html#_CPPv4N15StateUpdateKind9EuclideanE" title="StateUpdateKind::Euclidean"><span class="n"><span class="pre">Euclidean</span></span></a><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor10updateKindE" title="Link to this definition"></a><br /></dt>
+<dd><p>Cached arithmetic dispatch choice. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor12errorControlE">
+<span id="_CPPv3N19FlatStateDescriptor12errorControlE"></span><span id="_CPPv2N19FlatStateDescriptor12errorControlE"></span><span id="FlatStateDescriptor::errorControl__ErrorControlMode"></span><span class="target" id="struct_flat_state_descriptor_1ac3abe71aa54c9e337cc8bd6ed95354ab"></span><a class="reference internal" href="stateData.html#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">errorControl</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="stateData.html#_CPPv4N16ErrorControlMode10WholeStateE" title="ErrorControlMode::WholeState"><span class="n"><span class="pre">WholeState</span></span></a><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor12errorControlE" title="Link to this definition"></a><br /></dt>
+<dd><p>Cached adaptive scaling convention. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FlatStateDescriptor13specialUpdateE">
+<span id="_CPPv3N19FlatStateDescriptor13specialUpdateE"></span><span id="_CPPv2N19FlatStateDescriptor13specialUpdateE"></span><span id="FlatStateDescriptor::specialUpdate__StateUpdatePolicyCP"></span><span class="target" id="struct_flat_state_descriptor_1a89e17686dc3d436007b7cc8a333932b1"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">specialUpdate</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N19FlatStateDescriptor13specialUpdateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed immutable policy; null for Euclidean states. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv413FlatUpdateRun">
+<span id="_CPPv313FlatUpdateRun"></span><span id="_CPPv213FlatUpdateRun"></span><span id="FlatUpdateRun"></span><span class="target" id="struct_flat_update_run"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FlatUpdateRun</span></span></span><a class="headerlink" href="#_CPPv413FlatUpdateRun" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;flatStateBinding.h&gt;</em></div>
+<p>One contiguous Euclidean update span or one special-policy state. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun20firstDescriptorIndexE">
+<span id="_CPPv3N13FlatUpdateRun20firstDescriptorIndexE"></span><span id="_CPPv2N13FlatUpdateRun20firstDescriptorIndexE"></span><span id="FlatUpdateRun::firstDescriptorIndex__s"></span><span class="target" id="struct_flat_update_run_1aab19342e53737e124b780fc3c4dd1329"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstDescriptorIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FlatUpdateRun20firstDescriptorIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>First state in this run; the only state for a special update. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun11stateOffsetE">
+<span id="_CPPv3N13FlatUpdateRun11stateOffsetE"></span><span id="_CPPv2N13FlatUpdateRun11stateOffsetE"></span><span id="FlatUpdateRun::stateOffset__s"></span><span class="target" id="struct_flat_update_run_1aea15b93929dbec8cc896caa283a8c739"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FlatUpdateRun11stateOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined state buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun10stateCountE">
+<span id="_CPPv3N13FlatUpdateRun10stateCountE"></span><span id="_CPPv2N13FlatUpdateRun10stateCountE"></span><span id="FlatUpdateRun::stateCount__s"></span><span class="target" id="struct_flat_update_run_1a6e071d523d441fd7ffafdddf7831904f"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FlatUpdateRun10stateCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>State scalars covered by the run. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun16derivativeOffsetE">
+<span id="_CPPv3N13FlatUpdateRun16derivativeOffsetE"></span><span id="_CPPv2N13FlatUpdateRun16derivativeOffsetE"></span><span id="FlatUpdateRun::derivativeOffset__s"></span><span class="target" id="struct_flat_update_run_1ad7842f517c6c32fff500f38c0a4c5689"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FlatUpdateRun16derivativeOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in a combined derivative buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun15derivativeCountE">
+<span id="_CPPv3N13FlatUpdateRun15derivativeCountE"></span><span id="_CPPv2N13FlatUpdateRun15derivativeCountE"></span><span id="FlatUpdateRun::derivativeCount__s"></span><span class="target" id="struct_flat_update_run_1aa10d7f25c656e9feb400dce40c9f7609"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FlatUpdateRun15derivativeCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift scalars covered by the run. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FlatUpdateRun10updateKindE">
+<span id="_CPPv3N13FlatUpdateRun10updateKindE"></span><span id="_CPPv2N13FlatUpdateRun10updateKindE"></span><span id="FlatUpdateRun::updateKind__StateUpdateKind"></span><span class="target" id="struct_flat_update_run_1ade41438f67ae45c6809b72648d2dcd55"></span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateKind</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="stateData.html#_CPPv4N15StateUpdateKind9EuclideanE" title="StateUpdateKind::Euclidean"><span class="n"><span class="pre">Euclidean</span></span></a><a class="headerlink" href="#_CPPv4N13FlatUpdateRun10updateKindE" title="Link to this definition"></a><br /></dt>
+<dd><p>A vector-addition run or one policy-dispatched state. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416FlatStateBinding">
+<span id="_CPPv316FlatStateBinding"></span><span id="_CPPv216FlatStateBinding"></span><span id="FlatStateBinding"></span><span class="target" id="class_flat_state_binding"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FlatStateBinding</span></span></span><a class="headerlink" href="#_CPPv416FlatStateBinding" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;flatStateBinding.h&gt;</em></div>
+<p>Native bridge between named state registration and flat integrator arithmetic. </p>
+<p><a class="reference internal" href="#class_flat_state_binding_1a01e1f320bfe67e37410f0a9d4ea7da61"><span class="std std-ref">bind()</span></a> walks finalized registries once, validates shapes and policies, and builds object/state descriptors plus contiguous Euclidean update runs. Descriptors borrow buffers and policies; this class owns only topology metadata, not numerical stages. <a class="reference internal" href="#class_flat_state_binding_1af2dd9680f1dc774c18584c2cde78369d"><span class="std std-ref">validate()</span></a> checks object identity and fixed layout before reuse.</p>
+<p>Gather/scatter operations copy complete object buffers. Candidate construction uses vector addition for Euclidean runs and policy dispatch for special states. These operations require correctly sized caller-owned buffers and do not resize them. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding4ModeE">
+<span id="_CPPv3N16FlatStateBinding4ModeE"></span><span id="_CPPv2N16FlatStateBinding4ModeE"></span><span class="target" id="class_flat_state_binding_1a79cdb5615b4d6aea3d9e69561ea4160a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Mode</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding4ModeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Select validation and diagnostics for the consuming numerical family. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding4Mode23DeterministicRungeKuttaE">
+<span id="_CPPv3N16FlatStateBinding4Mode23DeterministicRungeKuttaE"></span><span id="_CPPv2N16FlatStateBinding4Mode23DeterministicRungeKuttaE"></span><span class="target" id="class_flat_state_binding_1a79cdb5615b4d6aea3d9e69561ea4160aaf54b5f87cd266ede48db04bcec070135"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DeterministicRungeKutta</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding4Mode23DeterministicRungeKuttaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift-only RK candidate construction. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding4Mode10StochasticE">
+<span id="_CPPv3N16FlatStateBinding4Mode10StochasticE"></span><span id="_CPPv2N16FlatStateBinding4Mode10StochasticE"></span><span class="target" id="class_flat_state_binding_1a79cdb5615b4d6aea3d9e69561ea4160aa7034d72178527959767784e9faadfca7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Stochastic</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding4Mode10StochasticE" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift and diffusion candidate construction. </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding16FlatStateBindingEv">
+<span id="_CPPv3N16FlatStateBinding16FlatStateBindingEv"></span><span id="_CPPv2N16FlatStateBinding16FlatStateBindingEv"></span><span id="FlatStateBinding::FlatStateBinding"></span><span class="target" id="class_flat_state_binding_1a1593c8fb06eb598a277da980e13a270b"></span><span class="sig-name descname"><span class="n"><span class="pre">FlatStateBinding</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding16FlatStateBindingEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding16FlatStateBindingERK16FlatStateBinding">
+<span id="_CPPv3N16FlatStateBinding16FlatStateBindingERK16FlatStateBinding"></span><span id="_CPPv2N16FlatStateBinding16FlatStateBindingERK16FlatStateBinding"></span><span id="FlatStateBinding::FlatStateBinding__FlatStateBindingCR"></span><span class="target" id="class_flat_state_binding_1a3e81487364ffa147fa6215d01731a870"></span><span class="sig-name descname"><span class="n"><span class="pre">FlatStateBinding</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16FlatStateBinding16FlatStateBindingERK16FlatStateBinding" title="FlatStateBinding::FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding16FlatStateBindingERK16FlatStateBinding" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBindingaSERK16FlatStateBinding">
+<span id="_CPPv3N16FlatStateBindingaSERK16FlatStateBinding"></span><span id="_CPPv2N16FlatStateBindingaSERK16FlatStateBinding"></span><span id="FlatStateBinding::assign-operator__FlatStateBindingCR"></span><span class="target" id="class_flat_state_binding_1a1f989a2a3a362a42d752bcb625ceef59"></span><a class="reference internal" href="#_CPPv416FlatStateBinding" title="FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416FlatStateBinding" title="FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBindingaSERK16FlatStateBinding" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding16FlatStateBindingERR16FlatStateBinding">
+<span id="_CPPv3N16FlatStateBinding16FlatStateBindingERR16FlatStateBinding"></span><span id="_CPPv2N16FlatStateBinding16FlatStateBindingERR16FlatStateBinding"></span><span id="FlatStateBinding::FlatStateBinding__FlatStateBindingRR"></span><span class="target" id="class_flat_state_binding_1a0deb280f6abc6f1f81f61a47b2d45df2"></span><span class="sig-name descname"><span class="n"><span class="pre">FlatStateBinding</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N16FlatStateBinding16FlatStateBindingERR16FlatStateBinding" title="FlatStateBinding::FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding16FlatStateBindingERR16FlatStateBinding" title="Link to this definition"></a><br /></dt>
+<dd><p>Transfer prepared descriptors when a binding transaction commits. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBindingaSERR16FlatStateBinding">
+<span id="_CPPv3N16FlatStateBindingaSERR16FlatStateBinding"></span><span id="_CPPv2N16FlatStateBindingaSERR16FlatStateBinding"></span><span id="FlatStateBinding::assign-operator__FlatStateBindingRR"></span><span class="target" id="class_flat_state_binding_1acb390f530bac14177db881ca5d60f1db"></span><a class="reference internal" href="#_CPPv416FlatStateBinding" title="FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416FlatStateBinding" title="FlatStateBinding"><span class="n"><span class="pre">FlatStateBinding</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBindingaSERR16FlatStateBinding" title="Link to this definition"></a><br /></dt>
+<dd><p>Replace descriptors with a successfully prepared binding. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding4bindERKNSt6vectorIP13DynamicObjectEE4Mode">
+<span id="_CPPv3N16FlatStateBinding4bindERKNSt6vectorIP13DynamicObjectEE4Mode"></span><span id="_CPPv2N16FlatStateBinding4bindERKNSt6vectorIP13DynamicObjectEE4Mode"></span><span id="FlatStateBinding::bind__std::vector:DynamicObjectP:CR.Mode"></span><span class="target" id="class_flat_state_binding_1a01e1f320bfe67e37410f0a9d4ea7da61"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bind</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynamics</span></span>, <a class="reference internal" href="#_CPPv4N16FlatStateBinding4ModeE" title="FlatStateBinding::Mode"><span class="n"><span class="pre">Mode</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">mode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16FlatStateBinding4bindERKNSt6vectorIP13DynamicObjectEE4Mode" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds a binding from finalized managers. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding5resetEv">
+<span id="_CPPv3N16FlatStateBinding5resetEv"></span><span id="_CPPv2N16FlatStateBinding5resetEv"></span><span id="FlatStateBinding::reset"></span><span class="target" id="class_flat_state_binding_1a9b1f1b7c2ca782c9761d5a2e97fbcb08"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reset</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding5resetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Discards a binding assembled as part of an aborted transaction. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding8validateERKNSt6vectorIP13DynamicObjectEE">
+<span id="_CPPv3NK16FlatStateBinding8validateERKNSt6vectorIP13DynamicObjectEE"></span><span id="_CPPv2NK16FlatStateBinding8validateERKNSt6vectorIP13DynamicObjectEE"></span><span id="FlatStateBinding::validate__std::vector:DynamicObjectP:CRC"></span><span class="target" id="class_flat_state_binding_1af2dd9680f1dc774c18584c2cde78369d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynamics</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding8validateERKNSt6vectorIP13DynamicObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Validates object/registry identity, finalized status, and fixed layout. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding7isBoundEv">
+<span id="_CPPv3NK16FlatStateBinding7isBoundEv"></span><span id="_CPPv2NK16FlatStateBinding7isBoundEv"></span><span id="FlatStateBinding::isBoundC"></span><span class="target" id="class_flat_state_binding_1aa0400edcc571d55140ea6e452198aa19"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isBound</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding7isBoundEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Report whether descriptor construction committed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding16stateScalarCountEv">
+<span id="_CPPv3NK16FlatStateBinding16stateScalarCountEv"></span><span id="_CPPv2NK16FlatStateBinding16stateScalarCountEv"></span><span id="FlatStateBinding::stateScalarCountC"></span><span class="target" id="class_flat_state_binding_1a23943c1390383b9b557b0cda026a7ce5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateScalarCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding16stateScalarCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return combined state-buffer size in doubles. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding21derivativeScalarCountEv">
+<span id="_CPPv3NK16FlatStateBinding21derivativeScalarCountEv"></span><span id="_CPPv2NK16FlatStateBinding21derivativeScalarCountEv"></span><span id="FlatStateBinding::derivativeScalarCountC"></span><span class="target" id="class_flat_state_binding_1acc0a1d36816b6ee05f6d808f675c6795"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeScalarCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding21derivativeScalarCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return combined drift-buffer size in doubles. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding15localNoiseCountEv">
+<span id="_CPPv3NK16FlatStateBinding15localNoiseCountEv"></span><span id="_CPPv2NK16FlatStateBinding15localNoiseCountEv"></span><span id="FlatStateBinding::localNoiseCountC"></span><span class="target" id="class_flat_state_binding_1a46c32f2cbcddb6599b69e2e2058b8da7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localNoiseCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding15localNoiseCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return total state-local noise endpoints before shared-source grouping. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding22updatesAreAllEuclideanEv">
+<span id="_CPPv3NK16FlatStateBinding22updatesAreAllEuclideanEv"></span><span id="_CPPv2NK16FlatStateBinding22updatesAreAllEuclideanEv"></span><span id="FlatStateBinding::updatesAreAllEuclideanC"></span><span class="target" id="class_flat_state_binding_1a5e0eb56615c3ad539a370b17a12c58bb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updatesAreAllEuclidean</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding22updatesAreAllEuclideanEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Report whether every state supports ordinary vector addition. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding7objectsEv">
+<span id="_CPPv3NK16FlatStateBinding7objectsEv"></span><span id="_CPPv2NK16FlatStateBinding7objectsEv"></span><span id="FlatStateBinding::objectsC"></span><span class="target" id="class_flat_state_binding_1afa5724bc33a7304daff1986ba710bb3b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv420FlatObjectDescriptor" title="FlatObjectDescriptor"><span class="n"><span class="pre">FlatObjectDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">objects</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding7objectsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow object descriptors in synchronized integration order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding6statesEv">
+<span id="_CPPv3NK16FlatStateBinding6statesEv"></span><span id="_CPPv2NK16FlatStateBinding6statesEv"></span><span id="FlatStateBinding::statesC"></span><span class="target" id="class_flat_state_binding_1a5a371904cb30f533b6c79d46d2a8f1d4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv419FlatStateDescriptor" title="FlatStateDescriptor"><span class="n"><span class="pre">FlatStateDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">states</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding6statesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow state descriptors in object and registration order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding10updateRunsEv">
+<span id="_CPPv3NK16FlatStateBinding10updateRunsEv"></span><span id="_CPPv2NK16FlatStateBinding10updateRunsEv"></span><span id="FlatStateBinding::updateRunsC"></span><span class="target" id="class_flat_state_binding_1a51280fd2e6c3f9888666dd5ba7e85da2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv413FlatUpdateRun" title="FlatUpdateRun"><span class="n"><span class="pre">FlatUpdateRun</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">updateRuns</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding10updateRunsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow coalesced Euclidean spans and individual special-state runs. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding19noiseTraversalOrderEv">
+<span id="_CPPv3NK16FlatStateBinding19noiseTraversalOrderEv"></span><span id="_CPPv2NK16FlatStateBinding19noiseTraversalOrderEv"></span><span id="FlatStateBinding::noiseTraversalOrderC"></span><span class="target" id="class_flat_state_binding_1a795ce513dec0640ac5a1f7433e08e338"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">noiseTraversalOrder</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding19noiseTraversalOrderEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow state indices in object order, then lexical state-name order. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding12gatherStatesERN5Eigen8VectorXdE">
+<span id="_CPPv3NK16FlatStateBinding12gatherStatesERN5Eigen8VectorXdE"></span><span id="_CPPv2NK16FlatStateBinding12gatherStatesERN5Eigen8VectorXdE"></span><span id="FlatStateBinding::gatherStates__Eigen::VectorXdRC"></span><span class="target" id="class_flat_state_binding_1abd610e36973fc0300254bd845e4d3fad"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding12gatherStatesERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live state buffers into flat storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding13scatterStatesERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK16FlatStateBinding13scatterStatesERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK16FlatStateBinding13scatterStatesERKN5Eigen8VectorXdE"></span><span id="FlatStateBinding::scatterStates__Eigen::VectorXdCRC"></span><span class="target" id="class_flat_state_binding_1a3723501e258cd02d11c1e043569bafd4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scatterStates</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding13scatterStatesERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies flat state storage into live buffers. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding17gatherDerivativesERN5Eigen8VectorXdE">
+<span id="_CPPv3NK16FlatStateBinding17gatherDerivativesERN5Eigen8VectorXdE"></span><span id="_CPPv2NK16FlatStateBinding17gatherDerivativesERN5Eigen8VectorXdE"></span><span id="FlatStateBinding::gatherDerivatives__Eigen::VectorXdRC"></span><span class="target" id="class_flat_state_binding_1ab8c327846d8282c7a102c4546a03be62"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherDerivatives</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding17gatherDerivativesERN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live derivative buffers into flat storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding17gatherDerivativesEPdN5Eigen5IndexE">
+<span id="_CPPv3NK16FlatStateBinding17gatherDerivativesEPdN5Eigen5IndexE"></span><span id="_CPPv2NK16FlatStateBinding17gatherDerivativesEPdN5Eigen5IndexE"></span><span id="FlatStateBinding::gatherDerivatives__doubleP.Eigen::IndexC"></span><span class="target" id="class_flat_state_binding_1a0d09d41f2ed0532f7c5729400ebbd21d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gatherDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">output</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">outputSize</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding17gatherDerivativesEPdN5Eigen5IndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copies live derivative buffers into caller-owned contiguous storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16FlatStateBinding19writeDriftCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdN5Eigen3RefIN5Eigen8VectorXdEEE">
+<span id="_CPPv3NK16FlatStateBinding19writeDriftCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdN5Eigen3RefIN5Eigen8VectorXdEEE"></span><span id="_CPPv2NK16FlatStateBinding19writeDriftCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdN5Eigen3RefIN5Eigen8VectorXdEEE"></span><span id="FlatStateBinding::writeDriftCandidate__Eigen::VectorXdCR.Eigen::VectorXdCR.double.Eigen::Ref:Eigen::VectorXd:C"></span><span class="target" id="class_flat_state_binding_1ad3f4514387f152ee752e3d12040ce035"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeDriftCandidate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">base</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">drift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16FlatStateBinding19writeDriftCandidateERKN5Eigen8VectorXdERKN5Eigen8VectorXdEdN5Eigen3RefIN5Eigen8VectorXdEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds one drift-only candidate in descriptor order. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding5boundE">
+<span id="_CPPv3N16FlatStateBinding5boundE"></span><span id="_CPPv2N16FlatStateBinding5boundE"></span><span id="FlatStateBinding::bound__b"></span><span class="target" id="class_flat_state_binding_1aba4494bbe4401b2795921e09c86bcc1c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bound</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding5boundE" title="Link to this definition"></a><br /></dt>
+<dd><p>True after complete descriptor construction. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding11bindingModeE">
+<span id="_CPPv3N16FlatStateBinding11bindingModeE"></span><span id="_CPPv2N16FlatStateBinding11bindingModeE"></span><span id="FlatStateBinding::bindingMode__Mode"></span><span class="target" id="class_flat_state_binding_1ac87125c83b7976f21e08965f25330440"></span><a class="reference internal" href="#_CPPv4N16FlatStateBinding4ModeE" title="FlatStateBinding::Mode"><span class="n"><span class="pre">Mode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bindingMode</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16FlatStateBinding4ModeE" title="FlatStateBinding::Mode"><span class="n"><span class="pre">Mode</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N16FlatStateBinding4Mode23DeterministicRungeKuttaE" title="FlatStateBinding::Mode::DeterministicRungeKutta"><span class="n"><span class="pre">DeterministicRungeKutta</span></span></a><a class="headerlink" href="#_CPPv4N16FlatStateBinding11bindingModeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Consumer family used for validation diagnostics. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding10stateCountE">
+<span id="_CPPv3N16FlatStateBinding10stateCountE"></span><span id="_CPPv2N16FlatStateBinding10stateCountE"></span><span id="FlatStateBinding::stateCount__s"></span><span class="target" id="class_flat_state_binding_1ab0a17e0d93ba9417be83b8ac60c1a747"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding10stateCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total stored state scalars. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding15derivativeCountE">
+<span id="_CPPv3N16FlatStateBinding15derivativeCountE"></span><span id="_CPPv2N16FlatStateBinding15derivativeCountE"></span><span id="FlatStateBinding::derivativeCount__s"></span><span class="target" id="class_flat_state_binding_1a57e6943dc1081d8779b8e8650280f0f6"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding15derivativeCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total drift scalars. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding10noiseCountE">
+<span id="_CPPv3N16FlatStateBinding10noiseCountE"></span><span id="_CPPv2N16FlatStateBinding10noiseCountE"></span><span id="FlatStateBinding::noiseCount__s"></span><span class="target" id="class_flat_state_binding_1a19e193c485e8d78edda5ebfa1c304636"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding10noiseCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total local noise endpoints. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding19allEuclideanUpdatesE">
+<span id="_CPPv3N16FlatStateBinding19allEuclideanUpdatesE"></span><span id="_CPPv2N16FlatStateBinding19allEuclideanUpdatesE"></span><span id="FlatStateBinding::allEuclideanUpdates__b"></span><span class="target" id="class_flat_state_binding_1aa43281881472a44b46bd3bae361fbe69"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allEuclideanUpdates</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding19allEuclideanUpdatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Enables whole-buffer arithmetic when no policy dispatch is needed. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding17objectDescriptorsE">
+<span id="_CPPv3N16FlatStateBinding17objectDescriptorsE"></span><span id="_CPPv2N16FlatStateBinding17objectDescriptorsE"></span><span id="FlatStateBinding::objectDescriptors__std::vector:FlatObjectDescriptor:"></span><span class="target" id="class_flat_state_binding_1a5f268a13d701b14fddaa650286df76a3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv420FlatObjectDescriptor" title="FlatObjectDescriptor"><span class="n"><span class="pre">FlatObjectDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">objectDescriptors</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding17objectDescriptorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed buffer metadata in integration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding16stateDescriptorsE">
+<span id="_CPPv3N16FlatStateBinding16stateDescriptorsE"></span><span id="_CPPv2N16FlatStateBinding16stateDescriptorsE"></span><span id="FlatStateBinding::stateDescriptors__std::vector:FlatStateDescriptor:"></span><span class="target" id="class_flat_state_binding_1aaf31c7e4800fb1ae028c91ac63b0cbf7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv419FlatStateDescriptor" title="FlatStateDescriptor"><span class="n"><span class="pre">FlatStateDescriptor</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateDescriptors</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding16stateDescriptorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Per-state metadata in registration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding15stateUpdateRunsE">
+<span id="_CPPv3N16FlatStateBinding15stateUpdateRunsE"></span><span id="_CPPv2N16FlatStateBinding15stateUpdateRunsE"></span><span id="FlatStateBinding::stateUpdateRuns__std::vector:FlatUpdateRun:"></span><span class="target" id="class_flat_state_binding_1a39bf895d0ff50dfcdbf30d01d1fad305"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv413FlatUpdateRun" title="FlatUpdateRun"><span class="n"><span class="pre">FlatUpdateRun</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateUpdateRuns</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding15stateUpdateRunsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adjacent compatible Euclidean states coalesced for vector arithmetic. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16FlatStateBinding28canonicalNoiseTraversalOrderE">
+<span id="_CPPv3N16FlatStateBinding28canonicalNoiseTraversalOrderE"></span><span id="_CPPv2N16FlatStateBinding28canonicalNoiseTraversalOrderE"></span><span id="FlatStateBinding::canonicalNoiseTraversalOrder__std::vector:s:"></span><span class="target" id="class_flat_state_binding_1a03cc09525e1fd87cc0125b0e85080eec"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">canonicalNoiseTraversalOrder</span></span></span><a class="headerlink" href="#_CPPv4N16FlatStateBinding28canonicalNoiseTraversalOrderE" title="Link to this definition"></a><br /></dt>
+<dd><p>State indices sorted by object and name for stable noise assignment. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynParamManager.html" class="btn btn-neutral float-left" title="C++ Module: dynParamManager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flatStochasticWorkspace.html" class="btn btn-neutral float-right" title="C++ Module: flatStochasticWorkspace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

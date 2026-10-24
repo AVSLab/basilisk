@@ -1,0 +1,791 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioFlexiblePanelMuJoCo &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioFlexiblePanelMuJoCo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioFlexiblePanelMuJoCo</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Review these prerequisite examples first:</span>
+
+<span class="sd">#. :ref:`scenarioFlexiblePanel` for the classic flexible-panel model.</span>
+<span class="sd">#. :ref:`scenarioHingedRigidBodyMuJoCo` for MuJoCo hinge and force setup.</span>
+<span class="sd">#. :ref:`scenarioAttitudeFeedbackRWMuJoCo` for attitude control with MuJoCo.</span>
+
+<span class="sd">This script demonstrates how to model a flexible, multi-segment solar panel</span>
+<span class="sd">using MuJoCo dynamics via :ref:`MJScene&lt;MJScene&gt;` instead of the traditional</span>
+<span class="sd">hub-centric Basilisk :ref:`spacecraft` dynamics. This scenario is a translation</span>
+<span class="sd">of the classic Basilisk :ref:`scenarioFlexiblePanel` example.</span>
+
+<span class="sd">Running the Example</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Use a Basilisk installation with MuJoCo support and the example dependencies</span>
+<span class="sd">described in :ref:`bskInstall`. When building from source, enable</span>
+<span class="sd">``--mujoco True``. With that Python environment active, run from the repository</span>
+<span class="sd">root:</span>
+
+<span class="sd">.. code-block:: console</span>
+
+<span class="sd">   python examples/mujoco/scenarioFlexiblePanelMuJoCo.py</span>
+
+<span class="sd">The script displays the result plots. When importing the scenario from</span>
+<span class="sd">``examples/mujoco``, call ``run(showPlots=False)`` to run without displaying</span>
+<span class="sd">windows; it still returns a dictionary of Matplotlib figures for inspection</span>
+<span class="sd">or saving.</span>
+
+<span class="sd">Model and Control Setup</span>
+<span class="sd">-----------------------</span>
+
+<span class="sd">The multi-body system is created programmatically as a MuJoCo XML string.</span>
+<span class="sd">It consists of a free-floating spacecraft bus ("hub") with a single flexible</span>
+<span class="sd">panel discretized into ``numberOfSegments`` rigid sub-panel bodies</span>
+<span class="sd">("subPanel1", "subPanel2", ...), connected end-to-end. Each sub-panel is</span>
+<span class="sd">connected to its neighbor by two colocated hinge joints: a "bend" joint</span>
+<span class="sd">(bending degree of freedom, or DOF) and a "twist" joint (torsional DOF). The</span>
+<span class="sd">panel's continuous flexibility is approximated by a discretized series of</span>
+<span class="sd">rigid links. As such, this system has 6 + 2 * ``numberOfSegments`` DOFs</span>
+<span class="sd">(3 translational, 3 rotational, 2 DOFs per panel segment).</span>
+
+<span class="sd">A torsional spring-damper torque is applied at every bend and twist joint to</span>
+<span class="sd">emulate the panel's structural stiffness and damping:</span>
+
+<span class="sd">#. :ref:`MJJointPIDController &lt;JointPIDController&gt;` computes a restoring torque</span>
+<span class="sd">   from a joint's angle and angular rate about a reference equilibrium angle,</span>
+<span class="sd">   and writes the result as</span>
+<span class="sd">   a ``SingleActuatorMsg`` command. One instance is attached to each bend and</span>
+<span class="sd">   twist joint, using separate bending and torsional stiffness/damping</span>
+<span class="sd">   coefficients.</span>
+
+<span class="sd">A standard Basilisk flight software (FSW) stack is used to point the hub at a</span>
+<span class="sd">fixed inertial attitude while the flexible panel dynamically responds to</span>
+<span class="sd">the resulting motion:</span>
+
+<span class="sd">#. :ref:`simpleNav` provides the spacecraft's navigation attitude solution.</span>
+<span class="sd">#. :ref:`inertial3D` generates a fixed inertial attitude reference.</span>
+<span class="sd">#. :ref:`attTrackingError` computes the attitude and rate tracking errors.</span>
+<span class="sd">#. :ref:`mrpFeedback` computes the commanded body torque, using an inertia</span>
+<span class="sd">   tensor for the hub plus panel computed via the parallel axis theorem.</span>
+
+<span class="sd">A small adapter module bridges the FSW torque command to the MuJoCo torque</span>
+<span class="sd">actuator:</span>
+
+<span class="sd">#. :ref:`cmdTorqueBodyToTorqueAtSite` relays the commanded body-frame torque as a</span>
+<span class="sd">   ``TorqueAtSiteMsg`` (site and body frames are aligned, so the default</span>
+<span class="sd">   identity ``dcm_SB`` is used), consumed by a torque actuator at the hub site.</span>
+
+<span class="sd">Earth gravity is configured using :ref:`NBodyGravity&lt;NBodyGravity&gt;` with a</span>
+<span class="sd">:ref:`pointMassGravityModel&lt;pointMassGravityModel&gt;` as the central body.</span>
+<span class="sd">Gravity targets are registered manually for the hub and every sub-panel body.</span>
+
+<span class="sd">The spacecraft is placed on an elliptical orbit with the panel initially</span>
+<span class="sd">undeformed and stationary relative to the hub (all bend/twist angles and</span>
+<span class="sd">rates initialized to zero) while the attitude controller maneuvers the hub</span>
+<span class="sd">to the commanded reference orientation. The simulation runs for 10 minutes.</span>
+
+<span class="sd">Bending angles, torsional angles, and their rates are plotted for every</span>
+<span class="sd">sub-panel segment, along with the attitude error and attitude error rate</span>
+<span class="sd">from the FSW control loop.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_thetas.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_betas.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_thetaDots.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_betaDots.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_sigma_BR.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_omega_BR_B.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span><span class="p">,</span> <span class="n">simHelpers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBodyGravity</span><span class="p">,</span> <span class="n">mujoco</span><span class="p">,</span> <span class="n">pointMassGravityModel</span><span class="p">,</span> <span class="n">simpleNav</span><span class="p">,</span> <span class="n">MJJointPIDController</span><span class="p">,</span> <span class="n">cmdTorqueBodyToTorqueAtSite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span><span class="p">,</span> <span class="n">inertial3D</span><span class="p">,</span> <span class="n">attTrackingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="c1"># Used to tag saved figs with name of file</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># -------------------------------------------------------------------------</span>
+<span class="c1"># PLOTTING FUNCTIONS</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plotBendingAngles">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotBendingAngles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotBendingAngles</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots bending angles for each segment"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">theta</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\theta_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\theta$ [deg]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Bending Angles"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotTorsionalAngles">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotTorsionalAngles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotTorsionalAngles</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots torsional angles for each segment"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">beta</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\beta_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\beta$ [deg]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Torsional Angles"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotBendingAngleRates">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotBendingAngleRates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotBendingAngleRates</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">thetaDot</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots bending angle rates for each segment"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">thetaDot</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\dot{\theta}_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\dot{\theta}$ [deg/s]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Bending Angle Rates"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotTorsionalAngleRates">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotTorsionalAngleRates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotTorsionalAngleRates</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">betaDot</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots torsional angle rates for each segment"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">betaDot</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\dot{\beta}_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\dot{\beta}$ [deg/s]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Torsional Angle Rates"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotAttitudeError">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotAttitudeError">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotAttitudeError</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sigma_BR</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots attitude error MRP components"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">sigma_BR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\sigma_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\sigma_{B/R}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Attitude Error"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotAttitudeErrorRate">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.plotAttitudeErrorRate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotAttitudeErrorRate</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">omega_BR_B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Plots attitude error rate components"""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">omega_BR_B</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\omega_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\omega_{B/R}$ [rad/s]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Attitude Error Rate"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="geometryClass">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.geometryClass">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">geometryClass</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Store hub and panel dimensions and derive equal-sized panel segments.</span>
+
+<span class="sd">    :param numberOfSegments: Positive number of rigid segments used to</span>
+<span class="sd">        approximate the flexible panel. The total panel length and mass</span>
+<span class="sd">        are divided equally among these segments.</span>
+<span class="sd">    """</span>
+    <span class="n">massHub</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># [kg]</span>
+    <span class="n">lengthHub</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># [m]</span>
+    <span class="n">widthHub</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># [m]</span>
+    <span class="n">heightHub</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># [m]</span>
+    <span class="n">lengthPanel</span> <span class="o">=</span> <span class="mf">18.0</span>  <span class="c1"># [m]</span>
+    <span class="n">widthPanel</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># [m]</span>
+    <span class="n">thicknessPanel</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># [m]</span>
+    <span class="n">massPanel</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Derive the mass and dimensions of each panel segment."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numberOfSegments</span> <span class="o">=</span> <span class="n">numberOfSegments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">massSubPanel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">massPanel</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberOfSegments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lengthSubPanel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lengthPanel</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberOfSegments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widthSubPanel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widthPanel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thicknessSubPanel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thicknessPanel</span></div>
+
+
+
+<div class="viewcode-block" id="panelChainGen">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.panelChainGen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panelChainGen</span><span class="p">(</span><span class="n">scGeometry</span><span class="p">:</span> <span class="n">geometryClass</span><span class="p">,</span> <span class="n">baseIndent</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the nested MuJoCo body elements for a flexible panel.</span>
+
+<span class="sd">    :param scGeometry: Hub and panel geometry, including the number of segments,</span>
+<span class="sd">        segment dimensions [m], and segment mass [kg].</span>
+<span class="sd">    :param baseIndent: Number of leading indentation tabs for the first segment.</span>
+<span class="sd">    :returns: XML defining the nested segment bodies, bending and twisting</span>
+<span class="sd">        joints, inertial properties, and visual geometry.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    """</span>
+
+    <span class="n">openTags</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">closeTags</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># Sub-panels connected to previous, denoted through an extra indent following prev. sub-panel</span>
+        <span class="n">pad</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">*</span> <span class="p">(</span><span class="n">baseIndent</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Starting sub-panel bending position, located at top corner of hub, centered in thickness of panel</span>
+            <span class="n">bendingPos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"0 </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessSubPanel</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Else, sub-panel bending position defined at end of previous sub-panel</span>
+            <span class="n">bendingPos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"0 </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthSubPanel</span><span class="si">}</span><span class="s2"> 0"</span>
+
+        <span class="c1"># CoM offset to correctly account for CoM of sub-panel on full flexible panel</span>
+        <span class="n">COM_offset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"0 </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthSubPanel</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> 0"</span>
+
+        <span class="c1"># Inertia matrix diagonal values for each sub-panel</span>
+        <span class="n">ixx</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthSubPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessSubPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">iyy</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthSubPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessSubPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">izz</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthSubPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthSubPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+
+        <span class="c1"># XML string defining sub-panel body from previously calculated values</span>
+        <span class="n">openTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">&lt;body name = "subPanel</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">" pos = "</span><span class="si">{</span><span class="n">bendingPos</span><span class="si">}</span><span class="s2">"&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">   &lt;joint name = "bendJoint</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">" pos = "0 0 0" axis = "1 0 0" ref = "0"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">   &lt;joint name = "twistJoint</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">" pos = "0 0 0" axis = "0 1 0" ref = "0"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">   &lt;inertial pos = "</span><span class="si">{</span><span class="n">COM_offset</span><span class="si">}</span><span class="s2">" mass = "</span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massSubPanel</span><span class="si">}</span><span class="s2">" diaginertia = "</span><span class="si">{</span><span class="n">ixx</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iyy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">izz</span><span class="si">}</span><span class="s2">"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">   &lt;geom name = "subPanel</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">Geom" class = "subpanel_geom" pos = "</span><span class="si">{</span><span class="n">COM_offset</span><span class="si">}</span><span class="s2">"/&gt;"""</span><span class="p">)</span>
+
+        <span class="c1"># Correctly closing off bodies in XML string</span>
+        <span class="n">closeTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">&lt;/body&gt;"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">openTags</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">closeTags</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="makeMjXmlString">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.makeMjXmlString">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makeMjXmlString</span><span class="p">(</span><span class="n">scGeometry</span><span class="p">:</span> <span class="n">geometryClass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build MuJoCo XML for a spacecraft hub with a flexible panel.</span>
+
+<span class="sd">    :param scGeometry: Hub and panel geometry, including dimensions [m],</span>
+<span class="sd">        masses [kg], and the number of panel segments.</span>
+<span class="sd">    :returns: Complete MuJoCo model XML containing the hub and panel chain.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Inertia matrix diagonal values for hub</span>
+    <span class="n">ixx</span> <span class="o">=</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">iyy</span> <span class="o">=</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">izz</span> <span class="o">=</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">widthHub</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Generating panel chain</span>
+    <span class="n">panelChain</span> <span class="o">=</span> <span class="n">panelChainGen</span><span class="p">(</span><span class="n">scGeometry</span><span class="p">,</span> <span class="n">baseIndent</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""&lt;mujoco model = "busWithFlexiblePanel"&gt;</span>
+<span class="s2">    &lt;compiler angle = "radian" meshdir = ""/&gt;</span>
+<span class="s2">    &lt;default&gt;</span>
+<span class="s2">        &lt;default class = "subpanel_geom"&gt;</span>
+<span class="s2">            &lt;geom type = "box" size = "</span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthSubPanel</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthSubPanel</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessSubPanel</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">"</span>
+<span class="s2">            contype = "0" conaffinity = "1"/&gt;</span>
+<span class="s2">        &lt;/default&gt;</span>
+<span class="s2">    &lt;/default&gt;</span>
+
+<span class="s2">    &lt;worldbody&gt;</span>
+<span class="s2">        &lt;body name = "hub" pos = "0 0 0"&gt;</span>
+<span class="s2">            &lt;freejoint name = "busFree"/&gt;</span>
+<span class="s2">            &lt;inertial pos = "0 0 0" mass = "</span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span><span class="si">}</span><span class="s2">" diaginertia = "</span><span class="si">{</span><span class="n">ixx</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iyy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">izz</span><span class="si">}</span><span class="s2">"/&gt;</span>
+<span class="s2">            &lt;geom name = "hubVisual" type = "box" size = "</span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthHub</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">" rgba = "1 1 1 1"/&gt;</span>
+<span class="s2">            &lt;site name = "hubSite" pos = "0 0 0"/&gt;</span>
+<span class="si">{</span><span class="n">panelChain</span><span class="si">}</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">    &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;"""</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFlexiblePanelMuJoCo.html#scenarioFlexiblePanelMuJoCo.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run 10 minutes of attitude control with a flexible solar panel.</span>
+
+<span class="sd">    :param showPlots: Display the Matplotlib figures and wait for the plot</span>
+<span class="sd">        windows to close when True. Defaults to False; figures are still</span>
+<span class="sd">        generated and returned in either case.</span>
+<span class="sd">    :returns: Dictionary mapping scenario-prefixed names to six Matplotlib</span>
+<span class="sd">        figures: bending and twisting angles, their rates, attitude error,</span>
+<span class="sd">        and angular-rate tracking error. No files are saved by this function.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    """</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 1) Simulation configuration and MJScene dynamics model</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">"simTask"</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">"simProcess"</span>
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">"fswTask"</span>
+    <span class="n">fswProcessName</span> <span class="o">=</span> <span class="s2">"fswProcess"</span>
+
+    <span class="c1"># Initializing simulation time/time-steps for dynamics/fsw task</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">timeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">fswTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">timeStep</span><span class="p">))</span>
+    <span class="n">fswProcess</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">fswProcessName</span><span class="p">)</span>
+    <span class="n">fswProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">fswTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># Constructing MJ XML string and loaded into MJScene dynamics model</span>
+    <span class="n">numberOfSegments</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># specifies number of discretized sub-panels (CHANGE THIS FOR SIM)</span>
+    <span class="n">scGeometry</span> <span class="o">=</span> <span class="n">geometryClass</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">)</span>
+    <span class="n">xmlString</span> <span class="o">=</span> <span class="n">makeMjXmlString</span><span class="p">(</span><span class="n">scGeometry</span><span class="p">)</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">xmlString</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mujocoScene"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 2) Retrieve spacecraft components</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Pull handles of hub/sub-panel bodies</span>
+    <span class="n">busBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+    <span class="n">subPanels</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="sa">f</span><span class="s2">"subPanel</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">)]</span>
+
+    <span class="c1"># Retrieving bend/twist joints that define flexible nature of panel</span>
+    <span class="n">bendJoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">subPanels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="sa">f</span><span class="s2">"bendJoint</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">)]</span>
+    <span class="n">twistJoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">subPanels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="sa">f</span><span class="s2">"twistJoint</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">)]</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 3) Adding damping/stiffness to subpanels (bend &amp; twist)</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Initializing stiffness/damping coefficients of bending/twisting DOFs</span>
+    <span class="n">kBend</span><span class="p">,</span> <span class="n">cBend</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">8.0</span>  <span class="c1"># stiffness [N m/rad], damping [N m s/rad]</span>
+    <span class="n">kTwist</span><span class="p">,</span> <span class="n">cTwist</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span>  <span class="c1"># stiffness [N m/rad], damping [N m s/rad]</span>
+    <span class="n">thetaRef</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+
+    <span class="c1"># Keep all springDamper/refMsgs in list so they remain in scope for whole sim</span>
+    <span class="n">springDampers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">refMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+            <span class="c1"># Loops through each bend and twist joint to apply proper torsional torquing</span>
+            <span class="k">for</span> <span class="n">jointName</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">"bendJoint</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">kBend</span><span class="p">,</span> <span class="n">cBend</span><span class="p">),</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"twistJoint</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">kTwist</span><span class="p">,</span> <span class="n">cTwist</span><span class="p">)]:</span>
+                <span class="c1"># Retrieving joints and adding actuators to mimic damping/stiffness effects</span>
+                <span class="n">actuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addJointSingleActuator</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">jointName</span><span class="si">}</span><span class="s2">Actuator"</span><span class="p">,</span> <span class="n">jointName</span><span class="p">)</span>
+                <span class="n">joint</span> <span class="o">=</span> <span class="n">subPanels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+
+                <span class="c1"># Using the C++ JointPIDController</span>
+                <span class="n">springDamper</span> <span class="o">=</span> <span class="n">MJJointPIDController</span><span class="o">.</span><span class="n">JointPIDController</span><span class="p">()</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">jointName</span><span class="si">}</span><span class="s2">SpringDamper"</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">setProportionalGain</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">setDerivativeGain</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+                <span class="c1"># Generating reference pos/vel messages</span>
+                <span class="n">refPosMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+                <span class="n">refPosMsgPayload</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">thetaRef</span>
+                <span class="n">refPosMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">refPosMsgPayload</span><span class="p">)</span>
+
+                <span class="n">refVelMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+                <span class="n">refVelMsgPayload</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+                <span class="n">refVelMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">refVelMsgPayload</span><span class="p">)</span>
+
+                <span class="n">refMsgs</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">refPosMsg</span><span class="p">,</span> <span class="n">refVelMsg</span><span class="p">])</span>
+
+                <span class="c1"># Connecting reference/current states to desired/measured positions and velocities</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">desiredPosInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">refPosMsg</span><span class="p">)</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">desiredVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">refVelMsg</span><span class="p">)</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">measuredPosInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+                <span class="n">springDamper</span><span class="o">.</span><span class="n">measuredVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="p">)</span>
+
+                <span class="c1"># Connecting actuator to commanded torque from PID</span>
+                <span class="n">actuator</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">springDamper</span><span class="o">.</span><span class="n">outputOutMsg</span><span class="p">)</span>
+
+                <span class="c1"># Add each model to dynamics task and append to springDampers</span>
+                <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">springDamper</span><span class="p">)</span>
+                <span class="n">springDampers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">springDamper</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 4) Add gravity and set up orbital elements</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">8e6</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [-]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">muEarth</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">muEarth</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="c1"># Adding N-Body gravity model into MJScene</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"gravity"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="c1"># Applying Earth point mass gravity effects to model, make central body</span>
+    <span class="n">earthPm</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">earthPm</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">muEarth</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="s2">"earth"</span><span class="p">,</span> <span class="n">earthPm</span><span class="p">,</span> <span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Gravity effects added to each body in scene (hub + all sub-panels)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">,</span> <span class="n">busBody</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="sa">f</span><span class="s2">"subPanel</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">subPanels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 5) Navigation and attitude control</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Reading s/c state and publishing standard navigation output</span>
+    <span class="n">simpleNavObj</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"simpleNav"</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">busBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simpleNavObj</span><span class="p">)</span>
+
+    <span class="c1"># Define the desired inertial attitude using modified Rodrigues parameters.</span>
+    <span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"inertial3D"</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">inertial3DObj</span><span class="p">)</span>
+
+    <span class="c1"># Tracks attitude error of s/c</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"attTrackingError"</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">simpleNavObj</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span> <span class="c1"># feed in the current navigation attitude</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span> <span class="c1"># feed in inertial frame (reference attitude)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="c1"># Hub inertia about own center of mass</span>
+    <span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massHub</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">widthHub</span><span class="o">**</span><span class="mi">2</span><span class="p">)]])</span>
+    <span class="c1"># FULL panel inertia about its own center of mass</span>
+    <span class="n">IPanelPntSc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">massPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,],</span>
+                              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">scGeometry</span><span class="o">.</span><span class="n">widthPanel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthPanel</span><span class="o">**</span><span class="mi">2</span><span class="p">)]])</span>
+    <span class="c1"># Position of panel's CoM relative to hub point B, in body frame</span>
+    <span class="n">r_ScB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthHub</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">lengthPanel</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+           <span class="n">scGeometry</span><span class="o">.</span><span class="n">heightHub</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">thicknessSubPanel</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># Combine into a single inertia tensor about hub reference point B (parallel axis theorem).</span>
+    <span class="n">IHubPntB_B</span> <span class="o">=</span>  <span class="n">IHubPntBc_B</span> <span class="o">+</span> <span class="n">IPanelPntSc_B</span> <span class="o">-</span> <span class="n">scGeometry</span><span class="o">.</span><span class="n">massPanel</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">v3Tilde</span><span class="p">(</span><span class="n">r_ScB_B</span><span class="p">))</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">v3Tilde</span><span class="p">(</span><span class="n">r_ScB_B</span><span class="p">))</span>
+
+    <span class="c1"># Apply modified Rodrigues parameter (MRP) attitude control to the spacecraft.</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mrpFeedback"</span>
+    <span class="n">decayTime</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># [s]</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="mf">0.9</span>  <span class="c1"># [-] Damping ratio.</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">IHubPntB_B</span><span class="p">)</span> <span class="o">/</span> <span class="n">decayTime</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">/</span> <span class="n">xi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">IHubPntB_B</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Inertia tensor passed into config message, vehicle config created</span>
+    <span class="n">configData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">IHubPntB_B</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+    <span class="n">configDataMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span>
+    <span class="n">configDataMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configData</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">configDataMsg</span><span class="p">)</span> <span class="c1"># so MRP controller knows mass properties</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+
+    <span class="c1"># Torque actuator at hub site for FSW-commanded control torques</span>
+    <span class="n">torqueActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"hubTorqueAct"</span><span class="p">,</span> <span class="s2">"hubSite"</span><span class="p">)</span>
+
+    <span class="c1"># Library adapter converts body-frame torque into a TorqueAtSite message.</span>
+    <span class="n">torqueBridge</span> <span class="o">=</span> <span class="n">cmdTorqueBodyToTorqueAtSite</span><span class="o">.</span><span class="n">CmdTorqueBodyToTorqueAtSite</span><span class="p">()</span>
+    <span class="n">torqueBridge</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"torqueBridge"</span>
+    <span class="n">torqueBridge</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">torqueBridge</span><span class="p">)</span>
+
+    <span class="n">torqueActuator</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueBridge</span><span class="o">.</span><span class="n">torqueOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 6) Setup data recording</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Hub position/velocity</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">busBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># FSW attitude error (control performance)</span>
+    <span class="n">attErrorLog</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="p">)</span>
+
+    <span class="c1"># Hinge angle/rate recorders at each sub panel, bend and twist combined into single recorder</span>
+    <span class="n">posData</span><span class="p">,</span> <span class="n">rateData</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="p">(</span><span class="n">bendJoints</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">twistJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">posLog</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+            <span class="n">rateLog</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">posLog</span><span class="p">)</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rateLog</span><span class="p">)</span>
+            <span class="n">posData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posLog</span><span class="p">)</span>
+            <span class="n">rateData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rateLog</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 7) Initialize simulation, orbit, &amp; joint angles</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Setting initial conditions</span>
+    <span class="n">busFree</span> <span class="o">=</span> <span class="n">busBody</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">busBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">busFree</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">bendJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">thetaInit</span><span class="p">)</span>
+        <span class="n">twistJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">thetaInit</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 8) Execute simulation</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 9) Post processing and plotting</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">theta</span><span class="p">,</span> <span class="n">thetaDot</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">betas</span><span class="p">,</span> <span class="n">betaDot</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="c1"># Need to unwind bend/twist data for proper logging</span>
+        <span class="n">theta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posData</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">thetaDot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rateData</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">betas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posData</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">betaDot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rateData</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">posData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="c1"># dyn-task time data</span>
+    <span class="n">timeAxisFSW</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="c1"># fsw-task time data</span>
+
+    <span class="c1"># Generating plots</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_thetas"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotBendingAngles</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_betas"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotTorsionalAngles</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">betas</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_thetaDots"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotBendingAngleRates</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">thetaDot</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_betaDots"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotTorsionalAngleRates</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">betaDot</span><span class="p">,</span> <span class="n">numberOfSegments</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_sigma_BR"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotAttitudeError</span><span class="p">(</span><span class="n">timeAxisFSW</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_omega_BR_B"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotAttitudeErrorRate</span><span class="p">(</span><span class="n">timeAxisFSW</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">omega_BR_B</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">showPlots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

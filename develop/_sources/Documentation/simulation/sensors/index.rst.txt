@@ -1,0 +1,17 @@
+.. _Folder_sensors:
+
+sensors
+=======
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   camera <camera/camera>
+   coarseSunSensor <coarseSunSensor/coarseSunSensor>
+   hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor>
+   imuSensor <imuSensor/imuSensor>
+   magnetometer <magnetometer/magnetometer>
+   simpleMassProps <simpleMassProps/simpleMassProps>
+   simpleVoltEstimator <simpleVoltEstimator/simpleVoltEstimator>
+   starTracker <starTracker/starTracker>

@@ -1,0 +1,272 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_avsLibrarySelfCheck &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_avsLibrarySelfCheck</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_avsLibrarySelfCheck</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#   Integrated Unit Test Script</span>
+<span class="c1">#   Purpose:  Self-check on the AVS C-code support libraries</span>
+<span class="c1">#   Author:  Hanspeter Schaub</span>
+<span class="c1">#   Creation Date:  August 11, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">avsLibrarySelfCheck</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span>
+
+
+<span class="n">SELF_CHECKS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"testRigidBodyKinematics"</span><span class="p">:</span> <span class="mf">1e-10</span><span class="p">,</span>
+    <span class="s2">"testOrbitalAnomalies"</span><span class="p">:</span> <span class="mf">1e-10</span><span class="p">,</span>  <span class="c1"># [rad] absolute anomaly tolerance</span>
+    <span class="s2">"testLinearAlgebra"</span><span class="p">:</span> <span class="mf">1e-10</span><span class="p">,</span>
+    <span class="s2">"testOrbitalHill"</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>  <span class="c1"># [km] and [km/s] absolute state tolerances</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="test_unitDynamicsModes">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.html#test_avsLibrarySelfCheck.test_unitDynamicsModes">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"testName"</span><span class="p">,</span> <span class="n">SELF_CHECKS</span><span class="p">)</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unitDynamicsModes</span><span class="p">(</span><span class="n">testName</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""AVS Library Self Check"""</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">unitAVSLibrarySelfCheck</span><span class="p">(</span><span class="n">testName</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<div class="viewcode-block" id="unitAVSLibrarySelfCheck">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.html#test_avsLibrarySelfCheck.unitAVSLibrarySelfCheck">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unitAVSLibrarySelfCheck</span><span class="p">(</span><span class="n">testName</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run a named native self-check; unknown names must never report success."""</span>
+    <span class="k">if</span> <span class="n">testName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SELF_CHECKS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown AVS self-check: </span><span class="si">{</span><span class="n">testName</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avsLibrarySelfCheck</span><span class="p">,</span> <span class="n">testName</span><span class="p">)(</span><span class="n">SELF_CHECKS</span><span class="p">[</span><span class="n">testName</span><span class="p">])</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"ERROR: </span><span class="si">{</span><span class="n">testName</span><span class="si">}</span><span class="s2"> failed self-check.</span><span class="se">\n</span><span class="s2">"</span><span class="p">]</span> <span class="k">if</span> <span class="n">testFailCount</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"PASSED "</span><span class="p">)</span>
+        <span class="n">passFailText</span> <span class="o">=</span> <span class="s2">"PASSED"</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">'ForestGreen'</span>  <span class="c1"># color to write auto-documented "PASSED" message in in LATEX</span>
+        <span class="n">snippetContent</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testFailCount</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">passFailText</span> <span class="o">=</span> <span class="s1">'FAILED'</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">'Red'</span>  <span class="c1"># color to write auto-documented "FAILED" message in in LATEX</span>
+        <span class="n">snippetContent</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">testMessages</span><span class="p">:</span>
+            <span class="n">snippetContent</span> <span class="o">+=</span> <span class="n">message</span>
+
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+    <span class="n">snippetMsgName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">'Msg-'</span> <span class="o">+</span> <span class="n">testName</span>
+    <span class="n">simHelpers</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetMsgName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">"/../_Documentation/"</span><span class="p">)</span>
+
+    <span class="n">snippetPassFailName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">'TestMsg-'</span> <span class="o">+</span> <span class="n">testName</span>
+    <span class="n">snippetContent</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'\textcolor{'</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">'}{'</span> <span class="o">+</span> <span class="n">passFailText</span> <span class="o">+</span> <span class="s1">'}'</span>
+    <span class="n">simHelpers</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetPassFailName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">"/../_Documentation/"</span><span class="p">)</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="test_self_check_dispatch">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.html#test_avsLibrarySelfCheck.test_self_check_dispatch">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">SELF_CHECKS</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"error_count"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_self_check_dispatch</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">error_count</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Every advertised selector calls native code and propagates its failures."""</span>
+    <span class="n">calls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">native_check</span><span class="p">(</span><span class="n">tolerance</span><span class="p">):</span>
+        <span class="n">calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">error_count</span>
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">avsLibrarySelfCheck</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">native_check</span><span class="p">)</span>
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">simHelpers</span><span class="p">,</span> <span class="s2">"writeTeXSnippet"</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="n">unitAVSLibrarySelfCheck</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">calls</span> <span class="o">==</span> <span class="p">[</span><span class="n">SELF_CHECKS</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="n">error_count</span>
+    <span class="k">assert</span> <span class="nb">bool</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">(</span><span class="n">error_count</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_self_check_unknown_selector">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.html#test_avsLibrarySelfCheck.test_self_check_unknown_selector">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"testOrbitalElements"</span><span class="p">,</span> <span class="s2">"testEnvironment"</span><span class="p">,</span> <span class="s2">"nonexistent_test"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_self_check_unknown_selector</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Previously empty test selectors must fail instead of reporting PASSED."""</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"Unknown AVS self-check"</span><span class="p">):</span>
+        <span class="n">unitAVSLibrarySelfCheck</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">unitAVSLibrarySelfCheck</span><span class="p">(</span>
+        <span class="s2">"testOrbitalHill"</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

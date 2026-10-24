@@ -1,0 +1,409 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_unitSpacecraftLocation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="C++ Module: spaceWeatherData" href="../../spaceWeatherData/spaceWeatherData.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../albedo/albedo.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dentonFluxModel/dentonFluxModel.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../earthRadiationModel/earthRadiationModel.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eclipse/eclipse.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ephemerisConverter/ephemerisConverter.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExponentialAtmosphere/exponentialAtmosphere.html">exponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundLocation/groundLocation.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundMapping/groundMapping.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldCenteredDipole/magneticFieldCenteredDipole.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldWMM/magneticFieldWMM.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MsisAtmosphere/msisAtmosphere.html">msisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../planetEphemeris/planetEphemeris.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../solarFlux/solarFlux.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingDynamics/spacecraftChargingDynamics.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingEquilibrium/spacecraftChargingEquilibrium.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../spacecraftLocation.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spaceWeatherData/spaceWeatherData.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spiceInterface/spiceInterface.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stripLocation/stripLocation.html">stripLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../TabularAtmosphere/tabularAtmosphere.html">tabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ZeroWindModel/zeroWindModel.html">zeroWindModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="../spacecraftLocation.html"><span class="module-type-label module-type-cpp">C++</span> Module: spacecraftLocation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_unitSpacecraftLocation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-unitspacecraftlocation">
+<span id="id1"></span><h1>test_unitSpacecraftLocation<a class="headerlink" href="#test-unitspacecraftlocation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_unitSpacecraftLocation">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocation">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultPolarRadius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultPlanet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxRange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cone</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocation" title="Link to this definition"></a></dt>
+<dd><p>Tests whether spacecraftLocation:</p>
+<ol class="arabic simple">
+<li><p>defaults planet polar radius to equatorial radius if the polar radius is not set</p></li>
+<li><p>checks that the zero default planet states are used if the planet is not provided</p></li>
+<li><p>checks that the planet oblateness is accounted for</p></li>
+<li><p>checks if the optional sensor boresight axis is properly accounted for</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationColinearAccess">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationColinearAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationColinearAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationColinearAccess" title="Link to this definition"></a></dt>
+<dd><p>Regression test for issues #644 / #946.</p>
+<p>Two spacecraft that are radially aligned (on the same ray from the planet
+center) at different altitudes have an unobstructed line of sight, so
+<code class="docutils literal notranslate"><span class="pre">hasAccess</span></code> must be 1.</p>
+<p>Before the #946 fix (commit <code class="docutils literal notranslate"><span class="pre">d432682135</span></code>), <code class="docutils literal notranslate"><span class="pre">rClose</span></code> – the closest point
+on the inter-spacecraft segment to the planet center – was computed from the
+<em>unclamped</em> line parameter. For a radial alignment that parameter is negative,
+placing the “closest point” at the planet center (<code class="docutils literal notranslate"><span class="pre">rClose</span></code> ~ 0), so the
+<code class="docutils literal notranslate"><span class="pre">rClose.norm()</span> <span class="pre">&gt;</span> <span class="pre">rEquator</span></code> gate failed and access was wrongly denied.</p>
+<p>This geometry keeps every other access pathway neutral – no planet message
+(identity orientation at the origin), a spherical planet so <code class="docutils literal notranslate"><span class="pre">zScale</span> <span class="pre">==</span> <span class="pre">1</span></code>,
+no range cap, no boresight cone, and no sun message – which isolates the
+<code class="docutils literal notranslate"><span class="pre">rClose</span></code> computation. The existing <a class="reference internal" href="#test_unitSpacecraftLocation.test_spacecraftLocation" title="test_unitSpacecraftLocation.test_spacecraftLocation"><code class="xref py py-func docutils literal notranslate"><span class="pre">test_spacecraftLocation()</span></code></a> cases
+cannot catch this regression: their equal-radius geometry holds the line
+parameter at ~0.5, inside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, where the clamp is a no-op.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationGlare">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationGlare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sunPolarAngle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sunAzimuth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewPolarAngle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewAzimuth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedGlareFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glareThreshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedHasGlare</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useGlareConstraint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedAccess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationGlare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationGlare" title="Link to this definition"></a></dt>
+<dd><p>Verify specular-glare geometry and its optional access constraint.</p>
+<section id="validation-test-description">
+<h2>Validation Test Description<a class="headerlink" href="#validation-test-description" title="Link to this heading"></a></h2>
+<p>The test places an offset body-fixed location far from the inertial origin,
+then supplies point-to-Sun and point-to-viewer directions with known mirror
+geometry. This verifies the glare factor, threshold flag, access behavior,
+and the use of the body-fixed location as the origin of both directions.</p>
+</section>
+<section id="test-parameter-discussion">
+<h2>Test Parameter Discussion<a class="headerlink" href="#test-parameter-discussion" title="Link to this heading"></a></h2>
+<p>The cases cover normal and oblique exact reflections, an in-plane near
+miss, an out-of-plane view, Sun and observer directions behind the surface,
+the exact threshold boundary, and zero-threshold back-facing geometry.
+<code class="docutils literal notranslate"><span class="pre">useGlareConstraint</span></code> also verifies that glare rejection is opt-in.</p>
+</section>
+<section id="expected-results">
+<h2>Expected Results<a class="headerlink" href="#expected-results" title="Link to this heading"></a></h2>
+<p>Exact reflections produce a glare factor of one. Off-specular and
+back-facing cases produce the analytical factor supplied by the test and
+do not meet the configured glare threshold. Back-facing geometry is never
+classified as glare, including when the threshold is zero.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationGlareThresholdValidation">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationGlareThresholdValidation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glareThreshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationGlareThresholdValidation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationGlareThresholdValidation" title="Link to this definition"></a></dt>
+<dd><p>Verify that the geometric glare threshold is finite and in [0, 1].</p>
+<section id="id2">
+<h2>Validation Test Description<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>The test initializes an otherwise valid module with a glare threshold
+outside the supported dimensionless alignment range or with a non-finite
+value.</p>
+</section>
+<section id="id3">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>Values immediately below zero and above one exercise both invalid bounds.
+NaN and both infinities check that non-finite thresholds are rejected.</p>
+</section>
+<section id="id4">
+<h2>Expected Results<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Reset()</span></code> emits <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>, which raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> and stops
+initialization.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationIlluminationRequirements">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationIlluminationRequirements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sunPolarAngle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solarAngleLimit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimumIllumination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectSun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectEclipse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedIllumination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedAccess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationIlluminationRequirements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationIlluminationRequirements" title="Link to this definition"></a></dt>
+<dd><p>Verify the optional illumination-angle and eclipse requirements.</p>
+<section id="id5">
+<h2>Validation Test Description<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>The test provides a surface point, its normal, a tracked imaging
+spacecraft, and optional Sun and eclipse messages. It evaluates the two
+illumination gates independently and together.</p>
+</section>
+<section id="id6">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>The cases place the Sun inside or outside <code class="docutils literal notranslate"><span class="pre">theta_solar</span></code>, put the eclipse
+illumination factor above or below <code class="docutils literal notranslate"><span class="pre">min_illumination_factor</span></code>, omit the
+optional eclipse input, and omit the optional Sun input.</p>
+</section>
+<section id="id7">
+<h2>Expected Results<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p>An illuminated point retains access only when every configured and
+connected illumination requirement is satisfied. Without a Sun message,
+illumination and glare remain unreported while geometric access is
+unchanged.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequirement">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationViewAngleRequirement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewAngle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewAngleLimit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectSun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedAccess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationViewAngleRequirement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequirement" title="Link to this definition"></a></dt>
+<dd><p>Verify the optional surface-normal-to-observer access requirement.</p>
+<section id="id8">
+<h2>Validation Test Description<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>Place the tracked spacecraft at a known angle from the body-fixed normal,
+with and without the optional Sun message.</p>
+</section>
+<section id="id9">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p>The cases cover accepted and rejected views, the exact limit, and the
+negative default that disables the requirement.</p>
+</section>
+<section id="id10">
+<h2>Expected Results<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">scViewAngle</span></code> reports the viewing geometry even without a Sun message.
+Access is denied only when the enabled viewing-angle limit is exceeded.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequiresNormal">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftLocationViewAngleRequiresNormal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraftLocationViewAngleRequiresNormal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequiresNormal" title="Link to this definition"></a></dt>
+<dd><p>Verify that an enabled viewing-angle limit requires a surface normal.</p>
+<section id="id11">
+<h2>Validation Test Description<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<p>Initialize a module with a viewing-angle limit but no <code class="docutils literal notranslate"><span class="pre">aHat_B</span></code>.</p>
+</section>
+<section id="id12">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<p>A positive limit enables the otherwise optional viewing-angle check.</p>
+</section>
+<section id="id13">
+<h2>Expected Results<a class="headerlink" href="#id13" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Reset()</span></code> emits <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> and initialization stops.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraft_location_glare_multiple_observers">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraft_location_glare_multiple_observers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_glare_constraint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_BN</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraft_location_glare_multiple_observers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraft_location_glare_multiple_observers" title="Link to this definition"></a></dt>
+<dd><p>Check independent glare outputs as two observers change position.</p>
+<section id="id14">
+<h2>Validation Test Description<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<p>Connect two observers to an offset surface point. Start one at the ideal
+reflection and the other outside the glare cone, then swap their positions.
+Finally, move both outside the cone to check that each glare flag clears.</p>
+</section>
+<section id="id15">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<p>Run with identity and nonzero primary attitudes and with glare rejection
+enabled and disabled. The Sun and observer directions are defined in the
+body frame and transformed into the inertial frame.</p>
+</section>
+<section id="id16">
+<h2>Expected Results<a class="headerlink" href="#id16" title="Link to this heading"></a></h2>
+<p>The observer on the reflected ray has unit glare factor. The other is
+twenty degrees away and has a glare factor below the default threshold.
+Each output follows its own observer at every update. Only the glared
+observer loses access when the constraint is enabled; previous glare flags
+do not persist once either observer leaves the reflected ray.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_unitSpacecraftLocation.test_spacecraft_location_glare_roundoff">
+<span class="sig-prename descclassname"><span class="pre">test_unitSpacecraftLocation.</span></span><span class="sig-name descname"><span class="pre">test_spacecraft_location_glare_roundoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incidence_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_BN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_glare_constraint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glare_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_glare</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_unitSpacecraftLocation.html#test_spacecraft_location_glare_roundoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_unitSpacecraftLocation.test_spacecraft_location_glare_roundoff" title="Link to this definition"></a></dt>
+<dd><p>Verify glare thresholds at and just outside exact reflection geometry.</p>
+<section id="id17">
+<h2>Validation Test Description<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<p>Construct the Sun direction and its ideal mirror reflection in the body
+frame, then rotate both into the inertial frame about an offset surface
+point. Shift the observer by a known angle from the ideal reflection.</p>
+</section>
+<section id="id18">
+<h2>Test Parameter Discussion<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<p>Incidence angles span normal through nearly grazing illumination, with
+identity and nonzero spacecraft attitudes. The cases exercise exact
+reflection at threshold one, the default threshold boundary, and views
+one microradian beyond each boundary. Glare rejection is enabled and
+disabled independently.</p>
+</section>
+<section id="id19">
+<h2>Expected Results<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
+<p>The glare factor equals the cosine of the reflected-ray viewing offset.
+Roundoff must not prevent boundary views from being classified as glare.
+Nearby views outside the boundary retain access, and detected glare only
+prevents access when the constraint is enabled.</p>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../spaceWeatherData/spaceWeatherData.html" class="btn btn-neutral float-right" title="C++ Module: spaceWeatherData" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

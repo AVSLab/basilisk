@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_centerRadiusCNN:
+
+centerRadiusCNN
+===============
+
+:doc:`Module documentation <centerRadiusCNN>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

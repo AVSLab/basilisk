@@ -1,0 +1,15 @@
+.. _scenarioBranchingPanels:
+
+scenarioBranchingPanels
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioBranchingPanels
+   :members:
+   :show-inheritance:
+

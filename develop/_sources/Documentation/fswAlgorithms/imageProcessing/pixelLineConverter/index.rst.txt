@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_pixelLineConverter:
+
+pixelLineConverter
+==================
+
+:doc:`Module documentation <pixelLineConverter>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

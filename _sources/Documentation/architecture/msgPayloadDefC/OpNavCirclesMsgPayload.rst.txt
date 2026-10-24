@@ -1,0 +1,10 @@
+.. _OpNavCirclesMsgPayload:
+
+OpNavCirclesMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: OpNavCirclesMsgPayload.h
+   :project: msgPayloadDefC
+

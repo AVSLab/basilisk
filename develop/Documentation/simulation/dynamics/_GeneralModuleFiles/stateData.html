@@ -1,0 +1,812 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: stateData &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: stateEffector" href="stateEffector.html" />
+    <link rel="prev" title="C++ Module: hubEffector" href="hubEffector.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: stateData</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stateData.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-statedata">
+<span id="statedata"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: stateData<a class="headerlink" href="#c-module-statedata" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<p>Shared by the modules in this folder.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTestDynamics/index.html"><span class="doc">_UnitTestDynamics</span></a></p></li>
+<li><p><a class="reference internal" href="BodyToHubInfo.html"><span class="doc">BodyToHubInfo</span></a></p></li>
+<li><p><a class="reference internal" href="fuelSlosh.html"><span class="doc">fuelSlosh</span></a></p></li>
+<li><p><a class="reference internal" href="gravityModel.html"><span class="doc">gravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="interpolator.html"><span class="doc">interpolator</span></a></p></li>
+<li><p><a class="reference internal" href="pointMassGravityModel.html"><span class="doc">pointMassGravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="RWConfigPayload.html"><span class="doc">RWConfigPayload</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticNoiseGenerator.html"><span class="doc">stochasticNoiseGenerator</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticTableauValidation.html"><span class="doc">stochasticTableauValidation</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticWeakRandomVariables.html"><span class="doc">stochasticWeakRandomVariables</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRA.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRA</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRI.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRI</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorWeakSIESME.html"><span class="doc">svIntegratorWeakSIESME</span></a></p></li>
+<li><p><a class="reference internal" href="THROperation.html"><span class="doc">THROperation</span></a></p></li>
+<li><p><a class="reference internal" href="THRSimConfig.html"><span class="doc">THRSimConfig</span></a></p></li>
+<li><p><a class="reference internal" href="THRTimePair.html"><span class="doc">THRTimePair</span></a></p></li>
+</ul>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">StateData</span></code> is a stable, registry-owned handle for one named continuous state.
+It provides shaped access to the state value, its time derivative, and one diffusion
+tangent per local noise source. It neither owns an independent matrix nor evaluates
+the equations of motion. See <a class="reference internal" href="../../../../Learn/makingModules/advancedTopics/integratorArchitecture.html#integratorarchitecture"><span class="std std-ref">Dynamics state and integrator architecture</span></a> for the surrounding system.</p>
+<section id="using-a-handle">
+<h2>Using a handle<a class="headerlink" href="#using-a-handle" title="Link to this heading"></a></h2>
+<p>Keep the handle returned by <code class="docutils literal notranslate"><span class="pre">DynParamManager::registerState()</span></code>. During a dynamics
+callback, acquire views and write the derivative in place:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// A dimensionless scalar x obeys dx/dt = -decayRate * x.</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">decayRate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span><span class="w"> </span><span class="c1">// [1/s]</span>
+<span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">xState</span><span class="o">-&gt;</span><span class="n">stateView</span><span class="p">();</span>
+<span class="k">this</span><span class="o">-&gt;</span><span class="n">xState</span><span class="o">-&gt;</span><span class="n">derivativeView</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">decayRate</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stateView()</span></code>, <code class="docutils literal notranslate"><span class="pre">derivativeView()</span></code>, and <code class="docutils literal notranslate"><span class="pre">diffusionView(index)</span></code> are borrowed Eigen
+maps with column-major storage. They must not outlive the owning manager and must be
+reacquired after first finalization. Handles and finalized buffer addresses survive later
+resets; their values update in place.
+The copying getters <code class="docutils literal notranslate"><span class="pre">getState()</span></code>, <code class="docutils literal notranslate"><span class="pre">getStateDeriv()</span></code>, and <code class="docutils literal notranslate"><span class="pre">getStateDiffusion()</span></code>
+return owning snapshots. Setters require exact shape matches.</p>
+</section>
+<section id="shapes-and-special-updates">
+<h2>Shapes and special updates<a class="headerlink" href="#shapes-and-special-updates" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StateSpec</span></code> declares state, derivative, and diffusion-tangent shapes separately.
+They match for ordinary Euclidean states. A <code class="docutils literal notranslate"><span class="pre">StateUpdatePolicy</span></code> defines propagation
+when the representation needs a special update, such as a quaternion driven by angular
+velocity. Policies are immutable and owned by the registry, not by individual integrators.
+Adaptive error control can measure the whole state or each scalar component.</p>
+<p>Declare noise counts in <code class="docutils literal notranslate"><span class="pre">StateSpec</span></code>. The deprecated <code class="docutils literal notranslate"><span class="pre">setNumNoiseSources()</span></code> remains
+available for initial registration; it cannot change established topology.</p>
+<hr class="docutils" />
+<p>State declarations, update-policy contract, and borrowed matrix access. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv417MutableMatrixView">
+<span id="_CPPv317MutableMatrixView"></span><span id="_CPPv217MutableMatrixView"></span><span class="target" id="state_data_8h_1a8cea8b762edd782709d9fba153d79e5e"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MutableMatrixView</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Unaligned</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv417MutableMatrixView" title="Link to this definition"></a><br /></dt>
+<dd><p>Writable column-major matrix alias; does not own or extend storage lifetime. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv415ConstMatrixView">
+<span id="_CPPv315ConstMatrixView"></span><span id="_CPPv215ConstMatrixView"></span><span class="target" id="state_data_8h_1af5cdfd8df0b5b968c2747a49f7441096"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConstMatrixView</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Unaligned</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv415ConstMatrixView" title="Link to this definition"></a><br /></dt>
+<dd><p>Read-only column-major matrix alias; does not own or extend storage lifetime. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv416ErrorControlMode">
+<span id="_CPPv316ErrorControlMode"></span><span id="_CPPv216ErrorControlMode"></span><span class="target" id="state_data_8h_1a17aabdc3c3779ee47824900fc2a15ec0"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ErrorControlMode</span></span></span><a class="headerlink" href="#_CPPv416ErrorControlMode" title="Link to this definition"></a><br /></dt>
+<dd><p>Adaptive-integrator error scaling associated with a state. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16ErrorControlMode10WholeStateE">
+<span id="_CPPv3N16ErrorControlMode10WholeStateE"></span><span id="_CPPv2N16ErrorControlMode10WholeStateE"></span><span class="target" id="state_data_8h_1a17aabdc3c3779ee47824900fc2a15ec0ab5964d5d74216c814875b70372d3db31"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WholeState</span></span></span><a class="headerlink" href="#_CPPv4N16ErrorControlMode10WholeStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare the norm of the state error against one state-level threshold. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16ErrorControlMode12PerComponentE">
+<span id="_CPPv3N16ErrorControlMode12PerComponentE"></span><span id="_CPPv2N16ErrorControlMode12PerComponentE"></span><span class="target" id="state_data_8h_1a17aabdc3c3779ee47824900fc2a15ec0aa41078f71d612858bc5e77f9353fd315"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PerComponent</span></span></span><a class="headerlink" href="#_CPPv4N16ErrorControlMode12PerComponentE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare each scalar error against its own scaled threshold. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv415StateUpdateKind">
+<span id="_CPPv315StateUpdateKind"></span><span id="_CPPv215StateUpdateKind"></span><span class="target" id="state_data_8h_1a50b1ebc7abed62503a77b7e8f34635e4"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateUpdateKind</span></span></span><a class="headerlink" href="#_CPPv415StateUpdateKind" title="Link to this definition"></a><br /></dt>
+<dd><p>Kind of update applied when a state is propagated. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15StateUpdateKind9EuclideanE">
+<span id="_CPPv3N15StateUpdateKind9EuclideanE"></span><span id="_CPPv2N15StateUpdateKind9EuclideanE"></span><span class="target" id="state_data_8h_1a50b1ebc7abed62503a77b7e8f34635e4a3e43207685247008d9e1ae53ecf8cab3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Euclidean</span></span></span><a class="headerlink" href="#_CPPv4N15StateUpdateKind9EuclideanE" title="Link to this definition"></a><br /></dt>
+<dd><p>State, drift, and diffusion share a shape and use ordinary addition. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15StateUpdateKind7SpecialE">
+<span id="_CPPv3N15StateUpdateKind7SpecialE"></span><span id="_CPPv2N15StateUpdateKind7SpecialE"></span><span class="target" id="state_data_8h_1a50b1ebc7abed62503a77b7e8f34635e4ab4c2b550635fe54fd29f2b64dfaca55d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Special</span></span></span><a class="headerlink" href="#_CPPv4N15StateUpdateKind7SpecialE" title="Link to this definition"></a><br /></dt>
+<dd><p>An immutable <a class="reference internal" href="#class_state_update_policy"><span class="std std-ref">StateUpdatePolicy</span></a> defines drift and noise updates. </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411MatrixShape">
+<span id="_CPPv311MatrixShape"></span><span id="_CPPv211MatrixShape"></span><span id="MatrixShape"></span><span class="target" id="struct_matrix_shape"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MatrixShape</span></span></span><a class="headerlink" href="#_CPPv411MatrixShape" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateData.h&gt;</em></div>
+<p>Shape of a matrix stored by the dynamics state registry. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11MatrixShapeeqERK11MatrixShape">
+<span id="_CPPv3NK11MatrixShapeeqERK11MatrixShape"></span><span id="_CPPv2NK11MatrixShapeeqERK11MatrixShape"></span><span id="MatrixShape::eq-operator__MatrixShapeCRC"></span><span class="target" id="struct_matrix_shape_1a7df184ddc0f0f6413a01a8fb1cc4f556"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11MatrixShapeeqERK11MatrixShape" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare two matrix shapes. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11MatrixShapeneERK11MatrixShape">
+<span id="_CPPv3NK11MatrixShapeneERK11MatrixShape"></span><span id="_CPPv2NK11MatrixShapeneERK11MatrixShape"></span><span id="MatrixShape::neq-operator__MatrixShapeCRC"></span><span class="target" id="struct_matrix_shape_1ae1a1bbf0e69001cb5da8440942c6e4c9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">!=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11MatrixShapeneERK11MatrixShape" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare two matrix shapes. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11MatrixShape4rowsE">
+<span id="_CPPv3N11MatrixShape4rowsE"></span><span id="_CPPv2N11MatrixShape4rowsE"></span><span id="MatrixShape::rows__uint32_t"></span><span class="target" id="struct_matrix_shape_1af8e232786b1d0642569d1dd288706b89"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11MatrixShape4rowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of matrix rows. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11MatrixShape4colsE">
+<span id="_CPPv3N11MatrixShape4colsE"></span><span id="_CPPv2N11MatrixShape4colsE"></span><span id="MatrixShape::cols__uint32_t"></span><span class="target" id="struct_matrix_shape_1aa203a037764ccfbd90ac49238f7fd1fb"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cols</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11MatrixShape4colsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of matrix columns. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv49StateSpec">
+<span id="_CPPv39StateSpec"></span><span id="_CPPv29StateSpec"></span><span id="StateSpec"></span><span class="target" id="struct_state_spec"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateSpec</span></span></span><a class="headerlink" href="#_CPPv49StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateData.h&gt;</em></div>
+<p>Immutable topology supplied when a state is registered. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateSpeceqERK9StateSpec">
+<span id="_CPPv3NK9StateSpeceqERK9StateSpec"></span><span id="_CPPv2NK9StateSpeceqERK9StateSpec"></span><span id="StateSpec::eq-operator__StateSpecCRC"></span><span class="target" id="struct_state_spec_1a7cbf5a3ac585084ab09988a5354328a1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK9StateSpeceqERK9StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare two state specifications. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateSpecneERK9StateSpec">
+<span id="_CPPv3NK9StateSpecneERK9StateSpec"></span><span id="_CPPv2NK9StateSpecneERK9StateSpec"></span><span id="StateSpec::neq-operator__StateSpecCRC"></span><span class="target" id="struct_state_spec_1a3007fa6fd41f67d2417ce118d1bdea1d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">!=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK9StateSpecneERK9StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare two state specifications. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec5stateE">
+<span id="_CPPv3N9StateSpec5stateE"></span><span id="_CPPv2N9StateSpec5stateE"></span><span id="StateSpec::state__MatrixShape"></span><span class="target" id="struct_state_spec_1ae4e1f96130d1f19ed1efef92ef3a7b73"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><a class="headerlink" href="#_CPPv4N9StateSpec5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Shape of the stored physical state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec10derivativeE">
+<span id="_CPPv3N9StateSpec10derivativeE"></span><span id="_CPPv2N9StateSpec10derivativeE"></span><span id="StateSpec::derivative__MatrixShape"></span><span class="target" id="struct_state_spec_1a477b5f411744c871d98d2a5b60f06f44"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivative</span></span></span><a class="headerlink" href="#_CPPv4N9StateSpec10derivativeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Shape of drift returned by the equations of motion. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec16diffusionTangentE">
+<span id="_CPPv3N9StateSpec16diffusionTangentE"></span><span id="_CPPv2N9StateSpec16diffusionTangentE"></span><span id="StateSpec::diffusionTangent__MatrixShape"></span><span class="target" id="struct_state_spec_1ab16e06b1d6c0b42ac31b1ce10989dcb9"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionTangent</span></span></span><a class="headerlink" href="#_CPPv4N9StateSpec16diffusionTangentE" title="Link to this definition"></a><br /></dt>
+<dd><p>Shape of one local noise tangent, even when no noise is registered. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec10noiseCountE">
+<span id="_CPPv3N9StateSpec10noiseCountE"></span><span id="_CPPv2N9StateSpec10noiseCountE"></span><span id="StateSpec::noiseCount__s"></span><span class="target" id="struct_state_spec_1a7bb79d1e8662cbe48930ead34cfd0adc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N9StateSpec10noiseCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of local sources; shared declarations may map them to global sources. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec12errorControlE">
+<span id="_CPPv3N9StateSpec12errorControlE"></span><span id="_CPPv2N9StateSpec12errorControlE"></span><span id="StateSpec::errorControl__ErrorControlMode"></span><span class="target" id="struct_state_spec_1a7344dfe1e715895a98c4160c7909d937"></span><a class="reference internal" href="#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">errorControl</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N16ErrorControlMode10WholeStateE" title="ErrorControlMode::WholeState"><span class="n"><span class="pre">WholeState</span></span></a><a class="headerlink" href="#_CPPv4N9StateSpec12errorControlE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adaptive error-scaling convention. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateSpec10updateKindE">
+<span id="_CPPv3N9StateSpec10updateKindE"></span><span id="_CPPv2N9StateSpec10updateKindE"></span><span id="StateSpec::updateKind__StateUpdateKind"></span><span class="target" id="struct_state_spec_1a6eb57573cf7750b90e3ef82addb0337c"></span><a class="reference internal" href="#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateKind</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N15StateUpdateKind9EuclideanE" title="StateUpdateKind::Euclidean"><span class="n"><span class="pre">Euclidean</span></span></a><a class="headerlink" href="#_CPPv4N9StateSpec10updateKindE" title="Link to this definition"></a><br /></dt>
+<dd><p>Selects ordinary addition or policy dispatch. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv417StateUpdatePolicy">
+<span id="_CPPv317StateUpdatePolicy"></span><span id="_CPPv217StateUpdatePolicy"></span><span id="StateUpdatePolicy"></span><span class="target" id="class_state_update_policy"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateUpdatePolicy</span></span></span><a class="headerlink" href="#_CPPv417StateUpdatePolicy" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateData.h&gt;</em></div>
+<p>Defines propagation when a state’s representation requires more than vector addition. </p>
+<p>The registry owns the policy; handles and integrators borrow it. Configuration is immutable after registration, and <a class="reference internal" href="#class_state_update_policy_1acfb116b00a0d585d8fa6ed6e0b079265"><span class="std std-ref">topologyEquals()</span></a> compares configuration by value when a repeated Reset presents a replacement policy. A policy has no stage storage: the integrator combines derivatives before calling it.</p>
+<p>Implementations must fully write drift output and apply noise increments in place. Noise calls arrive in state-local source order, which matters for noncommuting updates. Use the supplied views without resizing, retaining them, or changing registration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17StateUpdatePolicyD0Ev">
+<span id="_CPPv3N17StateUpdatePolicyD0Ev"></span><span id="_CPPv2N17StateUpdatePolicyD0Ev"></span><span id="StateUpdatePolicy::~StateUpdatePolicy"></span><span class="target" id="class_state_update_policy_1a50c3385b92f21438455ff7c0bd46d6fc"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~StateUpdatePolicy</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N17StateUpdatePolicyD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17StateUpdatePolicy14topologyEqualsERK17StateUpdatePolicy">
+<span id="_CPPv3NK17StateUpdatePolicy14topologyEqualsERK17StateUpdatePolicy"></span><span id="_CPPv2NK17StateUpdatePolicy14topologyEqualsERK17StateUpdatePolicy"></span><span id="StateUpdatePolicy::topologyEquals__StateUpdatePolicyCRC"></span><span class="target" id="class_state_update_policy_1acfb116b00a0d585d8fa6ed6e0b079265"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">topologyEquals</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK17StateUpdatePolicy14topologyEqualsERK17StateUpdatePolicy" title="Link to this definition"></a><br /></dt>
+<dd><p>Compare immutable policy topology by value. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17StateUpdatePolicy8validateERK9StateSpec">
+<span id="_CPPv3NK17StateUpdatePolicy8validateERK9StateSpec"></span><span id="_CPPv2NK17StateUpdatePolicy8validateERK9StateSpec"></span><span id="StateUpdatePolicy::validate__StateSpecCRC"></span><span class="target" id="class_state_update_policy_1a12f8ef18964655fa0a55f42ed4a8097a"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK17StateUpdatePolicy8validateERK9StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Validate that a state specification is supported by this policy. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17StateUpdatePolicy19buildDriftCandidateE15ConstMatrixView15ConstMatrixViewd17MutableMatrixView">
+<span id="_CPPv3NK17StateUpdatePolicy19buildDriftCandidateE15ConstMatrixView15ConstMatrixViewd17MutableMatrixView"></span><span id="_CPPv2NK17StateUpdatePolicy19buildDriftCandidateE15ConstMatrixView15ConstMatrixViewd17MutableMatrixView"></span><span id="StateUpdatePolicy::buildDriftCandidate__ConstMatrixView.ConstMatrixView.double.MutableMatrixViewC"></span><span class="target" id="class_state_update_policy_1a85ba290466d7f171d38fa5645405032a"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buildDriftCandidate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">base</span></span>, <a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">combinedDrift</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <a class="reference internal" href="#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">output</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK17StateUpdatePolicy19buildDriftCandidateE15ConstMatrixView15ConstMatrixViewd17MutableMatrixView" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct one drift candidate from a base state and combined drift. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base</strong> – State at the start of this candidate update. </p></li>
+<li><p><strong>combinedDrift</strong> – Weighted drift in the declared derivative shape. </p></li>
+<li><p><strong>timeStep</strong> – Drift multiplier in seconds. </p></li>
+<li><p><strong>output</strong> – Destination in the declared state shape; must be fully written. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17StateUpdatePolicy19applyNoiseIncrementE17MutableMatrixView15ConstMatrixViewd">
+<span id="_CPPv3NK17StateUpdatePolicy19applyNoiseIncrementE17MutableMatrixView15ConstMatrixViewd"></span><span id="_CPPv2NK17StateUpdatePolicy19applyNoiseIncrementE17MutableMatrixView15ConstMatrixViewd"></span><span id="StateUpdatePolicy::applyNoiseIncrement__MutableMatrixView.ConstMatrixView.doubleC"></span><span class="target" id="class_state_update_policy_1a0303042ac1e90f744a1b210370ccd2aa"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyNoiseIncrement</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span>, <a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">diffusionTangent</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pseudoStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK17StateUpdatePolicy19applyNoiseIncrementE17MutableMatrixView15ConstMatrixViewd" title="Link to this definition"></a><br /></dt>
+<dd><p>Apply one diffusion-tangent increment to a candidate state. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Candidate to update in place. </p></li>
+<li><p><strong>diffusionTangent</strong> – One combined tangent in the declared diffusion shape. </p></li>
+<li><p><strong>pseudoStep</strong> – Method-provided multiplier for this tangent, often a Wiener increment. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv49StateData">
+<span id="_CPPv39StateData"></span><span id="_CPPv29StateData"></span><span id="StateData"></span><span class="target" id="class_state_data"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateData</span></span></span><a class="headerlink" href="#_CPPv49StateData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateData.h&gt;</em></div>
+<p>Stable borrowed handle to one registry-owned state and its drift and diffusion. </p>
+<p>Obtain handles from <a class="reference internal" href="dynParamManager.html#class_dyn_param_manager"><span class="std std-ref">DynParamManager</span></a> during registration and retain them for model callbacks. Values begin in temporary matrices; the first finalization redirects handles into contiguous buffers. Reacquire views after that allocation. Later resets update live values in place and preserve both handle and buffer addresses.</p>
+<p>The manager must outlive native handles and views. Python wrappers retain the owning manager. Copying getters return independent snapshots of current values. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData9StateDataERK9StateData">
+<span id="_CPPv3N9StateData9StateDataERK9StateData"></span><span id="_CPPv2N9StateData9StateDataERK9StateData"></span><span id="StateData::StateData__StateDataCR"></span><span class="target" id="class_state_data_1ab01c53f7888bcbb0e2d33c72a4a95afd"></span><span class="sig-name descname"><span class="n"><span class="pre">StateData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N9StateData9StateDataERK9StateData" title="StateData::StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N9StateData9StateDataERK9StateData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateDataaSERK9StateData">
+<span id="_CPPv3N9StateDataaSERK9StateData"></span><span id="_CPPv2N9StateDataaSERK9StateData"></span><span id="StateData::assign-operator__StateDataCR"></span><span class="target" id="class_state_data_1a25ac60cf00e28020a4f91687e913a3f2"></span><a class="reference internal" href="#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N9StateDataaSERK9StateData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData9StateDataERR9StateData">
+<span id="_CPPv3N9StateData9StateDataERR9StateData"></span><span id="_CPPv2N9StateData9StateDataERR9StateData"></span><span id="StateData::StateData__StateDataRR"></span><span class="target" id="class_state_data_1a2f15e925297f7babf2aec0bab46116fc"></span><span class="sig-name descname"><span class="n"><span class="pre">StateData</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N9StateData9StateDataERR9StateData" title="StateData::StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N9StateData9StateDataERR9StateData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateDataaSERR9StateData">
+<span id="_CPPv3N9StateDataaSERR9StateData"></span><span id="_CPPv2N9StateDataaSERR9StateData"></span><span id="StateData::assign-operator__StateDataRR"></span><span class="target" id="class_state_data_1a8e2c36ed009a896193d92d11426ea099"></span><a class="reference internal" href="#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N9StateDataaSERR9StateData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData18getNumNoiseSourcesEv">
+<span id="_CPPv3NK9StateData18getNumNoiseSourcesEv"></span><span id="_CPPv2NK9StateData18getNumNoiseSourcesEv"></span><span id="StateData::getNumNoiseSourcesC"></span><span class="target" id="class_state_data_1a09abcf526356ab6b35d3bf0dec8bb4f7"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumNoiseSources</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData18getNumNoiseSourcesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of local noise sources, before shared-source grouping. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData18setNumNoiseSourcesE6size_t">
+<span id="_CPPv3N9StateData18setNumNoiseSourcesE6size_t"></span><span id="_CPPv2N9StateData18setNumNoiseSourcesE6size_t"></span><span id="StateData::setNumNoiseSources__s"></span><span class="target" id="class_state_data_1a12b6eec96a902878cd4f10270a42567e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNumNoiseSources</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numSources</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData18setNumNoiseSourcesE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the registration-time number of independent noise sources. </p>
+<p>This deprecated compatibility API may establish the count during the initial registration. Once topology is established, only the already-established value is accepted. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData8setStateEN5Eigen3RefIKN5Eigen8MatrixXdEEE">
+<span id="_CPPv3N9StateData8setStateEN5Eigen3RefIKN5Eigen8MatrixXdEEE"></span><span id="_CPPv2N9StateData8setStateEN5Eigen3RefIKN5Eigen8MatrixXdEEE"></span><span id="StateData::setState__Eigen::Ref:Eigen::MatrixXdC:"></span><span class="target" id="class_state_data_1a5fc403532475b1338b276ec03ae98743"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setState</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData8setStateEN5Eigen3RefIKN5Eigen8MatrixXdEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the state value, requiring an exact shape match. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData13setDerivativeEN5Eigen3RefIKN5Eigen8MatrixXdEEE">
+<span id="_CPPv3N9StateData13setDerivativeEN5Eigen3RefIKN5Eigen8MatrixXdEEE"></span><span id="_CPPv2N9StateData13setDerivativeEN5Eigen3RefIKN5Eigen8MatrixXdEEE"></span><span id="StateData::setDerivative__Eigen::Ref:Eigen::MatrixXdC:"></span><span class="target" id="class_state_data_1a876b4d559f004c76d4013541c2b033af"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDerivative</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newDeriv</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData13setDerivativeEN5Eigen3RefIKN5Eigen8MatrixXdEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the derivative value, requiring an exact shape match. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData9stateViewEv">
+<span id="_CPPv3N9StateData9stateViewEv"></span><span id="_CPPv2N9StateData9stateViewEv"></span><span id="StateData::stateView"></span><span class="target" id="class_state_data_1a777e3e77ae305a6f6a13ce4fc6b66f0e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateView</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData9stateViewEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a mutable borrowed view of the active state storage. </p>
+<p>The view aliases the manager buffer active when it is acquired. Do not retain it across the first finalizeStates(); reacquire it after storage allocation. Later resets preserve its address. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData9stateViewEv">
+<span id="_CPPv3NK9StateData9stateViewEv"></span><span id="_CPPv2NK9StateData9stateViewEv"></span><span id="StateData::stateViewC"></span><span class="target" id="class_state_data_1af43782ef5bf1434c089a38c3df43cb7f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateView</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData9stateViewEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a constant borrowed view of the active state storage. </p>
+<p>The view follows the same storage-lifetime restrictions as the mutable <a class="reference internal" href="#class_state_data_1a777e3e77ae305a6f6a13ce4fc6b66f0e"><span class="std std-ref">stateView()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData17getStateReferenceEv">
+<span id="_CPPv3NK9StateData17getStateReferenceEv"></span><span id="_CPPv2NK9StateData17getStateReferenceEv"></span><span id="StateData::getStateReferenceC"></span><span class="target" id="class_state_data_1ab437291f59bdcec1f2355d5efacf0526"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateReference</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData17getStateReferenceEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Compatibility alias for <a class="reference internal" href="#class_state_data_1a777e3e77ae305a6f6a13ce4fc6b66f0e"><span class="std std-ref">stateView()</span></a> on a constant state handle. </p>
+<p><dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>Will be removed after September 30, 2027. Use <a class="reference internal" href="#class_state_data_1a777e3e77ae305a6f6a13ce4fc6b66f0e"><span class="std std-ref">stateView()</span></a>. </p>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>Will be removed after 2027-09-30; use <a class="reference internal" href="#class_state_data_1a777e3e77ae305a6f6a13ce4fc6b66f0e"><span class="std std-ref">stateView()</span></a>.</p>
+</dd></dl>
+
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData14derivativeViewEv">
+<span id="_CPPv3N9StateData14derivativeViewEv"></span><span id="_CPPv2N9StateData14derivativeViewEv"></span><span id="StateData::derivativeView"></span><span class="target" id="class_state_data_1ad7032aabb95d0db6c5a90601b2d43514"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeView</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData14derivativeViewEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a mutable borrowed view of active derivative storage. </p>
+<p>The view aliases the manager buffer active when it is acquired and must be reacquired after the first finalization. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData14derivativeViewEv">
+<span id="_CPPv3NK9StateData14derivativeViewEv"></span><span id="_CPPv2NK9StateData14derivativeViewEv"></span><span id="StateData::derivativeViewC"></span><span class="target" id="class_state_data_1aec936afe6f207148524e08cce3c828f1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeView</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData14derivativeViewEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a constant borrowed view of active derivative storage. </p>
+<p>The view follows the same storage-lifetime restrictions as the mutable <a class="reference internal" href="#class_state_data_1ad7032aabb95d0db6c5a90601b2d43514"><span class="std std-ref">derivativeView()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData22getStateDerivReferenceEv">
+<span id="_CPPv3NK9StateData22getStateDerivReferenceEv"></span><span id="_CPPv2NK9StateData22getStateDerivReferenceEv"></span><span id="StateData::getStateDerivReferenceC"></span><span class="target" id="class_state_data_1a45d30a6d9b92f57e0633a0b39fcf9bcc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateDerivReference</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData22getStateDerivReferenceEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Compatibility alias for <a class="reference internal" href="#class_state_data_1ad7032aabb95d0db6c5a90601b2d43514"><span class="std std-ref">derivativeView()</span></a> on a constant state handle. </p>
+<p><dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>Will be removed after September 30, 2027. Use <a class="reference internal" href="#class_state_data_1ad7032aabb95d0db6c5a90601b2d43514"><span class="std std-ref">derivativeView()</span></a>. </p>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>Will be removed after 2027-09-30; use <a class="reference internal" href="#class_state_data_1ad7032aabb95d0db6c5a90601b2d43514"><span class="std std-ref">derivativeView()</span></a>.</p>
+</dd></dl>
+
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData13diffusionViewE6size_t">
+<span id="_CPPv3N9StateData13diffusionViewE6size_t"></span><span id="_CPPv2N9StateData13diffusionViewE6size_t"></span><span id="StateData::diffusionView__s"></span><span class="target" id="class_state_data_1aaafb7548039d07bd18f330bd2a4f24eb"></span><a class="reference internal" href="#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionView</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData13diffusionViewE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a mutable borrowed view of one diffusion tangent. </p>
+<p>The view aliases the manager buffer active when it is acquired and must be reacquired after the first finalization. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData13diffusionViewE6size_t">
+<span id="_CPPv3NK9StateData13diffusionViewE6size_t"></span><span id="_CPPv2NK9StateData13diffusionViewE6size_t"></span><span id="StateData::diffusionView__sC"></span><span class="target" id="class_state_data_1a03032b0b2688d6edc92f2d899d967059"></span><a class="reference internal" href="#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionView</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData13diffusionViewE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a constant borrowed view of one diffusion tangent. </p>
+<p>The view follows the same storage-lifetime restrictions as the mutable <a class="reference internal" href="#class_state_data_1aaafb7548039d07bd18f330bd2a4f24eb"><span class="std std-ref">diffusionView()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData9stateDataEv">
+<span id="_CPPv3N9StateData9stateDataEv"></span><span id="_CPPv2N9StateData9stateDataEv"></span><span id="StateData::stateData"></span><span class="target" id="class_state_data_1ab6de35af537d0d1b16b07a6d93c1c76c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">stateData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData9stateDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the live state-buffer pointer. </p>
+<p>Raw access is valid only while the owning manager is finalized. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData14derivativeDataEv">
+<span id="_CPPv3N9StateData14derivativeDataEv"></span><span id="_CPPv2N9StateData14derivativeDataEv"></span><span id="StateData::derivativeData"></span><span class="target" id="class_state_data_1a848603e79d42b406b5f755b5d72634ec"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">derivativeData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData14derivativeDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the live derivative-buffer pointer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData13diffusionDataE6size_t">
+<span id="_CPPv3N9StateData13diffusionDataE6size_t"></span><span id="_CPPv2N9StateData13diffusionDataE6size_t"></span><span id="StateData::diffusionData__s"></span><span class="target" id="class_state_data_1ab5155c8f6678c202b4e55bf2ca455e9b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">diffusionData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData13diffusionDataE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return one live diffusion-buffer pointer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData12setDiffusionEN5Eigen3RefIKN5Eigen8MatrixXdEEE6size_t">
+<span id="_CPPv3N9StateData12setDiffusionEN5Eigen3RefIKN5Eigen8MatrixXdEEE6size_t"></span><span id="_CPPv2N9StateData12setDiffusionEN5Eigen3RefIKN5Eigen8MatrixXdEEE6size_t"></span><span id="StateData::setDiffusion__Eigen::Ref:Eigen::MatrixXdC:.s"></span><span class="target" id="class_state_data_1ac423f1dea73ef96220a942408a0e66fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDiffusion</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newDiffusion</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData12setDiffusionEN5Eigen3RefIKN5Eigen8MatrixXdEEE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set one diffusion tangent, requiring an exact shape match. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>newDiffusion</strong> – New diffusion tangent. </p></li>
+<li><p><strong>index</strong> – Local noise-source index. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData8getStateEv">
+<span id="_CPPv3NK9StateData8getStateEv"></span><span id="_CPPv2NK9StateData8getStateEv"></span><span id="StateData::getStateC"></span><span class="target" id="class_state_data_1af81773dcf8371149e6ad3389f7a4e866"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData8getStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the active state value. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData13getStateDerivEv">
+<span id="_CPPv3NK9StateData13getStateDerivEv"></span><span id="_CPPv2NK9StateData13getStateDerivEv"></span><span id="StateData::getStateDerivC"></span><span class="target" id="class_state_data_1ad521b1dc16405e74d28a66f4916629c5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateDeriv</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData13getStateDerivEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the active derivative value. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData17getStateDiffusionE6size_t">
+<span id="_CPPv3NK9StateData17getStateDiffusionE6size_t"></span><span id="_CPPv2NK9StateData17getStateDiffusionE6size_t"></span><span id="StateData::getStateDiffusion__sC"></span><span class="target" id="class_state_data_1a4b2cc37651c414c4e60bef6e5a77eca6"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateDiffusion</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData17getStateDiffusionE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of one active diffusion tangent. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData7getNameEv">
+<span id="_CPPv3NK9StateData7getNameEv"></span><span id="_CPPv2NK9StateData7getNameEv"></span><span id="StateData::getNameC"></span><span class="target" id="class_state_data_1a1ac1131f694aebeca9812bdd8269f8cf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData7getNameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the state name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData28usesPerComponentErrorControlEv">
+<span id="_CPPv3NK9StateData28usesPerComponentErrorControlEv"></span><span id="_CPPv2NK9StateData28usesPerComponentErrorControlEv"></span><span id="StateData::usesPerComponentErrorControlC"></span><span class="target" id="class_state_data_1a681176ef774a57100e31baf8ad7f5ade"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">usesPerComponentErrorControl</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData28usesPerComponentErrorControlEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return whether adaptive error is measured per scalar component. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData10stateShapeEv">
+<span id="_CPPv3NK9StateData10stateShapeEv"></span><span id="_CPPv2NK9StateData10stateShapeEv"></span><span id="StateData::stateShapeC"></span><span class="target" id="class_state_data_1acca1160889e6e888c492a4134e6d09c1"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateShape</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData10stateShapeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the state shape. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData15derivativeShapeEv">
+<span id="_CPPv3NK9StateData15derivativeShapeEv"></span><span id="_CPPv2NK9StateData15derivativeShapeEv"></span><span id="StateData::derivativeShapeC"></span><span class="target" id="class_state_data_1a12817666a8deb078313911c99d452f6d"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeShape</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData15derivativeShapeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the derivative shape. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData14diffusionShapeEv">
+<span id="_CPPv3NK9StateData14diffusionShapeEv"></span><span id="_CPPv2NK9StateData14diffusionShapeEv"></span><span id="StateData::diffusionShapeC"></span><span class="target" id="class_state_data_1aeef1fcebef91eb124fe28b72adc72f72"></span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionShape</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData14diffusionShapeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the diffusion tangent shape. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData10getRowSizeEv">
+<span id="_CPPv3NK9StateData10getRowSizeEv"></span><span id="_CPPv2NK9StateData10getRowSizeEv"></span><span id="StateData::getRowSizeC"></span><span class="target" id="class_state_data_1af8fab1cd3b7cbd9b2089904bf2a2eef3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRowSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData10getRowSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the state row count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData13getColumnSizeEv">
+<span id="_CPPv3NK9StateData13getColumnSizeEv"></span><span id="_CPPv2NK9StateData13getColumnSizeEv"></span><span id="StateData::getColumnSizeC"></span><span class="target" id="class_state_data_1ac5391e9db067b02993ce605b0eb8d28e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getColumnSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData13getColumnSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the state column count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData20getDerivativeRowSizeEv">
+<span id="_CPPv3NK9StateData20getDerivativeRowSizeEv"></span><span id="_CPPv2NK9StateData20getDerivativeRowSizeEv"></span><span id="StateData::getDerivativeRowSizeC"></span><span class="target" id="class_state_data_1aa48511147e05a640db79c7dec8970e00"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDerivativeRowSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData20getDerivativeRowSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the derivative row count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData23getDerivativeColumnSizeEv">
+<span id="_CPPv3NK9StateData23getDerivativeColumnSizeEv"></span><span id="_CPPv2NK9StateData23getDerivativeColumnSizeEv"></span><span id="StateData::getDerivativeColumnSizeC"></span><span class="target" id="class_state_data_1a153f1832b6ded93caf75329a52c87ff3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDerivativeColumnSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData23getDerivativeColumnSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the derivative column count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData19getDiffusionRowSizeEv">
+<span id="_CPPv3NK9StateData19getDiffusionRowSizeEv"></span><span id="_CPPv2NK9StateData19getDiffusionRowSizeEv"></span><span id="StateData::getDiffusionRowSizeC"></span><span class="target" id="class_state_data_1a4b0e77cdd354a33c44d0ecbdfc39b2de"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDiffusionRowSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData19getDiffusionRowSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the diffusion tangent row count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK9StateData22getDiffusionColumnSizeEv">
+<span id="_CPPv3NK9StateData22getDiffusionColumnSizeEv"></span><span id="_CPPv2NK9StateData22getDiffusionColumnSizeEv"></span><span id="StateData::getDiffusionColumnSizeC"></span><span class="target" id="class_state_data_1ae808b755f7e17776e0c1f760b12ccbc4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDiffusionColumnSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK9StateData22getDiffusionColumnSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the diffusion tangent column count. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData9StateDataEP13StateRegistry6size_tRK9StateSpec">
+<span id="_CPPv3N9StateData9StateDataEP13StateRegistry6size_tRK9StateSpec"></span><span id="_CPPv2N9StateData9StateDataEP13StateRegistry6size_tRK9StateSpec"></span><span id="StateData::StateData__StateRegistryP.s.StateSpecCR"></span><span class="target" id="class_state_data_1aa1194d1146d9cb0e5daa72c5ab6630e1"></span><span class="sig-name descname"><span class="n"><span class="pre">StateData</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="stateRegistry.html#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">owner</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N9StateData9StateDataEP13StateRegistry6size_tRK9StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a stable handle for a registry slot and cache its immutable view shapes. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateDataD0Ev">
+<span id="_CPPv3N9StateDataD0Ev"></span><span id="_CPPv2N9StateDataD0Ev"></span><span id="StateData::~StateData"></span><span class="target" id="class_state_data_1a715073a36068b74b4d1a9d7b86a9fcfa"></span><span class="sig-name descname"><span class="n"><span class="pre">~StateData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N9StateDataD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData14bindStateViewsEPdPd">
+<span id="_CPPv3N9StateData14bindStateViewsEPdPd"></span><span id="_CPPv2N9StateData14bindStateViewsEPdPd"></span><span id="StateData::bindStateViews__doubleP.doubleP"></span><span class="target" id="class_state_data_1a4bed39783285b6486602b48b1e8c02a9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bindStateViews</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">state</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">derivative</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N9StateData14bindStateViewsEPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Rebind borrowed views when the manager changes the active buffer. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData5ownerE">
+<span id="_CPPv3N9StateData5ownerE"></span><span id="_CPPv2N9StateData5ownerE"></span><span id="StateData::owner__StateRegistryP"></span><span class="target" id="class_state_data_1a9d8329f9004e654297aeb3a7df9daa2e"></span><a class="reference internal" href="stateRegistry.html#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">owner</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N9StateData5ownerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Registry owning this handle’s metadata and storage. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData4slotE">
+<span id="_CPPv3N9StateData4slotE"></span><span id="_CPPv2N9StateData4slotE"></span><span id="StateData::slot__s"></span><span class="target" id="class_state_data_1ab91f7c68046d034e1bec423de687a680"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N9StateData4slotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stable registration slot. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData11activeStateE">
+<span id="_CPPv3N9StateData11activeStateE"></span><span id="_CPPv2N9StateData11activeStateE"></span><span id="StateData::activeState__doubleP"></span><span class="target" id="class_state_data_1a67004deb665569ef577b182ef40dc76b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">activeState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N9StateData11activeStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Active seed or buffer state storage. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData16activeDerivativeE">
+<span id="_CPPv3N9StateData16activeDerivativeE"></span><span id="_CPPv2N9StateData16activeDerivativeE"></span><span id="StateData::activeDerivative__doubleP"></span><span class="target" id="class_state_data_1a52d3e18c4d6a62daf7cfcf1b955349da"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">activeDerivative</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N9StateData16activeDerivativeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Active seed or buffer derivative storage. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData14viewStateShapeE">
+<span id="_CPPv3N9StateData14viewStateShapeE"></span><span id="_CPPv2N9StateData14viewStateShapeE"></span><span id="StateData::viewStateShape__MatrixShapeC"></span><span class="target" id="class_state_data_1a8097f38a3499653fb2258c60e79d8f0b"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">viewStateShape</span></span></span><a class="headerlink" href="#_CPPv4N9StateData14viewStateShapeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Immutable shape cached for inline state maps. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9StateData19viewDerivativeShapeE">
+<span id="_CPPv3N9StateData19viewDerivativeShapeE"></span><span id="_CPPv2N9StateData19viewDerivativeShapeE"></span><span id="StateData::viewDerivativeShape__MatrixShapeC"></span><span class="target" id="class_state_data_1a842da480f16a486e0a4b89b7d985785b"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411MatrixShape" title="MatrixShape"><span class="n"><span class="pre">MatrixShape</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">viewDerivativeShape</span></span></span><a class="headerlink" href="#_CPPv4N9StateData19viewDerivativeShapeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Immutable shape cached for inline derivative maps. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<span class="property"><span class="pre">friend</span> <span class="pre">class</span></span> <span class="pre">StateRegistry</span></dt>
+</dl>
+
+<dl>
+<dt class="sig sig-object cpp">
+<span class="property"><span class="pre">friend</span> <span class="pre">struct</span></span> <span class="pre">std::default_delete&lt;</span> <span class="pre">StateData</span> <span class="pre">&gt;</span></dt>
+</dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hubEffector.html" class="btn btn-neutral float-left" title="C++ Module: hubEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stateEffector.html" class="btn btn-neutral float-right" title="C++ Module: stateEffector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

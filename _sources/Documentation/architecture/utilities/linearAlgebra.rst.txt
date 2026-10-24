@@ -1,0 +1,10 @@
+.. _linearAlgebra:
+
+linearAlgebra
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: linearAlgebra.h
+   :project: utilities
+

@@ -1,0 +1,10 @@
+.. _SCMassPropsMsgPayload:
+
+SCMassPropsMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SCMassPropsMsgPayload.h
+   :project: msgPayloadDefC
+

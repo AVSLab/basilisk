@@ -1,0 +1,10 @@
+.. _CSSArraySensorMsgPayload:
+
+CSSArraySensorMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CSSArraySensorMsgPayload.h
+   :project: msgPayloadDefC
+

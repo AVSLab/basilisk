@@ -1,0 +1,980 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMomentumDumpingMuJoCo &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioMomentumDumpingMuJoCo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioMomentumDumpingMuJoCo</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Review these prerequisite examples first:</span>
+
+<span class="sd">#. :ref:`scenarioMomentumDumping` for the classic momentum-dumping sequence.</span>
+<span class="sd">#. :ref:`scenarioAttitudeFeedbackRWMuJoCo` for reaction-wheel control with MuJoCo.</span>
+
+<span class="sd">This script demonstrates how to run a reaction wheel momentum dumping</span>
+<span class="sd">scenario, translated from the classic Basilisk :ref:`scenarioMomentumDumping`</span>
+<span class="sd">example, using MuJoCo dynamics via :ref:`MJScene&lt;MJScene&gt;` instead of the</span>
+<span class="sd">traditional hub-centric Basilisk :ref:`spacecraft` dynamics.</span>
+
+<span class="sd">Running the Example</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Use a Basilisk installation with MuJoCo support and the example dependencies</span>
+<span class="sd">described in :ref:`bskInstall`. When building from source, enable</span>
+<span class="sd">``--mujoco True``. With that Python environment active, run from the repository</span>
+<span class="sd">root:</span>
+
+<span class="sd">.. code-block:: console</span>
+
+<span class="sd">   python examples/mujoco/scenarioMomentumDumpingMuJoCo.py</span>
+
+<span class="sd">The script displays the result plots. When importing the scenario from</span>
+<span class="sd">``examples/mujoco``, call ``run(showPlots=False)`` to run without displaying</span>
+<span class="sd">windows; it still returns a dictionary of Matplotlib figures for inspection</span>
+<span class="sd">or saving.</span>
+
+<span class="sd">Model and Control Setup</span>
+<span class="sd">-----------------------</span>
+
+<span class="sd">The multi-body system is created programmatically as a MuJoCo XML string.</span>
+<span class="sd">It consists of a free-floating spacecraft bus ("hub") carrying 4 reaction</span>
+<span class="sd">wheel rigid bodies ("rw1Spin" ... "rw4Spin") mounted at canted spin</span>
+<span class="sd">axes, and 8 thrusters attached directly to the hub via fixed sites.</span>
+<span class="sd">Each wheel spin degree of freedom (DOF) is driven by a MuJoCo single-input</span>
+<span class="sd">torque actuator, and each thruster site has a MuJoCo motor actuator that</span>
+<span class="sd">applies force along the site's z-axis.</span>
+
+<span class="sd">A standard Basilisk flight software (FSW) stack uses the reaction wheels to</span>
+<span class="sd">point the hub at a fixed inertial attitude. The attitude control system (ACS)</span>
+<span class="sd">thrusters remove excess wheel momentum in an explicitly requested dumping</span>
+<span class="sd">sequence:</span>
+
+<span class="sd">#. :ref:`inertial3D` generates a fixed inertial attitude reference.</span>
+<span class="sd">#. :ref:`attTrackingError` computes the attitude and rate tracking errors.</span>
+<span class="sd">#. :ref:`mrpFeedback` computes the commanded body control torque.</span>
+<span class="sd">#. :ref:`rwMotorTorque` maps the commanded body torque into individual wheel</span>
+<span class="sd">   motor torque commands.</span>
+<span class="sd">#. :ref:`thrMomentumManagement` checks the net wheel momentum once on its</span>
+<span class="sd">   first update after each ``Reset()``. If the magnitude exceeds ``hs_min``,</span>
+<span class="sd">   it requests an angular-momentum change, delta-H [N m s], to reduce it</span>
+<span class="sd">   to that level. Otherwise it requests zero change. Later threshold</span>
+<span class="sd">   crossings do not trigger another check unless the module is reset again.</span>
+<span class="sd">#. :ref:`thrForceMapping` maps the desaturation delta-H request into</span>
+<span class="sd">   individual thruster impulse requests [N s].</span>
+<span class="sd">#. :ref:`thrMomentumDumping` divides the requested impulses by the configured</span>
+<span class="sd">   maximum thrust [N] to obtain firing durations [s], then distributes them</span>
+<span class="sd">   over discrete on-time pulses.</span>
+
+<span class="sd">This chain reuses ``CmdTorqueBodyMsgPayload.torqueRequestBody`` to carry</span>
+<span class="sd">angular impulse [N m s], and ``THRArrayCmdForceMsgPayload.thrForce`` to carry</span>
+<span class="sd">linear impulse [N s]. Despite their field names, these values represent</span>
+<span class="sd">impulses in this application. The subsequent ``thrOnTimeToForce`` adapter</span>
+<span class="sd">produces the instantaneous force commands [N] sent to the actuators.</span>
+<span class="sd">See :ref:`scenarioMomentumDumping` for more detail on this control sequence.</span>
+
+<span class="sd">Several small adapter modules bridge Basilisk messaging to MuJoCo objects:</span>
+
+<span class="sd">#. :ref:`arrayMotorTorqueToSingleActuators` splits the single</span>
+<span class="sd">   ``ArrayMotorTorqueMsg`` from ``rwMotorTorque`` into individual</span>
+<span class="sd">   ``SingleActuatorMsg`` commands, one per MuJoCo wheel actuator.</span>
+<span class="sd">#. :ref:`scalarJointStatesToRWSpeed` reads each wheel's spin rate directly</span>
+<span class="sd">   from its MuJoCo joint state and republishes them as a single ``RWSpeedMsg``</span>
+<span class="sd">   for the momentum-management chain.</span>
+<span class="sd">#. :ref:`thrOnTimeToForce` converts the thruster on-time pulse commands from</span>
+<span class="sd">   ``thrMomentumDumping`` into instantaneous force commands for each MuJoCo</span>
+<span class="sd">   thruster actuator.</span>
+
+<span class="sd">Earth gravity is configured using :ref:`NBodyGravity&lt;NBodyGravity&gt;` with a</span>
+<span class="sd">:ref:`pointMassGravityModel&lt;pointMassGravityModel&gt;` as the central body,</span>
+<span class="sd">applied to the hub only.</span>
+
+<span class="sd">The spacecraft is placed on a near-circular low Earth orbit (LEO), and the</span>
+<span class="sd">wheels are initialized above the 80 N m s momentum threshold. The simulation</span>
+<span class="sd">runs to 10 seconds, then explicitly resets ``thrMomentumManagement``. Its</span>
+<span class="sd">next FSW update at 11 seconds publishes a fresh delta-H request. This avoids</span>
+<span class="sd">the initial request at time zero, whose timestamp is not recognized as a</span>
+<span class="sd">new request by ``thrMomentumDumping`` after initialization. The simulation</span>
+<span class="sd">continues to a total elapsed time of 5 minutes while the wheels provide</span>
+<span class="sd">attitude control and the thrusters execute the requested dumping sequence.</span>
+
+<span class="sd">Attitude error, rate tracking error, individual and total wheel momenta,</span>
+<span class="sd">requested angular-momentum change, wheel speeds, thruster impulse requests,</span>
+<span class="sd">thruster on-time requests, and delivered thruster forces are plotted at the end.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_attError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rateError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rwMomenta.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_DH.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The delta-H plot shows the command held between momentum-management resets,</span>
+<span class="sd">not the accumulated momentum removed by the thrusters. Use the wheel-momentum</span>
+<span class="sd">history above to assess the resulting change in stored wheel momentum.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rwSpeeds.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_thrImpulse.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_OnTimeReq.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_thrForce.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simHelpers</span><span class="p">,</span> <span class="n">simIncludeRW</span><span class="p">,</span> <span class="n">simIncludeThruster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBodyGravity</span><span class="p">,</span> <span class="n">mujoco</span><span class="p">,</span> <span class="n">pointMassGravityModel</span><span class="p">,</span> <span class="n">simpleNav</span><span class="p">,</span> <span class="n">thrOnTimeToForce</span><span class="p">,</span> <span class="n">arrayMotorTorqueToSingleActuators</span><span class="p">,</span> <span class="n">saturationSingleActuator</span><span class="p">,</span> <span class="n">scalarJointStatesToRWSpeed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span><span class="p">,</span> <span class="n">inertial3D</span><span class="p">,</span> <span class="n">attTrackingError</span><span class="p">,</span> <span class="n">rwMotorTorque</span><span class="p">,</span> <span class="n">thrMomentumManagement</span><span class="p">,</span> <span class="n">thrForceMapping</span><span class="p">,</span> <span class="n">thrMomentumDumping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span><span class="p">,</span> <span class="n">sysModel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="c1"># Used to tag saved figs with name of file</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># -------------------------------------------------------------------------</span>
+<span class="c1"># PLOTTING FUNCTIONS</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plot_attitude_error">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_attitude_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the attitude errors."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\sigma_'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Attitude Error $\sigma_{B/R}$'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_rate_error">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_rate_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the body angular velocity rate tracking errors."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\omega_{BR,'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Rate Tracking Error (rad/s) '</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_rw_momenta">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_rw_momenta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_momenta</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRw</span><span class="p">,</span> <span class="n">RW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the RW momenta."""</span>
+    <span class="c1"># Total momentum norm found by projecting each wheel's momentum onto spin axis and summing</span>
+    <span class="n">totMomentumNorm</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeData</span><span class="p">)):</span>
+        <span class="n">totMomentum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">totMomentum</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">totMomentum</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">dataOmegaRw</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">RW</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">Js</span> <span class="o">*</span> <span class="n">RW</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">totMomentumNorm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">totMomentum</span><span class="p">))</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRw</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">RW</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">Js</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$H_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">totMomentumNorm</span><span class="p">,</span> <span class="s1">'--'</span><span class="p">,</span>
+             <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\|H\|$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'RW Momentum (Nms)'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_DH">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_DH">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_DH</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataDH</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the requested angular-momentum change in body-frame components.</span>
+
+<span class="sd">    :param timeData: Sample times [min].</span>
+<span class="sd">    :param dataDH: Requested delta-H vectors [N m s], with one row per sample</span>
+<span class="sd">        and columns for the body x, y, and z components. These commands are</span>
+<span class="sd">        held between momentum-management resets; they are not measurements</span>
+<span class="sd">        of accumulated momentum removal.</span>
+<span class="sd">    :returns: Figure showing the three components of the delta-H request.</span>
+<span class="sd">    :rtype: matplotlib.figure.Figure</span>
+<span class="sd">    """</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataDH</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\Delta H_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Requested momentum change [N m s]'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_rw_speeds">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_rw_speeds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the RW spin rates."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$\Omega_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'RW Speed (RPM) '</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_thrImpulse">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_thrImpulse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_thrImpulse</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">,</span> <span class="n">numTh</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the Thruster force values."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTh</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numTh</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$thrImpulse_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Impulse requested [Ns]'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_OnTimeRequest">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_OnTimeRequest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_OnTimeRequest</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOnTime</span><span class="p">,</span> <span class="n">numTh</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the thruster on time requests."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTh</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOnTime</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numTh</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$OnTimeRequest_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'OnTimeRequest [sec]'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_thrForce">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.plot_thrForce">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_thrForce</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataThr</span><span class="p">,</span> <span class="n">numTh</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the Thruster force values."""</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">clear</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">'plain'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTh</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataThr</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numTh</span><span class="p">),</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'$thrForce_{'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'}$'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">'lower right'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Thruster force [N]'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+
+<div class="viewcode-block" id="addRWsXML">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.addRWsXML">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addRWsXML</span><span class="p">(</span><span class="n">rwPos</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+              <span class="n">rwAxes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+              <span class="n">rwFactory</span><span class="p">:</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">,</span>
+              <span class="n">maxMomentum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.</span><span class="p">,</span>
+              <span class="n">baseIndent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build MuJoCo XML for reaction-wheel bodies and motor actuators.</span>
+
+<span class="sd">    :param rwPos: Wheel mounting positions in the hub frame [m], one</span>
+<span class="sd">        three-component vector per wheel.</span>
+<span class="sd">    :param rwAxes: Unit spin-axis vectors in the hub frame, in the same order</span>
+<span class="sd">        as ``rwPos``.</span>
+<span class="sd">    :param rwFactory: Factory in which the wheel configuration objects are</span>
+<span class="sd">        created and registered.</span>
+<span class="sd">    :param maxMomentum: Maximum momentum specification per wheel [N m s].</span>
+<span class="sd">        Defaults to 100.0 N m s.</span>
+<span class="sd">    :param baseIndent: Number of leading indentation tabs for wheel-body XML.</span>
+<span class="sd">        Defaults to 3.</span>
+<span class="sd">    :returns: A tuple containing the wheel-body XML, motor-actuator XML, and</span>
+<span class="sd">        list of registered wheel configuration objects in mounting order.</span>
+<span class="sd">    :rtype: tuple[str, str, list]</span>
+<span class="sd">    """</span>
+
+    <span class="n">numRW</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rwPos</span><span class="p">)</span>
+    <span class="n">pad</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">*</span> <span class="n">baseIndent</span>
+
+    <span class="n">rwTags</span><span class="p">,</span> <span class="n">actTags</span><span class="p">,</span> <span class="n">RWs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">rwPos</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">rwAxis</span> <span class="o">=</span> <span class="n">rwAxes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="c1"># Register wheel with the RW factory to get correct mass/inertia/torque properties</span>
+        <span class="n">rw</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">'Honeywell_HR16'</span><span class="p">,</span> <span class="n">rwAxis</span><span class="p">,</span> <span class="n">maxMomentum</span> <span class="o">=</span> <span class="n">maxMomentum</span><span class="p">)</span>
+        <span class="n">RWs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span>
+
+        <span class="c1"># XML uses lengths [m], mass [kg], inertia [kg m^2], and motor torque limits [N m].</span>
+        <span class="c1"># XML string defining RW body: single revolute joint about spin axis, inertial props</span>
+        <span class="c1"># taken from the factory-created wheel (Jt, Jt, Js), simple cylinder geom for visuals only</span>
+        <span class="n">rwTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">&lt;body name = "rw</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">Spin" pos = "</span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">" zaxis = "</span><span class="si">{</span><span class="n">rwAxis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rwAxis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rwAxis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="se">\t</span><span class="s2">&lt;joint name = "rw</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">Joint" pos = "0 0 0" axis = "0 0 1" ref = "0"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="se">\t</span><span class="s2">&lt;inertial pos = "0 0 0" mass = "</span><span class="si">{</span><span class="n">rw</span><span class="o">.</span><span class="n">mass</span><span class="si">}</span><span class="s2">" diaginertia = "</span><span class="si">{</span><span class="n">rw</span><span class="o">.</span><span class="n">Jt</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rw</span><span class="o">.</span><span class="n">Jt</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rw</span><span class="o">.</span><span class="n">Js</span><span class="si">}</span><span class="s2">"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="se">\t</span><span class="s2">&lt;geom name = "rw</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">Geom" type = "cylinder" size = "0.2 0.05" contype = "0" conaffinity = "0"/&gt;</span>
+<span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">&lt;/body&gt;"""</span><span class="p">)</span>
+        <span class="c1"># Torque-controlled actuator on the wheel joint, limited to the wheel's max motor torque</span>
+        <span class="n">actTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">&lt;motor name = "rw</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">Act" joint = "rw</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">Joint" ctrlrange = "</span><span class="si">{</span><span class="o">-</span><span class="n">rw</span><span class="o">.</span><span class="n">u_max</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">rw</span><span class="o">.</span><span class="n">u_max</span><span class="si">}</span><span class="s1">" ctrllimited = "true"/&gt;'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rwTags</span><span class="p">),</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">actTags</span><span class="p">),</span> <span class="n">RWs</span></div>
+
+
+
+<div class="viewcode-block" id="addThrustersXML">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.addThrustersXML">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addThrustersXML</span><span class="p">(</span><span class="n">thrustLocs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                    <span class="n">thrustDirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                    <span class="n">thrFactory</span><span class="p">:</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">,</span>
+                    <span class="n">maxThrust</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+                    <span class="n">baseIndent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build MuJoCo XML for thruster sites and force actuators.</span>
+
+<span class="sd">    :param thrustLocs: Thruster mounting positions in the hub frame [m], one</span>
+<span class="sd">        three-component vector per thruster.</span>
+<span class="sd">    :param thrustDirs: Unit thrust directions in the hub frame, in the same</span>
+<span class="sd">        order as ``thrustLocs``.</span>
+<span class="sd">    :param thrFactory: Factory in which the thruster configuration objects are</span>
+<span class="sd">        created and registered.</span>
+<span class="sd">    :param maxThrust: Maximum thrust per thruster used for the FSW configuration</span>
+<span class="sd">        and MuJoCo actuator control limit [N]. Defaults to 5.0 N.</span>
+<span class="sd">    :param baseIndent: Base number of indentation tabs for the generated XML.</span>
+<span class="sd">        Defaults to 2; site elements receive one additional tab.</span>
+<span class="sd">    :returns: A tuple containing the site XML, force-actuator XML, and list of</span>
+<span class="sd">        registered thruster configuration objects in mounting order.</span>
+<span class="sd">    :rtype: tuple[str, str, list]</span>
+<span class="sd">    """</span>
+
+    <span class="n">numTHRs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">thrustLocs</span><span class="p">)</span>
+    <span class="n">pad</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">*</span> <span class="n">baseIndent</span>
+
+    <span class="n">thrustTags</span><span class="p">,</span> <span class="n">actTags</span><span class="p">,</span> <span class="n">THRs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">thrustLocs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">dirVec</span> <span class="o">=</span> <span class="n">thrustDirs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="c1"># Register thruster with thruster factory to get correct FSW config properties</span>
+        <span class="n">thr</span> <span class="o">=</span> <span class="n">thrFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">'MOOG_Monarc_5'</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">dirVec</span><span class="p">,</span> <span class="n">MaxThrust</span> <span class="o">=</span> <span class="n">maxThrust</span><span class="p">)</span>
+        <span class="n">THRs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thr</span><span class="p">)</span>
+
+        <span class="c1"># Site marks thruster location/orientation on hub, motor applies force along site z-axis</span>
+        <span class="n">thrustTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="se">\t</span><span class="s1">&lt;site name = "thrusterSite</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" pos = "</span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">" zaxis = "</span><span class="si">{</span><span class="n">dirVec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dirVec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dirVec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">"/&gt;'</span><span class="p">)</span>
+        <span class="n">actTags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s1">&lt;motor name = "thruster</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" site = "thrusterSite</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" gear = "0 0 1 0 0 0" ctrlrange = "0 </span><span class="si">{</span><span class="n">thr</span><span class="o">.</span><span class="n">MaxThrust</span><span class="si">}</span><span class="s1">"/&gt;'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">thrustTags</span><span class="p">),</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">actTags</span><span class="p">),</span> <span class="n">THRs</span></div>
+
+
+
+<div class="viewcode-block" id="makeMjXmlString">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.makeMjXmlString">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makeMjXmlString</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Build MuJoCo XML for a hub with four wheels and eight ACS thrusters.</span>
+
+<span class="sd">    The hub, wheel, and thruster properties are specified within this function.</span>
+
+<span class="sd">    :returns: A tuple containing the complete model XML, wheel configuration</span>
+<span class="sd">        objects, thruster configuration objects, reaction-wheel factory, and</span>
+<span class="sd">        thruster factory, in that order.</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    """</span>
+    <span class="c1"># Hub mass properties</span>
+    <span class="n">hubMass</span> <span class="o">=</span> <span class="mf">2500.0</span> <span class="c1"># kg</span>
+    <span class="n">hubIxx</span><span class="p">,</span> <span class="n">hubIyy</span><span class="p">,</span> <span class="n">hubIzz</span> <span class="o">=</span> <span class="mf">1700.0</span><span class="p">,</span> <span class="mf">1700.0</span><span class="p">,</span> <span class="mf">1800.0</span> <span class="c1"># kg*m^2</span>
+
+    <span class="c1"># All 4 RWs mounted at same offset point, canted along 4 different spin axes</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**-</span><span class="mf">0.5</span>
+    <span class="n">rwPos</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.28</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">4</span> <span class="c1"># m</span>
+    <span class="n">rwAxes</span> <span class="o">=</span> <span class="p">[[</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span>
+
+    <span class="c1"># 8 ACS thrusters at hub corners, each aligned with a principal body axis</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.28</span>  <span class="c1"># [m]</span>
+    <span class="n">thrustLocs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="p">,</span>  <span class="n">b</span><span class="p">],</span> <span class="p">[</span> <span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">],</span> <span class="p">[</span> <span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="p">,</span>  <span class="n">b</span><span class="p">],</span> <span class="p">[</span> <span class="n">a</span><span class="p">,</span>  <span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">],</span>
+        <span class="p">[</span> <span class="n">a</span><span class="p">,</span>  <span class="n">a</span><span class="p">,</span>  <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">,</span>  <span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">,</span>  <span class="n">a</span><span class="p">,</span>  <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">],</span>
+    <span class="p">]</span>
+    <span class="n">thrustDirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+    <span class="p">])</span>
+
+    <span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+    <span class="n">thrFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+
+    <span class="c1"># Generating RW and thruster XML chains</span>
+    <span class="n">rwBodies</span><span class="p">,</span> <span class="n">rwActs</span><span class="p">,</span> <span class="n">RWs</span> <span class="o">=</span> <span class="n">addRWsXML</span><span class="p">(</span><span class="n">rwPos</span><span class="p">,</span> <span class="n">rwAxes</span><span class="p">,</span> <span class="n">rwFactory</span><span class="p">)</span>
+    <span class="n">thrSites</span><span class="p">,</span> <span class="n">thrActs</span><span class="p">,</span> <span class="n">THRs</span> <span class="o">=</span> <span class="n">addThrustersXML</span><span class="p">(</span><span class="n">thrustLocs</span><span class="p">,</span> <span class="n">thrustDirs</span><span class="p">,</span> <span class="n">thrFactory</span><span class="p">)</span>
+
+    <span class="c1"># XML lengths are [m], masses [kg], inertia components [kg m^2], and angles [rad].</span>
+    <span class="n">xml</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""&lt;mujoco model = "busWithRWsAndThrusters"&gt;</span>
+<span class="s2">    &lt;compiler angle = "radian" meshdir = ""/&gt;</span>
+
+<span class="s2">    &lt;worldbody&gt;</span>
+<span class="s2">        &lt;body name = "hub" pos = "0 0 0"&gt;</span>
+<span class="s2">            &lt;freejoint name = "busFree"/&gt;</span>
+<span class="s2">            &lt;inertial pos = "0 0 </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">" mass = "</span><span class="si">{</span><span class="n">hubMass</span><span class="si">}</span><span class="s2">" diaginertia = "</span><span class="si">{</span><span class="n">hubIxx</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hubIyy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hubIzz</span><span class="si">}</span><span class="s2">"/&gt;</span>
+<span class="s2">            &lt;geom name = "hubVisual" type = "box" size = "1 1 1.28" rgba = "1 1 1 1"/&gt;</span>
+
+<span class="si">{</span><span class="n">thrSites</span><span class="si">}</span>
+
+<span class="si">{</span><span class="n">rwBodies</span><span class="si">}</span>
+
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">    &lt;/worldbody&gt;</span>
+
+<span class="s2">    &lt;actuator&gt;</span>
+<span class="si">{</span><span class="n">rwActs</span><span class="si">}</span>
+
+<span class="si">{</span><span class="n">thrActs</span><span class="si">}</span>
+<span class="s2">    &lt;/actuator&gt;</span>
+
+<span class="s2">&lt;/mujoco&gt;"""</span>
+
+    <span class="k">return</span> <span class="n">xml</span><span class="p">,</span> <span class="n">RWs</span><span class="p">,</span> <span class="n">THRs</span><span class="p">,</span> <span class="n">rwFactory</span><span class="p">,</span> <span class="n">thrFactory</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMomentumDumpingMuJoCo.html#scenarioMomentumDumpingMuJoCo.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run five minutes of wheel attitude control and requested desaturation.</span>
+
+<span class="sd">    :param showPlots: Display the Matplotlib figures and wait for the plot</span>
+<span class="sd">        windows to close when True. Defaults to False; figures are still</span>
+<span class="sd">        generated and returned in either case.</span>
+<span class="sd">    :returns: Dictionary mapping scenario-prefixed names to eight Matplotlib</span>
+<span class="sd">        figures: attitude and rate errors, wheel momenta, requested momentum</span>
+<span class="sd">        change, wheel speeds, thruster impulses, on-times, and forces.</span>
+<span class="sd">        No files are saved by this function.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    """</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 1) Simulation configuration and MJScene dynamics model</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">"fswTask"</span>
+    <span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">"dynTask"</span>
+    <span class="n">recordTaskName</span> <span class="o">=</span> <span class="s2">"recordTask"</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">"simProcess"</span>
+
+    <span class="c1"># Initializing simulation time/time-steps for dynamics/fsw task</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">simulationTimeStepFsw</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">simulationTimeStepDyn</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="c1"># Run dynamics and navigation, then FSW, then record the current outputs.</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">simulationTimeStepDyn</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">simulationTimeStepFsw</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">simulationTimeStepDyn</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Constructing MJ XML string (hub + 4 RWs + 8 thrusters) and loading into MJScene</span>
+    <span class="n">xmlString</span><span class="p">,</span> <span class="n">RWs</span><span class="p">,</span> <span class="n">THRs</span><span class="p">,</span> <span class="n">rwFactory</span><span class="p">,</span> <span class="n">thrFactory</span> <span class="o">=</span> <span class="n">makeMjXmlString</span><span class="p">()</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">xmlString</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mujocoScene"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># lets custom sys models step alongside MuJoCo's EoM evaluation</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 2) Retrieve spacecraft components</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Pull handles of hub/RW bodies and actuators from XML</span>
+    <span class="n">busBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+    <span class="n">numRWs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">RWs</span><span class="p">)</span>
+    <span class="n">numTHRs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">THRs</span><span class="p">)</span>
+
+    <span class="n">RWBodies</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rw</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">Spin"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)]</span>
+    <span class="n">RWJoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">RWBodies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rw</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">Joint"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)]</span>
+    <span class="n">RWActuators</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rw</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">Act"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)]</span>
+    <span class="n">THRActuators</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="sa">f</span><span class="s2">"thruster</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">)]</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 3) Add gravity</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Adding N-Body gravity model into MJScene</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"gravity"</span>
+
+    <span class="n">muEarth</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">earthPm</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">earthPm</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">muEarth</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="s2">"earth"</span><span class="p">,</span> <span class="n">earthPm</span><span class="p">,</span> <span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Gravity effects applied to hub only (RWs treated as rigidly attached, negligible mass)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">,</span> <span class="n">busBody</span><span class="p">)</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 4) Initial conditions</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>  <span class="c1"># [-]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">148.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">335</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">muEarth</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 5) Navigation and FSW</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Reading s/c state and publishing standard navigation output</span>
+    <span class="n">simpleNavObj</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"simpleNav"</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">busBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">simpleNavObj</span><span class="p">)</span>
+
+    <span class="c1"># Fixed inertial pointing target</span>
+    <span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"inertial3D"</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">inertial3DObj</span><span class="p">)</span>
+
+    <span class="c1"># Tracks attitude error of s/c</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"attErrorInertial3D"</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">simpleNavObj</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="c1"># MRP feedback control law computing the commanded control torque</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mrpFeedback"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+    <span class="n">decayTime</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="c1"># s</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [-] Damping ratio.</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1700</span><span class="p">,</span> <span class="mi">1700</span><span class="p">,</span> <span class="mi">1800</span><span class="p">])</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">/</span> <span class="n">decayTime</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span><span class="o">/</span><span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span><span class="o">/</span><span class="n">xi</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Add module that maps the Lr control torque into the RW motor torques</span>
+    <span class="n">rwMotorTorqueObj</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"rwMotorTorque"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">rwMotorTorqueObj</span><span class="p">)</span>
+    <span class="c1"># Make the RW control all three body axes</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+
+    <span class="c1"># Momentum dumping configuration</span>
+    <span class="n">thrDesatControl</span> <span class="o">=</span> <span class="n">thrMomentumManagement</span><span class="o">.</span><span class="n">thrMomentumManagement</span><span class="p">()</span>
+    <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"thrMomentumManagement"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrDesatControl</span><span class="p">)</span>
+    <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">hs_min</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># [N m s] Target net wheel momentum after dumping.</span>
+
+    <span class="c1"># Map angular impulse [N m s] to individual thruster impulses [N s].</span>
+    <span class="n">thrForceMappingObj</span> <span class="o">=</span> <span class="n">thrForceMapping</span><span class="o">.</span><span class="n">thrForceMapping</span><span class="p">()</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"thrForceMapping"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrForceMappingObj</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceSign</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">angErrThresh</span> <span class="o">=</span> <span class="mf">3.15</span>  <span class="c1"># [rad] Above pi to allow this momentum-dumping mapping.</span>
+
+    <span class="c1"># Setup the thruster momentum dumping module</span>
+    <span class="n">thrDump</span> <span class="o">=</span> <span class="n">thrMomentumDumping</span><span class="o">.</span><span class="n">thrMomentumDumping</span><span class="p">()</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"thrDump"</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrDump</span><span class="p">)</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">maxCounterValue</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># Number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">thrMinFireTime</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># [s]</span>
+
+    <span class="c1"># FSW-facing config messages describing all 4 wheels / 8 thrusters</span>
+    <span class="n">fswRwParamMsg</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">getConfigMessage</span><span class="p">()</span>
+    <span class="n">fswThrParamMsg</span> <span class="o">=</span> <span class="n">thrFactory</span><span class="o">.</span><span class="n">getConfigMessage</span><span class="p">()</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 6) Distribute torques/forces</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">rwUMax</span> <span class="o">=</span> <span class="n">RWs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_max</span>
+
+    <span class="n">arrayToSingles</span> <span class="o">=</span> <span class="n">arrayMotorTorqueToSingleActuators</span><span class="o">.</span><span class="n">ArrayMotorTorqueToSingleActuators</span><span class="p">()</span>
+    <span class="n">arrayToSingles</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"arrayMotorTorqueToSingleActuators"</span>
+    <span class="n">arrayToSingles</span><span class="o">.</span><span class="n">setNumActuators</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)</span>
+    <span class="n">arrayToSingles</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">arrayToSingles</span><span class="p">)</span>
+
+    <span class="n">torqueLimiters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">):</span>
+        <span class="n">limiter</span> <span class="o">=</span> <span class="n">saturationSingleActuator</span><span class="o">.</span><span class="n">SaturationSingleActuator</span><span class="p">()</span>
+        <span class="n">limiter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"rw</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">TorqueLimiter"</span>
+        <span class="n">limiter</span><span class="o">.</span><span class="n">setMinInput</span><span class="p">(</span><span class="o">-</span><span class="n">rwUMax</span><span class="p">)</span>
+        <span class="n">limiter</span><span class="o">.</span><span class="n">setMaxInput</span><span class="p">(</span><span class="n">rwUMax</span><span class="p">)</span>
+        <span class="n">limiter</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">arrayToSingles</span><span class="o">.</span><span class="n">actuatorOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">limiter</span><span class="p">)</span>
+        <span class="n">RWActuators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">limiter</span><span class="o">.</span><span class="n">actuatorOutMsg</span><span class="p">)</span>
+        <span class="n">torqueLimiters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">limiter</span><span class="p">)</span>
+
+
+    <span class="c1"># thrOnTimeToForce used to convert on-time commands from FSW stack to instant on/off</span>
+    <span class="c1"># thruster actuator messages for MuJoCo thrusters</span>
+    <span class="n">thrForceConverter</span> <span class="o">=</span> <span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">ThrOnTimeToForce</span><span class="p">()</span>
+    <span class="n">thrForceConverter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"thrOnTimeToForce"</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">):</span>
+        <span class="n">thrForceConverter</span><span class="o">.</span><span class="n">addThruster</span><span class="p">()</span>
+    <span class="n">thrForceConverter</span><span class="o">.</span><span class="n">setThrMag</span><span class="p">([</span><span class="n">thr</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">THRs</span><span class="p">])</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">thrForceConverter</span><span class="p">)</span>
+    <span class="n">thrForceConverter</span><span class="o">.</span><span class="n">onTimeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrDump</span><span class="o">.</span><span class="n">thrusterOnTimeOutMsg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">):</span>
+        <span class="n">THRActuators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrForceConverter</span><span class="o">.</span><span class="n">thrusterForceOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 6) Message Linking</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Inertia tensor passed into config message, vehicle config created</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1700</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1700</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1800</span><span class="p">])</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+
+    <span class="c1"># scalarJointStatesToRWSpeed gathers individual per-joint wheel speeds from MuJoCo,</span>
+    <span class="c1"># republishes them as a single RWSpeedMsg</span>
+    <span class="n">rwSpeedsAdapter</span> <span class="o">=</span> <span class="n">scalarJointStatesToRWSpeed</span><span class="o">.</span><span class="n">ScalarJointStatesToRWSpeed</span><span class="p">()</span>
+    <span class="n">rwSpeedsAdapter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scalarJointStatesToRWSpeed"</span>
+    <span class="n">rwSpeedsAdapter</span><span class="o">.</span><span class="n">setNumJoints</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">):</span>
+        <span class="n">rwSpeedsAdapter</span><span class="o">.</span><span class="n">jointStateInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">RWJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">rwSpeedsAdapter</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwSpeedsAdapter</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwSpeedsAdapter</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+    <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">rwConfigDataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswThrParamMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrDesatControl</span><span class="o">.</span><span class="n">deltaHOutMsg</span><span class="p">)</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">thrusterConfInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswThrParamMsg</span><span class="p">)</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">deltaHInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrDesatControl</span><span class="o">.</span><span class="n">deltaHOutMsg</span><span class="p">)</span>
+    <span class="n">thrDump</span><span class="o">.</span><span class="n">thrusterImpulseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceCmdOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 7) Set up data recording</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStepDyn</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+
+    <span class="n">sNavRec</span> <span class="o">=</span> <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">attOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">sNavRec</span><span class="p">)</span>
+
+    <span class="n">dataRec</span> <span class="o">=</span> <span class="n">busBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+
+    <span class="n">rwMotorLog</span> <span class="o">=</span> <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">rwMotorLog</span><span class="p">)</span>
+
+    <span class="n">attErrorLog</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="p">)</span>
+
+    <span class="n">deltaHLog</span>  <span class="o">=</span> <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">deltaHOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">deltaHLog</span><span class="p">)</span>
+
+    <span class="n">thrMapLog</span> <span class="o">=</span> <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceCmdOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">thrMapLog</span><span class="p">)</span>
+
+    <span class="n">onTimeLog</span> <span class="o">=</span> <span class="n">thrDump</span><span class="o">.</span><span class="n">thrusterOnTimeOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">onTimeLog</span><span class="p">)</span>
+
+    <span class="c1"># Wheel speeds live as individual MuJoCo joint states, so log each separately and column-stack later for plotting</span>
+    <span class="n">rwSpeedLogs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">):</span>
+        <span class="n">rwSpeedLogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RWJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">rwSpeedLogs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Delivered force at each thruster actuator, logged individually</span>
+    <span class="n">thrForceLogs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">):</span>
+        <span class="n">thrForceLogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">THRActuators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">recordTaskName</span><span class="p">,</span> <span class="n">thrForceLogs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 8) Running simulation</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Setting initial conditions</span>
+    <span class="n">busFree</span> <span class="o">=</span> <span class="n">busBody</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">busBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">busFree</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Initial wheel spin rates, chosen so the wheels start above the 80 Nms desat threshold</span>
+    <span class="n">initialOmegas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4000.</span><span class="p">,</span> <span class="mf">2000.</span><span class="p">,</span> <span class="mf">3500.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>  <span class="c1"># [RPM]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">):</span>
+        <span class="n">omega_radps</span> <span class="o">=</span> <span class="n">initialOmegas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+        <span class="n">RWJoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">omega_radps</span><span class="p">)</span>
+
+    <span class="c1"># Coast for 10 s before requesting a new momentum check.</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># The next FSW update at 11 s writes a fresh delta-H request. A request</span>
+    <span class="c1"># timestamped at zero is not recognized as new by thrMomentumDumping.</span>
+    <span class="n">thrDesatControl</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># 9) Post processing and plotting</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">sigma_BR</span>
+    <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">omega_BR_B</span>
+    <span class="c1"># Column-stack per-wheel speed logs into a single (numSamples x numRWs) array</span>
+    <span class="n">dataOmegaRW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">rwSpeedLogs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRWs</span><span class="p">)])</span>
+    <span class="n">dataDH</span> <span class="o">=</span> <span class="n">deltaHLog</span><span class="o">.</span><span class="n">torqueRequestBody</span>
+    <span class="n">dataMap</span> <span class="o">=</span> <span class="n">thrMapLog</span><span class="o">.</span><span class="n">thrForce</span>
+    <span class="n">dataOnTime</span> <span class="o">=</span> <span class="n">onTimeLog</span><span class="o">.</span><span class="n">OnTimeRequest</span>
+
+    <span class="c1"># Gather delivered thruster force logs into list of arrays, one per thruster</span>
+    <span class="n">dataThr</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTHRs</span><span class="p">):</span>
+        <span class="n">dataThr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thrForceLogs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">rwMotorLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+
+    <span class="c1"># Generating plots</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_attError"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_rateError"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_rwMomenta"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_rw_momenta</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">RWs</span><span class="p">,</span> <span class="n">numRWs</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_DH"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_DH</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataDH</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_rwSpeeds"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">numRWs</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_thrImpulse"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_thrImpulse</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">,</span> <span class="n">numTHRs</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_OnTimeReq"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_OnTimeRequest</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOnTime</span><span class="p">,</span> <span class="n">numTHRs</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"_thrForce"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_thrForce</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataThr</span><span class="p">,</span> <span class="n">numTHRs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">showPlots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+.. _ForceAtSiteMsgPayload:
+
+ForceAtSiteMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ForceAtSiteMsgPayload.h
+   :project: msgPayloadDefC
+
