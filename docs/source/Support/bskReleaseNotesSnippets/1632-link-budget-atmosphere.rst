@@ -1,0 +1,2 @@
+- Fixed :ref:`linkBudget` atmospheric slant attenuation by computing each layer's elevation from the ground ray invariant before accumulating its loss (GitHub issue 1632).
+- Fixed :ref:`linkBudget` atmospheric layer generation to cover the ground-to-100 km interval with finite exponential spacing and midpoint sampling, eliminating overflow and reducing the sea-level lookup table from 70,979 to 922 layers (GitHub issue 1632).
