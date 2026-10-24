@@ -48,7 +48,20 @@ double ItuAtmosphere::getWaterVapDensityISA(double altitude_m)
     return instance().calcWaterVapDensityISA(altitude_m);
 }
 
-size_t ItuAtmosphere::findLayerIndex(double altitude_m) const
+std::vector<double> ItuAtmosphere::getLayerBoundaries()
+{
+    std::vector<double> boundaries;
+    for (std::size_t i = 1; i < NUM_LAYERS; ++i) {
+        boundaries.push_back(ATMOSPHERE_DATA[i].h);
+    }
+    for (double geometricHeight : { TEMP_RISE_START, MODEL_TOP }) { // [km]
+        // Invert geometricHeight() to use the property getters' altitude coordinate.
+        boundaries.push_back(R_EARTH_ITU * geometricHeight / (R_EARTH_ITU + geometricHeight) * 1e3); // [m]
+    }
+    return boundaries;
+}
+
+std::size_t ItuAtmosphere::findLayerIndex(double altitude_m) const
 {
     size_t layer_idx = NUM_LAYERS - 1;
     for (size_t i = 0; i < NUM_LAYERS - 1; ++i) {
@@ -74,12 +87,12 @@ double ItuAtmosphere::calcTempISA(double altitude_m) const
     if (altitude_m >= ATMOSPHERE_DATA[NUM_LAYERS - 1].h) {
         // if h above 84.852 km
         double Z = ItuAtmosphere::geometricHeight(altitude_m); // [km] Geometric height
-        if (Z < 91.0) {
+        if (Z < TEMP_RISE_START) {
             return 186.8673; // [K] Constant temperature between 84.852 km and 91 km (ITU-R P.835-7 eq 4a)
-        } else if (Z < 100.0) {
+        } else if (Z < MODEL_TOP) {
             return 263.1905 -
                    76.3232 *
-                       std::sqrt(1 - std::pow((Z - 91.0) / (19.9429),
+                       std::sqrt(1 - std::pow((Z - TEMP_RISE_START) / (19.9429),
                                               2)); // [K] Linear increase between 91 km and 100 km (ITU-R P.835-7 eq 4b)
         } else {
             return 195.08134; // [K] Above 100 km, assume constant temperature
@@ -141,7 +154,7 @@ double ItuAtmosphere::calcPresISA(double altitude_m) const
     } else {
         // altitude >= 85 km
         double Z = ItuAtmosphere::geometricHeight(altitude_m); // [km] Geometric height
-        if (Z < 100.0) {
+        if (Z < MODEL_TOP) {
             return exp(95.571899 - 4.011801 * Z + 6.424731 * Z * Z * 1e-2 - 4.789660 * Z * Z * Z * 1e-4 +
                        1.340543 * Z * Z * Z * Z * 1e-6); // ITU-R P.835-7 eq 5
         } else {
