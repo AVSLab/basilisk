@@ -16,12 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "architecture/utilities/ItuRefAtmosphere.h"
 #include "simulation/communication/linkBudget/linkBudget.h"
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <tuple>
+#include <vector>
 
 /*! @brief Exercise private atmospheric calculations without adding a public module API. */
 class LinkBudgetTestAccess
@@ -83,23 +86,59 @@ class LinkBudgetTestAccess
 namespace {
 constexpr double topAltitude = 100.0e3;      // [m]
 constexpr double altitudeTolerance = 1.0e-8; // [m]
+constexpr double ituEarthRadius = 6356.766;  // [km]
+// [m] Property-branch boundaries, including geometric heights converted to input altitude.
+constexpr std::array<double, 9> atmosphereBoundaries = { 11000.0,
+                                                         20000.0,
+                                                         32000.0,
+                                                         47000.0,
+                                                         51000.0,
+                                                         71000.0,
+                                                         84852.0,
+                                                         ituEarthRadius * 91.0 / (ituEarthRadius + 91.0) * 1e3,
+                                                         ituEarthRadius * 100.0 / (ituEarthRadius + 100.0) * 1e3 };
+
+/*! @brief Generate ground altitudes below, at and above every atmospheric boundary.
+ *  @return Ground altitudes in meters.
+ */
+std::vector<double> groundAltitudes()
+{
+    std::vector<double> altitudes = { 0.0, 1500.0, 25000.0, 80000.0, 99999.0 }; // [m]
+    const double offset = 1.0;                                                  // [m]
+    for (double boundary : atmosphereBoundaries) {                              // [m]
+        altitudes.push_back(boundary - offset);
+        altitudes.push_back(boundary);
+        altitudes.push_back(boundary + offset);
+    }
+    return altitudes;
+}
+
+/*! @brief The atmosphere exposes all formula transitions in its input altitude coordinate. */
+TEST(LinkBudgetAtmosphere, ExposesAtmosphericBoundaries)
+{
+    const auto boundaries = ItuAtmosphere::getLayerBoundaries(); // [m]
+    ASSERT_EQ(boundaries.size(), atmosphereBoundaries.size());
+    for (std::size_t i = 0; i < boundaries.size(); ++i) {
+        EXPECT_NEAR(boundaries[i], atmosphereBoundaries[i], altitudeTolerance);
+    }
+}
 
 class LinkBudgetLayerGrid : public ::testing::TestWithParam<double>
 {};
 
-/*! @brief Check finite layers, midpoint sampling, exponential growth and complete altitude coverage. */
+/*! @brief Check finite midpoint cells, complete coverage and splitting at every atmospheric boundary. */
 TEST_P(LinkBudgetLayerGrid, CoversEntireAtmosphere)
 {
     LinkBudget model;
     const double groundAltitude = GetParam(); // [m]
     const auto& layers = LinkBudgetTestAccess::buildLayers(model, groundAltitude);
     ASSERT_FALSE(layers.layer_i.empty());
-    ASSERT_LE(layers.layer_i.size(), 922U);
+    ASSERT_LE(layers.layer_i.size(), 931U);
     ASSERT_EQ(layers.layer_i.size(), layers.delta_h_layer_i.size());
     ASSERT_EQ(layers.layer_i.size(), layers.gamma_i.size());
     ASSERT_EQ(layers.layer_i.size(), layers.n_i.size());
     if (groundAltitude == 0.0) {
-        EXPECT_EQ(layers.layer_i.size(), 922U);
+        EXPECT_EQ(layers.layer_i.size(), 931U);
     }
 
     double previousTop = groundAltitude; // [m]
@@ -116,19 +155,22 @@ TEST_P(LinkBudgetLayerGrid, CoversEntireAtmosphere)
         EXPECT_GE(layers.gamma_i[i], 0.0);
         EXPECT_GE(layers.n_i[i], 1.0);
         EXPECT_NEAR(height - 0.5 * thickness, previousTop, altitudeTolerance);
+        for (double boundary : atmosphereBoundaries) { // [m]
+            // No cell may sample across a formula transition, including near its endpoints.
+            EXPECT_FALSE(height - 0.5 * thickness < boundary - altitudeTolerance &&
+                         height + 0.5 * thickness > boundary + altitudeTolerance);
+        }
         previousTop = height + 0.5 * thickness;
         totalThickness += thickness;
         if (i > 0) {
             EXPECT_GT(height, layers.layer_i[i - 1]);
-            EXPECT_NEAR(thickness / layers.delta_h_layer_i[i - 1], std::exp(0.01), 1.0e-8);
         }
     }
     EXPECT_NEAR(previousTop, topAltitude, altitudeTolerance);
     EXPECT_NEAR(totalThickness, topAltitude - groundAltitude, altitudeTolerance);
 }
 
-// [m] Sea level, elevated ground, the old overflow region and the last atmospheric meter.
-INSTANTIATE_TEST_SUITE_P(Altitudes, LinkBudgetLayerGrid, ::testing::Values(0.0, 1500.0, 25000.0, 80000.0, 99999.0));
+INSTANTIATE_TEST_SUITE_P(Altitudes, LinkBudgetLayerGrid, ::testing::ValuesIn(groundAltitudes()));
 
 /*! @brief Rebuilding replaces cached layers and clears them at or above the atmosphere. */
 TEST(LinkBudgetAtmosphere, RebuildingReplacesLayers)
