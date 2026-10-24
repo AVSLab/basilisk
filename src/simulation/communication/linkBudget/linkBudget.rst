@@ -108,9 +108,21 @@ Atmospheric Attenuation
 
 For **space-to-ground** links, the module computes atmospheric attenuation due to oxygen, water vapor and nitrogen absorption following the `ITU-R P.676-13 <https://www.itu.int/rec/R-REC-P.676>`__ recommendation. This calculation is only performed when atmospheric attenuation is enabled ``atmosAtt == True`` and one antenna is located on the ground.
 
-The atmospheric attenuation model divides the atmosphere into discrete layers (increasing thickness with increasing altitude) from the ground antenna altitude up to 100 km (Karman line). The slant path depending on angle :math:`\alpha` (see Figure 2) through each layer is computed based on the antenna positions and the altitude of each layer.
+The atmospheric attenuation model starts with an exponential altitude grid from
+the ground antenna altitude to 100 km. It splits cells at the temperature and
+pressure formula boundaries provided by ``ItuAtmosphere::getLayerBoundaries()``.
+The upper-atmosphere transitions at 91 km and 100 km geometric height are
+converted to the altitude coordinate used by the atmosphere's property getters.
+Only boundaries strictly inside the integration interval are inserted, and
+coincident cell edges are merged. At sea level, the resulting grid has 931 cells.
 
-The atmospheric conditions (temperature, pressure, water vapor density) at each altitude layer are obtained from the `ITU-R P.835-7 <https://www.itu.int/rec/R-REC-P.835>`__ reference standard atmosphere model via the ``ItuAtmosphere`` utility class.
+Temperature, pressure, water vapor density, specific attenuation and refractive
+index are evaluated at each cell's midpoint. The atmospheric conditions come
+from the `ITU-R P.835-7 <https://www.itu.int/rec/R-REC-P.835>`__ reference atmosphere
+implementation in ``ItuAtmosphere``. Splitting prevents one midpoint value from
+representing both sides of a piecewise formula transition, reducing integration
+error near gas absorption lines. Each cell's slant elevation is calculated from
+the ground ray invariant before its attenuation is accumulated.
 
 .. note::
    Atmospheric attenuation lookup tables are precomputed at initialization, using the ground antenna position and frequency and re-used during simulation. Changes in frequency during simulation will not update the atmospheric attenuation profile.
@@ -299,6 +311,24 @@ The atmospheric attenuation model implements the line-by-line calculation method
 - 35 water vapor absorption lines (Table 2 of ITU-R P.676-13)
 - Pressure-induced nitrogen absorption continuum
 - Non-resonant Debye spectrum for oxygen below 10 GHz
+
+Atmospheric Integration Validation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Native regression tests check complete altitude coverage, positive cell widths
+and midpoint sampling, including ground stations immediately below, at and above
+every atmospheric boundary. No cell may cross a temperature or pressure formula
+boundary.
+
+Python regression tests use the real ``oxygen.json`` and ``waterVapour.json``
+absorption tables to compare absolute attenuation with a uniform 0.5 m midpoint
+reference integration. The references use the current atmospheric and spectral
+formulas; a separate 1 m calculation agrees within 0.00001 dB. Cases cover ground
+altitudes of 0 m and 1500 m, elevations of 5.1, 10 and 90 degrees, and both input
+antenna orders. Absolute tolerances are 0.0001 dB at 10 GHz, 0.05 dB at 60 GHz,
+and 0.02 dB at 118.750334 GHz and 183.310091 GHz. These checks measure integration
+accuracy for the existing atmosphere model; they do not independently validate
+its physical fidelity to the ITU recommendations.
 
 Elevation Angle Constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
