@@ -251,12 +251,11 @@ void LinkBudget::calculateAtmosphericLoss()
     Eigen::Vector3d n_Ag_n = { this->gndAntPnt->nHat_LP_N[0],
                                this->gndAntPnt->nHat_LP_N[1],
                                this->gndAntPnt->nHat_LP_N[2] }; // n-vector at antenna location in {N} frame
-    double cosSlant_i =
-        this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N); // [cos(rad)] Cosinus of slant angle at the ground
-    cosSlant_i = std::clamp(cosSlant_i, -1.0, 1.0);
+    const double cosSlant_0 =
+        std::clamp(this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N), -1.0, 1.0); // [-] Cosine of ground elevation
 
     // Check initial elevation angle and warn once if below minimum
-    double sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_i * cosSlant_i));
+    double sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_0 * cosSlant_0));
     if (sinSlant_i < MIN_SIN_ELEVATION) {
         bskLogger.bskLog(BSK_WARNING, "LinkBudget: Elevation angle below 5 deg, clamping for atmospheric calculation.");
     }
@@ -269,6 +268,11 @@ void LinkBudget::calculateAtmosphericLoss()
             this->attenuationLookup.delta_h_layer_i[i]; // [m]     Thickness of altitude layer i (ITU-R P.676-13 eq 16a)
         n_i = this->attenuationLookup.n_i[i];           // [-]     Refractivity at altitude layer i
 
+        // Reference every layer to the ground ray invariant (ITU-R P.676-13 eq. 12).
+        const double cosSlant_i =
+            std::clamp(((REQ_EARTH * 1e3 + this->h_0) * this->n_0) / ((REQ_EARTH * 1e3 + h_i) * n_i) * cosSlant_0,
+                       -1.0,
+                       1.0); // [-] Cosine of elevation at altitude h_i
         sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_i * cosSlant_i));
         if (sinSlant_i < MIN_SIN_ELEVATION) {
             sinSlant_i = MIN_SIN_ELEVATION;
@@ -276,10 +280,6 @@ void LinkBudget::calculateAtmosphericLoss()
 
         // Total attenuation at layer i
         attenuation += gamma_i * delta_h_layer_i * 1e-3 / sinSlant_i; // [dB] (ITU-R P.676-13 eq 11)
-        // calculate cosine slant angle for the next layer (ITU-R P.676-13 eq. 12)
-        cosSlant_i = ((REQ_EARTH * 1e3 + h_0) * n_0) / ((REQ_EARTH * 1e3 + h_i) * n_i) *
-                     cosSlant_i; // [-] Cosinus of slant angle at altitude h_i
-        cosSlant_i = std::clamp(cosSlant_i, -1.0, 1.0);
     }
     this->L_atm = attenuation; // [dB] Total atmospheric attenuation
 }
