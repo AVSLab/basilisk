@@ -559,6 +559,23 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
         (this->h_Toa - this->h_0) / std::expm1(static_cast<double>(upperIndex - lowerIndex) / layerScale); // [m]
     double layerBottom = this->h_0;                                                                        // [m]
 
+    std::vector<double> layerTops; // [m]
+    for (int i = lowerIndex; i < upperIndex; ++i) {
+        // This is eq. 16d normalized to the full interval, with bounded exponential arguments.
+        layerTops.push_back(i + 1 == upperIndex
+                                ? this->h_Toa
+                                : this->h_0 +
+                                      heightScale * std::expm1(static_cast<double>(i + 1 - lowerIndex) / layerScale));
+    }
+    // Keep each midpoint sample within one branch of the piecewise atmosphere.
+    for (double boundary : ItuAtmosphere::getLayerBoundaries()) { // [m]
+        if (boundary > this->h_0 && boundary < this->h_Toa) {
+            layerTops.push_back(boundary);
+        }
+    }
+    std::sort(layerTops.begin(), layerTops.end());
+    layerTops.erase(std::unique(layerTops.begin(), layerTops.end()), layerTops.end());
+
     double e_i;             // [kg K / m3]     (ITU-R P.676-13 eq 4) Water vapor partial pressure at altitude h_i
     double T_i, P_i, rho_i; // [K, Pa, kg/m^3] atmospheric conditions at altitude h_i (derived from ITU-R P.835-6)
     double theta_i, S_ox_i, S_wv_i;    // [K]             (ITU-R P.676-13: eq 3)
@@ -576,13 +593,8 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
 
     f_GHz = frequency / 1.0e9; // [GHz] Convert from Hz to GHz for ITU-R P.676 formulas
 
-    for (int i = lowerIndex; i < upperIndex; ++i) {
-        // This is eq. 16d normalized to the full interval, with bounded exponential arguments.
-        const double layerTop =
-            i + 1 == upperIndex
-                ? this->h_Toa
-                : this->h_0 + heightScale * std::expm1(static_cast<double>(i + 1 - lowerIndex) / layerScale); // [m]
-        const double delta_h_layer_i = layerTop - layerBottom;                                                // [m]
+    for (double layerTop : layerTops) {                         // [m]
+        const double delta_h_layer_i = layerTop - layerBottom;  // [m]
         const double h_i = layerBottom + 0.5 * delta_h_layer_i; // [m] Sample at the layer midpoint
         // Calculate atmospheric conditions at the current altitude (humidity, pressure, temperature)
         T_i = ItuAtmosphere::getTempISA(h_i);
