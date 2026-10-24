@@ -30,8 +30,10 @@
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include <cstdint>
 #include <fstream>
 #include <string>
+#include <vector>
 
 /*! @brief This module describes how the radio link-budget model operates within the simulation environment.
  *  The purpose of this module is to provide a basic representation of radio-link communication between two spacecrafts
@@ -53,10 +55,10 @@ struct LookupTable
  */
 struct AttenuationLookupTable
 {
-    std::vector<double> layer_i;         //!< [m] Altitude layers
-    std::vector<double> gamma_i;         //!< [dB/km] Attenuation values at each altitude layer (vertical)
+    std::vector<double> layer_i;         //!< [m] Sample altitudes at layer midpoints
+    std::vector<double> gamma_i;         //!< [dB/km] Specific attenuation at each sample altitude
     std::vector<double> delta_h_layer_i; //!< [m] Thickness of each altitude layer
-    std::vector<double> n_i;             //!< [-] Refractivity at each altitude layer
+    std::vector<double> n_i;             //!< [-] Refractive index at each sample altitude
 };
 
 /*! @brief Radio link budget model for spacecraft-to-spacecraft or spacecraft-to-ground communication
@@ -70,6 +72,8 @@ struct AttenuationLookupTable
  */
 class LinkBudget : public SysModel
 {
+    friend class LinkBudgetTestAccess; // Native regression tests inspect the atmospheric integration internals.
+
   public:
     LinkBudget();
     ~LinkBudget() = default;

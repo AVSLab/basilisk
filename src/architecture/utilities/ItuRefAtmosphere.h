@@ -22,6 +22,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <vector>
 
 /*! @brief ITU-R P.835-2 Reference Standard Atmosphere Implementation
  *
@@ -50,13 +52,18 @@ class ItuAtmosphere
      *  @return Water vapor density in [g/m3]
      */
     static double getWaterVapDensityISA(double altitude);
+    /*! @brief Get the internal altitude boundaries of the piecewise atmosphere.
+     *  @return Sorted boundaries in [m], in the same altitude coordinate as the property getters.
+     *  @note Includes the upper-atmosphere geometric-height transitions converted to altitude.
+     */
+    static std::vector<double> getLayerBoundaries();
 
   private:
     /*! @brief find the layer index for a given altitude
      *  @param altitude_m Altitude in [m]
      *  @return Layer index
      */
-    size_t findLayerIndex(double altitude_m) const;
+    std::size_t findLayerIndex(double altitude_m) const;
     /*! @brief Calculate geometric height from altitude
      *  @param altitude_m Altitude in [m]
      *  @return Geometric height in [km]
@@ -100,7 +107,7 @@ class ItuAtmosphere
     };
 
     /*! @brief Number of atmospheric layers in the reference atmosphere; Source: ITU-R P.835-7, Table 1 */
-    static constexpr size_t NUM_LAYERS = 8;
+    static constexpr std::size_t NUM_LAYERS = 8;
 
     /*! @brief Mean annual global reference atmosphere layer data
      *  Source: ITU-R P.835-7, Table 1
@@ -125,6 +132,8 @@ class ItuAtmosphere
     static constexpr double h0_water = 2.0; ///< [km] Water vapor scale height (ITU-R P.835-7 eq 6)
     //    static constexpr double h0_dry   = 6.0;  ///< [km] Dry atmosphere scale height (ITU-R P.835-7 eq 9)
     static constexpr double R_EARTH_ITU = 6356.766; ///< [km] Earth's radius for ITU atmosphere calculations
+    static constexpr double TEMP_RISE_START = 91.0; ///< [km] Geometric height where upper-atmosphere temperature rises
+    static constexpr double MODEL_TOP = 100.0;      ///< [km] Geometric height where pressure becomes zero
 
     ItuAtmosphere(const ItuAtmosphere&) = delete;
     ItuAtmosphere& operator=(const ItuAtmosphere&) = delete;

@@ -251,12 +251,11 @@ void LinkBudget::calculateAtmosphericLoss()
     Eigen::Vector3d n_Ag_n = { this->gndAntPnt->nHat_LP_N[0],
                                this->gndAntPnt->nHat_LP_N[1],
                                this->gndAntPnt->nHat_LP_N[2] }; // n-vector at antenna location in {N} frame
-    double cosSlant_i =
-        this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N); // [cos(rad)] Cosinus of slant angle at the ground
-    cosSlant_i = std::clamp(cosSlant_i, -1.0, 1.0);
+    const double cosSlant_0 =
+        std::clamp(this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N), -1.0, 1.0); // [-] Cosine of ground elevation
 
     // Check initial elevation angle and warn once if below minimum
-    double sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_i * cosSlant_i));
+    double sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_0 * cosSlant_0));
     if (sinSlant_i < MIN_SIN_ELEVATION) {
         bskLogger.bskLog(BSK_WARNING, "LinkBudget: Elevation angle below 5 deg, clamping for atmospheric calculation.");
     }
@@ -266,9 +265,14 @@ void LinkBudget::calculateAtmosphericLoss()
         h_i = this->attenuationLookup.layer_i[i];     // [m]     Altitude layer i
         gamma_i = this->attenuationLookup.gamma_i[i]; // [dB/km] Attenuation value at altitude layer i
         delta_h_layer_i =
-            this->attenuationLookup.delta_h_layer_i[i]; // [m]     Thickness of altitude layer i (ITU-R P.676-13 eq 16a)
+            this->attenuationLookup.delta_h_layer_i[i]; // [m]     Thickness of altitude layer i (ITU-R P.676-13 eq. 14)
         n_i = this->attenuationLookup.n_i[i];           // [-]     Refractivity at altitude layer i
 
+        // Reference every layer to the ground ray invariant (ITU-R P.676-13 eq. 12).
+        const double cosSlant_i =
+            std::clamp(((REQ_EARTH * 1e3 + this->h_0) * this->n_0) / ((REQ_EARTH * 1e3 + h_i) * n_i) * cosSlant_0,
+                       -1.0,
+                       1.0); // [-] Cosine of elevation at altitude h_i
         sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_i * cosSlant_i));
         if (sinSlant_i < MIN_SIN_ELEVATION) {
             sinSlant_i = MIN_SIN_ELEVATION;
@@ -276,10 +280,6 @@ void LinkBudget::calculateAtmosphericLoss()
 
         // Total attenuation at layer i
         attenuation += gamma_i * delta_h_layer_i * 1e-3 / sinSlant_i; // [dB] (ITU-R P.676-13 eq 11)
-        // calculate cosine slant angle for the next layer (ITU-R P.676-13 eq. 12)
-        cosSlant_i = ((REQ_EARTH * 1e3 + h_0) * n_0) / ((REQ_EARTH * 1e3 + h_i) * n_i) *
-                     cosSlant_i; // [-] Cosinus of slant angle at altitude h_i
-        cosSlant_i = std::clamp(cosSlant_i, -1.0, 1.0);
     }
     this->L_atm = attenuation; // [dB] Total atmospheric attenuation
 }
@@ -543,7 +543,39 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
     attenuationLookup->delta_h_layer_i.clear();
     attenuationLookup->n_i.clear();
 
-    double m_i;             // [-]             (ITU-R P.676-13 eq 16c) Weighting factor for layer i
+    if (this->h_0 >= this->h_Toa) {
+        return;
+    }
+
+    // ITU-R P.676-13 eqs. 14-16: retain exponential spacing over the fixed altitude interval.
+    const double firstLayerThickness = 0.1;                  // [m] Sea-level layer thickness in eq. 14
+    const double layerScale = 100.0;                         // [-] Number of layers per e-fold increase in thickness
+    const double layerGrowth = std::expm1(1.0 / layerScale); // [-]
+    const int lowerIndex =
+        static_cast<int>(std::floor(layerScale * std::log1p(this->h_0 * layerGrowth / firstLayerThickness) + 1.0));
+    const int upperIndex =
+        static_cast<int>(std::ceil(layerScale * std::log1p(this->h_Toa * layerGrowth / firstLayerThickness) + 1.0));
+    const double heightScale =
+        (this->h_Toa - this->h_0) / std::expm1(static_cast<double>(upperIndex - lowerIndex) / layerScale); // [m]
+    double layerBottom = this->h_0;                                                                        // [m]
+
+    std::vector<double> layerTops; // [m]
+    for (int i = lowerIndex; i < upperIndex; ++i) {
+        // This is eq. 16d normalized to the full interval, with bounded exponential arguments.
+        layerTops.push_back(i + 1 == upperIndex
+                                ? this->h_Toa
+                                : this->h_0 +
+                                      heightScale * std::expm1(static_cast<double>(i + 1 - lowerIndex) / layerScale));
+    }
+    // Keep each midpoint sample within one branch of the piecewise atmosphere.
+    for (double boundary : ItuAtmosphere::getLayerBoundaries()) { // [m]
+        if (boundary > this->h_0 && boundary < this->h_Toa) {
+            layerTops.push_back(boundary);
+        }
+    }
+    std::sort(layerTops.begin(), layerTops.end());
+    layerTops.erase(std::unique(layerTops.begin(), layerTops.end()), layerTops.end());
+
     double e_i;             // [kg K / m3]     (ITU-R P.676-13 eq 4) Water vapor partial pressure at altitude h_i
     double T_i, P_i, rho_i; // [K, Pa, kg/m^3] atmospheric conditions at altitude h_i (derived from ITU-R P.835-6)
     double theta_i, S_ox_i, S_wv_i;    // [K]             (ITU-R P.676-13: eq 3)
@@ -558,25 +590,19 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
     double gamma_i;                    // [dB/km]         Specific attenuation for layer i
     double f_j;                        // [Hz]            Absorption line frequency (oxygen or water vapor lookup table)
     double n_i;                        // [-]             Refractivity at altitude h_i
-    double delta_h_layer_i = 0.1;      // [m]             Layer thickness (first atmospheric layer thickness 0.1 m)
-    int i = 1;                         // [-]             Layer index (first layer i=1 according to ITU-R P.676-13)
-    double h_i = h_0; // [m]             Initial altitude, ground station altitude (above spherical earth surface)
 
     f_GHz = frequency / 1.0e9; // [GHz] Convert from Hz to GHz for ITU-R P.676 formulas
 
-    // Calculate slant angle at the ground antenna location
-    while (h_i < this->h_Toa) {
+    for (double layerTop : layerTops) {                         // [m]
+        const double delta_h_layer_i = layerTop - layerBottom;  // [m]
+        const double h_i = layerBottom + 0.5 * delta_h_layer_i; // [m] Sample at the layer midpoint
         // Calculate atmospheric conditions at the current altitude (humidity, pressure, temperature)
         T_i = ItuAtmosphere::getTempISA(h_i);
         P_i = ItuAtmosphere::getPresISA(h_i);
         rho_i = ItuAtmosphere::getWaterVapDensityISA(h_i);
 
-        theta_i = 300.0 / T_i;                                  // [K]         (ITU-R P.676-13 eq 3)
-        e_i = (rho_i * T_i) / (216.7);                          // [kg K / m3] (ITU-R P.676-13 eq 4) partial pressure
-        m_i = (std::exp(2.0 / 100.0) - std::exp(1.0 / 100.0)) / // (ITU-R P.676-13 eq 16c) Weighting factor for layer i
-              (std::exp(static_cast<double>(i) / 100.0) - std::exp(static_cast<double>(i - 1) / 100.0));
-        // Increment altitude for next layer
-        i += 1;
+        theta_i = 300.0 / T_i;         // [-] Inverse relative temperature (ITU-R P.676-13 eq. 3)
+        e_i = (rho_i * T_i) / (216.7); // [hPa] Water vapor partial pressure (ITU-R P.676-13 eq. 4)
         // Initialize specific attenuations
         N_ox_i = 0.0;
         N_wv_i = 0.0;
@@ -642,10 +668,7 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
         attenuationLookup->delta_h_layer_i.push_back(delta_h_layer_i);
         attenuationLookup->n_i.push_back(n_i);
 
-        // Calculate thickness of the next layer (i + 1)
-        delta_h_layer_i = m_i * std::exp(static_cast<double>(i - 1) / 100.0);
-        // Increase altitude and layer index for next iteration
-        h_i += delta_h_layer_i;
+        layerBottom = layerTop;
     }
 }
 void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)

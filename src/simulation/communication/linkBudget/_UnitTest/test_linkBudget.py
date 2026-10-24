@@ -46,6 +46,7 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros, orbitalMotion
 from Basilisk.simulation import linkBudget
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities.supportDataTools.dataFetcher import DataFile, get_path
 
 bskPath = __path__[0]
 
@@ -1863,6 +1864,143 @@ def test_linkBudget_atmospheric_attenuation_elevation_dependence():
     assert testFailCount == 0, "\n".join(testMessages)
 
 
+# Columns: ground altitude [m], frequency [Hz], elevation [deg], loss [dB],
+# absolute tolerance [dB]. References use uniform 0.5 m midpoint cells over the
+# full ground-to-100 km column, the existing atmospheric and spectral formulas,
+# and the real oxygen.json and waterVapour.json tables. Repeating with 1 m cells
+# changes every reference by less than 1e-5 dB. These values validate integration
+# accuracy for the current atmosphere model, not its physical fidelity to ITU.
+ATMOSPHERE_ABSOLUTE_CASES = [
+    (0.0, 10.0e9, 5.1, 0.674405627870, 1e-4),
+    (0.0, 10.0e9, 10.0, 0.365788633708, 1e-4),
+    (0.0, 10.0e9, 90.0, 0.0651973107843, 1e-4),
+    (1500.0, 10.0e9, 5.1, 0.479550654765, 1e-4),
+    (1500.0, 10.0e9, 10.0, 0.262189337581, 1e-4),
+    (1500.0, 10.0e9, 90.0, 0.0469195476589, 1e-4),
+    (0.0, 60.0e9, 5.1, 2086.84987158436, 0.05),
+    (0.0, 60.0e9, 10.0, 1187.36152377926, 0.05),
+    (0.0, 60.0e9, 90.0, 216.734190702406, 0.05),
+    (1500.0, 60.0e9, 5.1, 1879.43704686702, 0.05),
+    (1500.0, 60.0e9, 10.0, 1069.87294242870, 0.05),
+    (1500.0, 60.0e9, 90.0, 195.325379591458, 0.05),
+    (0.0, 118.750334e9, 5.1, 954.234001602237, 0.02),
+    (0.0, 118.750334e9, 10.0, 597.776772083896, 0.02),
+    (0.0, 118.750334e9, 90.0, 115.789794121404, 0.02),
+    (1500.0, 118.750334e9, 5.1, 934.570016278601, 0.02),
+    (1500.0, 118.750334e9, 10.0, 584.233509932637, 0.02),
+    (1500.0, 118.750334e9, 90.0, 112.967089115958, 0.02),
+    (0.0, 183.310091e9, 5.1, 1668.96647637460, 0.02),
+    (0.0, 183.310091e9, 10.0, 880.711914717179, 0.02),
+    (0.0, 183.310091e9, 90.0, 154.784577120573, 0.02),
+    (1500.0, 183.310091e9, 5.1, 973.934564759451, 0.02),
+    (1500.0, 183.310091e9, 10.0, 515.251071114997, 0.02),
+    (1500.0, 183.310091e9, 90.0, 90.6712643381242, 0.02),
+]
+
+
+@pytest.mark.parametrize(
+    "ground_altitude, frequency, elevation_degrees, expected, tolerance",
+    ATMOSPHERE_ABSOLUTE_CASES,
+)
+@pytest.mark.parametrize("ground_first", [False, True])
+def test_atmospheric_attenuation_absolute(
+    ground_altitude, frequency, elevation_degrees, expected, tolerance,
+    ground_first,
+):
+    """Compare absolute loss with converged integration using real gas tables.
+
+    Cases cover an atmospheric window, two oxygen absorption bands and a
+    water-vapor absorption line, at sea level and elevated ground. Zenith and
+    low-elevation rays exercise curvature and refraction. Absolute tolerances
+    bound midpoint integration error; ratios would hide a shared loss bias.
+
+    :param ground_altitude: Ground antenna altitude in meters.
+    :param frequency: Common antenna frequency in hertz.
+    :param elevation_degrees: Ground elevation angle in degrees.
+    :param expected: Fine-grid reference attenuation in decibels.
+    :param tolerance: Absolute attenuation tolerance in decibels.
+    :param ground_first: Whether the ground antenna uses input message one.
+    """
+    distance = 2000.0e3  # [m]
+    elevation = np.radians(elevation_degrees)  # [rad]
+    ground_position = np.array(
+        [REQ_EARTH + ground_altitude, 0.0, 0.0]
+    )  # [m]
+    spacecraft_position = ground_position + distance * np.array(
+        [np.sin(elevation), np.cos(elevation), 0.0]
+    )  # [m]
+    ground, _ = create_antenna_msg_payload(
+        name="Ground", environment=ENV_EARTH, state=ANTENNA_RX,
+        frequency=frequency, position=ground_position.tolist(),
+        r_AP_N=ground_position.tolist(), nHat_LP_N=[1.0, 0.0, 0.0],
+        target_position=spacecraft_position.tolist(),
+    )
+    spacecraft, _ = create_antenna_msg_payload(
+        name="Spacecraft", environment=ENV_SPACE, state=ANTENNA_TX,
+        frequency=frequency, position=spacecraft_position.tolist(),
+        target_position=ground_position.tolist(),
+    )
+    antennas = (ground, spacecraft) if ground_first else (spacecraft, ground)
+    sim, module, _ = setup_link_budget_sim(*antennas, enable_atm=True)
+    module.setOxygenLookupFilePath(
+        str(get_path(DataFile.AtmRadioFreqDampData.oxygen))
+    )
+    module.setWaterVaporLookupFilePath(
+        str(get_path(DataFile.AtmRadioFreqDampData.waterVapor))
+    )
+    run_simulation(sim, duration_sec=0.0)  # [s]
+    assert module.getL_atm() == pytest.approx(expected, abs=tolerance, rel=0.0)
+
+
+@pytest.mark.parametrize("ground_altitude", [0.0, 1500.0])  # [m]
+@pytest.mark.parametrize("elevation_degrees", [30.0, 60.0])  # [deg]
+@pytest.mark.parametrize("ground_first", [False, True])
+def test_atmospheric_attenuation_slant_ratio(ground_altitude, elevation_degrees, ground_first):
+    """Check quantitative slant loss for both antenna orders and elevated ground.
+
+    At these elevations, curvature and refraction perturb the plane-parallel
+    cosecant scaling by less than one percent. This independent approximation
+    rejects the compounded angle recurrence in issue 1632.
+
+    :param ground_altitude: Ground antenna altitude in meters.
+    :param elevation_degrees: Slant elevation in degrees.
+    :param ground_first: Whether the ground antenna uses input message one.
+    """
+    frequency = 10.0e9  # [Hz]
+    distance = 2000.0e3  # [m]
+    ground_position = np.array([REQ_EARTH + ground_altitude, 0.0, 0.0])  # [m]
+    losses = []  # [dB]
+    for angle_degrees in [90.0, elevation_degrees]:  # [deg]
+        elevation = np.radians(angle_degrees)  # [rad]
+        spacecraft_position = ground_position + distance * np.array(
+            [np.sin(elevation), np.cos(elevation), 0.0]
+        )  # [m]
+        ground, _ = create_antenna_msg_payload(
+            name="Ground", environment=ENV_EARTH, state=ANTENNA_RX,
+            frequency=frequency, position=ground_position.tolist(),
+            r_AP_N=ground_position.tolist(), nHat_LP_N=[1.0, 0.0, 0.0],
+            target_position=spacecraft_position.tolist(),
+        )
+        spacecraft, _ = create_antenna_msg_payload(
+            name="Spacecraft", environment=ENV_SPACE, state=ANTENNA_TX,
+            frequency=frequency, position=spacecraft_position.tolist(),
+            target_position=ground_position.tolist(),
+        )
+        antennas = (ground, spacecraft) if ground_first else (spacecraft, ground)
+        sim, module, _ = setup_link_budget_sim(*antennas, enable_atm=True)
+        run_simulation(sim, duration_sec=0.0)  # [s]
+        loss = module.getL_atm()  # [dB]
+        assert np.isfinite(loss) and loss > 0.0
+        # Reset must rebuild the same profile without duplicating cached layers.
+        module.Reset(0)  # [ns]
+        module.UpdateState(0)  # [ns]
+        assert module.getL_atm() == pytest.approx(loss, rel=1.0e-12)
+        losses.append(loss)
+
+    expected_ratio = 1.0 / np.sin(np.radians(elevation_degrees))
+    assert losses[1] / losses[0] == pytest.approx(expected_ratio, rel=0.01)
+
+
 def test_linkBudget_atmospheric_attenuation_low_elevation_stability():
     """
     Low-elevation stability test to ensure attenuation does not blow up or become NaN/inf.
@@ -2619,6 +2757,23 @@ if __name__ == "__main__":
         ("Atm Atten Elevation Dependence", test_linkBudget_atmospheric_attenuation_elevation_dependence),
         ("Atm Atten Low Elevation Stability", test_linkBudget_atmospheric_attenuation_low_elevation_stability),
     ]
+    for ground_altitude in [0.0, 1500.0]:  # [m]
+        for elevation_degrees in [30.0, 60.0]:  # [deg]
+            for ground_first in [False, True]:
+                atm_tests.append((
+                    f"Atm Slant Ratio ({ground_altitude:g} m, {elevation_degrees:g} deg, "
+                    f"ground_first={ground_first})",
+                    lambda altitude=ground_altitude, elevation=elevation_degrees, first=ground_first:
+                        test_atmospheric_attenuation_slant_ratio(altitude, elevation, first),
+                ))
+
+    for case in ATMOSPHERE_ABSOLUTE_CASES:
+        for ground_first in [False, True]:
+            atm_tests.append((
+                f"Absolute Atm Loss {case[:3]}, ground_first={ground_first}",
+                lambda args=case, first=ground_first:
+                    test_atmospheric_attenuation_absolute(*args, first),
+            ))
 
     passed_atm = 0
     failed_atm = 0

@@ -1183,6 +1183,9 @@ if(BUILD_TESTING)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/simulation/dynamics/Integrators/_UnitTest/CMakeLists.txt")
     add_subdirectory("simulation/dynamics/Integrators/_UnitTest")
   endif()
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/simulation/communication/linkBudget/_UnitTest/CMakeLists.txt")
+    add_subdirectory("simulation/communication/linkBudget/_UnitTest")
+  endif()
 endif()
 
 # Match the MSVC branch above; clang-cl uses Clang's warning options.
