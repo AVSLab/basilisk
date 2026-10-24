@@ -68,6 +68,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioDeployingSolarArrays'
                                         , 'scenarioTempMeasurementAttitude'
                                         , 'scenarioRoboticArm'
+                                        , 'scenarioGeneralSingleBody'
                                         , 'scenarioOrbitManeuverTH'
                                         , 'scenarioLambertSolver'
                                         , 'scenarioQuadMaps'
