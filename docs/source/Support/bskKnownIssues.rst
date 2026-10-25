@@ -7,6 +7,15 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1651: The Gooding method in :ref:`lambertSolver` could return the same
+  multi-revolution transfer in both valid solution slots, losing the other orbit.
+  The initial guesses now use consistent minimum-time data and corrected branch
+  formulas. A safeguarded minimum-time search also prevents divergence for
+  transfers close to a full revolution, which could produce nonfinite velocities
+  marked valid. Both methods return the coalesced orbit in both slots at the minimum
+  time, within floating-point roundoff. Users of older releases can select
+  ``IZZO`` to avoid the reported Gooding duplicate-solution issue.
+
 - GitHub issue 1649: Linux wheel builds could fail on upstream source-download errors despite an available
   backup because the Conan configuration helper ignored ``CONAN_HOME`` and wrote settings to an unused cache.
   The helper now configures the selected cache, retaining TLS and source-checksum verification.

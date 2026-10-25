@@ -20,6 +20,7 @@
 #include "fswAlgorithms/orbitControl/lambertSolver/lambertSolver.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <cmath>
+#include <limits>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -193,54 +194,43 @@ void LambertSolver::problemGeometry()
     this->Oframe2 = { i_r2_N, i_t2_N, i_h_N };
 }
 
-/*! This method finds the free variable x that satisfies the requested time of flight TOF.
-
-*/
+/*! @brief Find the free variable on each applicable branch of the time-of-flight curve.
+ */
 void LambertSolver::findx()
 {
-    // find x that satisfies time-of-flight constraint using numerical root finder
+    std::array<double, 2> x0;
     if (this->solverMethod == GOODING) {
-        // get initial guess for iteration variable x
-        std::array<double, 2> x0 = goodingInitialGuess(this->lambda, this->TOF);
-        if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
-            // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
-            // return no solution
-            return;
-        }
-        // for Gooding algorithm use halley root finder
-        std::array<double, 3> solution = halley(this->TOF, x0[0], this->numberOfRevolutions);
-        this->X = solution[0];
-        this->numIter = int(solution[1]);
-        this->errX = solution[2];
-
-        if (this->numberOfRevolutions > 0) {
-            // if one or more orbits are to be completed, two solutions exist. Find second solution
-            std::array<double, 3> solution_sol2 = halley(this->TOF, x0[1], this->numberOfRevolutions);
-            this->XSol2 = solution_sol2[0];
-            this->numIterSol2 = int(solution_sol2[1]);
-            this->errXSol2 = solution_sol2[2];
-        }
+        x0 = this->goodingInitialGuess(this->lambda, this->TOF);
     } else if (this->solverMethod == IZZO) {
-        // get initial guess for iteration variable x
-        std::array<double, 2> x0 = izzoInitialGuess(this->lambda, this->TOF);
-        if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
-            // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
-            // return no solution
-            return;
-        }
-        // for Izzo algorithm use 3rd order householder root finder
-        std::array<double, 3> solution = householder(this->TOF, x0[0], this->numberOfRevolutions);
-        this->X = solution[0];
-        this->numIter = int(solution[1]);
-        this->errX = solution[2];
+        x0 = this->izzoInitialGuess(this->lambda, this->TOF);
+    } else {
+        return;
+    }
+    if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
+        return;
+    }
+    if (this->numberOfRevolutions > 0 && x0[0] == x0[1]) {
+        // At the minimum time the two branches coalesce; do not iterate at dT/dx = 0.
+        this->X = x0[0];
+        this->XSol2 = x0[1];
+        this->numIter = this->numIterSol2 = 0;
+        this->errX = this->errXSol2 = 0.0;
+        return;
+    }
 
-        if (this->numberOfRevolutions > 0) {
-            // if one or more orbits are to be completed, two solutions exist. Find second solution
-            std::array<double, 3> solution_sol2 = householder(this->TOF, x0[1], this->numberOfRevolutions);
-            this->XSol2 = solution_sol2[0];
-            this->numIterSol2 = int(solution_sol2[1]);
-            this->errXSol2 = solution_sol2[2];
-        }
+    std::array<double, 3> solution = this->solverMethod == GOODING
+                                         ? this->halley(this->TOF, x0[0], this->numberOfRevolutions)
+                                         : this->householder(this->TOF, x0[0], this->numberOfRevolutions);
+    this->X = solution[0];
+    this->numIter = static_cast<int>(solution[1]);
+    this->errX = solution[2];
+
+    if (this->numberOfRevolutions > 0) {
+        solution = this->solverMethod == GOODING ? this->halley(this->TOF, x0[1], this->numberOfRevolutions)
+                                                 : this->householder(this->TOF, x0[1], this->numberOfRevolutions);
+        this->XSol2 = solution[0];
+        this->numIterSol2 = static_cast<int>(solution[1]);
+        this->errXSol2 = solution[2];
     }
 }
 
@@ -303,10 +293,7 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
     double c42 = 0.24;
 
     double theta = 2.0 * atan2(1.0 - pow(lam, 2), 2.0 * lam);
-    // theta between 0 and pi if lambda > 0 and between pi and 2pi if lambda < 0
-    if (lam < 0) {
-        theta = 2.0 * M_PI - theta;
-    }
+    // atan2 already places theta above pi for negative lambda. Do not reflect it.
 
     // initial guess procedure for Gooding algorithm. Involves several patches of solutions
     if (this->numberOfRevolutions == 0) {
@@ -326,28 +313,25 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
 
         x0Sol1 = scale * x03;
     } else {
-        // multi-revolution case
-        double x_M_pi = 4.0 / (3.0 * M_PI * (2 * this->numberOfRevolutions + 1));
-        double x_M; // x that corresponds to Tmin (minimum TOF for 2 solutions to exist, otherwise zero solutions exist)
-        if (theta <= M_PI) {
-            x_M = x_M_pi * pow(theta / M_PI, 1.0 / 8.0);
-        } else {
-            x_M = x_M_pi * (2.0 - pow(2.0 - theta / M_PI, 1.0 / 8.0));
+        // Use the converged minimum and its location for both starters.
+        const auto minimum = this->getTmin(T0M, this->numberOfRevolutions);
+        if (!minimum) {
+            this->multiRevSolution = false;
+            return { 0.0, 0.0 };
         }
-
-        // find Tmin using root-finder
-        double Tmin = this->getTmin(T0M, this->numberOfRevolutions);
-
-        if (T < Tmin) {
-            // if T < Tmin, no multi-revolution solution exists for the given time of flight T
+        const double x_M = (*minimum)[0];
+        const double Tmin = (*minimum)[1];
+        const double minTimeTolerance = 8.0 * std::numeric_limits<double>::epsilon() * Tmin;
+        if (T < Tmin - minTimeTolerance) {
             this->multiRevSolution = false;
             bskLogger.bskLog(BSK_WARNING,
                              "lambertSolver: no multi-revolution solution exists for the given time of flight.");
-            std::array<double, 2> x0 = { 0.0, 0.0 };
-            return x0;
+            return { 0.0, 0.0 };
         }
-        // if T >= Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
         this->multiRevSolution = true;
+        if (abs(T - Tmin) <= minTimeTolerance) {
+            return { x_M, x_M };
+        }
 
         // get derivatives of T at x_M
         std::array<double, 3> DTs = dTdx(x_M, Tmin, this->lambda);
@@ -356,31 +340,31 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
         double TdiffM = T - Tmin;
         double Tdiff = T - T0M;
 
-        // solution patches for solution 1
-        if (T > T0M) {
+        // Basilisk's non-dimensional time is half Gooding's XLAMB time, so the
+        // bilinear starter and its weighting use 2 rather than XLAMB's 4.
+        if (T <= T0M) {
             double term1 = TdiffM / (0.5 * D2T - TdiffM * (0.5 * D2T / (T0M - Tmin) - 1 / pow(x_M, 2)));
             x0Sol1 = x_M - sqrt(term1);
         } else {
-            double x01_1 = -Tdiff / (Tdiff + 4.0);
+            double x01_1 = -Tdiff / (Tdiff + 2.0);
             double W = x01_1 + c0 * sqrt(2.0 * (1.0 - theta / (2 * M_PI)));
             if (W < 0.0) {
-                x0Sol1 = x01_1 - pow(-W, 1.0 / 16.0) * (x01_1 + sqrt(Tdiff / (Tdiff + 1.5 * T0M)));
-            } else {
-                double W2 = 4.0 / (4.0 + Tdiff);
-                x0Sol1 = x01_1 * (1.0 + (1.0 + this->numberOfRevolutions + c42 * (theta / (2 * M_PI) - 0.5)) /
-                                            (1.0 - c3 * this->numberOfRevolutions) * x01_1 *
-                                            (c1 * W2 - c2 * x01_1 * pow(W2, 1.0 / 2.0)));
+                x01_1 -= pow(-W, 1.0 / 16.0) * (x01_1 + sqrt(Tdiff / (Tdiff + 1.5 * T0M)));
             }
+            // Apply the correction after either bilinear starter patch.
+            double W2 = 2.0 / (2.0 + Tdiff);
+            x0Sol1 =
+                x01_1 * (1.0 + (1.0 + this->numberOfRevolutions + c42 * (theta / (2 * M_PI) - 0.5)) /
+                                   (1.0 + c3 * this->numberOfRevolutions) * x01_1 * (c1 * W2 - c2 * x01_1 * sqrt(W2)));
         }
 
-        // solution 2
+        // The second starter is a positive displacement from the minimum.
         double term2 = TdiffM / (0.5 * D2T + TdiffM / pow(1 - x_M, 2));
-        double x01_2 = x_M + sqrt(term2);
+        double x01_2 = sqrt(term2);
         double W = x_M + x01_2;
-        W = W * 4.0 / (4.0 + TdiffM) + pow(1.0 - W, 2);
+        W = W * 2.0 / (2.0 + TdiffM) + pow(1.0 - W, 2);
         x0Sol2 = x01_2 * (1.0 - (1.0 + this->numberOfRevolutions + c41 * (theta / (2 * M_PI) - 0.5)) /
-                                    (1.0 - c3 * this->numberOfRevolutions) * x01_2 *
-                                    (c1 * W + c2 * x01_2 * pow(W, 1.0 / 2.0))) -
+                                    (1.0 + c3 * this->numberOfRevolutions) * x01_2 * (c1 * W + c2 * x01_2 * sqrt(W))) +
                  x_M;
     }
 
@@ -417,8 +401,14 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T)
         }
     } else {
         // multi-revolution case
-        double Tmin = this->getTmin(T0M, this->numberOfRevolutions);
-        if (T < Tmin) {
+        const auto minimum = this->getTmin(T0M, this->numberOfRevolutions);
+        if (!minimum) {
+            this->multiRevSolution = false;
+            return { 0.0, 0.0 };
+        }
+        const double Tmin = (*minimum)[1];
+        const double minTimeTolerance = 8.0 * std::numeric_limits<double>::epsilon() * Tmin;
+        if (T < Tmin - minTimeTolerance) {
             // if T < Tmin, no multi-revolution solution exists for the given time of flight T
             this->multiRevSolution = false;
             bskLogger.bskLog(BSK_WARNING,
@@ -428,6 +418,10 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T)
         }
         // if T > Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
         this->multiRevSolution = true;
+
+        if (abs(T - Tmin) <= minTimeTolerance) {
+            return { (*minimum)[0], (*minimum)[0] };
+        }
 
         double term1 = pow((this->numberOfRevolutions * M_PI + M_PI) / (8.0 * T), (2.0 / 3.0));
         double term2 = pow((8.0 * T) / (this->numberOfRevolutions * M_PI), (2.0 / 3.0));
@@ -596,40 +590,63 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
     return sol;
 }
 
-/*! This method computes the minimum non-dimensional time-of-flight Tmin such that solutions exist for the
-    multi-revolution case using a halley root-finder
-    @param T0M initial guess for Tmin
-    @param N number of revolutions
-    @return double
+/*! @brief Locate the multi-revolution minimum time using safeguarded Halley iterations.
+    @param T0M Non-dimensional time of flight at x = 0 for N revolutions.
+    @param N Number of revolutions, which must be positive.
+    @return The converged location x_M and minimum time T(x_M), or std::nullopt if the search fails.
+    @note Halley steps remain inside a derivative-sign bracket. Bisection is used when a step leaves
+          the bracket or does not sufficiently decrease in size. Convergence requires a finite time
+          and a derivative residual consistent with the tolerance on x_M.
 */
-double LambertSolver::getTmin(double T0M, int N)
+std::optional<std::array<double, 2>> LambertSolver::getTmin(double T0M, int N)
 {
-    double tol = 1e-5;
-    double iterMax = 12;
-    double xnew;
+    const double tol = 1e-13; // [-] convergence tolerance for the minimum's location
+    const int iterMax = 64;   // Allow enough iterations for bisection to reach tol.
+    if (N <= 0 || !std::isfinite(T0M) || !std::isfinite(this->lambda) || abs(this->lambda) >= 1.0) {
+        bskLogger.bskLog(BSK_WARNING, "lambertSolver: minimum-time search requires finite elliptic geometry.");
+        return std::nullopt;
+    }
+
+    // For N > 0, dT/dx = -2 at x = 0 and tends to positive infinity as x approaches 1.
+    double xLower = 0.0;
+    double xUpper = 1.0;
+    double previousStep = xUpper - xLower;
+    double x0 = xLower;
     double tof = T0M;
-    double x0 = 0.0;
-
     for (int j = 0; j < iterMax; ++j) {
-        // get derivatives of T
-        std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
-        double DT = DTs[0];
-        double D2T = DTs[1];
-        double D3T = DTs[2];
-
-        // compute new x using halley algorithm
-        xnew = x0 - DT * D2T / (pow(D2T, 2) - DT * D3T / 2.0);
-        double err = abs(x0 - xnew);
-        x0 = xnew;
-        if (err < tol) {
+        const std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
+        const double DT = DTs[0];
+        const double D2T = DTs[1];
+        const double D3T = DTs[2];
+        if (!std::isfinite(tof) || tof <= 0.0 || !std::isfinite(DT) || !std::isfinite(D2T) || !std::isfinite(D3T)) {
             break;
         }
-        // compute non-dimensional time-of-flight T for given x
-        tof = x2tof(xnew, N, this->lambda);
-    }
-    double Tmin = tof;
+        // A small step alone is insufficient: the derivative must vanish at a local minimum.
+        if (D2T > 0.0 && abs(DT) <= tol * D2T) {
+            return std::array<double, 2>{ x0, tof };
+        }
+        if (DT < 0.0) {
+            xLower = x0;
+        } else {
+            xUpper = x0;
+        }
 
-    return Tmin;
+        double xnew = 0.5 * (xLower + xUpper);
+        const double denominator = D2T * D2T - DT * D3T / 2.0;
+        if (std::isfinite(denominator) && denominator != 0.0) {
+            const double step = DT * D2T / denominator;
+            const double candidate = x0 - step;
+            if (std::isfinite(candidate) && candidate > xLower && candidate < xUpper &&
+                abs(step) <= 0.5 * previousStep) {
+                xnew = candidate;
+            }
+        }
+        previousStep = abs(xnew - x0);
+        x0 = xnew;
+        tof = x2tof(x0, N, this->lambda);
+    }
+    bskLogger.bskLog(BSK_WARNING, "lambertSolver: minimum-time search failed to converge to a finite minimum.");
+    return std::nullopt;
 }
 
 /*! This method computes the hypergeometric function 2F1(a,b,c,z)
