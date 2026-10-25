@@ -1,0 +1,1 @@
+- Fixed Conan retry and source-backup configuration to honor ``CONAN_HOME``, enabling the existing backup server for Linux wheel builds when an upstream source download fails (GitHub issue 1649). TLS and source-checksum verification remain enabled.

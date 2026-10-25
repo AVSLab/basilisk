@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1649: Linux wheel builds could fail on upstream source-download errors despite an available
+  backup because the Conan configuration helper ignored ``CONAN_HOME`` and wrote settings to an unused cache.
+  The helper now configures the selected cache, retaining TLS and source-checksum verification.
+
 - GitHub issue 1644: The C ``ukfLUBckSlv()`` utility could return a wrong solution when the first nonzero entry of
   the pivoted right-hand side was below 1 in magnitude, because it cast that entry to ``int`` before testing it for
   zero. No module calls it, and ``ukfMatInv()``, which back-solves unit vectors, was not affected.
