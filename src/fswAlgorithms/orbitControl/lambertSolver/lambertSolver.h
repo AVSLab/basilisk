@@ -28,8 +28,10 @@
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include <Eigen/Core>
 #include <array>
-#include <vector>
+#include <cstdint>
+#include <optional>
 
 /*! @brief This module solves Lambert's problem using either the Gooding or the Izzo algorithm.
  */
@@ -65,7 +67,7 @@ class LambertSolver : public SysModel
     std::array<double, 3> dTdx(double x, double T, double lam);
     std::array<double, 3> householder(double T, double x0, int N);
     std::array<double, 3> halley(double T, double x0, int N);
-    double getTmin(double T0M, int N);
+    std::optional<std::array<double, 2>> getTmin(double T0M, int N);
     double hypergeometricF(double z);
 
     double alignmentThreshold = 1.0; //!< [deg] minimum angle between position vectors so they are not too aligned.

@@ -13,9 +13,16 @@ The algorithms by Gooding and Izzo provide solutions for elliptic, parabolic and
 In the zero-revolution case, exactly one solution exists. In the multi-revolution case (meaning that the transfer orbit
 completes at least one complete revolution about the central body), either two or zero solutions exist, depending on
 whether the requested transfer time is greater or less than the minimum time-of-flight for the given number of
-revolutions. The :ref:`LambertSolutionMsgPayload` output message includes two solutions. If a solution does not exist,
+revolutions. At the minimum time, within floating-point roundoff, the two solutions
+coalesce. Both output slots then contain the same orbit with both validity flags
+set to 1, and the root-finder iteration counts and step errors are zero. Above the
+minimum time, solution 1 has :math:`x < x_M` and solution 2 has :math:`x > x_M`, where
+:math:`x_M` is the location of the minimum of the time-of-flight curve.
+The :ref:`LambertSolutionMsgPayload` output message includes two solutions. If a solution does not exist,
 the corresponding velocity vectors in the message are equal to the zero vector, and the "validity" flag is equal to
-zero. Otherwise, the "validity" flag is set to 1.
+zero. Otherwise, the "validity" flag is set to 1. If the minimum-time search cannot
+converge to a finite minimum, the module logs a warning and returns zero velocities
+with both validity flags set to zero.
 
 Message Connection Descriptions
 -------------------------------

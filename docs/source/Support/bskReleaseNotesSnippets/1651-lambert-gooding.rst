@@ -1,0 +1,1 @@
+- Fixed duplicate multi-revolution solutions in the Gooding method of :ref:`lambertSolver` by correcting its initial guesses and safeguarding the minimum-time search against divergence; both solvers now explicitly handle coalesced roots at the minimum transfer time (GitHub issue 1651).
