@@ -7,6 +7,17 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1652: :ref:`lambertSolver` previously assumed prograde motion about
+  the input frame's positive z-axis, so retrograde problems could return the
+  opposite transfer with a valid flag. ``LambertProblemMsgPayload.transferDirection``
+  now selects ``PROGRADE`` (the zero/default value) or ``RETROGRADE`` for both
+  algorithms. :ref:`lambertPlanner` forwards the selection made with
+  ``setTransferDirection``. Existing callers retain prograde behavior; retrograde
+  callers must select their intended direction explicitly. Polar geometry uses a
+  deterministic short/long transfer convention that accounts for floating-point
+  cancellation. Unknown direction values are validated as integers before enum
+  conversion, so rejection does not depend on undefined enum behavior.
+
 - GitHub issue 1651: The Gooding method in :ref:`lambertSolver` could return the same
   multi-revolution transfer in both valid solution slots, losing the other orbit.
   The initial guesses now use consistent minimum-time data and corrected branch

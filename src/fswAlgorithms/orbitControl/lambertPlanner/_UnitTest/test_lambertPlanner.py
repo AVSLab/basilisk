@@ -26,6 +26,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.fswAlgorithms import lambertPlanner
+from Basilisk.fswAlgorithms import lambertSolver
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -232,6 +233,71 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
                                atol=accuracy,
                                err_msg=('Variable: numRevolutions,' + paramsString),
                                verbose=True)
+
+
+@pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
+@pytest.mark.parametrize("revolutions", [0, 1])
+def test_transfer_direction_reaches_solver(method, revolutions):
+    """Pass explicit directions through the planner to recover known circular transfers."""
+    mu = 3.986004360e14  # [m^3/s^2]
+    radius = 8.0e6  # [m]
+    speed = np.sqrt(mu/radius)
+    period = 2.0*np.pi*np.sqrt(radius**3/mu)
+    r1 = np.array([radius, 0.0, 0.0])  # [m]
+    r2 = np.array([0.0, radius, 0.0])  # [m]
+    navigation = messaging.NavTransMsgPayload()
+    navigation.r_BN_N = r1
+    navigation.v_BN_N = [0.0, speed, 0.0]
+    navigation_message = messaging.NavTransMsg().write(navigation)
+    planner = lambertPlanner.LambertPlanner()
+    planner.navTransInMsg.subscribeTo(navigation_message)
+    planner.setMu(mu)
+    planner.setR_TN_N(r2)
+    planner.setNumRevolutions(revolutions)
+    if method == messaging.GOODING:
+        planner.useSolverGoodingMethod()
+    else:
+        planner.useSolverIzzoMethod()
+    solver = lambertSolver.LambertSolver()
+    solver.lambertProblemInMsg.subscribeTo(planner.lambertProblemOutMsg)
+    assert planner.getTransferDirection() == messaging.PROGRADE
+    for direction in (None, messaging.RETROGRADE, messaging.PROGRADE):
+        if direction is not None:
+            planner.setTransferDirection(direction)
+        expected_direction = messaging.PROGRADE if direction is None else direction
+        sign = -1 if expected_direction == messaging.RETROGRADE else 1
+        orbit_fraction = 0.75 if expected_direction == messaging.RETROGRADE else 0.25
+        planner.setFinalTime((revolutions+orbit_fraction)*period)
+        planner.Reset(0)
+        planner.UpdateState(0)
+        problem = planner.lambertProblemOutMsg.read()
+        assert problem.transferDirection == planner.getTransferDirection() == expected_direction
+        assert problem.solverMethod == method
+        solver.Reset(0)
+        solver.UpdateState(0)
+        solution = solver.lambertSolutionOutMsg.read()
+        assert solution.valid == 1
+        assert solution.validSol2 == int(revolutions > 0)
+        branches = [(solution.v1_N, solution.v2_N)]
+        if revolutions:
+            branches.append((solution.v1Sol2_N, solution.v2Sol2_N))
+        for initial_velocity, _ in branches:
+            assert sign*np.cross(r1, initial_velocity)[2] > 0.0
+        expected_v1 = np.array([0.0, sign*speed, 0.0])  # [m/s]
+        expected_v2 = np.array([-sign*speed, 0.0, 0.0])  # [m/s]
+        initial_velocity, final_velocity = min(branches, key=lambda pair: np.linalg.norm(pair[0]-expected_v1))
+        np.testing.assert_allclose(initial_velocity, expected_v1, rtol=0.0, atol=1e-5)  # [m/s]
+        np.testing.assert_allclose(final_velocity, expected_v2, rtol=0.0, atol=1e-5)  # [m/s]
+
+
+@pytest.mark.parametrize("direction", [int(np.iinfo(np.intc).min), -1, 2, int(np.iinfo(np.intc).max)])
+def test_invalid_transfer_direction(direction):
+    """Reject an unknown planner direction without changing the previous valid selection."""
+    planner = lambertPlanner.LambertPlanner()
+    planner.setTransferDirection(messaging.RETROGRADE)
+    with pytest.raises(BasiliskError, match="transferDirection"):
+        planner.setTransferDirection(direction)
+    assert planner.getTransferDirection() == messaging.RETROGRADE
 
 
 if __name__ == "__main__":
