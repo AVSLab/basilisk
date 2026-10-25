@@ -27,7 +27,9 @@
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include <Eigen/Core>
 #include <array>
+#include <cstdint>
 #include <functional>
 #include <utility>
 #include <vector>
@@ -72,6 +74,16 @@ class LambertPlanner : public SysModel
     /** getter for `numRevolutions` */
     int getNumRevolutions() const { return this->numRevolutions; }
 
+    /** @brief Set the requested transfer direction about the input frame's positive z-axis.
+     *  @param value PROGRADE (the default) or RETROGRADE.
+     *  @note Accepts an integer so unknown values can be rejected before conversion to the internal enum.
+     */
+    void setTransferDirection(int value);
+    /** @brief Get the requested transfer direction.
+     *  @return PROGRADE or RETROGRADE.
+     */
+    LambertTransferDirection getTransferDirection() const { return this->transferDirection; }
+
   private:
     static constexpr int stateSize = 6;
     using StateVector = Eigen::Matrix<double, stateSize, 1>;
@@ -92,9 +104,11 @@ class LambertPlanner : public SysModel
     double mu{};               //!< [m^3 s^-2] gravitational parameter
     int numRevolutions = 0;    //!< [-] number of revolutions to be completed (completed orbits)
     SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
-    double time{};             //!< [s] Current vehicle time-tag associated with measurements
-    Eigen::Vector3d r_N;       //!< [m] Current inertial spacecraft position vector in inertial frame N components
-    Eigen::Vector3d v_N;       //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
+    LambertTransferDirection transferDirection =
+        PROGRADE;         //!< Requested transfer direction about the input frame's +z axis.
+    double time{};        //!< [s] Current vehicle time-tag associated with measurements
+    Eigen::Vector3d r_N;  //!< [m] Current inertial spacecraft position vector in inertial frame N components
+    Eigen::Vector3d v_N;  //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
     Eigen::Vector3d rm_N; //!< [m] Expected inertial spacecraft position vector at maneuver time tm in inertial frame N
 };
 

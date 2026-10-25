@@ -19,6 +19,12 @@ parameters :math:`\mathbf{r}_{1}`, :math:`\mathbf{r}_{2}` and time if flight
 parameters to the :ref:`lambertProblemMsgPayload` message that is used as an input to the :ref:`lambertSolver` module,
 which subsequently solves Lambert's problem.
 
+The planner also forwards the requested ``transferDirection``. It defaults to
+``PROGRADE`` about the positive z-axis of the input frame. Use
+``setTransferDirection(messaging.RETROGRADE)`` to request retrograde motion. This
+is an explicit transfer choice; it is not inferred from the current navigation
+velocity. Both zero- and multi-revolution problems use this setting.
+
 Message Connection Descriptions
 -------------------------------
 The following diagram and table list all the module input and output messages.  The module message connection is
@@ -39,6 +45,11 @@ The equations of motion used inside the module to propagate the state assume sim
 motion is propagated using a 4th order Runge-Kutta (RK4). Additionally, this module assumes that
 :math:`t_{final} > t_{maneuver} \ge t`, with final time :math:`t_{final}`, maneuver time :math:`t_{maneuver}` and
 current time :math:`t`.
+
+The direction convention, including the polar tie within floating-point roundoff,
+is described in :ref:`lambertSolver`. The ``setTransferDirection`` method accepts
+an integer and rejects unknown values with a Basilisk error before converting to
+the internal direction enum. A rejected value leaves the previous selection unchanged.
 
 Algorithm
 ---------
@@ -63,6 +74,7 @@ The module is first initialized as follows:
     module.setManeuverTime(1000.)
     module.setMu(3.986004418e14)
     module.setNumRevolutions(0) # module defaults this value to 0 if not specified
+    module.setTransferDirection(messaging.PROGRADE) # default; use RETROGRADE for the opposite direction
     module.useSolverIzzoMethod() # module uses Izzo by default if not specified
     unitTestSim.AddModelToTask(unitTaskName, module)
 

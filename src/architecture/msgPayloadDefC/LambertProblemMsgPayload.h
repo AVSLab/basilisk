@@ -26,6 +26,13 @@ typedef enum
     GOODING
 } SolverMethod;
 
+/*! @brief Transfer direction relative to the positive z-axis of the input frame. */
+typedef enum
+{
+    PROGRADE = 0,  //!< Nonnegative z-component of orbital angular momentum; the default.
+    RETROGRADE = 1 //!< Nonpositive z-component of orbital angular momentum.
+} LambertTransferDirection;
+
 /*! @brief Structure used to define the input for Lambert problem */
 typedef struct
 {
@@ -35,6 +42,7 @@ typedef struct
     double transferTime;       //!< [s] time of flight between r1_N and r2_N (t1-t0)
     double mu;                 //!< [m^3 s^-2] gravitational parameter of body
     int numRevolutions;        //!< [-] number of revolutions to be completed (completed orbits)
+    int transferDirection;     //!< [-] PROGRADE (zero/default) or RETROGRADE; raw integer validated by the solver
 } LambertProblemMsgPayload;
 
 #endif

@@ -72,15 +72,16 @@ class LambertSolver : public SysModel
 
     double alignmentThreshold = 1.0; //!< [deg] minimum angle between position vectors so they are not too aligned.
     SolverMethod solverMethod;       //!< lambert solver algorithm (GOODING or IZZO)
-    Eigen::Vector3d r1_N;            //!< position vector at t0
-    Eigen::Vector3d r2_N;            //!< position vector at t1
-    double transferTime{};           //!< time of flight between r1_N and r2_N (t1-t0)
-    double mu{};                     //!< gravitational parameter
-    int numberOfRevolutions{};       //!< number of revolutions
-    double TOF{};                    //!< non-dimensional time-of-flight constraint
-    double lambda{};                 //!< parameter of Lambert"s problem that defines problem geometry
-    bool multiRevSolution{};         //!< boolean flag if multi-revolution solutions exist or not
-    bool noSolution{}; //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
+    LambertTransferDirection transferDirection = PROGRADE; //!< Requested direction about the input frame's +z axis.
+    Eigen::Vector3d r1_N;                                  //!< position vector at t0
+    Eigen::Vector3d r2_N;                                  //!< position vector at t1
+    double transferTime{};                                 //!< time of flight between r1_N and r2_N (t1-t0)
+    double mu{};                                           //!< gravitational parameter
+    int numberOfRevolutions{};                             //!< number of revolutions
+    double TOF{};                                          //!< non-dimensional time-of-flight constraint
+    double lambda{};         //!< parameter of Lambert"s problem that defines problem geometry
+    bool multiRevSolution{}; //!< boolean flag if multi-revolution solutions exist or not
+    bool noSolution{};       //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
     std::array<Eigen::Vector3d, 3> Oframe1;   //!< array containing the orbit frame unit vectors at t0
     std::array<Eigen::Vector3d, 3> Oframe2;   //!< array containing the orbit frame unit vectors at t1
     std::array<Eigen::Vector3d, 2> vvecs;     //!< array containing the velocity vector solutions at t0 and t1

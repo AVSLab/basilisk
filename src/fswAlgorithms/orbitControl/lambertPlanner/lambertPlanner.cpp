@@ -129,6 +129,7 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos)
     lambertProblemOutMsgBuffer.transferTime = this->finalTime - this->maneuverTime;
     lambertProblemOutMsgBuffer.mu = this->mu;
     lambertProblemOutMsgBuffer.numRevolutions = this->numRevolutions;
+    lambertProblemOutMsgBuffer.transferDirection = this->transferDirection;
 
     // Write to the output messages
     this->lambertProblemOutMsg.write(&lambertProblemOutMsgBuffer, this->moduleID, currentSimNanos);
@@ -223,4 +224,12 @@ void LambertPlanner::setMu(const double value)
 void LambertPlanner::setNumRevolutions(const int value)
 {
     this->numRevolutions = value;
+}
+
+void LambertPlanner::setTransferDirection(int value)
+{
+    if (value != PROGRADE && value != RETROGRADE) {
+        bskLogger.bskError("lambertPlanner: transferDirection must be PROGRADE or RETROGRADE.");
+    }
+    this->transferDirection = static_cast<LambertTransferDirection>(value);
 }

@@ -91,6 +91,11 @@ void LambertSolver::readMessages()
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
     this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
+    if (lambertProblemInMsgBuffer.transferDirection != PROGRADE &&
+        lambertProblemInMsgBuffer.transferDirection != RETROGRADE) {
+        bskLogger.bskError("lambertSolver: transferDirection must be PROGRADE or RETROGRADE.");
+    }
+    this->transferDirection = static_cast<LambertTransferDirection>(lambertProblemInMsgBuffer.transferDirection);
     this->r1_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1_N);
     this->r2_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2_N);
 }
@@ -169,7 +174,8 @@ void LambertSolver::problemGeometry()
     Eigen::Vector3d i_r1_N = this->r1_N / r1;
     Eigen::Vector3d i_r2_N = this->r2_N / r2;
     // check alignment of the two position vectors
-    double sinTheta = i_r1_N.cross(i_r2_N).norm();
+    Eigen::Vector3d radialCross = i_r1_N.cross(i_r2_N);
+    double sinTheta = radialCross.norm();
     if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.)) {
         bskLogger.bskLog(BSK_WARNING,
                          "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
@@ -178,17 +184,22 @@ void LambertSolver::problemGeometry()
         this->noSolution = true;
     }
     // orbit normal direction
-    Eigen::Vector3d i_h_N = i_r1_N.cross(i_r2_N) / (i_r1_N.cross(i_r2_N).norm());
+    Eigen::Vector3d i_h_N = radialCross / sinTheta;
 
-    double sign = 1.0;
-    if (i_h_N(2) < 0.0) {
-        // Transfer angle is greater than 180 degrees
+    // Orient the orbit normal to match the requested direction. Reversing it selects
+    // the complementary transfer angle, which also reverses the sign of lambda.
+    // Treat cancellation-level roundoff in the z-component as a polar tie: PROGRADE
+    // retains r1 cross r2 and RETROGRADE reverses it. Scale the tolerance by the terms
+    // being subtracted so resolvable near-polar signs are preserved.
+    const double crossZScale = std::abs(i_r1_N(0) * i_r2_N(1)) + std::abs(i_r1_N(1) * i_r2_N(0));
+    const double polarTolerance = 8.0 * std::numeric_limits<double>::epsilon() * crossZScale;
+    if ((radialCross(2) < -polarTolerance) != (this->transferDirection == RETROGRADE)) {
         this->lambda = -this->lambda;
-        sign = -sign;
+        i_h_N = -i_h_N;
     }
     // second unit vectors
-    Eigen::Vector3d i_t1_N = i_h_N.cross(i_r1_N) * sign;
-    Eigen::Vector3d i_t2_N = i_h_N.cross(i_r2_N) * sign;
+    Eigen::Vector3d i_t1_N = i_h_N.cross(i_r1_N);
+    Eigen::Vector3d i_t2_N = i_h_N.cross(i_r2_N);
 
     this->Oframe1 = { i_r1_N, i_t1_N, i_h_N };
     this->Oframe2 = { i_r2_N, i_t2_N, i_h_N };
