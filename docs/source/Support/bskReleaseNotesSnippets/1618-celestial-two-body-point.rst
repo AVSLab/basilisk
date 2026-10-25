@@ -1,1 +1,0 @@
-- Fixed :ref:`celestialTwoBodyPoint` reference angular acceleration by removing dot products that mixed component frames; added finite-difference regression tests and corrected the documented derivative equations.

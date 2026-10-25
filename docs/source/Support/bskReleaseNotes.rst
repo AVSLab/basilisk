@@ -48,7 +48,11 @@ releases newest first, including the development version where applicable.
 
    - .. _version-release:
 
-     :ref:`Current development version <bsk-release-current>`
+     :ref:`Current release <bsk-release-current>`
+
+   - .. _version-2-12-1-october-25-2026:
+
+     :ref:`Version 2.12.1 (October 25, 2026) <bsk-release-2-12-1>`
 
    - .. _version-release-september-21-2026:
 

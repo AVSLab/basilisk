@@ -1,1 +1,0 @@
-- Group the example-script sidebar by its existing topic headings, with collapsible categories and automatic expansion for the current scenario.

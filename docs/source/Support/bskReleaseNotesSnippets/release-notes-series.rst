@@ -1,1 +1,0 @@
-- Split release notes into version-series pages and a single archive for versions before 2.0.0, preserving historical release bookmarks and the manual release workflow.

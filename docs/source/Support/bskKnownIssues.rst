@@ -4,8 +4,8 @@
 Basilisk Known Issues
 =====================
 
-Version |release| (unreleased)
---------------------------------
+Version 2.12.1 (October 25, 2026)
+---------------------------------
 
 - GitHub issue 1649: Linux wheel builds could fail on upstream source-download errors despite an available
   backup because the Conan configuration helper ignored ``CONAN_HOME`` and wrote settings to an unused cache.
@@ -28,7 +28,7 @@ Version |release| (unreleased)
   planet spin axis was not aligned with the inertial 3-axis. The rotation terms now use consistent frame components.
 
 - GitHub issue 1607: :ref:`stripLocation` still does not populate the ``v_BL_L`` access message field for
-  nonzero spacecraft-to-target separation in this patch branch. Do not use that field; its value can be
+  nonzero spacecraft-to-target separation in 2.12.1. Do not use that field; its value can be
   uninitialized or stale.
   The issue 1605 fix corrects the rotation term used internally to compute the access rates.
 
@@ -43,7 +43,7 @@ Version |release| (unreleased)
   now preserve identity, small rotations, and half-turns;
   PRV rate maps use analytic limits at zero and angle wrapping handles multiple
   revolutions. Python and Numba retain sequence inputs and non-contiguous PRV
-  arrays. This patch retains the existing Numba dispatcher interface, including
+  arrays. Version 2.12.1 retains the existing Numba dispatcher interface, including
   ``.py_func`` and ``.signatures``; Python-list reflection warnings can still occur.
   Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
@@ -90,7 +90,7 @@ Version |release| (unreleased)
 - GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
   components of the final-acceleration constraint by reading uninitialized
   constraint-vector entries. All three components now use the correct constraint
-  row. This is fixed in the current version.
+  row. This is fixed in 2.12.1.
 
 - Incremental native builds could retain an old version in
   ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.

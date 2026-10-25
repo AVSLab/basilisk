@@ -4,11 +4,100 @@ Version 2.12 Release Notes
 ==========================
 
 .. _bsk-release-current:
+.. _bsk-release-2-12-1:
 
-Version |release| (unreleased)
---------------------------------
+Version 2.12.1 (October 25, 2026)
+---------------------------------
 
-.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst
+Compatibility and migration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed Euler conversions and composition for all 12 sequences in C, Python, and Numba
+  (GitHub issue 1611), preserving the represented rotation at and near singularities.
+  At a singularity, the third angle is zero and the first carries the observable
+  combined rotation. Returned angle triples can change; compare reconstructed
+  attitudes when checking equivalence. Euler rate-map singularities remain. See
+  :ref:`rbkNumericalLimits`.
+- Fixed the C ``atmosphericDrag()`` diagnostic in ``orbitalMotion`` reading past the
+  end of the position vector and printing incorrect components (GitHub issue 1620).
+  For non-positive altitude, the Python implementation now reports the supplied
+  position and returns a three-component NaN acceleration vector instead of raising
+  ``IndexError``.
+
+Build, installation, and CI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Incremental native builds now refresh ``Basilisk.getBuildInfo()`` when
+  ``docs/source/bskVersion.txt`` changes, including in existing build trees with an
+  old Conan-cached version (GitHub issue 1570).
+- Fixed Conan retry and source-backup configuration to honor ``CONAN_HOME``, enabling
+  the existing backup server for Linux wheel builds when an upstream source download
+  fails (GitHub issue 1649). TLS and source-checksum verification remain enabled.
+
+Simulation framework and module development
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed ``BSpline.approximate()`` ignoring final-acceleration components because of
+  incorrect constraint-vector indexing (GitHub issue 1563).
+- Fixed PRV conversions and PRV/MRP composition across C, Python, Numba, and the
+  corresponding Rust C bindings to preserve identity, small rotations, and half-turns
+  (GitHub issue 1610). PRV rate maps handle zero attitude, and angle wrapping handles
+  multiple revolutions. See :ref:`rbkNumericalLimits` for representation limits.
+- Preserved Python and Numba list/tuple support and non-contiguous PRV array inputs,
+  retaining the 2.12 Numba dispatcher interface. Added Python/Numba ``MRPshadow()``
+  and extended the Rust attitude bindings (GitHub issue 1610).
+
+Environment, gravity, and ephemerides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed out-of-bounds table reads in the C ``debyeLength()`` utility for altitudes
+  from 2,000 km through 30,000 km and for NaN altitude inputs (GitHub issue 1581).
+  NaN inputs now produce an error diagnostic and return NaN.
+- Fixed inconsistent planet angular-velocity frame use in :ref:`groundLocation`
+  and :ref:`stripLocation`, correcting the rotation term in ``range_dot``,
+  ``az_dot``, and ``el_dot`` for tilted planet spin axes (GitHub issue 1605).
+  This also corrects ``groundLocation.v_BL_L``. The ``stripLocation.v_BL_L`` output
+  remains unpopulated for nonzero spacecraft-to-target separation; do not use that
+  field (GitHub issue 1607).
+- Fixed :ref:`groundLocation` ignoring the planet translational velocity from
+  ``planetInMsg`` when computing ``v_BL_L``, ``range_dot``, ``az_dot``, and ``el_dot``
+  of the access messages (GitHub issue 1606).
+- Fixed :ref:`keplerianOrbit` eccentric and mean anomalies, signed flight-path
+  angles, and rates after construction and ``set_a()`` (GitHub issue 1609).
+  ``set_mu()`` now refreshes derived outputs, and ``oe().rmag`` returns the current
+  radius. Anomalies follow the ``orbitalMotion.f2E()`` and ``E2M()`` conventions
+  without additional angle normalization.
+- Fixed :ref:`spiceInterface` GPS week and seconds of ``spiceTimeOutMsg``, which
+  were computed from TDB instead of atomic time, and its UTC Julian date, which was
+  quantized to 1e-7 day (GitHub issue 1612). The SPICE convention of holding the
+  Julian date at midnight during an inserted leap second is preserved.
+- Fixed :ref:`spiceInterface` ``GPSSeconds`` integer overflow after GPS week 3550.
+  GPS time outputs are now held at zero with a warning when the simulation starts
+  before the GPS epoch (GitHub issue 1612).
+- Fixed :ref:`eclipse` returning the occulted instead of the visible fraction of
+  the solar disk during annular eclipses, where the disk of the occulting body lies
+  inside the solar disk (GitHub issue 1615). The same formula in
+  ``PlanetRadiationBase``, used by :ref:`albedo` and :ref:`earthRadiationModel`, now
+  returns the visible fraction.
+- Fixed the GCRS to J2000 frame bias in ``tleHandling.frame_bias()`` (GitHub issue
+  1621). TLE-derived initial states change slightly with the corrected conversion.
+
+Sensors and flight software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed :ref:`celestialTwoBodyPoint` reference angular acceleration by removing
+  dot products that mixed component frames; added finite-difference regression
+  tests and corrected the documented derivative equations (GitHub issue 1618).
+
+Documentation, examples, and validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Split release notes into version-series pages and a single archive for versions
+  before 2.0.0, preserving historical release bookmarks and the manual release
+  workflow (GitHub issue 1568).
+- Grouped the example-script sidebar by its existing topic headings, with
+  collapsible categories and automatic expansion for the current scenario
+  (GitHub issue 1568).
 
 .. _bsk-release-2-12-0:
 

@@ -1,1 +1,0 @@
-- Fixed the GCRS to J2000 frame bias in ``tleHandling.frame_bias()``.
