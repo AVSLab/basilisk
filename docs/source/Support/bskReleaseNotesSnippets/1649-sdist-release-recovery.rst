@@ -1,0 +1,1 @@
+- Release workflows now configure Conan retries and source backups before testing source distributions and can recover previously tested artifacts without moving a release tag (GitHub issue 1649).

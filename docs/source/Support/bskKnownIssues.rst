@@ -10,6 +10,8 @@ Version 2.12.1 (October 25, 2026)
 - GitHub issue 1649: Linux wheel builds could fail on upstream source-download errors despite an available
   backup because the Conan configuration helper ignored ``CONAN_HOME`` and wrote settings to an unused cache.
   The helper now configures the selected cache, retaining TLS and source-checksum verification.
+  Source-distribution release validation also runs this helper before installation,
+  so an upstream download failure can use the same backup server as wheel builds.
 
 - GitHub issue 1618: :ref:`celestialTwoBodyPoint` mixed reference-frame angular-rate
   components with inertial-frame basis-vector derivatives when computing
