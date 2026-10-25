@@ -15,6 +15,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -33,8 +34,6 @@ CONAN_RETRY_SETTINGS = {
     "core.sources:download_urls": ["origin", CONAN_SOURCE_BACKUP_URL],
 }
 
-GLOBAL_CONF_PATH = Path.home() / ".conan2" / "global.conf"
-
 
 def _conf_key(line: str) -> Optional[str]:
     stripped = line.strip()
@@ -43,8 +42,17 @@ def _conf_key(line: str) -> Optional[str]:
     return stripped.split("=", 1)[0].strip()
 
 
-def update_global_conf(path: Path = GLOBAL_CONF_PATH) -> None:
-    """Set Conan retry and source-backup configuration in ``global.conf``."""
+def update_global_conf(path: Optional[Path] = None) -> None:
+    """Set retries and source backups in ``CONAN_HOME`` or the default ``~/.conan2``.
+
+    An explicit ``path`` overrides the environment and default location.
+    """
+    if path is None:
+        conan_home = Path(os.environ.get("CONAN_HOME", Path.home() / ".conan2")).expanduser()
+        if not conan_home.is_absolute():
+            raise ValueError("CONAN_HOME must be an absolute path or start with '~/'.")
+        path = conan_home / "global.conf"
+
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
 
