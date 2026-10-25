@@ -15,12 +15,17 @@ on:
         options:
           - testpypi
           - pypi
+      recovery_run_id:
+        description: "Recover artifacts from a failed tagged run; leave empty for a normal build"
+        required: false
+        type: string
 
 jobs:
   resolve-rust-toolchain:
     uses: ./.github/workflows/resolve-rust-toolchain.yml
 
   build-wheels:
+    if: ${{ inputs.recovery_run_id == '' }}
     name: Build Wheel Input (${{ matrix.wheel-kind }}, ${{ matrix.os }})
     needs: resolve-rust-toolchain
     runs-on: ${{ matrix.os }}
@@ -101,7 +106,7 @@ jobs:
   package-wheels:
     name: Test and Package Wheels (${{ matrix.os }})
     needs: build-wheels
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && inputs.recovery_run_id == '' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -161,6 +166,7 @@ jobs:
           path: ./wheelhouse-publish/*.whl
 
   make_sdist:
+    if: ${{ inputs.recovery_run_id == '' }}
     name: Make SDist
     runs-on: ubuntu-24.04
     steps:
@@ -200,16 +206,93 @@ jobs:
           path: dist
 
       - name: Verify SDist Installation
-        run: pip install dist/*.tar.gz
+        run: |
+          python .github/scripts/configure_conan_retries.py
+          python -m pip install dist/*.tar.gz
+
+  recover-release:
+    name: Validate existing release artifacts
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.recovery_run_id != '' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      tag: ${{ steps.source.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+
+      - name: Install artifact validation dependency
+        run: python -m pip install packaging
+
+      - name: Verify original run and unchanged release tag
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id }}
+        run: python .github/scripts/recover_wheel_release.py run "$RECOVERY_RUN_ID"
+
+      - name: Download original tested wheels
+        uses: actions/download-artifact@v6
+        with:
+          artifact-ids: ${{ steps.source.outputs.wheel_artifact_ids }}
+          run-id: ${{ inputs.recovery_run_id }}
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: dist
+
+      - name: Download original source archive
+        uses: actions/download-artifact@v6
+        with:
+          artifact-ids: ${{ steps.source.outputs.sdist_artifact_id }}
+          run-id: ${{ inputs.recovery_run_id }}
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: dist
+
+      - name: Verify distribution versions and wheel inventory
+        env:
+          RELEASE_VERSION: ${{ steps.source.outputs.version }}
+        run: python .github/scripts/recover_wheel_release.py files dist "$RELEASE_VERSION"
+
+      - uses: ./.github/actions/setup
+
+      - name: Install and import the original source distribution
+        env:
+          RELEASE_VERSION: ${{ steps.source.outputs.version }}
+        run: |
+          python .github/scripts/configure_conan_retries.py
+          python -m pip install dist/*.tar.gz
+          python -c 'import os, Basilisk; from importlib.metadata import version; expected = os.environ["RELEASE_VERSION"]; assert version("bsk") == expected; assert Basilisk.getBuildInfo()["artifact"]["basiliskVersion"] == expected'
+
+      - name: Retain validated original distributions
+        uses: actions/upload-artifact@v6
+        with:
+          name: recovered-release-dist
+          path: dist/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
 
   publish:
     name: Publish
-    needs: [package-wheels, test-sdist]
+    needs: [package-wheels, test-sdist, recover-release]
+    if: >-
+      ${{ !cancelled() &&
+          (needs.recover-release.result == 'success' ||
+           (needs.recover-release.result == 'skipped' &&
+            needs.package-wheels.result == 'success' &&
+            needs.test-sdist.result == 'success')) }}
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
     steps:
       - name: Download wheels
+        if: ${{ needs.recover-release.result != 'success' }}
         uses: actions/download-artifact@v6
         with:
           pattern: cibw-wheels-*
@@ -217,24 +300,38 @@ jobs:
           path: dist
 
       - name: Download sdist
+        if: ${{ needs.recover-release.result != 'success' }}
         uses: actions/download-artifact@v6
         with:
           name: cibw-sdist
           path: dist
 
+      - name: Download validated recovery distributions
+        if: ${{ needs.recover-release.result == 'success' }}
+        uses: actions/download-artifact@v6
+        with:
+          name: recovered-release-dist
+          path: dist
+
       - name: Resolve publish config
         id: config
+        env:
+          RELEASE_REF: ${{ needs.recover-release.outputs.tag || github.ref_name }}
+          RECOVERED: ${{ needs.recover-release.result == 'success' }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          DESTINATION: ${{ inputs.destination }}
         run: |
-          ref="${{ github.ref_name }}"
-          # Guard: manual PyPI publish requires a non-RC version tag
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.destination }}" == "pypi" ]]; then
-            if [[ "${{ github.ref_type }}" != "tag" || "$ref" == *rc* || "$ref" != v* ]]; then
+          ref="$RELEASE_REF"
+          # Recovery validates the original tag before reusing its artifacts.
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$DESTINATION" == "pypi" ]]; then
+            if [[ ( "$REF_TYPE" != "tag" && "$RECOVERED" != "true" ) || "$ref" == *rc* || "$ref" != v* ]]; then
               echo "::error::PyPI publish requires a non-RC version tag (e.g. vX.Y.Z). Got: $ref"
               exit 1
             fi
           fi
           # Route to TestPyPI for RC/test tags or manual testpypi dispatch
-          if [[ "$ref" == *rc* || "$ref" == test* || "${{ inputs.destination }}" == "testpypi" ]]; then
+          if [[ "$ref" == *rc* || "$ref" == test* || "$DESTINATION" == "testpypi" ]]; then
             testpypi="true"
           else
             testpypi="false"

@@ -361,6 +361,33 @@ is neither ``master`` nor ``develop``. After publishing a patch:
 #. Verify both the root release documentation and the ``/develop``
    documentation after the workflows finish.
 
+.. _bsk-release-task-recovery:
+
+Recover Failed Source-Distribution Validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If all wheel build and packaging jobs succeeded but ``Test SDist`` failed because
+of an external dependency download, fix the validation environment on the release
+branch and keep the published tag unchanged. The ``Publish Wheels`` workflow has
+an optional ``recovery_run_id`` input for this case:
+
+.. code-block:: bash
+
+   gh workflow run publish-wheels.yml --ref patch/v2_X_x \
+     -f destination=pypi -f recovery_run_id=ORIGINAL_RUN_ID
+
+Run this only after reviewing the original failure and the environment fix. The
+workflow verifies that the original run used the same final tag and commit, that
+all wheel checks succeeded, and that publication was skipped. It downloads the
+original, unexpired artifacts, verifies their package versions and platform pairs,
+and installs and imports the original source distribution with Conan retries and
+source backups configured. Publication runs only after these checks pass.
+
+This recovery uses the original distributions without rebuilding or modifying
+them. It cannot repair a source-code defect in the tagged archive or recover a
+partially published release. A rerun of the original workflow still uses its old
+workflow definition; dispatch recovery from the branch containing the fix.
+
 .. _bsk-release-task-github-release:
 
 Create the GitHub Release
