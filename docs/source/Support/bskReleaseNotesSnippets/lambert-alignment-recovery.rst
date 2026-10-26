@@ -1,0 +1,1 @@
+- Fixed :ref:`lambertSolver` remaining disabled after an aligned input: alignment rejection now applies only to the current update, allowing subsequent acceptable geometry or a relaxed alignment threshold to recover on the same module instance without a reset.

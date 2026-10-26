@@ -129,10 +129,15 @@ the sign selects the direction normally, including for near-polar transfers.
 The message stores ``transferDirection`` as an integer so unknown values raise a
 Basilisk error before conversion to the internal direction enum.
 
-An edge case exists for a transfer angle of 0 or 180 degrees, as the two position vectors do not define a plane, so an
-infinite number of solutions exist. The module checks if the angle between the two position vectors is smaller than the
-threshold "alignmentThreshold". In this case, the computed velocity vectors are set equal to the zero vector and the
-validity flag of the solution is set to zero.
+Position vectors near parallel or antiparallel alignment do not reliably define
+a transfer plane. The module rejects inputs when the magnitude of the cross
+product of the radial unit vectors is below the sine of ``alignmentThreshold``
+(in degrees). This covers angles near both 0 and 180 degrees. A rejected update
+returns zero velocities, cleared validity flags, and zero performance fields in
+both solution slots. It also skips normalization of the rejected orbit normal.
+The alignment check is evaluated on every update: a later acceptable geometry
+or a relaxed threshold can produce a solution on the same module instance
+without calling ``Reset`` or recreating the module.
 
 The convergence tolerances apply to the non-dimensional root and flight-time
 equation; they are not absolute bounds on position or velocity error. Geometry
