@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- An aligned input to :ref:`lambertSolver` could permanently disable solutions
+  on that module instance, even after a later input defined a valid transfer
+  plane. Alignment rejection now applies only to the current update. Both
+  solution and performance slots are cleared for a rejected input, and later
+  acceptable geometry or a relaxed alignment threshold can recover without
+  resetting or recreating the module.
+
 - The Izzo method in :ref:`lambertSolver` used an incorrect exponent for its
   intermediate zero-revolution starter, producing a negative guess for a
   positive root. The corrected logarithmic interpolation is continuous at both

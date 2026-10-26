@@ -217,6 +217,94 @@ def test_roots_converge_near_minimum(method, direction, lam, revolutions, excess
 @pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
 @pytest.mark.parametrize("direction", [messaging.PROGRADE, messaging.RETROGRADE])
 @pytest.mark.parametrize("revolutions", [0, 1])
+@pytest.mark.parametrize("angle_degrees", [0.0, 0.5, 179.5, 180.0, 180.5, 359.5])  # [deg]
+def test_alignment_rejection_and_recovery(method, direction, revolutions, angle_degrees):
+    """Reject only the aligned update and recover without resetting the module.
+
+    Start with an aligned input, then alternate aligned and valid geometries
+    on the same message and module. Rejected updates must clear both solution
+    and performance slots. Each recovered result must match a fresh module,
+    including when the valid endpoint and flight time change.
+    """
+    r1 = np.array([RADIUS, 0.0, 0.0])  # [m]
+    sign = -1 if direction == messaging.RETROGRADE else 1
+    angle = np.deg2rad(angle_degrees)  # [rad]
+    aligned_r2 = RADIUS*np.array([np.cos(angle), sign*np.sin(angle), 0.0])  # [m]
+    if angle_degrees in (0.0, 180.0):  # [deg]
+        aligned_r2[1] = 0.0  # [m] Exercise an exactly zero cross product.
+    r2_a = np.array([0.0, sign*RADIUS, 0.0])  # [m]
+    r2_b = RADIUS*np.array([-0.5, sign*np.sqrt(0.75), 0.0])  # [m]
+    time_a = 2000.0 if revolutions == 0 else 10000.0  # [s]
+    time_b = 1.2*time_a  # [s]
+    expected_a = solve_problem(r1, r2_a, time_a, revolutions, method, transfer_direction=direction)
+    expected_b = solve_problem(r1, r2_b, time_b, revolutions, method, transfer_direction=direction)
+    for solution, _ in (expected_a, expected_b):
+        assert solution.valid == 1
+        assert solution.validSol2 == int(revolutions > 0)
+
+    payload = messaging.LambertProblemMsgPayload()
+    payload.mu = MU
+    payload.r1_N = r1
+    payload.numRevolutions = revolutions
+    payload.solverMethod = method
+    payload.transferDirection = direction
+    message = messaging.LambertProblemMsg()
+    module = lambertSolver.LambertSolver()
+    module.lambertProblemInMsg.subscribeTo(message)
+    module.Reset(0)
+    for r2, transfer_time, expected in [
+        (aligned_r2, time_a, None), (r2_a, time_a, expected_a),
+        (aligned_r2, time_a, None), (r2_b, time_b, expected_b),
+        (aligned_r2, time_b, None), (r2_a, time_a, expected_a),
+    ]:
+        payload.r2_N = r2
+        payload.transferTime = transfer_time
+        message.write(payload)
+        module.UpdateState(0)
+        # Borrowed views remain valid while the module is alive in this loop.
+        solution = module.lambertSolutionOutMsg.read()
+        performance = module.lambertPerformanceOutMsg.read()
+        if expected is None:
+            assert solution.valid == solution.validSol2 == 0
+            np.testing.assert_array_equal(
+                [solution.v1_N, solution.v2_N, solution.v1Sol2_N, solution.v2Sol2_N], np.zeros((4, 3))
+            )
+            assert performance.x == performance.xSol2 == 0.0
+            assert performance.numIter == performance.numIterSol2 == 0
+            assert performance.errX == performance.errXSol2 == 0.0
+        else:
+            for field in ("v1_N", "v2_N", "valid", "v1Sol2_N", "v2Sol2_N", "validSol2"):
+                np.testing.assert_array_equal(getattr(solution, field), getattr(expected[0], field))
+            for field in ("x", "numIter", "errX", "xSol2", "numIterSol2", "errXSol2"):
+                np.testing.assert_array_equal(getattr(performance, field), getattr(expected[1], field))
+
+
+@pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
+@pytest.mark.parametrize("direction", [messaging.PROGRADE, messaging.RETROGRADE])
+def test_alignment_threshold_recovery(method, direction):
+    """Reevaluate the same input after changing the alignment threshold without a reset."""
+    angle = np.deg2rad(1.5)  # [rad]
+    sign = -1 if direction == messaging.RETROGRADE else 1
+    payload = messaging.LambertProblemMsgPayload()
+    payload.mu = MU
+    payload.r1_N = [RADIUS, 0.0, 0.0]  # [m]
+    payload.r2_N = RADIUS*np.array([np.cos(angle), sign*np.sin(angle), 0.0])  # [m]
+    payload.transferTime = 2000.0  # [s]
+    payload.solverMethod = method
+    payload.transferDirection = direction
+    message = messaging.LambertProblemMsg().write(payload)
+    module = lambertSolver.LambertSolver()
+    module.lambertProblemInMsg.subscribeTo(message)
+    module.Reset(0)
+    for threshold, expected_valid in [(2.0, 0), (1.0, 1), (2.0, 0), (1.0, 1)]:  # [deg], flag
+        module.setAlignmentThreshold(threshold)
+        module.UpdateState(0)
+        assert module.lambertSolutionOutMsg.read().valid == expected_valid
+
+
+@pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
+@pytest.mark.parametrize("direction", [messaging.PROGRADE, messaging.RETROGRADE])
+@pytest.mark.parametrize("revolutions", [0, 1])
 def test_numerical_failure_and_recovery(method, direction, revolutions):
     """Zero failed solutions, then recover without reusing their roots or validity."""
     r1 = np.array([RADIUS, 0.0, 0.0])  # [m]

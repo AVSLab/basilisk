@@ -176,12 +176,14 @@ void LambertSolver::problemGeometry()
     // check alignment of the two position vectors
     Eigen::Vector3d radialCross = i_r1_N.cross(i_r2_N);
     double sinTheta = radialCross.norm();
-    if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.)) {
+    // Alignment rejects only the current input, not subsequent module updates.
+    this->noSolution = abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.);
+    if (this->noSolution) {
         bskLogger.bskLog(BSK_WARNING,
                          "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
                          "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
                          "They might not define a plane, so no solution is returned.");
-        this->noSolution = true;
+        return;
     }
     // orbit normal direction
     Eigen::Vector3d i_h_N = radialCross / sinTheta;
