@@ -7,6 +7,15 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The Izzo method in :ref:`lambertSolver` used an incorrect exponent for its
+  intermediate zero-revolution starter, producing a negative guess for a
+  positive root. The corrected logarithmic interpolation is continuous at both
+  ends of the interval and reduces unnecessary safeguarded iterations. Some
+  transfers near the parabolic boundary previously exceeded the default
+  :ref:`lambertValidator` iteration limit despite converging to a valid root.
+  The Python test reference uses the corrected exponent as well and safely
+  refines starters at the parabolic boundary without producing NaN results.
+
 - :ref:`lambertSolver` could publish unconverged roots as valid after reaching its
   iteration limit, including short transfers and multi-revolution transfers just
   above the minimum time. Root searches now use safeguarded branch brackets and

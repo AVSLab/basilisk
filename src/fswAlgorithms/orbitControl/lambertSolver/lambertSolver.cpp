@@ -436,7 +436,8 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T)
         } else if (T <= T1) {
             x0Sol1 = 5.0 / 2.0 * T1 * (T1 - T) / (T * (1.0 - pow(lam, 5))) + 1.0;
         } else {
-            x0Sol1 = pow(T00 / T, log(T1 / T00) / log(2.0)) - 1.0;
+            // Interpolate log(1+x) from 0 at T00 to log(2) at T1.
+            x0Sol1 = pow(T00 / T, log(2.0) / log(T00 / T1)) - 1.0;
         }
     } else {
         // multi-revolution case

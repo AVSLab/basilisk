@@ -89,7 +89,8 @@ class IzzoSolve():
         elif T <= T_1:
             self.x0 = 5./2. * T_1 * (T_1 - T) / (T*(1 - self.lambd ** 5)) + 1
         else:
-            self.x0 = (T_00 / T) ** (np.log(T_1 / T_00)/np.log(2)) - 1.
+            # Interpolate log(1+x) from 0 at T_00 to log(2) at T_1.
+            self.x0 = (T_00 / T) ** (np.log(2.0) / np.log(T_00 / T_1)) - 1.0
         iters[0] = self.householder(T, self.x0, 0, 1e-5, self.max_iter)
         x[0] = self.x0
         for i in range(1, int(M_max) + 1):
@@ -137,6 +138,9 @@ class IzzoSolve():
         return tof
 
     def x2tof(self, x, N):
+        if x == 1.0 and N == 0:
+            # The zero-revolution parabolic limit avoids the Battin term 0/0.
+            return 2.0 / 3.0 * (1.0 - self.lambd ** 3)
         battin = 0.01
         lagrange = 0.2
         dist = np.abs(x - 1)
@@ -167,10 +171,17 @@ class IzzoSolve():
     def householder(self, T, x0, N, eps, iter_max):
         for it in range(iter_max):
             tof = self.x2tof(x0, N)
-            DT, DDT, DDDT = self.dTdx(x0, tof)
             delta = tof - T
-            DT2 = DT ** 2
-            xnew = x0 - delta * (DT2 - delta * DDT / 2.0) / (DT * (DT2 - delta * DDT) + DDDT * delta * delta / 6.0)
+            if N == 0 and np.abs(x0 - 1.0) < 1e-8:
+                # Near x = 1 the general derivatives suffer cancellation and
+                # divide by zero at the boundary. Use a Newton step with the
+                # analytic derivative limit while retaining the actual residual.
+                DT = 2.0 / 5.0 * (self.lambd ** 5 - 1.0)
+                xnew = x0 - delta / DT
+            else:
+                DT, DDT, DDDT = self.dTdx(x0, tof)
+                DT2 = DT ** 2
+                xnew = x0 - delta * (DT2 - delta * DDT / 2.0) / (DT * (DT2 - delta * DDT) + DDDT * delta * delta / 6.0)
             err = np.abs(x0 - xnew)
             x0 = xnew
             self.x0 = xnew

@@ -31,6 +31,24 @@ velocities are finite. If the minimum-time search cannot converge to a finite
 minimum, the module logs a warning and returns zero velocities with both validity
 flags set to zero.
 
+Izzo Zero-Revolution Starter
+----------------------------
+For non-dimensional flight times between
+:math:`T_1=\frac{2}{3}(1-\lambda^3)` and
+:math:`T_{00}=\arccos\lambda+\lambda\sqrt{1-\lambda^2}`, the Izzo starter
+interpolates linearly in :math:`\log(1+x)` versus :math:`\log T`:
+
+.. math::
+
+    x_0 = \left(\frac{T_{00}}{T}\right)^{\log 2/\log(T_{00}/T_1)}-1,
+    \qquad T_1 < T < T_{00}.
+
+The positive exponent keeps the starter between zero and one and makes it
+continuous with the adjacent branches: :math:`x_0=0` at :math:`T=T_{00}` and
+:math:`x_0=1` at :math:`T=T_1`. This avoids unnecessary safeguarded iterations
+from a negative starter for a positive root. The root convergence checks below
+still determine whether the resulting solution is valid.
+
 Root Convergence
 ----------------
 The Gooding Halley steps and Izzo Householder steps are safeguarded by a bracket
