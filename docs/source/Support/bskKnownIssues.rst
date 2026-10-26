@@ -7,6 +7,19 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- :ref:`lambertSolver` could publish unconverged roots as valid after reaching its
+  iteration limit, including short transfers and multi-revolution transfers just
+  above the minimum time. Root searches now use safeguarded branch brackets and
+  require finite results, a small final step, and a small flight-time residual.
+  A failed branch returns zero velocities with its validity flag cleared; a later
+  resolvable request can recover. Accurate hyperbolic starters and converged tiny
+  corrections are retained to avoid unnecessary bisection and downstream
+  iteration-limit rejection. Step-shrink checks compare consecutive high-order
+  steps; bisection clears that history so high-order refinement can resume.
+  Parabolic solutions use the same residual tolerance;
+  nearby flight times use a smooth evaluator instead of a constant approximation.
+  Requests beyond the evaluator's numerical resolution can still be rejected.
+
 - GitHub issue 1652: :ref:`lambertSolver` previously assumed prograde motion about
   the input frame's positive z-axis, so retrograde problems could return the
   opposite transfer with a valid flag. ``LambertProblemMsgPayload.transferDirection``

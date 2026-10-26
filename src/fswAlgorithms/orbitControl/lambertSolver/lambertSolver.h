@@ -56,6 +56,15 @@ class LambertSolver : public SysModel
     double getlignmentThreshold() const { return this->alignmentThreshold; }
 
   private:
+    /** @brief Numerical result for one root of the flight-time equation. */
+    struct RootResult
+    {
+        double x{};       //!< [-] Last evaluated root candidate.
+        int iterations{}; //!< Number of root iterations.
+        double error{};   //!< [-] Magnitude of the final step or converged correction in x.
+        bool converged{}; //!< True only after finite-domain, step, and residual checks pass.
+    };
+
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
     void problemGeometry();
@@ -65,8 +74,7 @@ class LambertSolver : public SysModel
     std::array<Eigen::Vector3d, 2> computeVelocities(double x);
     double x2tof(double x, int N, double lam);
     std::array<double, 3> dTdx(double x, double T, double lam);
-    std::array<double, 3> householder(double T, double x0, int N);
-    std::array<double, 3> halley(double T, double x0, int N);
+    RootResult solveRoot(double T, double x0, int N, double xLower, double xUpper, bool increasing);
     std::optional<std::array<double, 2>> getTmin(double T0M, int N);
     double hypergeometricF(double z);
 
@@ -81,17 +89,14 @@ class LambertSolver : public SysModel
     double TOF{};                                          //!< non-dimensional time-of-flight constraint
     double lambda{};         //!< parameter of Lambert"s problem that defines problem geometry
     bool multiRevSolution{}; //!< boolean flag if multi-revolution solutions exist or not
+    double xMin{};           //!< [-] Minimum-time root location separating the multi-revolution branches.
     bool noSolution{};       //!< boolean flag if no solution should be returned (in case of 180 deg transfer angle)
     std::array<Eigen::Vector3d, 3> Oframe1;   //!< array containing the orbit frame unit vectors at t0
     std::array<Eigen::Vector3d, 3> Oframe2;   //!< array containing the orbit frame unit vectors at t1
     std::array<Eigen::Vector3d, 2> vvecs;     //!< array containing the velocity vector solutions at t0 and t1
     std::array<Eigen::Vector3d, 2> vvecsSol2; //!< array containing the velocity vector solutions at t0 and t1 (sol 2)
-    double X{};                               //!< solution for free variable of Lambert's problem
-    double XSol2{};                           //!< second solution for free variable of Lambert's problem
-    int numIter{};                            //!< number of root finder iterations to find X
-    int numIterSol2{};                        //!< number of root finder iterations to find X_sol2
-    double errX{};                            //!< difference in X between last and second-to-last iteration
-    double errXSol2{}; //!< difference in X between last and second-to-last iteration (for X_sol2)
+    RootResult solution{};                    //!< Numerical result for the first solution.
+    RootResult solutionSol2{};                //!< Numerical result for the second solution.
 };
 
 #endif

@@ -26,9 +26,48 @@ minimum time, solution 1 has :math:`x < x_M` and solution 2 has :math:`x > x_M`,
 :math:`x_M` is the location of the minimum of the time-of-flight curve.
 The :ref:`LambertSolutionMsgPayload` output message includes two solutions. If a solution does not exist,
 the corresponding velocity vectors in the message are equal to the zero vector, and the "validity" flag is equal to
-zero. Otherwise, the "validity" flag is set to 1. If the minimum-time search cannot
-converge to a finite minimum, the module logs a warning and returns zero velocities
-with both validity flags set to zero.
+zero. A validity flag is set to 1 only after the root converges and both endpoint
+velocities are finite. If the minimum-time search cannot converge to a finite
+minimum, the module logs a warning and returns zero velocities with both validity
+flags set to zero.
+
+Root Convergence
+----------------
+The Gooding Halley steps and Izzo Householder steps are safeguarded by a bracket
+for each monotonic branch of the flight-time curve. A nonfinite step, a step
+outside that bracket, or a high-order step that does not shrink sufficiently
+relative to the preceding high-order step is replaced by bisection. Bisection
+clears this step-size history, allowing an admissible high-order step to resume.
+The first high-order step also starts with no step-size history. Multi-revolution
+roots remain on their respective sides of the minimum-time point.
+For a zero-revolution hyperbolic transfer, the upper bracket
+is expanded at most 64 times. A finite starter at that upper endpoint is retained.
+Each root then receives at most 80 refinement steps.
+
+Convergence requires a finite root in its admissible domain, a final step or
+computed correction no larger than :math:`10^{-8}`, and a relative
+non-dimensional flight-time residual no larger than :math:`10^{-12}`. A small
+correction with an acceptable residual is recognized before the bracket
+safeguard, even when the correction rounds to zero. A small correction alone
+does not establish convergence. An exact finite flight-time match has a zero
+correction.
+
+The analytic parabolic solution uses :math:`x=1` with zero iterations and zero
+step error when it satisfies the same relative flight-time tolerance. Nearby
+requests use the smooth Battin flight-time formula rather than a constant
+parabolic approximation, so the residual check can distinguish them.
+
+If numerical limits prevent convergence or velocity reconstruction produces a
+nonfinite value, the module logs a warning. The affected solution slot has a zero
+validity flag, zero velocities, and zero performance fields. The other branch
+can still be valid. Every update starts with fresh root results, so a later
+numerically resolvable request can recover after a root-search failure.
+
+The performance message reports the number of root refinements, including
+bisection steps, and the final step or converged correction magnitude. A valid
+solution can require more iterations than older solver versions allowed. Downstream acceptance policies
+still apply: :ref:`lambertValidator` currently requires fewer than six root
+iterations when its constraint checks are enabled.
 
 Message Connection Descriptions
 -------------------------------
@@ -77,8 +116,10 @@ infinite number of solutions exist. The module checks if the angle between the t
 threshold "alignmentThreshold". In this case, the computed velocity vectors are set equal to the zero vector and the
 validity flag of the solution is set to zero.
 
-While the module also works for parabolic transfer orbits, the solutions for orbits that are very close to - but not
-exactly - parabolic, may not be as accurate.
+The convergence tolerances apply to the non-dimensional root and flight-time
+equation; they are not absolute bounds on position or velocity error. Geometry
+and floating-point resolution can limit accuracy. If the flight-time evaluator
+cannot resolve a request to the convergence tolerances, the result is invalid.
 
 User Guide
 ----------

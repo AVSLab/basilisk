@@ -25,10 +25,10 @@ typedef struct
 {
     double x;        //!< [-] solution for free variable (iteration variable)
     int numIter;     //!< [-] number of root-finder iterations to find x
-    double errX;     //!< [-] difference in x between last and second-to-last iteration
+    double errX;     //!< [-] magnitude of the final step or converged correction in x
     double xSol2;    //!< [-] second solution for free variable (iteration variable)
     int numIterSol2; //!< [-] number of root-finder iterations to find x_sol2
-    double errXSol2; //!< [-] difference in x_sol2 between last and second-to-last iteration
+    double errXSol2; //!< [-] magnitude of the final step or converged correction in xSol2
 } LambertPerformanceMsgPayload;
 
 #endif

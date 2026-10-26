@@ -19,8 +19,13 @@
 
 #include "fswAlgorithms/orbitControl/lambertSolver/lambertSolver.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <algorithm>
 #include <cmath>
 #include <limits>
+
+namespace {
+constexpr double rootTimeTolerance = 1e-12; // [-] Maximum relative flight-time residual.
+}
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -55,11 +60,21 @@ void LambertSolver::UpdateState(uint64_t currentSimNanos)
     // find free variable x that satisfies the given time of flight
     this->findx();
 
-    // compute velocity vector at initial and final position of Lambert's problem
-    this->vvecs = this->computeVelocities(this->X);
-    if (numberOfRevolutions > 0) {
-        // if one or more orbits are to be completed, two solutions exist. Compute velocities for second solution
-        this->vvecsSol2 = this->computeVelocities(this->XSol2);
+    // Only reconstruct velocities for converged roots. A finite root alone does not
+    // guarantee finite velocities when the geometry is numerically unresolvable.
+    if (this->solution.converged) {
+        this->vvecs = this->computeVelocities(this->solution.x);
+        this->solution.converged = this->vvecs[0].allFinite() && this->vvecs[1].allFinite();
+        if (!this->solution.converged) {
+            bskLogger.bskLog(BSK_WARNING, "lambertSolver: first solution has nonfinite velocities.");
+        }
+    }
+    if (this->solutionSol2.converged) {
+        this->vvecsSol2 = this->computeVelocities(this->solutionSol2.x);
+        this->solutionSol2.converged = this->vvecsSol2[0].allFinite() && this->vvecsSol2[1].allFinite();
+        if (!this->solutionSol2.converged) {
+            bskLogger.bskLog(BSK_WARNING, "lambertSolver: second solution has nonfinite velocities.");
+        }
     }
 
     // write messages
@@ -113,38 +128,23 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos)
     lambertSolutionOutMsgBuffer = this->lambertSolutionOutMsg.zeroMsgPayload;
     lambertPerformanceOutMsgBuffer = this->lambertPerformanceOutMsg.zeroMsgPayload;
 
-    if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)) {
-        /*  1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite
-            number of solutions exist. In this case, the module should not return any solutions.
-            2. transfer time is too short for multi-revolution solution, zero solutions exist.
-            Neither solution is valid */
-        lambertSolutionOutMsgBuffer.valid = 0;
-        lambertSolutionOutMsgBuffer.validSol2 = 0;
-    } else if (this->numberOfRevolutions == 0) {
-        // if zero orbits are completed, only one solution exists.
-        // Only populate information for 1st solution, 2nd solution remains zero message payload
-        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1_N);
-        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2_N);
-        lambertSolutionOutMsgBuffer.valid = 1; // solution 1 is valid
-
-        lambertPerformanceOutMsgBuffer.x = this->X;
-        lambertPerformanceOutMsgBuffer.numIter = this->numIter;
-        lambertPerformanceOutMsgBuffer.errX = this->errX;
-    } else {
-        // if one or more orbits are completed, and the requested time of flight is long enough, two solutions exist
-        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1_N);
-        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2_N);
-        lambertSolutionOutMsgBuffer.valid = 1; // solution 1 is valid
-        eigenVector3d2CArray(this->vvecsSol2.at(0), lambertSolutionOutMsgBuffer.v1Sol2_N);
-        eigenVector3d2CArray(this->vvecsSol2.at(1), lambertSolutionOutMsgBuffer.v2Sol2_N);
-        lambertSolutionOutMsgBuffer.validSol2 = 1; // solution 2 is valid
-
-        lambertPerformanceOutMsgBuffer.x = this->X;
-        lambertPerformanceOutMsgBuffer.numIter = this->numIter;
-        lambertPerformanceOutMsgBuffer.errX = this->errX;
-        lambertPerformanceOutMsgBuffer.xSol2 = this->XSol2;
-        lambertPerformanceOutMsgBuffer.numIterSol2 = this->numIterSol2;
-        lambertPerformanceOutMsgBuffer.errXSol2 = this->errXSol2;
+    // A failed branch retains its zero payload and validity flag independently of
+    // the other branch. Never expose a stale root or an unconverged velocity.
+    if (this->solution.converged) {
+        eigenVector3d2CArray(this->vvecs[0], lambertSolutionOutMsgBuffer.v1_N);
+        eigenVector3d2CArray(this->vvecs[1], lambertSolutionOutMsgBuffer.v2_N);
+        lambertSolutionOutMsgBuffer.valid = 1;
+        lambertPerformanceOutMsgBuffer.x = this->solution.x;
+        lambertPerformanceOutMsgBuffer.numIter = this->solution.iterations;
+        lambertPerformanceOutMsgBuffer.errX = this->solution.error;
+    }
+    if (this->solutionSol2.converged) {
+        eigenVector3d2CArray(this->vvecsSol2[0], lambertSolutionOutMsgBuffer.v1Sol2_N);
+        eigenVector3d2CArray(this->vvecsSol2[1], lambertSolutionOutMsgBuffer.v2Sol2_N);
+        lambertSolutionOutMsgBuffer.validSol2 = 1;
+        lambertPerformanceOutMsgBuffer.xSol2 = this->solutionSol2.x;
+        lambertPerformanceOutMsgBuffer.numIterSol2 = this->solutionSol2.iterations;
+        lambertPerformanceOutMsgBuffer.errXSol2 = this->solutionSol2.error;
     }
 
     // Write to the output messages
@@ -209,6 +209,17 @@ void LambertSolver::problemGeometry()
  */
 void LambertSolver::findx()
 {
+    this->solution = {};
+    this->solutionSol2 = {};
+    if (this->noSolution) {
+        return;
+    }
+    if (!std::isfinite(this->TOF) || this->TOF <= 0.0 || !std::isfinite(this->lambda) ||
+        std::abs(this->lambda) >= 1.0) {
+        bskLogger.bskLog(BSK_WARNING, "lambertSolver: root search requires finite time and geometry.");
+        return;
+    }
+
     std::array<double, 2> x0;
     if (this->solverMethod == GOODING) {
         x0 = this->goodingInitialGuess(this->lambda, this->TOF);
@@ -217,31 +228,47 @@ void LambertSolver::findx()
     } else {
         return;
     }
-    if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
-        return;
-    }
-    if (this->numberOfRevolutions > 0 && x0[0] == x0[1]) {
-        // At the minimum time the two branches coalesce; do not iterate at dT/dx = 0.
-        this->X = x0[0];
-        this->XSol2 = x0[1];
-        this->numIter = this->numIterSol2 = 0;
-        this->errX = this->errXSol2 = 0.0;
-        return;
-    }
-
-    std::array<double, 3> solution = this->solverMethod == GOODING
-                                         ? this->halley(this->TOF, x0[0], this->numberOfRevolutions)
-                                         : this->householder(this->TOF, x0[0], this->numberOfRevolutions);
-    this->X = solution[0];
-    this->numIter = static_cast<int>(solution[1]);
-    this->errX = solution[2];
-
     if (this->numberOfRevolutions > 0) {
-        solution = this->solverMethod == GOODING ? this->halley(this->TOF, x0[1], this->numberOfRevolutions)
-                                                 : this->householder(this->TOF, x0[1], this->numberOfRevolutions);
-        this->XSol2 = solution[0];
-        this->numIterSol2 = static_cast<int>(solution[1]);
-        this->errXSol2 = solution[2];
+        if (!this->multiRevSolution) {
+            return;
+        }
+        if (x0[0] == x0[1]) {
+            // The minimum-time search already checks convergence at the coalesced root.
+            this->solution = { x0[0], 0, 0.0, true };
+            this->solutionSol2 = this->solution;
+            return;
+        }
+        this->solution = this->solveRoot(this->TOF, x0[0], this->numberOfRevolutions, -1.0, this->xMin, false);
+        this->solutionSol2 = this->solveRoot(this->TOF, x0[1], this->numberOfRevolutions, this->xMin, 1.0, true);
+    } else {
+        // Preserve the analytic parabolic solution when it meets the same residual
+        // tolerance as an iterated root, including roundoff in the input geometry.
+        const double parabolicTime = this->x2tof(1.0, 0, this->lambda);
+        if (std::abs(this->TOF - parabolicTime) <= rootTimeTolerance * this->TOF) {
+            this->solution = { 1.0, 0, 0.0, true };
+            return;
+        }
+        // T(x) decreases from infinity at x = -1 to zero as x tends to infinity.
+        // Expand the finite upper bound for hyperbolic transfers; never evaluate -1.
+        double xUpper = std::isfinite(x0[0]) ? std::max(1.0, x0[0]) : 1.0;
+        const int expansionLimit = 64;
+        bool bracketed = false;
+        for (int j = 0; j < expansionLimit; ++j) {
+            const double upperTime = this->x2tof(xUpper, 0, this->lambda);
+            if (!std::isfinite(upperTime) || upperTime <= 0.0) {
+                break;
+            }
+            if (upperTime <= this->TOF) {
+                bracketed = true;
+                break;
+            }
+            xUpper *= 2.0;
+        }
+        if (!bracketed) {
+            bskLogger.bskLog(BSK_WARNING, "lambertSolver: could not bracket the zero-revolution root.");
+            return;
+        }
+        this->solution = this->solveRoot(this->TOF, x0[0], 0, -1.0, xUpper, false);
     }
 }
 
@@ -331,6 +358,7 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
             return { 0.0, 0.0 };
         }
         const double x_M = (*minimum)[0];
+        this->xMin = x_M;
         const double Tmin = (*minimum)[1];
         const double minTimeTolerance = 8.0 * std::numeric_limits<double>::epsilon() * Tmin;
         if (T < Tmin - minTimeTolerance) {
@@ -417,6 +445,7 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T)
             this->multiRevSolution = false;
             return { 0.0, 0.0 };
         }
+        this->xMin = (*minimum)[0];
         const double Tmin = (*minimum)[1];
         const double minTimeTolerance = 8.0 * std::numeric_limits<double>::epsilon() * Tmin;
         if (T < Tmin - minTimeTolerance) {
@@ -459,12 +488,13 @@ double LambertSolver::x2tof(double x, int N, double lam)
     double y = sqrt(1.0 - pow(lam, 2) * u);
 
     double tof;
-    if (dist < 1e-8) {
+    if (x == 1.0 && N == 0) {
         // exact time of flight for parabolic case
 
         tof = 2.0 / 3.0 * (1.0 - pow(lam, 3));
     } else if (dist < battin) {
-        // Use Battin formulation
+        // Use the smooth Battin formulation even arbitrarily close to x = 1.
+        // A constant parabolic interval would conceal the true flight-time residual.
 
         double eta = y - lam * x;
         double S1 = 0.5 * (1.0 - lam - x * eta);
@@ -521,84 +551,108 @@ std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
     return DTs;
 }
 
-/*! This method includes a 3rd order householder root-finder to find the free variable x that satisfies the
-    time-of-flight constraint.
-    @param T requested non-dimensional time-of-flight
-    @param x0 initial guess for x free variable of Lambert's problem that satisfies the given time of flight
-    @param N number of revolutions
-    @return std::array<double, 3>
+/*! @brief Solve one monotonic flight-time branch with safeguarded Halley or Householder steps.
+    @param T Requested positive non-dimensional flight time.
+    @param x0 Initial root estimate; an out-of-bracket estimate is replaced by the midpoint.
+    @param N Number of complete revolutions.
+    @param xLower Lower bound of the root's branch, including the open elliptic endpoint -1.
+    @param xUpper Upper bound, including the open endpoint 1 for a multi-revolution branch.
+    @param increasing True for the right multi-revolution branch; false for decreasing branches.
+    @return Last root estimate, iteration count, step or correction magnitude, and explicit convergence status.
+    @note Bisection replaces nonfinite, out-of-bracket, or insufficiently shrinking high-order steps.
+          The shrink check compares consecutive high-order steps; bisection clears that history.
+          Success requires both a small step or correction and a small relative flight-time residual,
+          or an exact finite flight-time match. Numerical failure never constitutes convergence.
 */
-std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
+LambertSolver::RootResult LambertSolver::solveRoot(double T,
+                                                   double x0,
+                                                   int N,
+                                                   double xLower,
+                                                   double xUpper,
+                                                   bool increasing)
 {
-    double tol = 1e-8;
-    int iterMax = 8;
-    double xnew = 0.0; // initialize
-    int nIter = 0;     // number of iterations
-    double err;
-
-    for (int j = 0; j < iterMax; ++j) {
-        // compute non-dimensional time-of-flight T for given x
-        double tof = x2tof(x0, N, this->lambda);
-        // get derivatives of T
-        std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
-        double DT = DTs[0];
-        double D2T = DTs[1];
-        double D3T = DTs[2];
-
-        double delta = tof - T;
-        // compute new x using 3rd order householder algorithm
-        xnew = x0 -
-               delta * (pow(DT, 2) - delta * D2T / 2.0) / (DT * (pow(DT, 2) - delta * D2T) + D3T * pow(delta, 2) / 6.0);
-
-        err = abs(x0 - xnew);
-        x0 = xnew;
-        nIter += 1;
-        if (err < tol) {
-            break;
-        }
-    }
-    std::array<double, 3> sol = { xnew, static_cast<double>(nIter), err };
-
-    return sol;
-}
-
-/*! This method includes a halley root-finder (2nd order householder) to find the free variable x that satisfies the
-    time-of-flight constraint
-    @param T requested non-dimensional time-of-flight
-    @param x0 initial guess for x free variable of Lambert's problem that satisfies the given time of flight
-    @param N number of revolutions
-    @return std::array<double, 3>
-*/
-std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
-{
-    double tol = 1e-8;
-    int iterMax = 8;
-    double xnew = 0.0; // initialize
-    int nIter = 0;     // number of iterations
-    double err;
-
-    for (int j = 0; j < iterMax; ++j) {
-        // compute non-dimensional time-of-flight T for given x
-        double tof = x2tof(x0, N, this->lambda);
-        // get derivatives of T
-        std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
-        double DT = DTs[0];
-        double D2T = DTs[1];
-
-        double delta = tof - T;
-        // compute new x using halley algorithm
-        xnew = x0 - delta * DT / (pow(DT, 2) - delta * D2T / 2.0);
-        err = abs(x0 - xnew);
-        x0 = xnew;
-        nIter += 1;
-        if (err < tol) {
-            break;
-        }
+    const double xTolerance = 1e-8; // [-] Maximum final step or correction in the root variable.
+    const int iterationLimit = 80;
+    RootResult result{};
+    result.error = std::numeric_limits<double>::infinity();
+    std::optional<double> previousHighOrderStep; // [-] Empty initially and after bisection.
+    // A finite zero-revolution upper endpoint is admissible and can be the starter
+    // itself. Multi-revolution endpoints remain open to exclude the singularity.
+    if (!std::isfinite(x0) || x0 <= xLower || x0 > xUpper || (N > 0 && x0 == xUpper)) {
+        x0 = xLower + 0.5 * (xUpper - xLower);
     }
 
-    std::array<double, 3> sol = { xnew, static_cast<double>(nIter), err };
+    for (int j = 0; j <= iterationLimit; ++j) {
+        result.x = x0;
+        result.iterations = j;
+        const double tof = this->x2tof(x0, N, this->lambda);
+        if (!std::isfinite(tof) || tof <= 0.0 || x0 <= -1.0 || (N > 0 && x0 >= 1.0)) {
+            break;
+        }
+        const double residual = tof - T;
+        // An exact match has a zero correction even if the preceding step was large.
+        if (residual == 0.0) {
+            result.error = 0.0;
+        }
+        if (result.error <= xTolerance && std::abs(residual) <= rootTimeTolerance * T) {
+            result.converged = true;
+            return result;
+        }
+        if (j == iterationLimit) {
+            break;
+        }
 
-    return sol;
+        if ((residual < 0.0) == increasing) {
+            xLower = x0;
+        } else {
+            xUpper = x0;
+        }
+        double xNew = xLower + 0.5 * (xUpper - xLower);
+        bool usedHighOrderStep = false;
+        const auto derivatives = this->dTdx(x0, tof, this->lambda);
+        const double first = derivatives[0];
+        const double second = derivatives[1];
+        const double third = derivatives[2];
+        const double numerator =
+            this->solverMethod == GOODING ? residual * first : residual * (first * first - residual * second / 2.0);
+        const double denominator = this->solverMethod == GOODING ? first * first - residual * second / 2.0
+                                                                 : first * (first * first - residual * second) +
+                                                                       third * residual * residual / 6.0;
+        if (std::isfinite(numerator) && std::isfinite(denominator) && denominator != 0.0) {
+            const double correction = numerator / denominator;
+            // The residual can pass immediately after a large step. Accept a small
+            // correction before the strict bracket check rejects candidate == x0
+            // (the updated endpoint) and sends an accurate root back to the midpoint.
+            if (std::isfinite(correction) && std::abs(correction) <= xTolerance &&
+                std::abs(residual) <= rootTimeTolerance * T) {
+                result.error = std::abs(correction);
+                result.converged = true;
+                return result;
+            }
+            const double candidate = x0 - correction;
+            // Compare consecutive high-order steps. After bisection, allow an
+            // admissible high-order step to resume without comparing it to the
+            // bisection distance, which can otherwise force repeated fallback.
+            if (std::isfinite(candidate) && candidate > xLower && candidate < xUpper &&
+                (!previousHighOrderStep || std::abs(candidate - x0) <= 0.5 * *previousHighOrderStep)) {
+                xNew = candidate;
+                usedHighOrderStep = true;
+            }
+        }
+        // A collapsed bracket cannot improve the residual; do not call stagnation convergence.
+        if (xNew == x0) {
+            break;
+        }
+        result.error = std::abs(xNew - x0);
+        if (usedHighOrderStep) {
+            previousHighOrderStep = result.error;
+        } else {
+            previousHighOrderStep.reset();
+        }
+        x0 = xNew;
+    }
+    bskLogger.bskLog(BSK_WARNING, "lambertSolver: root search failed to converge within its numerical limits.");
+    return result;
 }
 
 /*! @brief Locate the multi-revolution minimum time using safeguarded Halley iterations.
