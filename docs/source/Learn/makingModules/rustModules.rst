@@ -149,7 +149,9 @@ Rust modules supplied through ``pathToExternalModules``. Cargo builds the Rust
 code, while Corrosion connects Cargo packages to Basilisk's CMake build as
 ordinary CMake targets. Basilisk downloads a pinned Corrosion version
 automatically during the first Rust-enabled configuration, so developers only
-need to install Rust and Cargo.
+need to install the Rust toolchain and its platform prerequisites. On macOS,
+install its matching ``llvm-tools-preview`` component as described in
+:ref:`installMacOS` so direct compiler invocations can strip debug information.
 
 After the build, verify the template through its normal Python unit test:
 

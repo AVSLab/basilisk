@@ -70,6 +70,35 @@ Verify the installation with:
 
 Update an existing stable toolchain with ``rustup update stable``.
 
+Install the matching LLVM tools component before building Rust modules:
+
+.. code-block:: bash
+
+    $ rustup component add llvm-tools-preview
+
+Run this command from the Basilisk checkout with the same toolchain selection
+used for the build. If selecting an exact version with ``RUSTUP_TOOLCHAIN`` or
+``--toolchain``, install the component for that version as well.
+
+Some Apple Silicon Rust toolchains, including 1.99.1, cannot load
+``libLLVM.dylib`` when ``rust-objcopy`` is invoked directly during a Corrosion
+build. Rust can report this as a debug-stripping warning while returning a
+successful compiler exit status. The matching LLVM component supplies the
+required library; an unrelated Homebrew LLVM installation is not a substitute.
+See `Rust issue 163947 <https://github.com/rust-lang/rust/issues/163947>`__.
+
+From a source checkout, verify the selected toolchain without installing
+anything further:
+
+.. code-block:: bash
+
+    $ python3 .github/scripts/setup_macos_rust.py --check-only
+
+Rust-enabled macOS CI and wheel jobs install the component and run this check
+automatically. The check invokes ``rust-objcopy`` and the compiler directly,
+builds and runs a tiny executable with debug stripping enabled, and rejects
+stripping warnings even when the compiler exits successfully.
+
 Install Python 3
 ----------------
 To install Python 3 on macOS there are two common options:
