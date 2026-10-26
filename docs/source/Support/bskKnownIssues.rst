@@ -7,6 +7,15 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1654: Some Apple Silicon Rust toolchains, including 1.99.1,
+  report ``rust-objcopy`` debug-stripping failures because ``libLLVM.dylib``
+  is missing from the tool's library search path. Compilation and tests can
+  still succeed despite these warnings. Rust-enabled macOS CI and wheel jobs
+  now install the selected toolchain's matching ``llvm-tools-preview``
+  component and verify direct tool execution and debug stripping before
+  building. Local source builds need the same component; see
+  :ref:`installMacOS` for installation and verification commands.
+
 - :ref:`lambertSolver` silently returned invalid solutions for unknown
   ``solverMethod`` values. The message now carries the selection as a raw
   integer, and values other than ``IZZO`` (0) or ``GOODING`` (1) raise

@@ -1,0 +1,1 @@
+- Fixed macOS Rust debug-stripping failures caused by missing ``libLLVM.dylib`` by installing the selected toolchain's matching LLVM component in CI and wheel builds, checking stripping even when the compiler reports success, and documenting the local build prerequisite.
