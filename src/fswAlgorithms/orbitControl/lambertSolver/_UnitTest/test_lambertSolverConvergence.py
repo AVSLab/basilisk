@@ -78,7 +78,8 @@ def test_safeguards_preserve_fast_convergence(method, direction, r2_xy, transfer
     ((-8007153.311464242, 1134336.721226995), 1517.1851310277925),
     ((-1373963.0772790438, 21169783.315275904), 1029.9495735576572),
     ((-1160389.9429338065, 9261648.1844296623), 1347.9302728188266),
-], ids=["hyperbolic-upper-endpoint", "first-step", "bisection"])
+    ((7823692.80546992, 1670278.6850218216), 168.1732550120743),
+], ids=["hyperbolic-upper-endpoint", "first-step", "bisection", "intermediate-izzo-starter"])
 def test_converged_solution_passes_validator(method, direction, r2_xy, transfer_time):
     """Accept converged solutions with the validator's default convergence checks."""
     r1 = np.array([RADIUS, 0.0, 0.0])  # [m]
