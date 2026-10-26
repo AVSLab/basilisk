@@ -1,9 +1,10 @@
 # Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 # Distributed under the ISC license; see LICENSE.
 
-# Compile the module implementations directly to test the native integer boundaries.
+# Compile the module implementations directly to test native input validation.
 add_executable(test_lambertTransferDirection
                test_lambertTransferDirection.cpp
+               test_lambertInputValidation.cpp
                ../lambertSolver.cpp
                ../../lambertPlanner/lambertPlanner.cpp)
 target_link_libraries(test_lambertTransferDirection PRIVATE GTest::gtest_main architectureLib)

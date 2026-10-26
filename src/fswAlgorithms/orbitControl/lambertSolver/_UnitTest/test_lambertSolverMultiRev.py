@@ -164,17 +164,13 @@ def test_minimum_time_boundary(method, direction, lam, revolutions):
 
 
 @pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
-def test_nonfinite_minimum_time_is_invalid(method):
-    """Reject nonfinite minimum-time data instead of publishing valid NaN velocities."""
+def test_nonfinite_position_rejected_before_minimum_search(method):
+    """Reject nonfinite input geometry before attempting the minimum-time search."""
     position = np.array([RADIUS, 0.0, 0.0])  # [m]
     target = np.array([np.nan, RADIUS, 0.0])  # [m]
     transfer_time = 1.0e4  # [s]
-    solution, performance = solve_problem(position, target, transfer_time, 1, method)
-    assert solution.valid == solution.validSol2 == 0
-    np.testing.assert_array_equal(
-        [solution.v1_N, solution.v2_N, solution.v1Sol2_N, solution.v2Sol2_N], np.zeros((4, 3))
-    )
-    assert performance.x == performance.xSol2 == 0.0
+    with pytest.raises(BasiliskError, match="r2_N"):
+        solve_problem(position, target, transfer_time, 1, method)
 
 
 def propagate(r1, v1, transfer_time):

@@ -50,7 +50,11 @@ class LambertSolver : public SysModel
 
     BSKLogger bskLogger; //!< BSK Logging
 
-    /** setter for `alignmentThreshold` */
+    /** @brief Set the minimum angular separation from parallel or antiparallel alignment.
+        @param value Threshold in degrees, finite and strictly between 0 and 90.
+        @throws BasiliskError If the threshold is outside its valid range.
+        @note A rejected value leaves the previous threshold unchanged.
+    */
     void setAlignmentThreshold(const double value);
     /** getter for `alignmentThreshold` */
     double getlignmentThreshold() const { return this->alignmentThreshold; }
