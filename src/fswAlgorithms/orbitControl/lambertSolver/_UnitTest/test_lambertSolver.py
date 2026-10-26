@@ -22,6 +22,7 @@ import sys
 import copy
 import itertools
 
+import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import lambertSolver
@@ -33,15 +34,15 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + "/Support")
-from IzzoLambert import *
+from IzzoLambert import IzzoSolve
 
 # parameters
 solver = ["Gooding", "Izzo"]
 revs = [0, 1, 4]
-times = [1e2, 1e6]
+times = [1e2, 1e6]  # [s] Used only for multi-revolution transfers.
 eccentricities = [0.0, 0.05, 1.0, 1.2]
-transferAngle = [30., 90., 180., 210., -60., 500.]
-alignmentThreshold = [1.]
+transferAngle = [30., 90., 180., 210., -60., 500.]  # [deg]
+alignmentThreshold = [1.]  # [deg]
 
 paramArray = [solver, revs, times, eccentricities, transferAngle, alignmentThreshold]
 # create list with all combinations of parameters
@@ -54,45 +55,59 @@ paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 1.))
 paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 2.))
 paramList.append((solver[0], revs[0], times[0], eccentricities[0], 2.5, 2.))
 
-@pytest.mark.parametrize("accuracy", [1e-2])
-@pytest.mark.parametrize("p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align", paramList)
+# Exercise long arcs and anomaly wrapping on a more eccentric ellipse.
+zero_revolution_angles = [210.0, -60.0, 355.0, 500.0]  # [deg]
+paramList.extend(
+    (method, 0, times[0], 0.7, angle, alignmentThreshold[0])  # Eccentricity [-].
+    for method in solver for angle in zero_revolution_angles
+)
 
+
+@pytest.mark.parametrize("accuracy", [1e-2])  # Velocity [m/s] and dimensionless root tolerances.
+@pytest.mark.parametrize("p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align", paramList)
 def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
     r"""
     **Validation Test Description**
 
-    This test checks if the Lambert solver module works correctly for different Lambert solver algorithms,
-    number of revolutions, time of flight, transfer orbit eccentricities, transfer angles, and position vector
-    alignment threshold. The Lambert solver module is tested using the orbitalMotion libraries
-    (for zero revolution scenarios), and using an external python implementation of the Izzo algorithm
-    (for multi-revolution scenarios).
+    Check both Lambert algorithms over revolution counts, flight times, conic
+    eccentricities, transfer angles, and alignment thresholds. Zero-revolution
+    reference velocities come from classical orbital elements through
+    ``orbitalMotion``, independently of the Lambert outputs. Multi-revolution
+    reference velocities come from the external Python Izzo implementation.
 
     **Test Parameters**
 
-    Args:
-        show_plots: flag if plots should be shown
-        p1_solver: Lambert solver algorithm
-        p2_revs: number of revolutions to be completed
-        p3_times: time-of-flight (transfer time)
-        p4_eccs: eccentricity of transfer orbit
-        p5_angles: transfer angle
-        p6_align: threshold for transfer angle being considered too small
+    :param show_plots: Plotting flag supplied by the shared test interface.
+    :param p1_solver: Lambert solver algorithm.
+    :param p2_revs: Number of complete revolutions.
+    :param p3_times: Multi-revolution flight time in seconds; derived from the
+        reference orbit for zero revolutions.
+    :param p4_eccs: Dimensionless eccentricity of the reference orbit.
+    :param p5_angles: Transfer angle in degrees, reduced modulo 360 for the
+        endpoint geometry.
+    :param p6_align: Alignment rejection threshold in degrees.
+    :param accuracy: Absolute tolerance for velocities in m/s and the
+        dimensionless multi-revolution roots.
 
     **Description of Variables Being Tested**
 
-    The computed velocity vectors at position 1 and position 2 are compared to the true velocity vectors.
-    For the zero-revolution case, the eccentricity and transfer angle parameters are used to determine the
-    time-of-flight input for the Lambert solver, and the corresponding orbit elements are used to determine the true
-    velocity vectors for the given position vectors. For the multi-revolution case, the time-of-flight parameter is
-    used as the input for the Lambert solver, and the true velocity vectors are computed using an external
-    Python script that uses Izzo's algorithm to solve Lambert's problem.
+    Both endpoint velocities and both validity flags are checked. For zero
+    revolutions, flight time follows Kepler's equation for ellipses and
+    hyperbolas, and Barker's equation for parabolas. Elliptic mean-anomaly
+    differences are wrapped forward into one revolution so long arcs and
+    negative or greater-than-360-degree input angles retain the intended orbit.
+    The expected endpoint velocities are retained separately from the recorded
+    module outputs. These analytical checks require no numerical propagation.
 
-    For the multi-revolution case, the solution for the free variable x is also tested.
+    Multi-revolution cases also check the free variable ``x`` against the
+    external reference. Rejected alignment or infeasible flight time must
+    produce zero velocities and cleared validity flags in both slots.
     """
     lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy)
 
 
 def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
+    """Compare one module update with independently constructed reference velocities."""
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -110,7 +125,7 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # set up the transfer orbit using classical orbit elements
-    mu = 3.986004418e14
+    mu = 3.986004418e14  # [m^3/s^2]
     oe1 = orbitalMotion.ClassicElements()
     r = 10000. * 1000  # meters
     if p4_eccs < 1.0:
@@ -120,17 +135,17 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         # parabolic and hyperbolic case
         oe1.a = -r
     oe1.e = p4_eccs
-    oe1.i = 5. * macros.D2R
-    oe1.Omega = 25. * macros.D2R
-    oe1.omega = 30. * macros.D2R
-    oe1.f = 10. * macros.D2R
-    r1_N, v1_N = orbitalMotion.elem2rv_parab(mu, oe1)
+    oe1.i = 5. * macros.D2R  # [rad]
+    oe1.Omega = 25. * macros.D2R  # [rad]
+    oe1.omega = 30. * macros.D2R  # [rad]
+    oe1.f = 10. * macros.D2R  # [rad]
+    r1_N, reference_v1_N = orbitalMotion.elem2rv_parab(mu, oe1)
 
     oe2 = copy.deepcopy(oe1)
     oe2.f = oe1.f + p5_angles * macros.D2R
-    # Izzo and Gooding Lambert algorithms only consider positive transfer angles. Convert to 0 < angle < 2pi
+    # Normalize the endpoint anomaly; the number of complete revolutions is supplied separately.
     oe2.f = (oe2.f*macros.R2D % 360) * macros.D2R
-    r2_N, v2_N = orbitalMotion.elem2rv_parab(mu, oe2)
+    r2_N, reference_v2_N = orbitalMotion.elem2rv_parab(mu, oe2)
 
     # determine time-of-flight for given transfer orbit and position vectors (true anomalies)
     if p2_revs > 0:
@@ -141,7 +156,8 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         M1 = orbitalMotion.E2M(orbitalMotion.f2E(oe1.f, p4_eccs), p4_eccs)
         M2 = orbitalMotion.E2M(orbitalMotion.f2E(oe2.f, p4_eccs), p4_eccs)
         n = np.sqrt(mu/(oe1.a)**3)
-        t_transfer = np.abs(M2-M1)/n
+        # Follow the forward prograde arc, including a wrap through periapsis.
+        t_transfer = ((M2-M1) % (2.0*np.pi))/n
     elif p4_eccs == 1.0:
         # parabolic case
         D1 = np.tan(oe1.f/2)
@@ -224,9 +240,9 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         v2TrueSol2_N = np.array([0., 0., 0.])
         validFlagTrueSol2 = 0
     elif revs == 0:
-        # for zero-revolution case, obtain true velocity vectors from computed transfer orbit
-        v1True_N = v1_N
-        v2True_N = v2_N
+        # Preserve the orbit-derived reference independently of the recorded solver outputs.
+        v1True_N = reference_v1_N
+        v2True_N = reference_v2_N
         validFlagTrue = 1
         v1TrueSol2_N = np.array([0., 0., 0.])
         v2TrueSol2_N = np.array([0., 0., 0.])
@@ -319,6 +335,31 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
                                atol=accuracy,
                                err_msg=('Variable: xSol2,' + paramsString),
                                verbose=True)
+
+
+@pytest.mark.parametrize("solver_name", solver)
+@pytest.mark.parametrize("eccentricity", eccentricities)
+@pytest.mark.parametrize("velocity_field", ["v1_N", "v2_N"])
+def test_zero_revolution_rejects_corrupted_velocities(monkeypatch, solver_name, eccentricity, velocity_field):
+    """Require the independent reference to detect an error in either endpoint velocity.
+
+    Perturb only the recorded solver output by 1 m/s, leaving the orbit-derived
+    reference untouched. This must fail the corresponding velocity assertion
+    for both algorithms and all four conics; a self-comparison would pass.
+    """
+    original_getter = getattr(messaging.LambertSolutionMsgRecorder, velocity_field).fget
+
+    def corrupted_velocity(recorder):
+        """Return a perturbed copy without changing the recorded native payload."""
+        velocity = original_getter(recorder).copy()
+        velocity[:, 0] += 1.0  # [m/s]
+        return velocity
+
+    monkeypatch.setattr(messaging.LambertSolutionMsgRecorder, velocity_field, property(corrupted_velocity))
+    with pytest.raises(AssertionError, match=f"Variable: {velocity_field},"):
+        lambertSolverTestFunction(
+            False, solver_name, 0, times[0], eccentricity, 90.0, 1.0, 1e-2  # Angles [deg], accuracy [m/s].
+        )
 
 
 if __name__ == "__main__":
