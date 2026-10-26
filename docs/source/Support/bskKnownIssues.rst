@@ -7,6 +7,18 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- :ref:`lambertSolver` could accept nonfinite flight time or gravity, unusable
+  endpoint vectors, and invalid alignment thresholds, allowing invalid
+  arithmetic or bypassing the transfer-plane check. Numeric inputs are now
+  validated before solving and invalid values raise ``BasiliskError``.
+  ``setAlignmentThreshold`` now accepts only finite values strictly between
+  0 and 90 degrees, preserving its previous value when a new value is rejected.
+  A componentwise roundoff bound rejects parallel and antiparallel endpoints
+  even when normalization produces a tiny nonzero cross product and the
+  configured angular threshold would otherwise allow it. Alignment rejection
+  occurs before computing ``lambda`` and the scaled flight time, avoiding
+  invalid square roots or division by zero for rejected collinear geometry.
+
 - An aligned input to :ref:`lambertSolver` could permanently disable solutions
   on that module instance, even after a later input defined a valid transfer
   plane. Alignment rejection now applies only to the current update. Both

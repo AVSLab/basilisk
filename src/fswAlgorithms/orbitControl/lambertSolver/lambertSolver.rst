@@ -105,7 +105,21 @@ description provides information on what this message is used for.
 
 Module Assumptions and Limitations
 ----------------------------------
-The algorithms require a positive time of flight. The transfer angle is measured
+The input message must provide finite, positive ``mu`` and ``transferTime``,
+nonnegative ``numRevolutions``, and finite position components in both ``r1_N``
+and ``r2_N``. The endpoint norms computed in double precision must also be
+finite and nonzero; zero vectors and vectors whose norm calculation underflows
+to zero or overflows are rejected before normalization. Invalid numeric inputs
+raise ``BasiliskError`` before solving or publishing a new output message. This
+includes NaN and infinite inputs, which previously could reach geometry or
+root-search calculations. Finite, valid inputs that exceed the numerical
+resolution of the solver still follow the convergence-failure behavior above.
+
+``setAlignmentThreshold`` requires a finite value strictly between 0 and 90
+degrees. The default is 1 degree. An invalid value raises ``BasiliskError`` and
+leaves the previous setting unchanged.
+
+The transfer angle is measured
 along the requested direction of motion. ``PROGRADE`` selects an orbit with
 positive z-component of angular momentum, while ``RETROGRADE`` selects a negative
 z-component. This convention is relative to the input frame, so the direction
@@ -132,9 +146,18 @@ Basilisk error before conversion to the internal direction enum.
 Position vectors near parallel or antiparallel alignment do not reliably define
 a transfer plane. The module rejects inputs when the magnitude of the cross
 product of the radial unit vectors is below the sine of ``alignmentThreshold``
-(in degrees). This covers angles near both 0 and 180 degrees. A rejected update
+(in degrees). The module also rejects a cross product when every component is
+within its cancellation-roundoff bound, using the same componentwise scaling
+as the polar bound above. This prevents normalization roundoff from defining a
+spurious plane for parallel or antiparallel endpoints, even with a tiny positive
+threshold. Small cross products with a resolvable component remain subject to
+the configured angular threshold. A computed zero cross-product norm is always
+rejected before normalization. These checks cover angles near both 0 and 180
+degrees. A rejected update
 returns zero velocities, cleared validity flags, and zero performance fields in
-both solution slots. It also skips normalization of the rejected orbit normal.
+both solution slots. It also skips normalization of the rejected orbit normal
+and evaluation of ``lambda`` and the scaled flight time, avoiding invalid
+square roots or division by zero for rejected collinear geometry.
 The alignment check is evaluated on every update: a later acceptable geometry
 or a relaxed threshold can produce a solution on the same module instance
 without calling ``Reset`` or recreating the module.

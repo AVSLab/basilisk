@@ -90,29 +90,43 @@ void LambertSolver::readMessages()
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
 
     // check if input parameters are valid
-    if (lambertProblemInMsgBuffer.mu <= 0.0) {
-        bskLogger.bskError("lambertSolver: mu must be positive.");
-    } else {
-        this->mu = lambertProblemInMsgBuffer.mu;
+    if (!std::isfinite(lambertProblemInMsgBuffer.mu) || lambertProblemInMsgBuffer.mu <= 0.0) {
+        bskLogger.bskError("lambertSolver: mu must be finite and positive.");
     }
-    if (lambertProblemInMsgBuffer.transferTime <= 0.0) {
-        bskLogger.bskError("lambertSolver: transferTime must be positive.");
-    } else {
-        this->transferTime = lambertProblemInMsgBuffer.transferTime;
+    if (!std::isfinite(lambertProblemInMsgBuffer.transferTime) || lambertProblemInMsgBuffer.transferTime <= 0.0) {
+        bskLogger.bskError("lambertSolver: transferTime must be finite and positive.");
     }
     if (lambertProblemInMsgBuffer.numRevolutions < 0) {
-        bskLogger.bskError("lambertSolver: numberOfRevolutions must be zero or positive.");
-    } else {
-        this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
+        bskLogger.bskError("lambertSolver: numRevolutions must be nonnegative.");
     }
-    this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
     if (lambertProblemInMsgBuffer.transferDirection != PROGRADE &&
         lambertProblemInMsgBuffer.transferDirection != RETROGRADE) {
         bskLogger.bskError("lambertSolver: transferDirection must be PROGRADE or RETROGRADE.");
     }
+    const Eigen::Vector3d r1 = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1_N);
+    const Eigen::Vector3d r2 = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2_N);
+    const auto hasFiniteNonzeroNorm = [](const Eigen::Vector3d& position) {
+        if (!position.allFinite()) {
+            return false;
+        }
+        const double magnitude = position.norm();
+        return std::isfinite(magnitude) && magnitude > 0.0;
+    };
+    if (!hasFiniteNonzeroNorm(r1)) {
+        bskLogger.bskError("lambertSolver: r1_N must have finite components and a finite, nonzero computed norm.");
+    }
+    if (!hasFiniteNonzeroNorm(r2)) {
+        bskLogger.bskError("lambertSolver: r2_N must have finite components and a finite, nonzero computed norm.");
+    }
+
+    // Commit the new problem only after every numeric input has passed validation.
+    this->mu = lambertProblemInMsgBuffer.mu;
+    this->transferTime = lambertProblemInMsgBuffer.transferTime;
+    this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
+    this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
     this->transferDirection = static_cast<LambertTransferDirection>(lambertProblemInMsgBuffer.transferDirection);
-    this->r1_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1_N);
-    this->r2_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2_N);
+    this->r1_N = r1;
+    this->r2_N = r2;
 }
 
 /*! This method writes the output messages each call of updateState
@@ -158,33 +172,38 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos)
 */
 void LambertSolver::problemGeometry()
 {
-    double c = (this->r2_N - this->r1_N).norm(); // chord length
     double r1 = this->r1_N.norm();
     double r2 = this->r2_N.norm();
-    double s = 1.0 / 2.0 * (r1 + r2 + c); // semiperimeter
-
-    // lambda parameter
-    this->lambda = sqrt(1.0 - c / s);
-    // non-dimensional time-of-flight
-    this->TOF = sqrt(2.0 * this->mu / pow(s, 3)) * this->transferTime;
-
-    // compute orbit frame unit vectors
-
-    // radial direction at for initial and final position vector
+    // Radial directions at the initial and final positions.
     Eigen::Vector3d i_r1_N = this->r1_N / r1;
     Eigen::Vector3d i_r2_N = this->r2_N / r2;
     // check alignment of the two position vectors
     Eigen::Vector3d radialCross = i_r1_N.cross(i_r2_N);
     double sinTheta = radialCross.norm();
+    // Normalization can leave a nonzero cross product for collinear endpoints.
+    // Bound cancellation roundoff component by component so small, resolvable
+    // cross products remain usable when the configured threshold allows them.
+    const Eigen::Vector3d crossScale{ std::abs(i_r1_N(1) * i_r2_N(2)) + std::abs(i_r1_N(2) * i_r2_N(1)),
+                                      std::abs(i_r1_N(2) * i_r2_N(0)) + std::abs(i_r1_N(0) * i_r2_N(2)),
+                                      std::abs(i_r1_N(0) * i_r2_N(1)) + std::abs(i_r1_N(1) * i_r2_N(0)) };
+    const Eigen::Vector3d crossTolerance = 8.0 * std::numeric_limits<double>::epsilon() * crossScale;
+    const bool unresolvedPlane = (radialCross.cwiseAbs().array() <= crossTolerance.array()).all();
     // Alignment rejects only the current input, not subsequent module updates.
-    this->noSolution = abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.);
+    this->noSolution = unresolvedPlane || sinTheta == 0.0 || sinTheta < sin(this->alignmentThreshold * M_PI / 180.);
     if (this->noSolution) {
         bskLogger.bskLog(BSK_WARNING,
-                         "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
-                         "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
-                         "They might not define a plane, so no solution is returned.");
+                         "lambertSolver: r1_N and r2_N do not define a usable transfer plane at the current "
+                         "alignmentThreshold, so no solution is returned.");
         return;
     }
+
+    // Compute time and geometry parameters only after accepting the transfer plane.
+    // Antiparallel endpoints can round 1-c/s negative even with finite input norms.
+    const double c = (this->r2_N - this->r1_N).norm(); // [m] Chord length.
+    const double s = 1.0 / 2.0 * (r1 + r2 + c);        // [m] Semiperimeter.
+    this->lambda = sqrt(1.0 - c / s);
+    this->TOF = sqrt(2.0 * this->mu / pow(s, 3)) * this->transferTime;
+
     // orbit normal direction
     Eigen::Vector3d i_h_N = radialCross / sinTheta;
 
@@ -193,9 +212,7 @@ void LambertSolver::problemGeometry()
     // Treat cancellation-level roundoff in the z-component as a polar tie: PROGRADE
     // retains r1 cross r2 and RETROGRADE reverses it. Scale the tolerance by the terms
     // being subtracted so resolvable near-polar signs are preserved.
-    const double crossZScale = std::abs(i_r1_N(0) * i_r2_N(1)) + std::abs(i_r1_N(1) * i_r2_N(0));
-    const double polarTolerance = 8.0 * std::numeric_limits<double>::epsilon() * crossZScale;
-    if ((radialCross(2) < -polarTolerance) != (this->transferDirection == RETROGRADE)) {
+    if ((radialCross(2) < -crossTolerance(2)) != (this->transferDirection == RETROGRADE)) {
         this->lambda = -this->lambda;
         i_h_N = -i_h_N;
     }
@@ -748,5 +765,8 @@ double LambertSolver::hypergeometricF(double z)
 
 void LambertSolver::setAlignmentThreshold(const double value)
 {
+    if (!std::isfinite(value) || value <= 0.0 || value >= 90.0) {
+        bskLogger.bskError("lambertSolver: alignmentThreshold must be finite and strictly between 0 and 90 degrees.");
+    }
     this->alignmentThreshold = value;
 }
