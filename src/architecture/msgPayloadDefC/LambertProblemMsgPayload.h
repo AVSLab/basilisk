@@ -20,10 +20,11 @@
 #ifndef LAMBERT_PROBLEM_MESSAGE_H
 #define LAMBERT_PROBLEM_MESSAGE_H
 
+/*! @brief Supported Lambert solver algorithms. */
 typedef enum
 {
-    IZZO,
-    GOODING
+    IZZO = 0,   //!< Izzo algorithm; the default for zero-initialized messages.
+    GOODING = 1 //!< Gooding algorithm.
 } SolverMethod;
 
 /*! @brief Transfer direction relative to the positive z-axis of the input frame. */
@@ -36,13 +37,13 @@ typedef enum
 /*! @brief Structure used to define the input for Lambert problem */
 typedef struct
 {
-    SolverMethod solverMethod; //!< [-] lambert solver algorithm (GOODING or IZZO)
-    double r1_N[3];            //!< [m] position vector at t0
-    double r2_N[3];            //!< [m] position vector at t1
-    double transferTime;       //!< [s] time of flight between r1_N and r2_N (t1-t0)
-    double mu;                 //!< [m^3 s^-2] gravitational parameter of body
-    int numRevolutions;        //!< [-] number of revolutions to be completed (completed orbits)
-    int transferDirection;     //!< [-] PROGRADE (zero/default) or RETROGRADE; raw integer validated by the solver
+    int solverMethod;      //!< [-] IZZO (zero/default) or GOODING; raw integer validated by the solver
+    double r1_N[3];        //!< [m] position vector at t0
+    double r2_N[3];        //!< [m] position vector at t1
+    double transferTime;   //!< [s] time of flight between r1_N and r2_N (t1-t0)
+    double mu;             //!< [m^3 s^-2] gravitational parameter of body
+    int numRevolutions;    //!< [-] number of revolutions to be completed (completed orbits)
+    int transferDirection; //!< [-] PROGRADE (zero/default) or RETROGRADE; raw integer validated by the solver
 } LambertProblemMsgPayload;
 
 #endif

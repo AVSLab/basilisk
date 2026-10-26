@@ -99,6 +99,14 @@ def test_negative_revolution_count(method, value):
 
 
 @pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
+@pytest.mark.parametrize("revolutions", [0, 1])
+@pytest.mark.parametrize("value", [int(np.iinfo(np.intc).min), -1, 2, int(np.iinfo(np.intc).max)])
+def test_invalid_solver_method(method, revolutions, value):
+    """Reject unknown method integers, then recover with either supported algorithm."""
+    invalid_input_and_recovery(method, revolutions, "solverMethod", value)
+
+
+@pytest.mark.parametrize("method", [messaging.GOODING, messaging.IZZO])
 @pytest.mark.parametrize("value", [np.nan, np.inf, -np.inf, -1.0, 0.0, 90.0, 91.0, 180.0, 360.0])  # [deg]
 def test_invalid_alignment_threshold(method, value):
     """Reject invalid thresholds without changing the previous valid configuration."""

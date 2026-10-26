@@ -99,6 +99,9 @@ void LambertSolver::readMessages()
     if (lambertProblemInMsgBuffer.numRevolutions < 0) {
         bskLogger.bskError("lambertSolver: numRevolutions must be nonnegative.");
     }
+    if (lambertProblemInMsgBuffer.solverMethod != IZZO && lambertProblemInMsgBuffer.solverMethod != GOODING) {
+        bskLogger.bskError("lambertSolver: solverMethod must be IZZO or GOODING.");
+    }
     if (lambertProblemInMsgBuffer.transferDirection != PROGRADE &&
         lambertProblemInMsgBuffer.transferDirection != RETROGRADE) {
         bskLogger.bskError("lambertSolver: transferDirection must be PROGRADE or RETROGRADE.");
@@ -123,7 +126,7 @@ void LambertSolver::readMessages()
     this->mu = lambertProblemInMsgBuffer.mu;
     this->transferTime = lambertProblemInMsgBuffer.transferTime;
     this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
-    this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
+    this->solverMethod = static_cast<SolverMethod>(lambertProblemInMsgBuffer.solverMethod);
     this->transferDirection = static_cast<LambertTransferDirection>(lambertProblemInMsgBuffer.transferDirection);
     this->r1_N = r1;
     this->r2_N = r2;

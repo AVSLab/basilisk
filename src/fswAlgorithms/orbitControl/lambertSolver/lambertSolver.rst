@@ -115,6 +115,14 @@ includes NaN and infinite inputs, which previously could reach geometry or
 root-search calculations. Finite, valid inputs that exceed the numerical
 resolution of the solver still follow the convergence-failure behavior above.
 
+``solverMethod`` must be ``IZZO`` (0, the default for a zero-initialized message)
+or ``GOODING`` (1). Unknown values raise ``BasiliskError`` before solving or
+publishing a new output. A corrected request can recover without resetting
+the module. The message field stores a raw integer, which is validated before
+conversion to the internal ``SolverMethod`` enum. C++ callers reading the field
+into an enum variable must validate the integer before explicitly casting it;
+assigning ``IZZO`` or ``GOODING`` to the message remains supported.
+
 ``setAlignmentThreshold`` requires a finite value strictly between 0 and 90
 degrees. The default is 1 degree. An invalid value raises ``BasiliskError`` and
 leaves the previous setting unchanged.
