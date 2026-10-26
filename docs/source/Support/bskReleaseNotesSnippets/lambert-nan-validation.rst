@@ -1,0 +1,1 @@
+- Fixed :ref:`lambertSolver` raising the ``FE_INVALID`` floating-point flag while rejecting quiet NaN endpoint positions on x86 platforms; input validation now classifies each component before computing norms or geometry.

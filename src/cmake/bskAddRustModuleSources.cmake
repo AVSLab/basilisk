@@ -123,9 +123,12 @@ function(_bsk_load_corrosion)
   # integration; leave the shared source cache unchanged.
   set(_corrosion_build_source "${CMAKE_BINARY_DIR}/_deps/corrosion-source")
   file(COPY "${_corrosion_source_dir}/" DESTINATION "${_corrosion_build_source}"
-       PATTERN ".git" EXCLUDE)
+       PATTERN ".git" EXCLUDE
+       PATTERN "cmake/Corrosion.cmake" EXCLUDE)
   set(_corrosion_cmake "${_corrosion_build_source}/cmake/Corrosion.cmake")
-  file(READ "${_corrosion_cmake}" _corrosion_code)
+  # Always patch pristine input. COPY can retain a previously patched file when
+  # its timestamp matches the cached source, even if the contents differ.
+  file(READ "${_corrosion_source_dir}/cmake/Corrosion.cmake" _corrosion_code)
   set(_cargo_target_start [=[        _cargo-build_${target_name}
         # Build crate]=])
   string(FIND "${_corrosion_code}" "${_cargo_target_start}" _cargo_target_position)
@@ -135,7 +138,13 @@ function(_bsk_load_corrosion)
   string(REPLACE "${_cargo_target_start}" [=[        _cargo-build_${target_name}
         COMMENT "Building Rust module ${target_name}"
         # Build crate]=] _corrosion_code "${_corrosion_code}")
-  file(WRITE "${_corrosion_cmake}" "${_corrosion_code}")
+  set(_previous_corrosion_code "")
+  if(EXISTS "${_corrosion_cmake}")
+    file(READ "${_corrosion_cmake}" _previous_corrosion_code)
+  endif()
+  if(NOT _corrosion_code STREQUAL _previous_corrosion_code)
+    file(WRITE "${_corrosion_cmake}" "${_corrosion_code}")
+  endif()
   add_subdirectory("${_corrosion_build_source}" "${CMAKE_BINARY_DIR}/_deps/corrosion-build")
 endfunction()
 

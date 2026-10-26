@@ -1,0 +1,1 @@
+- Fixed Rust-enabled CMake reconfiguration failing when matching file timestamps retained an already-patched Corrosion build file. The loader now patches pristine cached source while preserving the shared cache and avoiding rewrites of unchanged generated content.

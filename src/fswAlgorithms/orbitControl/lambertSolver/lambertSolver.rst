@@ -112,7 +112,10 @@ finite and nonzero; zero vectors and vectors whose norm calculation underflows
 to zero or overflows are rejected before normalization. Invalid numeric inputs
 raise ``BasiliskError`` before solving or publishing a new output message. This
 includes NaN and infinite inputs, which previously could reach geometry or
-root-search calculations. Finite, valid inputs that exceed the numerical
+root-search calculations. Position components are classified individually so
+quiet NaNs are rejected without raising the ``FE_INVALID`` floating-point flag
+through a vectorized finiteness check.
+Finite, valid inputs that exceed the numerical
 resolution of the solver still follow the convergence-failure behavior above.
 
 ``solverMethod`` must be ``IZZO`` (0, the default for a zero-initialized message)

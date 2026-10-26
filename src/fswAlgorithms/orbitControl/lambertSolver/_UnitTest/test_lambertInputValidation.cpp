@@ -94,29 +94,33 @@ TEST(LambertInputValidation, RejectsMalformedInputsBeforeGeometry)
                                   std::numeric_limits<double>::quiet_NaN(),
                                   std::numeric_limits<double>::infinity(),
                                   -std::numeric_limits<double>::infinity() }) { // Units follow the selected field.
-                SCOPED_TRACE(method);
-                SCOPED_TRACE(field);
-                SCOPED_TRACE(value);
-                auto problem = validProblem();
-                problem.solverMethod = method;
-                if (field == 0) {
-                    problem.mu = value;
-                } else if (field == 1) {
-                    problem.transferTime = value;
-                } else {
-                    double* position = field == 2 ? problem.r1_N : problem.r2_N;
-                    position[0] = value;
-                    position[1] = position[2] = 0.0; // [m]
+                const int componentCount = field < 2 ? 1 : 3;
+                for (int component = 0; component < componentCount; ++component) {
+                    SCOPED_TRACE(method);
+                    SCOPED_TRACE(field);
+                    SCOPED_TRACE(value);
+                    SCOPED_TRACE(component);
+                    auto problem = validProblem();
+                    problem.solverMethod = method;
+                    if (field == 0) {
+                        problem.mu = value;
+                    } else if (field == 1) {
+                        problem.transferTime = value;
+                    } else {
+                        double* position = field == 2 ? problem.r1_N : problem.r2_N;
+                        position[0] = position[1] = position[2] = 0.0; // [m]
+                        position[component] = value;
+                    }
+                    Message<LambertProblemMsgPayload> message;
+                    message.write(&problem, 0, 0);
+                    LambertSolver solver;
+                    solver.bskLogger.setLogLevel(BSK_SILENT);
+                    solver.lambertProblemInMsg.subscribeTo(&message);
+                    solver.Reset(0);
+                    std::feclearexcept(FE_ALL_EXCEPT);
+                    EXPECT_THROW(solver.UpdateState(0), BasiliskError);
+                    EXPECT_EQ(std::fetestexcept(FE_INVALID | FE_DIVBYZERO), 0);
                 }
-                Message<LambertProblemMsgPayload> message;
-                message.write(&problem, 0, 0);
-                LambertSolver solver;
-                solver.bskLogger.setLogLevel(BSK_SILENT);
-                solver.lambertProblemInMsg.subscribeTo(&message);
-                solver.Reset(0);
-                std::feclearexcept(FE_ALL_EXCEPT);
-                EXPECT_THROW(solver.UpdateState(0), BasiliskError);
-                EXPECT_EQ(std::fetestexcept(FE_INVALID | FE_DIVBYZERO), 0);
             }
         }
     }
