@@ -4,6 +4,12 @@
 Basilisk Known Issues
 =====================
 
+Version |release| (unreleased)
+------------------------------
+
+No additional known issues have been recorded for this development cycle.
+See the version 2.12.1 section below for existing issues and workarounds.
+
 Version 2.12.1 (October 25, 2026)
 ---------------------------------
 
