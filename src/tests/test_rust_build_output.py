@@ -116,6 +116,82 @@ if NINJA and (os.name != "nt" or os.environ.get("VCINSTALLDIR")):
     GENERATORS.extend(["Ninja", "Ninja Multi-Config"])
 
 
+@pytest.mark.skipif(not CMAKE, reason="CMake is required")
+@pytest.mark.parametrize("generator", GENERATORS)
+def test_corrosion_patch_survives_reconfiguration(tmp_path, generator):
+    """Patch pristine cached input even when timestamps hide a modified build copy.
+
+    Exercise the production loader with a small cached Corrosion stand-in; no
+    Rust toolchain or downloads are needed. Reconfiguration must preserve the
+    source cache and an unchanged generated file's timestamp, while still
+    rejecting an unexpected upstream Cargo rule.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param generator: Native CMake generator to exercise.
+    """
+    versions = (REPOSITORY_ROOT / "src/cmake/bskRustSupportVersions.cmake").read_text(encoding="utf-8")
+    revision = re.search(r'set\(BSK_CORROSION_GIT_TAG "([^"\n]+)"\)', versions).group(1)
+    cache = tmp_path / "cache space"
+    cached_source = cache / f"corrosion-{revision}"
+    (cached_source / "cmake").mkdir(parents=True)
+    cached_cmake = cached_source / "cmake/Corrosion.cmake"
+    original = b'''function(corrosion_import_crate target_name)
+    add_custom_target(
+        _cargo-build_${target_name}
+        # Build crate
+        COMMAND "${CMAKE_COMMAND}" -E echo "${target_name}")
+endfunction()
+'''
+    cached_cmake.write_bytes(original)
+    (cached_source / "CMakeLists.txt").write_text(
+        'include("${CMAKE_CURRENT_LIST_DIR}/cmake/Corrosion.cmake")\n', encoding="utf-8",
+    )
+    project = tmp_path / "source space"
+    build = tmp_path / "build space"
+    project.mkdir()
+    helper = REPOSITORY_ROOT / "src/cmake/bskAddRustModuleSources.cmake"
+    (project / "CMakeLists.txt").write_text(
+        'cmake_minimum_required(VERSION 3.26)\n'
+        'project(corrosionReconfiguration LANGUAGES NONE)\n'
+        f'include("{helper.as_posix()}")\n'
+        f'set(BSK_FETCHCONTENT_CACHE_DIR "{cache.as_posix()}")\n'
+        'set(BSK_OFFLINE_BUILD ON)\n'
+        '_bsk_load_corrosion()\n'
+        '_bsk_load_corrosion()\n'
+        'corrosion_import_crate(fixture)\n', encoding="utf-8",
+    )
+    command = [CMAKE, "-S", str(project), "-B", str(build)]
+    if generator:
+        command.extend(["-G", generator])
+    if generator and generator.startswith("Ninja"):
+        command.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
+    configured = run(command, project)
+    assert configured.returncode == 0, configured.stdout + configured.stderr
+    patched_cmake = build / "_deps/corrosion-source/cmake/Corrosion.cmake"
+    patched = patched_cmake.read_bytes()
+    assert patched.count(b'COMMENT "Building Rust module ${target_name}"') == 1
+    assert cached_cmake.read_bytes() == original
+
+    source_time = cached_cmake.stat().st_mtime_ns  # [ns]
+    for timestamp in (source_time, source_time - 2_000_000_000):  # [ns]
+        # Equal timestamps previously caused COPY to retain already-patched
+        # content. Different timestamps must not cause needless rewrites either.
+        os.utime(patched_cmake, ns=(timestamp, timestamp))
+        previous_time = patched_cmake.stat().st_mtime_ns
+        configured = run(command, project)
+        assert configured.returncode == 0, configured.stdout + configured.stderr
+        assert patched_cmake.read_bytes() == patched
+        assert patched_cmake.stat().st_mtime_ns == previous_time
+        assert cached_cmake.read_bytes() == original
+
+    # A valid generated copy must not conceal a changed upstream rule.
+    cached_cmake.write_bytes(original.replace(b"# Build crate", b"# Changed crate rule"))
+    rejected = run(command, project)
+    assert rejected.returncode != 0
+    assert b"pinned Corrosion Cargo build rule changed" in rejected.stdout + rejected.stderr
+    assert patched_cmake.read_bytes() == patched
+
+
 @pytest.mark.skipif(not CMAKE or not CARGO, reason="CMake and Cargo are required")
 @pytest.mark.parametrize("generator", GENERATORS)
 def test_rust_clean_cached_verbose_and_failed_builds(tmp_path_factory, generator):

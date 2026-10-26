@@ -109,7 +109,9 @@ void LambertSolver::readMessages()
     const Eigen::Vector3d r1 = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1_N);
     const Eigen::Vector3d r2 = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2_N);
     const auto hasFiniteNonzeroNorm = [](const Eigen::Vector3d& position) {
-        if (!position.allFinite()) {
+        // Eigen's vectorized allFinite() can raise FE_INVALID for quiet NaNs on x86.
+        // Classify each component before any norm or geometry arithmetic.
+        if (!std::isfinite(position[0]) || !std::isfinite(position[1]) || !std::isfinite(position[2])) {
             return false;
         }
         const double magnitude = position.norm();
