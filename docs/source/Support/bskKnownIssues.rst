@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- :ref:`lambertSolver` silently returned invalid solutions for unknown
+  ``solverMethod`` values. The message now carries the selection as a raw
+  integer, and values other than ``IZZO`` (0) or ``GOODING`` (1) raise
+  ``BasiliskError`` before conversion to the internal enum or publication of a
+  new output. Corrected requests recover without resetting the module, and
+  zero-initialized messages retain the Izzo default.
+
 - :ref:`lambertSolver` could accept nonfinite flight time or gravity, unusable
   endpoint vectors, and invalid alignment thresholds, allowing invalid
   arithmetic or bypassing the transfer-plane check. Numeric inputs are now

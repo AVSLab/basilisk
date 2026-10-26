@@ -42,6 +42,49 @@ LambertProblemMsgPayload validProblem()
 }
 }
 
+/** @brief Zero-initialized messages retain the default Izzo method and produce a valid solution. */
+TEST(LambertInputValidation, DefaultSolverMethodIsIzzo)
+{
+    auto problem = validProblem();
+    ASSERT_EQ(problem.solverMethod, IZZO);
+    EXPECT_EQ(problem.solverMethod, 0);
+    Message<LambertProblemMsgPayload> message;
+    message.write(&problem, 0, 0);
+    LambertSolver solver;
+    solver.lambertProblemInMsg.subscribeTo(&message);
+    auto solutionReader = solver.lambertSolutionOutMsg.addSubscriber();
+    solver.Reset(0);
+    solver.UpdateState(0);
+    EXPECT_EQ(solutionReader().valid, 1);
+}
+
+/** @brief Preserve invalid method integers in transport and reject them before enum conversion. */
+TEST(LambertInputValidation, RejectsUnknownSolverMethodsAndRecovers)
+{
+    for (SolverMethod acceptedMethod : { GOODING, IZZO }) {
+        SCOPED_TRACE(acceptedMethod);
+        auto problem = validProblem();
+        Message<LambertProblemMsgPayload> message;
+        LambertSolver solver;
+        solver.bskLogger.setLogLevel(BSK_SILENT);
+        solver.lambertProblemInMsg.subscribeTo(&message);
+        auto solutionReader = solver.lambertSolutionOutMsg.addSubscriber();
+        solver.Reset(0);
+        for (int method : { std::numeric_limits<int>::min(), -1, 2, std::numeric_limits<int>::max() }) {
+            SCOPED_TRACE(method);
+            problem.solverMethod = method;
+            message.write(&problem, 0, 0);
+            EXPECT_EQ(solver.lambertProblemInMsg().solverMethod, method);
+            EXPECT_THROW(solver.UpdateState(0), BasiliskError);
+
+            problem.solverMethod = acceptedMethod;
+            message.write(&problem, 0, 0);
+            EXPECT_NO_THROW(solver.UpdateState(0));
+            EXPECT_EQ(solutionReader().valid, 1);
+        }
+    }
+}
+
 /** @brief Reject zero and nonfinite inputs without dividing by zero or normalizing NaNs. */
 TEST(LambertInputValidation, RejectsMalformedInputsBeforeGeometry)
 {
