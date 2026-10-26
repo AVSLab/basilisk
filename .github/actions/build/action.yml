@@ -40,6 +40,11 @@ runs:
     - name: Setup system dependencies
       uses: ./.github/actions/setup
 
+    - name: Prepare macOS Rust tools
+      if: ${{ runner.os == 'macOS' && contains(inputs.conan-args, '--rustModules True') }}
+      shell: bash
+      run: python .github/scripts/setup_macos_rust.py
+
     - name: Install requirements
       shell: bash
       run: |
