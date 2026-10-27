@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- Editable installs and wheel builds could hang during Git source discovery
+  on macOS. Packaging now avoids the pipe deadlock without requiring
+  dependency downgrades.
+
 - GitHub issue 1654: Some Apple Silicon Rust toolchains, including 1.99.1,
   report ``rust-objcopy`` debug-stripping failures because ``libLLVM.dylib``
   is missing from the tool's library search path. Compilation and tests can

@@ -1,0 +1,1 @@
+- Avoided a macOS pipe-buffer deadlock during editable-install and wheel source discovery by passing Git attribute queries as bounded command-line argument batches, preserving existing packaging dependency ranges and Git export rules.
