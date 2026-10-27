@@ -72,7 +72,7 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
     return;
 }
 
-/*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states
+/*! Method for spring mass damper particle to access the states that it needs. It needs the hub states
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
@@ -81,9 +81,6 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
 
     // Get access to the hub's states needed for dynamic coupling
     this->hubOmega = states.getStateObject("hubOmega");
-
-    const std::string gravName = this->propName_vehicleGravity.empty() ? "g_N" : this->propName_vehicleGravity;
-    this->g_N = states.getPropertyReference(gravName);
 
     if (!this->propName_centerOfMassSC.empty()) {
         this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
@@ -209,7 +206,7 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
                                                  BackSubMatrices& backSubContr,
                                                  Eigen::MRPd sigma_BN,
                                                  Eigen::Vector3d omega_BN_B,
-                                                 Eigen::Vector3d g_N [[maybe_unused]])
+                                                 Eigen::Vector3d g_N)
 {
     if (this->massSMD <= 0.0) {
         this->aRho.setZero();
@@ -233,10 +230,7 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
     dcm_BN = dcm_NB.transpose();
 
     // - Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
-    gLocal_N = *this->g_N;
-    g_B = dcm_BN * gLocal_N;
+    Eigen::Vector3d g_B = dcm_BN * g_N;
 
     // - Define aRho
     this->aRho = -this->pHat_B;
