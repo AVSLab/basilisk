@@ -52,23 +52,22 @@ class LinearSpringMassDamper final
     BSKLogger bskLogger;            //!< BSK Logging
 
   private:
-    void validateConfiguration();      //!< Validate the initial particle mass without changing its current state
-    double cRho;                       //!< Term needed for back-sub method
-    double rho;                        //!< [m] spring mass damper displacement from equilibrium
-    double rhoDot;                     //!< [m/s] time derivative of displacement from equilibrium
-    double massSMD;                    //!< [kg] mass of spring mass damper particle
-    Eigen::Vector3d r_PcB_B;           //!< [m] position vector form B to center of mass location of particle
-    Eigen::Matrix3d rTilde_PcB_B;      //!< [m] tilde matrix of r_Pc_B
-    Eigen::Vector3d rPrime_PcB_B;      //!< [m/s] Body time derivative of r_Pc_B
-    Eigen::Matrix3d rPrimeTilde_PcB_B; //!< [m/s] Tilde matrix of rPrime_PcB_B
-    Eigen::Vector3d aRho;              //!< Term needed for back-sub method
-    Eigen::Vector3d bRho;              //!< Term needed for back-sub method
-    Eigen::MatrixXd* g_N;              //!< [m/s^2] Gravitational acceleration in N frame components
-    StateData* rhoState;               //!< state data for spring mass damper displacement from equilibrium
-    Eigen::MatrixXd* c_B;              //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd* cPrime_B;         //!< [m/s] Body time derivative of vector c_B in B frame components
-    StateData* rhoDotState;            //!< state data for time derivative of rho;
-    static uint64_t effectorID;        //!< [] ID number of this panel
+    void validateConfiguration();        //!< Validate the initial particle mass without changing its current state
+    double cRho;                         //!< Term needed for back-sub method
+    double rho;                          //!< [m] spring mass damper displacement from equilibrium
+    double rhoDot;                       //!< [m/s] time derivative of displacement from equilibrium
+    double massSMD;                      //!< [kg] mass of spring mass damper particle
+    Eigen::Vector3d r_PcB_B;             //!< [m] position vector form B to center of mass location of particle
+    Eigen::Matrix3d rTilde_PcB_B;        //!< [m] tilde matrix of r_Pc_B
+    Eigen::Vector3d rPrime_PcB_B;        //!< [m/s] Body time derivative of r_Pc_B
+    Eigen::Matrix3d rPrimeTilde_PcB_B;   //!< [m/s] Tilde matrix of rPrime_PcB_B
+    Eigen::Vector3d aRho;                //!< Term needed for back-sub method
+    Eigen::Vector3d bRho;                //!< Term needed for back-sub method
+    StateData* rhoState;                 //!< state data for spring mass damper displacement from equilibrium
+    Eigen::MatrixXd* c_B = nullptr;      //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd* cPrime_B = nullptr; //!< [m/s] Body time derivative of vector c_B in B frame components
+    StateData* rhoDotState;              //!< state data for time derivative of rho;
+    static uint64_t effectorID;          //!< [] ID number of this panel
 
   public:
     LinearSpringMassDamper();  //!< Constructor
