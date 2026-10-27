@@ -61,7 +61,7 @@ void Reset_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t m
         _bskError(configData->bskLogger, "Error: opNavPoint.cameraConfigInMsg wasn't connected.");
     }
 
-    /* compute an Eigen axis orthogonal to alignAxis_C */
+    /* compute an Eigen axis orthogonal to alignAxis_C, in camera frame components */
     if (v3Norm(configData->alignAxis_C) < 0.1) {
         char info[MAX_LOGGING_LENGTH];
         snprintf(info,
@@ -74,12 +74,12 @@ void Reset_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t m
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->alignAxis_C, configData->alignAxis_C); /* ensure that this vector is a unit vector */
-        v3Cross(configData->alignAxis_C, v1, configData->eHat180_B);
-        if (v3Norm(configData->eHat180_B) < 0.1) {
+        v3Cross(configData->alignAxis_C, v1, configData->eHat180_C);
+        if (v3Norm(configData->eHat180_C) < 0.1) {
             v3Set(0., 1., 0., v1);
-            v3Cross(configData->alignAxis_C, v1, configData->eHat180_B);
+            v3Cross(configData->alignAxis_C, v1, configData->eHat180_C);
         }
-        v3Normalize(configData->eHat180_B, configData->eHat180_B);
+        v3Normalize(configData->eHat180_C, configData->eHat180_C);
     }
     configData->lastTime = 0;
     v3SetZero(configData->currentHeading_N);
@@ -102,7 +102,8 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
     double timeWithoutMeas;
     double currentHeading_C[3], alignAxis_B[3];
     double hNorm;         /* Norm of measured direction vector */
-    double e_hat[3];      /* Principal rotation Axis */
+    double e_hat_C[3];    /* Principal rotation axis in camera frame components */
+    double e_hat_B[3];    /* Principal rotation axis in body frame components */
     double omega_BN_B[3]; /* r/s inertial body angular velocity vector in B frame components */
     double omega_RN_B[3]; /* r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
@@ -156,12 +157,14 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
         } else {
             if (M_PI - configData->opNavAngleErr < configData->smallAngle) {
                 /* the commanded camera vector nearly is opposite the opNav heading */
-                v3Copy(configData->eHat180_B, e_hat);
+                v3Copy(configData->eHat180_C, e_hat_C);
             } else {
                 /* normal case where opNav and commanded camera vectors are not aligned */
-                v3Cross(currentHeading_C, configData->alignAxis_C, e_hat);
+                v3Cross(currentHeading_C, configData->alignAxis_C, e_hat_C);
             }
-            v3Normalize(e_hat, configData->opNavMnvrVec);
+            /* sigma_BR requires the principal rotation axis in body frame components */
+            m33tMultV3(dcm_CB, e_hat_C, e_hat_B);
+            v3Normalize(e_hat_B, configData->opNavMnvrVec);
             v3Scale(tan(configData->opNavAngleErr * 0.25),
                     configData->opNavMnvrVec,
                     configData->attGuidanceOutBuffer.sigma_BR);

@@ -40,8 +40,8 @@ typedef struct
     double minUnitMag;          /*!< -- The minimally acceptable norm of opNav body vector*/
     double opNavAngleErr;       /*!< -- rad The current error between cmd and obs opNav angle*/
     double smallAngle;          /*!< -- rad An angle value that specifies what is near 0 or 180 degrees */
-    double eHat180_B[3];        /*!< -- Eigen axis to use if commanded axis is 180 from opNav axis */
-    double opNavMnvrVec[3];     /*!< -- The eigen axis that we want to rotate on to see target*/
+    double eHat180_C[3];        /*!< -- Eigen axis (C frame) to use if commanded axis is 180 from opNav axis */
+    double opNavMnvrVec[3];     /*!< -- The eigen axis (B frame) that we want to rotate on to see target*/
     uint64_t lastTime;          /*!< [ns] Last time a measurement came in to integrate pointing */
     double timeOut;             /*!< -- If no images were seen in this much time, stop using past values */
     double alignAxis_C[3];      /*!< -- Desired camera vector to point at target*/
