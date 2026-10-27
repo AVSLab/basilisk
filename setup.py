@@ -57,12 +57,17 @@ USER_CONAN_ARGS = shlex.split(os.getenv("CONAN_ARGS") or "")
 
 
 import sys
+import runpy
 from setuptools import setup, Command, Extension, find_packages
 from setuptools.command.build import build, SubCommand
 from subprocess import run
 from pathlib import Path
 
 HERE = Path(__file__).parent.resolve()
+# Load by path because PEP 517 frontends need not put this directory on sys.path.
+setup_with_git_file_discovery = runpy.run_path(str(HERE / "src/buildSupport/_bsk_packaging.py"))[
+    "setup_with_git_file_discovery"
+]
 
 
 class ConanExtension(Extension):
@@ -145,7 +150,8 @@ build.sub_commands = [
 ]
 
 
-setup(
+setup_with_git_file_discovery(
+    setup,
     ext_modules=[
         # XXX: Build as an "extension" to force "has_ext_modules" to be True,
         # and build this as a "platform wheel" instead of a "pure Python wheel".

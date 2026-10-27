@@ -5,6 +5,9 @@ prune **/_UnitTest
 prune **/_Documentation
 prune supportData
 
+# Used by setup.py, including builds from an unpacked source distribution.
+include src/buildSupport/_bsk_packaging.py
+
 global-exclude *.pdf *.png *.jpg *.jpeg *.gif *.JPG *.svg *.psd
 global-exclude *.ipynb *.bib *.tex
 global-exclude *.mex* *.o *.a *.so *.dylib *.dll
