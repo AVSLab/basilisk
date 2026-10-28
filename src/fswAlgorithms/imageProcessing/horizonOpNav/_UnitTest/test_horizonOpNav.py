@@ -287,8 +287,10 @@ def horizonOpNav_update(configuredPlanet=2, messagePlanet=0):
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-    # The result isn't going to change with more time. The module will continue to produce the same result
-    unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(0)  # [ns]
+    unitTestSim.ExecuteSimulation()
+    limbInMsg.write(inputLimbMsg, testProcessRate)
+    unitTestSim.ConfigureStopTime(testProcessRate)  # [ns]
     unitTestSim.ExecuteSimulation()
     assert opNav.planetTarget == 2
     np.testing.assert_array_equal(dataLog.planetID, 2)

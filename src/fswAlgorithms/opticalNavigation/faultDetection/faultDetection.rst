@@ -5,8 +5,20 @@ are implemented, and then can be compared in different ways.
 
 Module Assumptions and Limitations
 ----------------------------------
-There are no direct assumptions in this module. The performance and limitations are tied to the two methods that are
-input.
+Each input is consumed once per strictly increasing message-header write time,
+including invalid measurements. Unwritten, retained, and older inputs are treated
+as unavailable. The fault modes operate only on fresh valid inputs in the current
+update: mode 0 accepts either source, mode 1 accepts a primary alone, and mode 2
+requires both sources. Inputs are not buffered for pairing on a later update.
+If neither input has a new write, the output and its write time remain unchanged,
+allowing slower consumers to read the last result. When a new input arrives but
+the fault mode finds no usable measurement, the output is zero with ``valid = 0``.
+Consumers must check the output write time to detect new results.
+
+``Reset`` clears both timestamp histories, allowing writes at time zero. Producers
+must timestamp new measurements when writing them; republishing an old image with
+a newer write time is treated as a new measurement. Other performance limitations
+depend on the two input methods.
 
 Message Connection Descriptions
 -------------------------------

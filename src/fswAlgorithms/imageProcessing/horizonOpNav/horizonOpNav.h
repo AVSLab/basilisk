@@ -20,6 +20,9 @@
 #ifndef _HORIZON_OPNAV_H_
 #define _HORIZON_OPNAV_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/OpNavLimbMsg_C.h"
@@ -39,8 +42,10 @@ typedef struct
     NavAttMsg_C attInMsg;                //!< attitude input message
     OpNavLimbMsg_C limbInMsg;            //!< limb input message
 
-    int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    double noiseSF;       //!< A scale factor to control measurement noise
+    int32_t planetTarget;   //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
+    double noiseSF;         //!< A scale factor to control measurement noise
+    uint64_t lastWriteTime; //!< [ns] Last consumed limb message write time
+    int hasReadMessage;     //!< Whether a limb message has been consumed since reset
 
     BSKLogger* bskLogger; //!< BSK Logging
 } HorizonOpNavData;

@@ -118,8 +118,10 @@ def pixelLineConverterTestFunction():
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-    # The result isn't going to change with more time. The module will continue to produce the same result
-    unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(0)  # [ns]
+    unitTestSim.ExecuteSimulation()
+    circlesInMsg.write(inputCircles, testProcessRate)
+    unitTestSim.ConfigureStopTime(testProcessRate)  # [ns]
     unitTestSim.ExecuteSimulation()
 
     # Truth Values

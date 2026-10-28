@@ -44,6 +44,8 @@ void Reset_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTim
 {
     (void)callTime;
     (void)moduleID;
+    configData->lastWriteTime = 0; // [ns]
+    configData->hasReadMessage = 0;
     // check that the required message has not been connected
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
         _bskError(configData->bskLogger, "Error: pixelLineConverter.cameraConfigInMsg wasn't connected.");
@@ -74,6 +76,15 @@ void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTi
     NavAttMsgPayload attInfo;
 
     opNavMsgOut = OpNavMsg_C_zeroMsgPayload();
+
+    /* Consume each input write once, including invalid measurements. */
+    uint64_t writeTime = OpNavCirclesMsg_C_timeWritten(&configData->circlesInMsg);
+    if (!OpNavCirclesMsg_C_isWritten(&configData->circlesInMsg) ||
+        (configData->hasReadMessage && writeTime <= configData->lastWriteTime)) {
+        return;
+    }
+    configData->lastWriteTime = writeTime;
+    configData->hasReadMessage = 1;
 
     /*! - read input messages */
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
