@@ -118,7 +118,8 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     int thrusterUsed[MAX_EFF_CNT]; /* []      Array of flags indicating if this thruster is used for the Lr_j */
     double rThrusterRelCOM_B[MAX_EFF_CNT][3]; /* [m]     local copy of the thruster locations relative to COM */
     double Lr_B_Bar[3];                       /* [Nm]    Control torque that we actually control*/
-    double maxFractUse; /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
+    double LrReduced_B[3]; /* [Nm]    reduced control torque [C]^T [C] Lr_B in body frame components */
+    double maxFractUse;    /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double rCrossGt[3];
     CmdTorqueBodyMsgPayload LrInputMsg;
     THRArrayCmdForceMsgPayload thrusterForceOut;
@@ -173,6 +174,9 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if
                                                using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
 
+    /*! - map the reduced control torque back into body frame components to compare it with [D] F */
+    m33tMultV3(RECAST3X3 C, Lr_B_Bar, LrReduced_B);
+
     /*! - 1st iteration of finding a set of force vectors to implement the control torque */
     findMinimumNormForce(configData, D, Lr_B_Bar, configData->numThrusters, F);
 
@@ -211,7 +215,7 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     }
 
     configData->outTorqAngErr = computeTorqueAngErr(
-        D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 16*/
+        D, LrReduced_B, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
         all thruster forces values to not exceed saturation.
@@ -228,7 +232,7 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
         if (maxFractUse > 1.0) {
             vScale(1.0 / maxFractUse, F, configData->numThrusters, F);
             configData->outTorqAngErr = computeTorqueAngErr(
-                D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag);
+                D, LrReduced_B, configData->numThrusters, configData->epsilon, F, configData->thrForcMag);
         }
     }
 
@@ -313,7 +317,16 @@ void findMinimumNormForce(thrForceMappingConfig* configData,
 }
 
 /*!
- Determine the angle between the desired torque vector and the actual torque vector.
+ @brief Determine the angle between the desired torque vector and the actual torque vector.
+
+ @param D Mapping matrix from thruster forces to body frame torque [m]
+ @param BLr_B Desired reduced control torque [C]^T [C] Lr in body frame components [Nm]
+ @param numForces Number of thruster forces to evaluate
+ @param epsilon Small value below which the desired torque is treated as zero [Nm]
+ @param F Commanded thruster forces [N]
+ @param FMag Thruster force saturation limits [N]
+ @return Angle between the desired and the actual body frame torque vector [rad]
+ @note Both torque vectors must be expressed in body frame components.
  */
 double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
                            double BLr_B[3],

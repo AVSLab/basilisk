@@ -75,7 +75,7 @@ extern "C"
                               uint32_t numForces,
                               double F[MAX_EFF_CNT]);
     double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
-                               double BLr[3],
+                               double BLr_B[3],
                                uint32_t numForces,
                                double epsilon,
                                double F[MAX_EFF_CNT],

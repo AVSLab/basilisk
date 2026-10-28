@@ -66,7 +66,9 @@ class Results_thrForceMapping():
                     F[i] = 0.0
         else:
             DNew = D
-        angle = self.results_computeAngErr(D, Lr_Bar, F)
+        # compare the reduced torque [C]^T [C] Lr in body frame components with [D] F
+        Lr_Bar_B = np.dot(CT, Lr_Bar)
+        angle = self.results_computeAngErr(D, Lr_Bar_B, F)
 
         if angle > self.angErrThresh:
 
@@ -76,7 +78,7 @@ class Results_thrForceMapping():
                     maxFractUse = abs(F[i])/self.thrForceMag[i]
             if maxFractUse > 1.0:
                 F = F/maxFractUse
-                angleErr = self.results_computeAngErr(D, Lr_Bar, F)
+                angleErr = self.results_computeAngErr(D, Lr_Bar_B, F)
 
         return F, DNew
 
@@ -112,8 +114,8 @@ class Results_thrForceMapping():
 
     def mapToForce(self, D, Lr_Bar):
         numControlAxes = 0
-        for i in range(0, len(self.C[0])):
-            if not np.array_equal(self.C[:, i], [0.0, 0.0, 0.0]):
+        for i in range(0, len(self.C)):
+            if not np.array_equal(self.C[i, :], [0.0, 0.0, 0.0]):
                 numControlAxes = numControlAxes + 1
         numThr = 0
         for i in range(0, len(D[0])):

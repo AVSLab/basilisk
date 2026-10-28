@@ -7,6 +7,15 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1658: :ref:`thrForceMapping` compared the commanded torque
+  reduced onto the control axes, expressed in control axis components, with
+  the thruster torque expressed in body frame components. For control axes
+  other than the leading rows of the identity matrix (for example permuted,
+  non-leading, or rotated axes) the ``outTorqAngErr`` output was wrong and the
+  ``angErrThresh`` saturation scaling could be applied or skipped incorrectly,
+  so the same torque request produced different thruster forces depending only
+  on the control axis order.
+
 - Editable installs and wheel builds could hang during Git source discovery
   on macOS. Packaging now avoids the pipe deadlock without requiring
   dependency downgrades.
