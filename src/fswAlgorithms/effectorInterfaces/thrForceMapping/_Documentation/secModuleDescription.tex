@@ -10,7 +10,7 @@
 
 \subsection{Introduction}
 \subsubsection{Torque Control Axes}
-This technical note describes a general algorithm that maps a desired ADCS external control torque $\bm L_{r}$ onto force commands for a cluster of thrusters.  Let $\hat{\bm c}_{j}$ be the axis about which the thrusters are to produce the desired torque.  The matrix of $N_{c}$ thruster axes rows is then given by
+This technical note describes a general algorithm that maps an input ADCS control torque $\bm L_{\text{cmd}}$ onto force commands for a cluster of thrusters.  In the on-pulsing formulation below, the allocator target is $\bm L_r = \bm L_{\text{cmd}}$.  Section~\ref{sec:DVStrategy} defines the nominal-thrust compensation used to obtain $\bm L_r$ for off-pulsing.  Let $\hat{\bm c}_{j}$ be the axis about which the thrusters are to produce the desired torque.  The matrix of $N_{c}$ thruster axes rows is then given by
 \begin{equation}
 	[C]  = \begin{bmatrix}
 		\hat{\bm c}_{1} \\ \vdots \\ \hat{\bm c}_{N_{c}}
@@ -190,8 +190,15 @@ The next step is to sum the individual $\bar{\bm F}$ thruster solutions to the y
 
 
 
-\subsection{DV Thruster Firing Strategy}
+\subsection{DV Thruster Firing Strategy}\label{sec:DVStrategy}
 With a DV thruster configuration the thruster force axes are parallel.  As such, this configuration cannot produce a torque along the DV thrust axis.  A slightly modified version of the above algorithm is used in this case.  With the DV configuration the attitude along the axes orthogonal to the thrust vector are controlled via off-pulsing.  As such, the thruster firing mapping must produce negative $F_{i}$ values and the {\tt thrForceSign} sign must be set to -1.  With this  {\tt thrForceSign} value the flag {\tt use2ndLoop} is ignored and the second loop is always engaged.
+
+Here $\bm F$ represents signed changes from the nominal all-on force vector $\bm F_{\text{max}}$.  A zero command leaves a thruster fully on, while $F_i = -F_{\text{max},i}$ requests that it remain off for the control period.  Before either minimum norm solve, the module compensates for the nominal torque:
+\begin{equation*}
+	\bm L_r = \bm L_{\text{cmd}} - [D]\bm F_{\text{max}},
+	\qquad {}^{\mathcal{B}}\bar{\bm L}_r = [C]^T[C]\,{}^{\mathcal{B}}\bm L_r.
+\end{equation*}
+Thus $[D]\bm F$ is the change from nominal torque.  When the commands are within their limits, the ideal average net thruster torque is $[D](\bm F_{\text{max}} + \bm F)$.  Nominal torque need not be zero, for example when the spacecraft center of mass is offset from the nominal thrust line.
 
 The modified algorithm still evaluates the first minimum norm inverse, but does not subtract out the $\text{min}(\bm F)$ value.  Rather, the 2nd stage is used to determine which DV thrusters produce the torque with a negative torque value to generate the corresponding $[\bar D]$ matrix.  After performing the 2nd minimum norm inverse with $[\bar D]$ the subtraction of  $\text{min}(\bm F)$ is not performed.
 
@@ -199,26 +206,26 @@ The modified algorithm still evaluates the first minimum norm inverse, but does 
 
 
 \subsection{Saturating the Thruster Capability}
-The thruster force solution $\bm F$ is implemented using a pulse-width modulation where the thruster is fired only partially with the maximum thruster force $F_{\text{max}}$ during the control period such that the net impulse achieved is equivalent as if a smaller thruster force $F_{i}$ had been commanded.  This section discusses the case where $F_{i}>F_{\text{max}}$ and the thruster is not able to achieve the desire control impulse due to be saturated.
-
-Ideally the thrusters are not saturated, and the thruster force solution $\bm F$ yields a torque
+The thruster force solution $\bm F$ is implemented using pulse-width modulation.  For on-pulsing, $F_i$ is a nonnegative average force; for off-pulsing, it is a nonpositive change from the nominal average force $F_{\text{max},i}$.  A command with $|F_i| > F_{\text{max},i}$ cannot be realized over the control period.  To evaluate the torque direction under saturation, the module clips each signed command to its individual limit:
 \begin{equation*}
-	[D]\bm F \rightarrow \bm\tau
+	F_{\text{clip},i} = \min\left(F_{\text{max},i}, \max\left(-F_{\text{max},i}, F_i\right)\right),
+	\qquad \bm\tau = [D]\bm F_{\text{clip}}.
 \end{equation*}
-that is equal to the desired reduced control torque vector $\bar{\bm L}_{r}$.  However, if the thrusters are saturated, then the net torque $\bm\tau$ is not only different in the magnitude, but also the direction.  Applying a control torque that has a significant direction error can lead to unstable behavior.  Let $\theta_{\bm\tau/\bar{\bm L}_{r}}$ be the angle between the actual torque $\bm\tau$ and the desired torque $\bar{\bm L}_{r}$.
+Without saturation, $\bm\tau = [D]\bm F$.  Clipping can change both the magnitude and direction of this torque contribution.  For on-pulsing, it is the ideal average net thruster torque.  For off-pulsing, the net torque also includes the nominal contribution:
+\begin{equation*}
+	\bm\tau_{\text{net}} = [D](\bm F_{\text{max}} + \bm F_{\text{clip}}).
+\end{equation*}
+The module's angle compares the signed torque contribution $\bm\tau$ with the reduced allocator target $\bar{\bm L}_r$, which includes the nominal-thrust compensation in off-pulsing mode.  It does not compare $\bm\tau_{\text{net}}$ directly with the input request $\bm L_{\text{cmd}}$.
 \begin{equation}
 	\label{eq:th:angErr}
 	\theta_{\bm\tau/\bar{\bm L}_{r}} = \arccos \left( \frac{\bm\tau \cdot \bar{\bm L}_{r}}{|\bm\tau| |\bar{\bm L}_{r}|} \right)
 \end{equation}
-In Eq.~\eqref{eq:th:angErr} both $\bm\tau = [D]\bm F$ and $\bar{\bm L}_{r}$ are taken in body frame components, i.e.\ ${}^{\mathcal{B}}\bar{\bm L}_{r} = [C]^{T}[C]\,{}^{\mathcal{B}}\bm L_{r}$ and not the control frame components ${}^{\mathcal{C}}\bar{\bm L}_{r}$ used in the force solution of Eq.~\eqref{eq:th:min1}, such that this angle does not depend on the order or orientation of the control axes.
-If a 12-thruster configuration is used where each thruster only produces a torque about a single axis, then this saturation issue might not be as concerning.  However, if a reduced thruster solution is used, such as the common 8-thruster solution used in section~\ref{sec:ACSConfig}, then some thrusters must do double-duty and support multiple control axes.  Being saturated can quickly yield an actual net thruster torque $\bm \tau$ that has a significantly different heading then $\bar{\bm L}_{r}$.  In this case the thruster solution $\bm F$ is scaled such that no $|F_{i}|$ value is larger  then $F_{\text{max}}$.  This will reduce the $\bm\tau$ magnitude, but the direction will align with $\bar{\bm L}_{r}$.  As a result the closed-loop performance tends to respond more slowly, but in a more stable manner during period of thruster saturation.  If $|F_{i}|$ is used, the above algorithm works for both on- and off-pulsing solutions.
+In Eq.~\eqref{eq:th:angErr}, both $\bm\tau = [D]\bm F_{\text{clip}}$ and $\bar{\bm L}_{r}$ are expressed in body frame components.  Thus ${}^{\mathcal{B}}\bar{\bm L}_{r} = [C]^{T}[C]\,{}^{\mathcal{B}}\bm L_{r}$ is used instead of the control frame components ${}^{\mathcal{C}}\bar{\bm L}_{r}$ in the force solution of Eq.~\eqref{eq:th:min1}.  The angle is invariant under reordering the control axes or selecting another orthonormal basis for the same controlled subspace.  Changing that subspace can change the angle and force solution.
 
-Then angular threshold beyond which this thruster force $\bm F$ scaling is implemented is set through the  {\tt thrForceMapping} module parameter {\tt angErrThresh}.  If
-$$
-	\theta_{\bm\tau/\bar{\bm L}_{r}} > \text{\tt angErrThresh}
-$$
-then the thruster force solution is scaled such that $|F_{i}| \le F_{\text{max}}$.
+In the 8-thruster configuration in section~\ref{sec:ACSConfig}, some thrusters support multiple control axes, so saturation can change the torque direction substantially.  Uniformly scaling the signed commands until every $|F_i| \le F_{\text{max},i}$ removes clipping and preserves the direction of their unscaled torque contribution $[D]\bm F$.  This contribution aligns with $\bar{\bm L}_r$ only if it was already aligned before scaling.  In particular, torque outside the controlled subspace is also scaled and can leave a nonzero angle error.  This scaling rule applies to both on- and off-pulsing solutions.  In off-pulsing mode, the net torque also includes the unchanged nominal contribution $[D]\bm F_{\text{max}}$, so its direction need not be preserved by scaling the commands.
 
-The default value of {\tt angErrThresh} is 0\dg.  This means that this scaling during super-saturated thruster solutions is on by default.  If a control torque miss-alignment of 10\dg is acceptable, then set {\tt angErrThresh} = 10\dg.
+The parameter {\tt angErrThresh} sets the angular threshold for scaling.  When the angle in Eq.~\eqref{eq:th:angErr} exceeds this threshold and at least one commanded force exceeds its limit, all commanded forces are scaled by the same positive factor such that $|F_i| \le F_{\text{max},i}$.  The module then recomputes {\tt outTorqAngErr}.  At or below the angle threshold, the force commands can remain above their limits even though the angle calculation uses clipped forces.
 
-To turn off this thruster force scaling during super-saturated conditions, the parameter  {\tt angErrThresh} is set to a value larger than 180\dg.  As the angle $\theta_{\bm\tau/\bar{\bm L}_{r}} \le $180\dg, this ensures that the above threshold condition is never reached and the thruster forces are not scaled.
+The default value of {\tt angErrThresh} is 0 rad.  If a control torque misalignment of 10\dg\ is acceptable, set {\tt angErrThresh} to $10\pi/180$ rad.
+
+To disable scaling, set {\tt angErrThresh} to a value larger than $\pi$ rad (180\dg).  The torque angle cannot exceed this value, so the scaling condition is never reached.

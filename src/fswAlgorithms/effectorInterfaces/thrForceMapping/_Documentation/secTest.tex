@@ -149,10 +149,10 @@ The torque implementation errors are compared in Figure~\ref{fig:minTorquePerDV}
 
 
 \subsubsection{Control Axes Ordering Test}
-The test {\tt test\_controlAxesOrdering} verifies that the thruster mapping does not depend on the order or orientation of the control axes in $[C]$.  An RCS configuration of 8 thrusters located at the corners of a 2~m cube and firing tangentially is used.  The control axis sets considered are the identity $[x,y,z]$, the permuted set $[z,x,y]$, the non-leading set $[x,z]$, the reversed set $[y,x]$, the single axis $[y]$, as well as a rotated orthonormal 3-axis set and a rotated orthonormal 2-axis set.  For each case the test checks that
+The test {\tt test\_controlAxesOrdering} checks the torque angle for several controlled subspaces and verifies that the saturated force solution is unchanged by using different orthonormal bases of the full three-dimensional space.  An RCS configuration of 8 thrusters located at the corners of a 2~m cube and firing tangentially is used.  The control axis sets considered are the identity $[x,y,z]$, the permuted set $[z,x,y]$, the non-leading set $[x,z]$, the reversed set $[y,x]$, the single axis $[y]$, as well as a rotated orthonormal 3-axis set and a rotated orthonormal 2-axis set.  For each case the test checks that
 \begin{itemize}
 	\item without thruster saturation the produced torque satisfies $[C][D]\bm F = [C]\bm L_{r}$,
-	\item the output {\tt outTorqAngErr} equals the angle in Eq.~\eqref{eq:th:angErr} between the body frame reduced torque $[C]^{T}[C]\bm L_{r}$ and the saturation clipped torque $[D]\bm F$.
+	\item the output {\tt outTorqAngErr} equals the angle in Eq.~\eqref{eq:th:angErr} between the body frame reduced torque $[C]^{T}[C]\bm L_{r}$ and the saturation-clipped torque $[D]\bm F_{\text{clip}}$.
 \end{itemize}
 A saturated case is also run with a maximum thrust of 0.2~N and {\tt angErrThresh} = 10\dg.  Here the true torque angle error is about 6.5\dg, while the former control frame comparison yielded about 108\dg.  For the 3-axis sets the test checks that the thruster forces are not scaled and are equal to the forces obtained with the identity control axes.
 
