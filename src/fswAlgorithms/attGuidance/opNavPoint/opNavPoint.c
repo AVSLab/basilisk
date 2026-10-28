@@ -82,6 +82,7 @@ void Reset_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t m
         v3Normalize(configData->eHat180_C, configData->eHat180_C);
     }
     configData->lastTime = 0;
+    configData->hasReceivedMeasurement = 0;
     v3SetZero(configData->savedR_BN_N);
     configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
 
@@ -109,21 +110,26 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttMsgPayload localImuDataInBuffer;
     CameraConfigMsgPayload cameraSpecs;
+    uint64_t writeTime;
+    int newValidMeasurement;
 
     /*! - Read the current target vector estimate*/
     opNavMsg = OpNavMsg_C_read(&configData->opnavDataInMsg);
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
+    writeTime = OpNavMsg_C_timeWritten(&configData->opnavDataInMsg);
+    newValidMeasurement = OpNavMsg_C_isWritten(&configData->opnavDataInMsg) && opNavMsg.valid == 1 &&
+                          (!configData->hasReceivedMeasurement || writeTime > configData->lastTime);
 
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
 
-    /*! - A non-zero savedR_BN_N marks a saved heading. A valid image replaces it, while a saved heading is
-     * discarded once no valid image has been seen for timeOut seconds. */
-    if (opNavMsg.valid == 1) {
-        configData->lastTime = callTime;
+    /*! - A new valid measurement replaces the saved heading. Retained messages do not restart the timeout. */
+    if (newValidMeasurement) {
+        configData->lastTime = writeTime;
+        configData->hasReceivedMeasurement = 1;
         m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->savedR_BN_N);
     } else if (v3IsZero(configData->savedR_BN_N, 1E-10) == 0) {
         timeWithoutMeas = diffNanoToSec(callTime, configData->lastTime);
@@ -135,8 +141,8 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
     /*! Compute the current error vector if it is valid. This checks for a new fresh measurement or a valid,
      * non-stale, previous message.*/
     if (v3IsZero(configData->savedR_BN_N, 1E-10) == 0) {
-        /*! - If a valid image is in, use its camera frame heading directly*/
-        if (opNavMsg.valid == 1) {
+        /*! - Use a new measurement's camera frame heading directly */
+        if (newValidMeasurement) {
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);

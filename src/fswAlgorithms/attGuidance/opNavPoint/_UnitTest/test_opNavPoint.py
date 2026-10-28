@@ -336,7 +336,7 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
         opNavData.r_BN_C = [0.0, 0.0, 0.0]  # [m]
     else:
         opNavData.r_BN_C = (dcm_CB @ dcm_BN_drop @ r_BN_N).tolist()  # [m]
-    opNavInMsg.write(opNavData)
+    opNavInMsg.write(opNavData, testProcessRate)
     unitTestSim.ConfigureStopTime(testProcessRate)
     unitTestSim.ExecuteSimulation()
 
@@ -461,7 +461,7 @@ def test_savedHeadingTimeout(firstMeasurementTime):
     steps = range(validSteps[-1] + 1)
     for step in steps:
         opNavData.valid = 1 if step in validSteps else 0
-        opNavInMsg.write(opNavData)
+        opNavInMsg.write(opNavData, step * mc.sec2nano(timeStep))
         unitTestSim.ConfigureStopTime(step * mc.sec2nano(timeStep))
         unitTestSim.ExecuteSimulation()
 
@@ -527,7 +527,7 @@ def test_defaultTimeOut():
 
     for step, valid in enumerate(validFlags):
         opNavData.valid = valid
-        opNavInMsg.write(opNavData)
+        opNavInMsg.write(opNavData, step * mc.sec2nano(timeStep))
         unitTestSim.ConfigureStopTime(step * mc.sec2nano(timeStep))
         unitTestSim.ExecuteSimulation()
 
@@ -546,6 +546,72 @@ def test_defaultTimeOut():
                                    err_msg=f"sigma_BR mismatch at t = {t} s")
         np.testing.assert_allclose(omega_RN_B, omegaTrue, atol=1e-12,  # [rad/s]
                                    err_msg=f"omega_RN_B mismatch at t = {t} s")
+
+
+@pytest.mark.parametrize("timeOut", [0.0, 2.0])  # [s]
+def test_retainedMeasurement(timeOut):
+    """Consume each valid message once, retain its inertial heading, and expire it.
+
+    Write valid images at 0 s and 4 s, leaving the payload untouched between writes.
+    Rotate the body after the first image and require the reference camera axis to
+    keep pointing at the saved target until timeout.  After expiry, search must
+    continue until the second image supplies a new target.  With zero timeout,
+    only the updates receiving new images may track.  Reset must allow a new
+    measurement at time zero again, and a delayed first read must still expire
+    relative to the message write time.
+    """
+    module = opNavPoint.opNavPoint()
+    module.alignAxis_C = [0.0, 0.0, 1.0]
+    module.smallAngle = 1e-6  # [rad]
+    module.timeOut = timeOut
+    module.omega_RN_B = [0.0, 0.0, 0.1]  # [rad/s]
+    r_BN_N = np.array([7000e3, -2000e3, 1000e3])  # [m]
+
+    opNavData = messaging.OpNavMsgPayload()
+    opNavData.valid = 1
+    opNavInMsg = messaging.OpNavMsg()
+    imuData = messaging.NavAttMsgPayload()
+    imuInMsg = messaging.NavAttMsg()
+    camData = messaging.CameraConfigMsgPayload()
+    camData.sigma_CB = [0.3, -0.2, 0.1]
+    camInMsg = messaging.CameraConfigMsg().write(camData)
+    dcm_CB = rbk.MRP2C(camData.sigma_CB)
+    module.opnavDataInMsg.subscribeTo(opNavInMsg)
+    module.imuInMsg.subscribeTo(imuInMsg)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
+    module.SelfInit()
+    module.Reset(0)
+
+    for step in range(8):
+        callTime = mc.sec2nano(float(step))  # [ns]
+        imuData.sigma_BN = [0.0, 0.0, 0.0] if step == 0 else [0.1, 0.4, -0.2]
+        imuInMsg.write(imuData, callTime)
+        dcm_BN = rbk.MRP2C(imuData.sigma_BN)
+        if step == 4:
+            r_BN_N = np.array([-2000e3, 3000e3, 7000e3])  # [m]
+        if step in (0, 4):
+            opNavData.r_BN_C = (dcm_CB @ dcm_BN @ r_BN_N).tolist()
+            opNavInMsg.write(opNavData, callTime)
+
+        module.UpdateState(callTime)
+        output = module.attGuidanceOutMsg.read()
+        tracking = step in (0, 4) or step % 4 < timeOut
+        if tracking:
+            dcm_RN = rbk.MRP2C(output.sigma_BR).T @ dcm_BN
+            cameraAxis_N = (dcm_CB @ dcm_RN).T @ np.array(module.alignAxis_C)
+            np.testing.assert_allclose(cameraAxis_N, -r_BN_N / np.linalg.norm(r_BN_N), rtol=0, atol=1e-12)
+        else:
+            np.testing.assert_allclose(output.sigma_BR, np.zeros(3), atol=1e-12)
+        omegaTrue = np.zeros(3) if tracking else np.array(module.omega_RN_B)
+        np.testing.assert_allclose(output.omega_RN_B, omegaTrue, atol=1e-12)  # [rad/s]
+
+    module.Reset(0)
+    opNavInMsg.write(opNavData, 0)
+    imuInMsg.write(imuData, 0)
+    module.UpdateState(mc.sec2nano(0.5))  # [ns]
+    np.testing.assert_allclose(module.attGuidanceOutMsg.read().omega_RN_B, np.zeros(3), atol=1e-12)  # [rad/s]
+    module.UpdateState(mc.sec2nano(2.0))  # [ns]
+    np.testing.assert_allclose(module.attGuidanceOutMsg.read().omega_RN_B, module.omega_RN_B, atol=1e-12)  # [rad/s]
 
 
 #
