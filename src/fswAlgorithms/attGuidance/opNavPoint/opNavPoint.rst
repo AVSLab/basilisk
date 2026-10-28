@@ -25,10 +25,16 @@ is nearly opposite ``alignAxis_C``.
 
 Saved Heading
 -------------
-Each valid image saves the target heading in inertial frame components.  While no valid image is available, the
-saved heading is mapped back into the camera frame with the current attitude and used for guidance until
-``timeOut`` seconds have passed since the last valid image; the module then switches to the search rate
-``omega_RN_B``.  A new valid image is always used immediately.
+Each new valid image saves the target heading in inertial frame components.  While no new valid image is available,
+the saved heading is mapped back into the camera frame with the current attitude and used for guidance until
+``timeOut`` seconds have passed since the write time of the last accepted valid message; the module then switches
+to the search rate ``omega_RN_B``.  A new valid image is always used immediately.
+
+Freshness is determined by the message write timestamp: after the first valid message, only a strictly newer
+valid message replaces the saved heading.  A retained ``valid=1`` payload neither restarts the timeout nor
+changes the saved inertial heading.  With ``timeOut=0``, each new valid message is used for one update only.
+Producers must supply increasing write timestamps for new measurements; republishing an old image with a
+new write timestamp is treated as a new measurement.
 
 Message Connection Descriptions
 -------------------------------
