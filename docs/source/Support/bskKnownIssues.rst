@@ -7,6 +7,16 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- :ref:`thrForceMapping` could return positive commands during off-pulsing
+  because its second unconstrained solve could reverse a selected thruster's
+  sign.  Such results now trigger a nonnegative least-squares fallback over
+  all configured thrusters, followed by force-norm minimization at fixed
+  achieved torque.  Roundoff-sized positive commands are clamped to zero.
+  This also avoids weak-thruster and proportional-column selection artifacts.
+  Row-space projection prevents cycling at zero-force boundaries.
+  Valid allocations and the existing
+  ``angErrThresh`` saturation policy are retained.
+
 - GitHub issue 1658: :ref:`thrForceMapping` compared the commanded torque
   reduced onto the control axes, expressed in control axis components, with
   the thruster torque expressed in body frame components. For control axes

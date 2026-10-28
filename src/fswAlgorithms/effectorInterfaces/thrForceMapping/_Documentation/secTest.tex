@@ -156,6 +156,9 @@ The test {\tt test\_controlAxesOrdering} checks the torque angle for several con
 \end{itemize}
 A saturated case is also run with a maximum thrust of 0.2~N and {\tt angErrThresh} = 10\dg.  Here the true torque angle error is about 6.5\dg, while the former control frame comparison yielded about 108\dg.  For the 3-axis sets the test checks that the thruster forces are not scaled and are equal to the forces obtained with the identity control axes.
 
+\subsubsection{Off-Pulsing Sign Enforcement Tests}
+The tests in {\tt test\_thrForceMappingSign.py} verify nonpositive commands, physical net torque, repeated-call determinism, equivalent control bases, preservation of valid original allocations, and the existing angle-threshold saturation policy.  Regression cases cover the original positive-command failure, a weak thruster aligned with the target, roundoff at the sign-repair boundary, and proportional thruster columns under rotated control bases.  Independent SciPy optimizers check both the best achievable torque and the secondary minimum-force solution for seeded geometries with two or three control axes and six or 36 thrusters.  Feasible and unreachable requests are included.  A nearly dependent torque-map case checks that force-norm minimization preserves the achieved torque.  A 36-thruster boundary case checks convergence, the independent minimum-force solution, and consistent saturation scaling under equivalent control bases.
+
 
 \section{Test Parameters}
 

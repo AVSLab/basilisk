@@ -202,6 +202,14 @@ Thus $[D]\bm F$ is the change from nominal torque.  When the commands are within
 
 The modified algorithm still evaluates the first minimum norm inverse, but does not subtract out the $\text{min}(\bm F)$ value.  Rather, the 2nd stage is used to determine which DV thrusters produce the torque with a negative torque value to generate the corresponding $[\bar D]$ matrix.  After performing the 2nd minimum norm inverse with $[\bar D]$ the subtraction of  $\text{min}(\bm F)$ is not performed.
 
+The second solve is unconstrained and can reverse the sign of a selected thruster.  Positive commands no larger than {\tt 64 * DBL\_EPSILON} times the largest absolute command are clamped to zero.  If all remaining commands are nonpositive, the allocation is retained.  Otherwise, a nonnegative least-squares fallback reconsiders all thrusters and solves
+\begin{equation*}
+    \min_{\bm u\geq 0}\left\|-[C][D]\bm u-[C]\,{}^{\mathcal{B}}\bm L_r\right\|_2^2,
+    \qquad \bm F=-\bm u.
+\end{equation*}
+Among allocations with the best achievable controlled torque, a second step minimizes $\|\bm u\|_2$ while holding that torque fixed.  This produces a unique minimum-force solution, including for proportional thruster columns, and avoids selecting a large weak-thruster command when smaller commands can produce the same torque.  Thrust-magnitude limits are not included in either optimization.
+
+Both steps use deterministic active-set methods that can add and release thrusters, with subproblems solved using reorthogonalized QR.  The first step uses at most three independent thruster columns, while the second can distribute force over all thrusters.  The second step projects the current feasible forces onto the row space of the free torque map, preserving the achieved torque.  This avoids cancellation that can cause cycling at zero-force boundaries.  One common map normalization preserves relative torque authority; target normalization makes the numerical tests relative to the problem scale.  Gradient comparisons use a tolerance to handle numerical ties.  Both steps share a limit of {\tt 6 * MAX\_EFF\_CNT} active-set steps (216 with the current limit).  If the iteration budget or numerical rank prevents convergence, the module logs {\tt BSK\_WARNING} and retains its last nonpositive allocation.  The original two-stage handling of singular configurations is unchanged: an all-zero result does not trigger sign repair.  Thrust-magnitude limits are handled afterwards by the existing angle-threshold policy in the next section.
 
 
 

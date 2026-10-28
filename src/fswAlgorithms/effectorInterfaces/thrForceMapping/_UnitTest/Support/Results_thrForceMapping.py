@@ -66,6 +66,36 @@ class Results_thrForceMapping():
                     F[i] = 0.0
         else:
             DNew = D
+
+        # Clamp numerical sign noise before deciding whether the off-pulsing allocation needs repair.
+        if self.thrForceSign < 0:
+            force_tolerance = 64.0 * np.finfo(float).eps * np.max(np.abs(F))  # [N]
+            F[(F > 0.0) & (F <= force_tolerance)] = 0.0  # [N]
+        if self.thrForceSign < 0 and np.any(F > 0.0):
+            # This validation helper is embedded in the module bindings; defer its optimizer import until needed.
+            from scipy.optimize import minimize, nnls
+
+            negative_map = -(self.C @ D[:, :self.numThrusters])  # [m]
+            map_scale = np.max(np.linalg.norm(negative_map, axis=0))  # [m]
+            target_norm = np.linalg.norm(Lr_Bar)  # [N*m]
+            F = np.zeros_like(F)
+            if target_norm > 0.0 and map_scale > 0.0:
+                normalized_map = negative_map / map_scale
+                coefficients, _ = nnls(normalized_map, Lr_Bar / target_norm)
+                # Remove redundant equality rows using SVD, independently of the C implementation's QR.
+                left, singular_values, _ = np.linalg.svd(normalized_map, full_matrices=False)
+                rank = np.count_nonzero(singular_values > 64.0 * np.finfo(float).eps * singular_values[0])
+                constraints = left[:, :rank].T @ normalized_map
+                achieved = constraints @ coefficients
+                solution = minimize(lambda x: 0.5 * np.dot(x, x), coefficients, jac=lambda x: x,
+                                    constraints={"type": "eq", "fun": lambda x: constraints @ x - achieved,
+                                                 "jac": lambda x: constraints},
+                                    bounds=[(0.0, None)] * self.numThrusters, method="SLSQP",
+                                    options={"ftol": 1e-12, "maxiter": 200})
+                if not solution.success:
+                    raise RuntimeError("Independent minimum-force allocation failed: " + solution.message)
+                F[:self.numThrusters] = -solution.x * target_norm / map_scale
+
         # compare the reduced torque [C]^T [C] Lr in body frame components with [D] F
         Lr_Bar_B = np.dot(CT, Lr_Bar)
         angle = self.results_computeAngErr(D, Lr_Bar_B, F)

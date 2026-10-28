@@ -48,7 +48,32 @@ This adjusted target is reduced onto the control axes, written in body frame com
 
     {}^{\cal B}\bar{\mathbf{L}}_r = [C]^T [C] \, {}^{\cal B}\mathbf{L}_r
 
-The thruster forces :math:`\mathbf{F}` are then found such that :math:`[C][D]\mathbf{F} = [C]\,{}^{\cal B}\mathbf{L}_r`.
+The allocator attempts to find thruster forces :math:`\mathbf{F}` satisfying
+:math:`[C][D]\mathbf{F} = [C]\,{}^{\cal B}\mathbf{L}_r`.
+For off-pulsing, positive commands no larger than ``64 * DBL_EPSILON`` times the largest absolute
+command are clamped to zero.  The original two-stage allocation is otherwise retained if every command
+is nonpositive.  A larger positive command triggers a nonnegative least-squares fallback over all thrusters:
+
+.. math::
+
+    \min_{\mathbf{u}\geq 0}\left\|-[C][D]\mathbf{u}-[C]\,{}^{\cal B}\mathbf{L}_r\right\|_2^2,
+    \qquad \mathbf{F}=-\mathbf{u}.
+
+Among allocations with the best achievable controlled torque, a second step minimizes
+:math:`\|\mathbf{u}\|_2`.  This gives a unique minimum-force solution, including for proportional thruster
+columns, and avoids selecting a large weak-thruster command when smaller commands can produce the same torque.
+The solver does not impose thrust-magnitude limits.  Both steps use deterministic active-set methods that
+add and release thrusters and solve their subproblems using reorthogonalized QR.  The first step needs at
+most three independent thruster columns; the second can distribute force over all thrusters.  A
+row-space projection of the current feasible forces gives the second step's minimum-norm trial while
+preserving its achieved torque.  This avoids cancellation that can cause cycling at zero-force boundaries.
+One common map normalization preserves relative torque authority, and target normalization makes the numerical tests
+relative to the problem scale.  Gradient comparisons use a tolerance to handle numerical ties.
+The two steps share a limit of ``6 * MAX_EFF_CNT`` active-set steps
+(216 with the current 36-thruster limit).  If they cannot converge within that budget or numerical rank
+prevents further progress, it logs ``BSK_WARNING`` and retains its last nonpositive allocation.
+All allocations then use the saturation policy below.  Existing singular-matrix handling in the two-stage
+allocator is unchanged; an all-zero allocation does not trigger sign repair.
 
 The magnitudes of the commanded force changes :math:`\mathbf{F}` can exceed the individual thruster limits
 :math:`F_{\max,i}`.  The angle calculation uses the saturation-clipped commands
