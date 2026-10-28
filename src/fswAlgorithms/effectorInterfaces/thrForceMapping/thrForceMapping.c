@@ -23,10 +23,18 @@
 #include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <float.h>
 #include <math.h>
 #include <string.h>
 
 #define CONTROL_AXES_ORTHO_TOL 1e-6 /* [-] max |cos| between two control axes before they are flagged non-orthogonal */
+#define SIGN_SOLVE_TOL (64.0 * DBL_EPSILON) /* [-] relative gradient and rank tolerance after normalization */
+#define SIGN_SOLVE_MAX_STEPS (6 * MAX_EFF_CNT)
+
+static int findNonpositiveForce(thrForceMappingConfig* configData,
+                                double D[3][MAX_EFF_CNT],
+                                double target[3],
+                                double F[MAX_EFF_CNT]);
 
 /*! self init method
 
@@ -228,6 +236,31 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
         }
     }
 
+    /* The second unconstrained solve can reverse a selected thruster's sign.  Preserve valid allocations,
+       but reconsider all thrusters with a nonnegative least-squares solve when off-pulsing needs repair. */
+    if (configData->thrForceSign < 0) {
+        double forceScale = 0.0; /* [N] magnitude used to distinguish roundoff from a sign violation */
+        for (uint32_t i = 0; i < configData->numThrusters; i++) {
+            forceScale = fmax(forceScale, fabs(F[i]));
+        }
+        int repairRequired = 0;
+        for (uint32_t i = 0; i < configData->numThrusters; i++) {
+            if (F[i] > 0.0) {
+                if (F[i] <= SIGN_SOLVE_TOL * forceScale) {
+                    F[i] = 0.0; /* [N] remove a roundoff-sized positive command without changing the allocation */
+                } else {
+                    repairRequired = 1;
+                }
+            }
+        }
+        if (repairRequired && !findNonpositiveForce(configData, D, Lr_B_Bar, F)) {
+            _bskLog(configData->bskLogger,
+                    BSK_WARNING,
+                    "thrForceMapping off-pulsing sign solver did not converge; using its last nonpositive "
+                    "force allocation.");
+        }
+    }
+
     configData->outTorqAngErr = computeTorqueAngErr(
         D, LrReduced_B, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 21 */
     maxFractUse = 0.0;
@@ -255,6 +288,383 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     THRArrayCmdForceMsg_C_write(&thrusterForceOut, &configData->thrForceCmdOutMsg, moduleID, callTime);
 
     return;
+}
+
+/*!
+ @brief Solve a least-squares problem on up to three independent thruster columns.
+ @param columns Negative control-axis torque map divided by one common scale [-].
+ @param target Normalized control-axis torque request [-].
+ @param passive Indices of the currently free thrusters.
+ @param count Number of free thrusters, at most three.
+ @param trial Unconstrained normalized force coefficients, indexed by thruster [-].
+ @return One on success, zero if the selected columns are numerically dependent.
+ @note Reorthogonalized QR avoids squaring the condition number in the normal equations.
+ */
+static int solvePassiveForces(double columns[MAX_EFF_CNT][3],
+                              double target[3],
+                              uint32_t passive[3],
+                              uint32_t count,
+                              double trial[MAX_EFF_CNT])
+{
+    double basis[3][3] = { { 0.0 } };
+    double upper[3][3] = { { 0.0 } };
+    double rhs[3] = { 0.0 };
+    vSetZero(trial, MAX_EFF_CNT);
+    for (uint32_t i = 0; i < count; i++) {
+        v3Copy(columns[passive[i]], basis[i]);
+        for (uint32_t pass = 0; pass < 2; pass++) {
+            for (uint32_t j = 0; j < i; j++) {
+                double projection = v3Dot(basis[j], basis[i]);
+                upper[j][i] += projection;
+                for (uint32_t axis = 0; axis < 3; axis++) {
+                    basis[i][axis] -= projection * basis[j][axis];
+                }
+            }
+        }
+        upper[i][i] = v3Norm(basis[i]);
+        if (upper[i][i] <= SIGN_SOLVE_TOL) {
+            return 0;
+        }
+        v3Scale(1.0 / upper[i][i], basis[i], basis[i]);
+        rhs[i] = v3Dot(basis[i], target);
+    }
+    for (uint32_t remaining = count; remaining > 0; remaining--) {
+        uint32_t i = remaining - 1;
+        double coefficient = rhs[i];
+        for (uint32_t j = i + 1; j < count; j++) {
+            coefficient -= upper[i][j] * trial[passive[j]];
+        }
+        trial[passive[i]] = coefficient / upper[i][i];
+    }
+    return 1;
+}
+
+/*!
+ @brief Project feasible free forces onto the minimum-norm allocation with the same achieved torque.
+ @param columns Commonly scaled negative control-axis torque map [-].
+ @param feasible Current feasible normalized force coefficients [-].
+ @param freeThruster Flags identifying forces not fixed at zero.
+ @param numThrusters Number of configured thrusters.
+ @param trial Minimum-norm normalized force coefficients [-].
+ @param multiplier Equality-constraint multiplier in normalized control-axis components [-].
+ @note Column-pivoted, reorthogonalized QR of the transposed free map handles dependent control axes
+ without forming normal equations. With orthonormal row-space basis Q, the projection Q Q^T feasible
+ preserves the achieved torque. Using the feasible forces avoids cancellation in a separate triangular
+ solve for the torque, which could spuriously activate and release a zero-force bound. At most three
+ basis vectors are needed, regardless of thruster count.
+ */
+static void solveMinimumForceNorm(double columns[MAX_EFF_CNT][3],
+                                  double feasible[MAX_EFF_CNT],
+                                  int freeThruster[MAX_EFF_CNT],
+                                  uint32_t numThrusters,
+                                  double trial[MAX_EFF_CNT],
+                                  double multiplier[3])
+{
+    double basis[3][MAX_EFF_CNT] = { { 0.0 } };
+    double upper[3][3] = { { 0.0 } };
+    double weights[3] = { 0.0 };
+    uint32_t permutation[3] = { 0, 1, 2 };
+    uint32_t rank = 0;
+    double scale = 0.0; /* [-] largest column norm of the transposed free map */
+    vSetZero(trial, MAX_EFF_CNT);
+    v3SetZero(multiplier);
+    for (uint32_t axis = 0; axis < 3; axis++) {
+        for (uint32_t i = 0; i < numThrusters; i++) {
+            if (freeThruster[i]) {
+                basis[axis][i] = columns[i][axis];
+            }
+        }
+        scale = fmax(scale, vNorm(basis[axis], numThrusters));
+    }
+    for (uint32_t axis = 0; axis < 3; axis++) {
+        uint32_t pivot = axis;
+        double largest = vNorm(basis[axis], numThrusters);
+        for (uint32_t candidate = axis + 1; candidate < 3; candidate++) {
+            double magnitude = vNorm(basis[candidate], numThrusters);
+            if (magnitude > largest) {
+                largest = magnitude;
+                pivot = candidate;
+            }
+        }
+        if (largest <= SIGN_SOLVE_TOL * scale) {
+            break;
+        }
+        if (pivot != axis) {
+            for (uint32_t i = 0; i < numThrusters; i++) {
+                double temporary = basis[axis][i];
+                basis[axis][i] = basis[pivot][i];
+                basis[pivot][i] = temporary;
+            }
+            for (uint32_t i = 0; i < axis; i++) {
+                double temporary = upper[i][axis];
+                upper[i][axis] = upper[i][pivot];
+                upper[i][pivot] = temporary;
+            }
+            uint32_t temporary = permutation[axis];
+            permutation[axis] = permutation[pivot];
+            permutation[pivot] = temporary;
+        }
+        /* Earlier eliminations can lose orthogonality for nearly dependent axes.  Reorthogonalize
+           against the complete established basis before using Q to form the minimum-norm solution. */
+        for (uint32_t pass = 0; pass < 2; pass++) {
+            for (uint32_t previous = 0; previous < axis; previous++) {
+                double projection = vDot(basis[previous], numThrusters, basis[axis]);
+                upper[previous][axis] += projection;
+                for (uint32_t i = 0; i < numThrusters; i++) {
+                    basis[axis][i] -= projection * basis[previous][i];
+                }
+            }
+        }
+        largest = vNorm(basis[axis], numThrusters);
+        if (largest <= SIGN_SOLVE_TOL * scale) {
+            break;
+        }
+        upper[axis][axis] = largest;
+        vScale(1.0 / largest, basis[axis], numThrusters, basis[axis]);
+        for (uint32_t candidate = axis + 1; candidate < 3; candidate++) {
+            for (uint32_t pass = 0; pass < 2; pass++) {
+                double projection = vDot(basis[axis], numThrusters, basis[candidate]);
+                upper[axis][candidate] += projection;
+                for (uint32_t i = 0; i < numThrusters; i++) {
+                    basis[candidate][i] -= projection * basis[axis][i];
+                }
+            }
+        }
+        rank++;
+    }
+    for (uint32_t axis = 0; axis < rank; axis++) {
+        weights[axis] = vDot(basis[axis], numThrusters, feasible);
+    }
+    for (uint32_t i = 0; i < numThrusters; i++) {
+        for (uint32_t axis = 0; axis < rank; axis++) {
+            trial[i] += basis[axis][i] * weights[axis];
+        }
+    }
+    for (uint32_t remaining = rank; remaining > 0; remaining--) {
+        uint32_t axis = remaining - 1;
+        double rhs = weights[axis];
+        for (uint32_t i = axis + 1; i < rank; i++) {
+            rhs -= upper[axis][i] * multiplier[permutation[i]];
+        }
+        multiplier[permutation[axis]] = rhs / upper[axis][axis];
+    }
+}
+
+/*!
+ @brief Minimize force norm without changing the torque obtained by nonnegative least squares.
+ @param columns Commonly scaled negative control-axis torque map [-].
+ @param requested Original normalized torque request in control-axis components [-].
+ @param numThrusters Number of configured thrusters.
+ @param coefficients Nonnegative normalized forces, initially feasible and updated in place [-].
+ @param steps Shared active-set step count, bounded by SIGN_SOLVE_MAX_STEPS.
+ @return One when the minimum-norm optimality conditions hold, zero on early termination.
+ @note Columns with a strictly negative NNLS residual gradient cannot contribute to another allocation
+ with the same optimal torque.  All other columns start free; bounds may subsequently be added and released.
+ */
+static int minimizeForceNorm(double columns[MAX_EFF_CNT][3],
+                             double requested[3],
+                             uint32_t numThrusters,
+                             double coefficients[MAX_EFF_CNT],
+                             uint32_t* steps)
+{
+    int freeThruster[MAX_EFF_CNT] = { 0 };
+    int eligible[MAX_EFF_CNT] = { 0 };
+    double target[3] = { 0.0 };
+    double trial[MAX_EFF_CNT];
+    double multiplier[3];
+    for (uint32_t i = 0; i < numThrusters; i++) {
+        for (uint32_t axis = 0; axis < 3; axis++) {
+            target[axis] += columns[i][axis] * coefficients[i];
+        }
+    }
+    double residual[3];
+    v3Subtract(requested, target, residual);
+    double gradientTolerance = SIGN_SOLVE_TOL * (1.0 + vNorm(coefficients, numThrusters));
+    for (uint32_t i = 0; i < numThrusters; i++) {
+        eligible[i] = coefficients[i] > 0.0 || v3Dot(columns[i], residual) >= -gradientTolerance;
+        freeThruster[i] = eligible[i];
+    }
+    while (*steps < SIGN_SOLVE_MAX_STEPS) {
+        (*steps)++;
+        solveMinimumForceNorm(columns, coefficients, freeThruster, numThrusters, trial, multiplier);
+        double forceScale = 0.0; /* [-] largest normalized trial or current force */
+        for (uint32_t i = 0; i < numThrusters; i++) {
+            forceScale = fmax(forceScale, fmax(fabs(trial[i]), coefficients[i]));
+        }
+        double fraction = 1.0; /* [-] feasible fraction of the minimum-norm step */
+        uint32_t leaving = numThrusters;
+        for (uint32_t i = 0; i < numThrusters; i++) {
+            if (freeThruster[i] && trial[i] < -SIGN_SOLVE_TOL * forceScale) {
+                double candidate = coefficients[i] / (coefficients[i] - trial[i]);
+                if (leaving == numThrusters || candidate < fraction) {
+                    fraction = candidate;
+                    leaving = i;
+                }
+            }
+        }
+        if (leaving != numThrusters) {
+            for (uint32_t i = 0; i < numThrusters; i++) {
+                coefficients[i] = fmax(0.0, coefficients[i] + fraction * (trial[i] - coefficients[i]));
+            }
+            coefficients[leaving] = 0.0;
+            freeThruster[leaving] = 0;
+            continue;
+        }
+        for (uint32_t i = 0; i < numThrusters; i++) {
+            coefficients[i] = fmax(0.0, trial[i]);
+        }
+        double dualTolerance = SIGN_SOLVE_TOL * v3Norm(multiplier);
+        double bestGradient = dualTolerance;
+        uint32_t entering = numThrusters;
+        for (uint32_t i = 0; i < numThrusters; i++) {
+            double gradient = v3Dot(columns[i], multiplier);
+            if (eligible[i] && !freeThruster[i] && gradient > bestGradient + dualTolerance) {
+                bestGradient = gradient;
+                entering = i;
+            }
+        }
+        if (entering == numThrusters) {
+            return 1;
+        }
+        freeThruster[entering] = 1;
+    }
+    return 0;
+}
+
+/*!
+ @brief Repair an off-pulsing allocation by minimizing control-axis torque error with F <= 0.
+ @param configData Module configuration, including the control axes and thruster count.
+ @param D Body-frame torque map [m].
+ @param target Nominal-thrust-compensated request in control-axis components [N*m].
+ @param F Repaired signed force commands [N].
+ @return One when both torque-error and force-norm optimality tests are satisfied, zero on early termination.
+ @note The first active-set stage minimizes torque error from zero, using up to three independent columns.
+ The second minimizes force norm while holding the achieved torque fixed. One common map scale preserves
+ relative torque authority. Both stages share SIGN_SOLVE_MAX_STEPS active-set steps; early termination
+ retains a nonpositive allocation. Thrust limits remain governed by the existing angle-threshold policy.
+ */
+static int findNonpositiveForce(thrForceMappingConfig* configData,
+                                double D[3][MAX_EFF_CNT],
+                                double target[3],
+                                double F[MAX_EFF_CNT])
+{
+    double columns[MAX_EFF_CNT][3] = { { 0.0 } };
+    double mapScale = 0.0; /* [m] common scale preserving relative thruster torque authority */
+    double normalizedTarget[3];
+    double coefficients[MAX_EFF_CNT] = { 0.0 };
+    double trial[MAX_EFF_CNT];
+    uint32_t passive[3] = { 0 };
+    uint32_t count = 0;
+    uint32_t steps = 0;
+    int freeThruster[MAX_EFF_CNT] = { 0 };
+    int rejected[MAX_EFF_CNT] = { 0 };
+    int converged = 0;
+    double targetNorm = v3Norm(target); /* [N*m] */
+
+    vSetZero(F, MAX_EFF_CNT);
+    if (targetNorm == 0.0) {
+        return 1;
+    }
+    v3Scale(1.0 / targetNorm, target, normalizedTarget);
+    for (uint32_t i = 0; i < configData->numThrusters; i++) {
+        for (uint32_t axis = 0; axis < configData->numControlAxes; axis++) {
+            for (uint32_t body = 0; body < 3; body++) {
+                columns[i][axis] -= configData->controlAxes_B[3 * axis + body] * D[body][i];
+            }
+        }
+        mapScale = fmax(mapScale, v3Norm(columns[i]));
+    }
+    if (mapScale == 0.0) {
+        return 1;
+    }
+    for (uint32_t i = 0; i < configData->numThrusters; i++) {
+        v3Scale(1.0 / mapScale, columns[i], columns[i]);
+    }
+
+    while (steps < SIGN_SOLVE_MAX_STEPS) {
+        double residual[3];
+        v3Copy(normalizedTarget, residual);
+        for (uint32_t i = 0; i < configData->numThrusters; i++) {
+            for (uint32_t axis = 0; axis < 3; axis++) {
+                residual[axis] -= columns[i][axis] * coefficients[i];
+            }
+        }
+        double gradientTolerance = SIGN_SOLVE_TOL * (1.0 + vNorm(coefficients, configData->numThrusters));
+        double bestGradient = gradientTolerance;
+        uint32_t entering = configData->numThrusters;
+        for (uint32_t i = 0; i < configData->numThrusters; i++) {
+            double gradient = v3Dot(columns[i], residual);
+            if (!freeThruster[i] && !rejected[i] && gradient > bestGradient + gradientTolerance) {
+                bestGradient = gradient;
+                entering = i;
+            }
+        }
+        if (entering == configData->numThrusters) {
+            converged = 1;
+            for (uint32_t i = 0; i < configData->numThrusters; i++) {
+                if (rejected[i] && v3Dot(columns[i], residual) > gradientTolerance) {
+                    converged = 0;
+                }
+            }
+            break;
+        }
+        if (count == 3) {
+            break;
+        }
+        passive[count++] = entering;
+        steps++;
+        if (!solvePassiveForces(columns, normalizedTarget, passive, count, trial)) {
+            count--;
+            rejected[entering] = 1;
+            continue;
+        }
+        freeThruster[entering] = 1;
+        memset(rejected, 0, sizeof(rejected));
+
+        /* Move only as far as the first zero bound, then release that thruster and solve again. */
+        while (1) {
+            double fraction = 1.0; /* [-] fraction of the step to the unconstrained solution */
+            uint32_t leaving = count;
+            for (uint32_t i = 0; i < count; i++) {
+                uint32_t index = passive[i];
+                if (trial[index] <= 0.0) {
+                    double denominator = coefficients[index] - trial[index];
+                    double candidate = denominator > 0.0 ? coefficients[index] / denominator : 0.0;
+                    if (leaving == count || candidate < fraction) {
+                        fraction = candidate;
+                        leaving = i;
+                    }
+                }
+            }
+            if (leaving == count) {
+                vCopy(trial, MAX_EFF_CNT, coefficients);
+                break;
+            }
+            for (uint32_t i = 0; i < count; i++) {
+                uint32_t index = passive[i];
+                coefficients[index] = fmax(0.0, coefficients[index] + fraction * (trial[index] - coefficients[index]));
+            }
+            coefficients[passive[leaving]] = 0.0;
+            freeThruster[passive[leaving]] = 0;
+            for (uint32_t i = leaving + 1; i < count; i++) {
+                passive[i - 1] = passive[i];
+            }
+            count--;
+            if (steps == SIGN_SOLVE_MAX_STEPS) {
+                break;
+            }
+            steps++;
+            /* A subset of independent columns remains independent. */
+            solvePassiveForces(columns, normalizedTarget, passive, count, trial);
+        }
+    }
+    if (converged) {
+        converged = minimizeForceNorm(columns, normalizedTarget, configData->numThrusters, coefficients, &steps);
+    }
+    for (uint32_t i = 0; i < configData->numThrusters; i++) {
+        F[i] = -coefficients[i] * (targetNorm / mapScale);
+    }
+    return converged;
 }
 
 /*!

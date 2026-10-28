@@ -1,0 +1,1 @@
+- Fixed :ref:`thrForceMapping` returning positive off-pulsing commands with a deterministic fallback that minimizes controlled torque error, then force norm without cycling at zero-force boundaries; roundoff-sized sign errors are clamped, and valid allocations and the existing ``angErrThresh`` saturation policy are preserved.
