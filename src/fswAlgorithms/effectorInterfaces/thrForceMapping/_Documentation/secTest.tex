@@ -8,8 +8,14 @@ The module test {\tt test\_module} is run with the following parameters:
 \item dropThruster: Removes 0, 1 or 2 thrusters from the DV or RCS configuration.  When thrusters are dropped the 2nd least squares fitting loop {\tt use2ndLoop} is used.
 \item numControlAxis: Number of controlled axes (1, 2 or 3).  The DV configuration is only evaluated for 1 and 2 control axes.
 \item saturateThrusters: Changes the requested torque and the angle tolerance which triggers scaling behavior.
-\item axesOrder: Uses the leading body axes, the same axes in reversed order, or an orthonormal rotation of these axes to span the same controlled subspace.  The thruster forces and the torque angle error {\tt outTorqAngErr} must not depend on this choice.  The test results below are reported for the leading body axes.
 \end{enumerate}
+The control axes of {\tt test\_module} are the leading {\tt numControlAxis} body axes.
+
+The test {\tt test\_moduleAxesOrder} reruns a representative subset of these cases (no COM offset, 0 or 1 dropped thrusters, {\tt saturateThrusters} of 0 or 2, all values of {\tt useDVThruster} and {\tt numControlAxis}) with the additional parameter
+\begin{enumerate}
+\item axesOrder: Uses the same leading body axes in reversed order, or an orthonormal rotation of these axes, to span the same controlled subspace.  The thruster forces and the torque angle error {\tt outTorqAngErr} must not depend on this choice.  For a single control axis the reversed set equals the leading set and the rotated set only negates the axis; these cases are kept for clarity.
+\end{enumerate}
+The test results below are reported for the leading body axes.
 
 \subsubsection{ACS Thruster Configuration}\label{sec:ACSConfig}
 To illustrate the performance of this algorithm, the following simulation setup is used.  Let the ACS system have a total of $N = 8$ thrusters with the following body-fixed locations:

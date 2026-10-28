@@ -26,6 +26,8 @@
 #include <math.h>
 #include <string.h>
 
+#define CONTROL_AXES_ORTHO_TOL 1e-6 /* [-] max |cos| between two control axes before they are flagged non-orthogonal */
+
 /*! self init method
 
  @param configData The configuration data associated with this module
@@ -65,6 +67,18 @@ void Reset_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime,
     }
     if (configData->numControlAxes == 0) {
         _bskError(configData->bskLogger, "thrForceMapping() is not setup to control any axes!");
+    }
+    /*! - check that the control axes are mutually orthogonal, as assumed by the torque reduction [C]^T [C] Lr */
+    for (i = 0; i < configData->numControlAxes; i++) {
+        for (uint32_t j = i + 1; j < configData->numControlAxes; j++) {
+            if (fabs(v3Dot(configData->controlAxes_B + 3 * i, configData->controlAxes_B + 3 * j)) >
+                CONTROL_AXES_ORTHO_TOL) {
+                _bskLog(configData->bskLogger,
+                        BSK_WARNING,
+                        "thrForceMapping.controlAxes_B are not orthogonal. The reduced torque and outTorqAngErr "
+                        "assume orthonormal control axes.");
+            }
+        }
     }
     if (configData->thrForceSign == 0) {
         _bskError(configData->bskLogger, "thrForceMapping() must have thrForceSign set to either +1 or -1");

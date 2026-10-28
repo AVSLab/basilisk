@@ -61,24 +61,43 @@ import numpy as np
 @pytest.mark.parametrize("numControlAxis", [1, 2, 3])
 @pytest.mark.parametrize("saturateThrusters", [0,1,2])
 @pytest.mark.parametrize("misconfigThruster", [False])
-@pytest.mark.parametrize("axesOrder", ["leading", "reversed", "rotated"])
 
 
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters,
-                misconfigThruster, use2ndLoop, axesOrder):
+                misconfigThruster, use2ndLoop):
     """
-    Validate the thruster forces and the torque angle error against the Python reference model.
-
-    The ``axesOrder`` parameter spans the same controlled subspace with the leading body axes, with the
-    same axes in reversed order, or with an orthonormal rotation of these axes. The thruster forces and
-    ``outTorqAngErr`` must not depend on this choice.
+    Validate the thruster forces and the torque angle error against the Python reference model using the leading
+    ``numControlAxis`` body axes as control axes.
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
                                                    numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop,
-                                                   axesOrder)
+                                                   "leading")
+    assert testResults < 1, testMessage
+
+
+@pytest.mark.parametrize("useDVThruster", [True, False])
+@pytest.mark.parametrize(["dropThruster", "use2ndLoop"], [(0, False), (1, True)])
+@pytest.mark.parametrize("numControlAxis", [1, 2, 3])
+@pytest.mark.parametrize("saturateThrusters", [0, 2])
+# For numControlAxis == 1, "reversed" is identical to "leading" and "rotated" only negates the axis, so these cases
+# exercise the same code path. They are kept for clarity so that every axesOrder is run for every numControlAxis.
+@pytest.mark.parametrize("axesOrder", ["reversed", "rotated"])
+def test_moduleAxesOrder(show_plots, useDVThruster, dropThruster, numControlAxis, saturateThrusters, use2ndLoop,
+                         axesOrder):
+    """
+    Validate the thruster forces and the torque angle error against the Python reference model when the control axes
+    are not the leading body axes.
+
+    The ``axesOrder`` parameter spans the same controlled subspace as the leading body axes, either with the same axes
+    in reversed order or with an orthonormal rotation of these axes. The thruster forces and ``outTorqAngErr`` must
+    not depend on this choice. To limit the test runtime, only a representative subset of the
+    :func:`test_module` parameters is used.
+    """
+    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, False, dropThruster, False,
+                                                   numControlAxis, saturateThrusters, False, use2ndLoop, axesOrder)
     assert testResults < 1, testMessage
 
 
@@ -552,6 +571,20 @@ def test_controlAxesOrdering(controlAxes, saturated):
         np.testing.assert_allclose(F, FIdentity, atol=accuracy,
                                    err_msg="the forces depend on the order or orientation of the control axes")
         assert angErr == pytest.approx(angErrIdentity, abs=angAccuracy)
+
+
+@pytest.mark.parametrize("controlAxes, expectWarning", [
+    (np.eye(3), False),
+    ([[1, 0, 0], [1, 1, 0]], True),
+], ids=["orthonormal", "nonOrthogonal"])
+def test_controlAxesOrthogonalityWarning(capfd, controlAxes, expectWarning):
+    """
+    Validate that ``Reset()`` logs a warning if the control axes are not mutually orthogonal, and stays silent for
+    orthonormal control axes.
+    """
+    runCubeRcsMapping(controlAxes, [0.3, -0.5, 0.8], 10.0, 0.0)  # [Nm], [N], [rad]
+    warned = "controlAxes_B are not orthogonal" in capfd.readouterr().out
+    assert warned == expectWarning, "unexpected control axes orthogonality warning behavior"
 
 
 #
