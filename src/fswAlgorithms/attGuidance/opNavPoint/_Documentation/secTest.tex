@@ -22,6 +22,9 @@ The camera frame is rotated relative to the body frame by several non-zero $\bm\
 \subsection{Antiparallel Heading}
 The target is placed directly behind $\hat{\bm h}_{c}$ for zero and non-zero $\bm\sigma_{C/B}$, with $\hat{\bm h}_{c}$ set to both $\hat{\bm c}_{3}$ and $\hat{\bm c}_{1}$ to exercise both cross products of the 180 degree fallback axis.  The test {\tt test\_antiparallelHeading} requires the boresight-to-target angle of the reference attitude to be below $10^{-7}$ rad.
 
+\subsection{Saved Heading Timeout}
+Valid images are provided at selected times and invalid images otherwise, with the first image at 0 s and at 3 s.  The saved heading must produce the tracking error of the last image for less than {\tt timeOut} seconds after it, after which the module must output the search rate.  An image that arrives exactly {\tt timeOut} seconds after the previous one must be used on that update.  The test {\tt test\_savedHeadingTimeout} checks $\bm\sigma_{B/R}$ and $\bm\omega_{R/N}$ to $10^{-12}$.
+
 
 
 \section{Test Parameters}

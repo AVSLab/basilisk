@@ -115,25 +115,29 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
 
-    if (configData->lastTime == 0) {
-        configData->lastTime = callTime;
-        v3SetZero(configData->currentHeading_N);
-    }
-    timeWithoutMeas = diffNanoToSec(callTime, configData->lastTime);
-
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
-    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new
-     * fresh measurement.*/
-    if ((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) &&
-        (timeWithoutMeas < configData->timeOut)) {
-        /*! - If a valid image is in save the heading direction for future use*/
+
+    /*! - A non-zero currentHeading_N marks a saved heading. A valid image replaces it, while a saved heading is
+     * discarded once no valid image has been seen for timeOut seconds. */
+    if (opNavMsg.valid == 1) {
+        configData->lastTime = callTime;
+        m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->currentHeading_N);
+    } else if (v3IsZero(configData->currentHeading_N, 1E-10) == 0) {
+        timeWithoutMeas = diffNanoToSec(callTime, configData->lastTime);
+        if (timeWithoutMeas >= configData->timeOut) {
+            v3SetZero(configData->currentHeading_N);
+        }
+    }
+
+    /*! Compute the current error vector if it is valid. This checks for a new fresh measurement or a valid,
+     * non-stale, previous message.*/
+    if (v3IsZero(configData->currentHeading_N, 1E-10) == 0) {
+        /*! - If a valid image is in, use its camera frame heading directly*/
         if (opNavMsg.valid == 1) {
-            configData->lastTime = callTime;
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
-            m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->currentHeading_N);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
             v3Scale(1 / hNorm, currentHeading_C, currentHeading_C);
@@ -178,7 +182,6 @@ void Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t 
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
     } else {
-        configData->lastTime = 0;
         /* no proper opNav direction vector is available */
         v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
 

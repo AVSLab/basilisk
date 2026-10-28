@@ -268,15 +268,11 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
         sigma_BN (list): body MRP attitude relative to the inertial frame
         r_BN_N (list): target-to-spacecraft position vector in inertial components
         alignAxis_C (list): camera axis to point at the target, in camera components
-        dropMeasurement (bool): if True, the update after the measurement receives an invalid measurement so
-            the stored inertial heading is used instead
-
-    The first valid measurement is provided at 1 s rather than 0 s, because the module uses ``lastTime == 0``
-    to detect that no measurement has been stored yet.
+        dropMeasurement (bool): if True, the update after the measurement at 0 s receives an invalid
+            measurement so the stored inertial heading is used instead
 
     Returns:
-        numpy.ndarray: angle between the reference camera axis and the target heading for the measurement update
-        and the following update [rad]
+        numpy.ndarray: angle between the reference camera axis and the target heading for each update [rad]
     """
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -300,7 +296,7 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
     r_BN_N = np.array(r_BN_N)
 
     opNavData = messaging.OpNavMsgPayload()
-    opNavData.valid = 0
+    opNavData.valid = 1
     opNavData.r_BN_C = (dcm_CB @ dcm_BN @ r_BN_N).tolist()
     opNavInMsg = messaging.OpNavMsg().write(opNavData)
 
@@ -322,20 +318,16 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(0)
     unitTestSim.ExecuteSimulation()
-    opNavData.valid = 1
-    opNavInMsg.write(opNavData)
-    unitTestSim.ConfigureStopTime(testProcessRate)
-    unitTestSim.ExecuteSimulation()
     if dropMeasurement:
         opNavData.valid = 0
         opNavData.r_BN_C = [0.0, 0.0, 0.0]  # [m]
         opNavInMsg.write(opNavData)
-    unitTestSim.ConfigureStopTime(2 * testProcessRate)
+    unitTestSim.ConfigureStopTime(testProcessRate)
     unitTestSim.ExecuteSimulation()
 
     heading_N = -r_BN_N / np.linalg.norm(r_BN_N)
     angles = []
-    for sigma_BR in dataLog.sigma_BR[1:]:
+    for sigma_BR in dataLog.sigma_BR:
         dcm_RN = rbk.MRP2C(sigma_BR).T @ dcm_BN
         cameraAxis_N = (dcm_CB @ dcm_RN).T @ np.array(alignAxis_C)
         cameraAxis_N = cameraAxis_N / np.linalg.norm(cameraAxis_N)
@@ -394,6 +386,76 @@ def test_antiparallelHeading(alignAxis_C, sigma_CB):
     # acos() near 180 degrees amplifies roundoff in the heading, so a looser tolerance is used here
     np.testing.assert_allclose(angles, 0.0, atol=1e-7,  # [rad]
                                err_msg="reference camera axis does not point at the target")
+
+
+@pytest.mark.parametrize("firstMeasurementTime", [0.0, 3.0])  # [s]
+def test_savedHeadingTimeout(firstMeasurementTime):
+    """Verify the saved heading is reused until ``timeOut`` and a new image is used as soon as it arrives.
+
+    Valid images are separated by invalid ones.  The saved heading must keep producing the tracking error of
+    the last image for less than ``timeOut`` seconds after it, also when the image arrives at 0 s, and the
+    module must switch to the search rate once ``timeOut`` is reached.  A valid image that arrives exactly
+    ``timeOut`` seconds after the previous one must be used on that update instead of being ignored.
+    """
+    timeStep = 1.0  # [s]
+    timeOut = 2.0  # [s]
+    omega_RN_B_Search = [0.0, 0.0, 0.1]  # [rad/s]
+    omega_BN_B = [0.01, 0.50, -0.2]  # [rad/s]
+    r_BN_C = [1.0, 1.0, 0.0]  # [m]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", mc.sec2nano(timeStep)))
+
+    module = opNavPoint.opNavPoint()
+    module.ModelTag = "opNavPoint"
+    module.alignAxis_C = [0.0, 0.0, 1.0]
+    module.smallAngle = 0.01 * mc.D2R  # [rad]
+    module.timeOut = timeOut
+    module.omega_RN_B = omega_RN_B_Search
+    unitTestSim.AddModelToTask("unitTask", module)
+
+    opNavData = messaging.OpNavMsgPayload()
+    opNavData.r_BN_C = r_BN_C
+    opNavInMsg = messaging.OpNavMsg().write(opNavData)
+    imuData = messaging.NavAttMsgPayload()
+    imuData.omega_BN_B = omega_BN_B
+    imuInMsg = messaging.NavAttMsg().write(imuData)
+    camInMsg = messaging.CameraConfigMsg().write(messaging.CameraConfigMsgPayload())
+    module.opnavDataInMsg.subscribeTo(opNavInMsg)
+    module.imuInMsg.subscribeTo(imuInMsg)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
+
+    dataLog = module.attGuidanceOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", dataLog)
+    unitTestSim.InitializeSimulation()
+
+    # valid images: the first one times out, the second one is followed by a third exactly timeOut later
+    validTimes = [firstMeasurementTime,
+                  firstMeasurementTime + 2 * timeOut,
+                  firstMeasurementTime + 3 * timeOut]  # [s]
+    endTime = validTimes[-1]  # [s]
+    times = np.arange(0.0, endTime + timeStep / 2, timeStep)  # [s]
+    for t in times:
+        opNavData.valid = 1 if t in validTimes else 0
+        opNavInMsg.write(opNavData)
+        unitTestSim.ConfigureStopTime(mc.sec2nano(t))
+        unitTestSim.ExecuteSimulation()
+
+    heading_C = -np.array(r_BN_C) / np.linalg.norm(r_BN_C)
+    eHat = np.cross(heading_C, [0.0, 0.0, 1.0])
+    eHat = eHat / np.linalg.norm(eHat)
+    sigmaTrack = eHat * np.tan(np.arccos(heading_C[2]) / 4.0)
+
+    for t, sigma_BR, omega_RN_B in zip(times, dataLog.sigma_BR, dataLog.omega_RN_B):
+        lastValidTime = max(v for v in validTimes if v <= t) if t >= validTimes[0] else None  # [s]
+        tracking = lastValidTime is not None and t - lastValidTime < timeOut
+        sigmaTrue = sigmaTrack if tracking else np.zeros(3)
+        omegaTrue = np.zeros(3) if tracking else np.array(omega_RN_B_Search)
+        np.testing.assert_allclose(sigma_BR, sigmaTrue, atol=1e-12,
+                                   err_msg=f"sigma_BR mismatch at t = {t} s")
+        np.testing.assert_allclose(omega_RN_B, omegaTrue, atol=1e-12,  # [rad/s]
+                                   err_msg=f"omega_RN_B mismatch at t = {t} s")
 
 
 #
