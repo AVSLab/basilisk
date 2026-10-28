@@ -27,7 +27,8 @@ description provides information on what this message is used for.
 Module Assumptions and Limitations
 ----------------------------------
 The variable ``controlAxes_B`` holds up to three orthonormal control axes :math:`\hat{\mathbf{c}}_j`, stored row by
-row in body frame components as the matrix :math:`[C]`.  Unused rows are zero-padded.  The commanded torque
+row in body frame components as the matrix :math:`[C]`.  Unused rows are zero-padded.  ``Reset()`` normalizes each
+axis, and logs a ``BSK_WARNING`` if any two axes are not orthogonal, as the math below then no longer holds.  The commanded torque
 :math:`{}^{\cal B}\mathbf{L}_r` is reduced onto these control axes, written in body frame components, as
 
 .. math::
