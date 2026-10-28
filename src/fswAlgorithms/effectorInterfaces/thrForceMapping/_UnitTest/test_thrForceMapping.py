@@ -37,6 +37,7 @@ from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import simHelpers
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 
 import numpy as np
@@ -60,20 +61,53 @@ import numpy as np
 @pytest.mark.parametrize("numControlAxis", [1, 2, 3])
 @pytest.mark.parametrize("saturateThrusters", [0,1,2])
 @pytest.mark.parametrize("misconfigThruster", [False])
+@pytest.mark.parametrize("axesOrder", ["leading", "reversed", "rotated"])
 
 
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop):
-    """Module Unit Test"""
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters,
+                misconfigThruster, use2ndLoop, axesOrder):
+    """
+    Validate the thruster forces and the torque angle error against the Python reference model.
+
+    The ``axesOrder`` parameter spans the same controlled subspace with the leading body axes, with the
+    same axes in reversed order, or with an orthonormal rotation of these axes. The thruster forces and
+    ``outTorqAngErr`` must not depend on this choice.
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
-                                                   numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop)
+                                                   numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop,
+                                                   axesOrder)
     assert testResults < 1, testMessage
 
 
+def controlAxesSet(numControlAxis, axesOrder):
+    """
+    Return orthonormal control axes that span the same subspace as the leading ``numControlAxis`` body axes.
+
+    :param numControlAxis: number of control axes
+    :param axesOrder: ``"leading"`` for the leading body axes, ``"reversed"`` for the same axes in reverse
+        order, or ``"rotated"`` for an orthonormal rotation of these axes
+    :return: control axes as rows of a ``numControlAxis`` x 3 array
+    """
+    axes = np.eye(3)[0:numControlAxis]
+    if axesOrder == "reversed":
+        axes = axes[::-1]
+    elif axesOrder == "rotated":
+        if numControlAxis == 1:
+            axes = -axes
+        elif numControlAxis == 2:
+            angle = 30.0 * macros.D2R  # [rad]
+            axes = np.array([[np.cos(angle), np.sin(angle), 0.0],
+                             [-np.sin(angle), np.cos(angle), 0.0]])
+        else:
+            axes = np.array(rbk.PRV2C([0.3, -0.4, 0.5]))  # [rad] principal rotation vector
+    return axes
+
+
 def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis,
-                      saturateThrusters, misconfigThruster,use2ndLoop):
+                      saturateThrusters, misconfigThruster, use2ndLoop, axesOrder="leading"):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -128,13 +162,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
     rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
 
-    controlAxes_B = np.array([
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]
-    ])
-
-    controlAxes_B = controlAxes_B[0:numControlAxis]
+    controlAxes_B = controlAxesSet(numControlAxis, axesOrder)
     if len(controlAxes_B) == 0:
         controlAxes_B = np.array([[]])
 
@@ -320,6 +348,15 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if testFailCount > 0:
         return [testFailCount, ''.join(testMessages)]
 
+    # Check that the torque angle error compares [C]^T [C] Lr with [D] F in body frame components
+    expectedAngErr = torqueAngErr(np.matmul(CT, np.matmul(C, Lr_B)), rcsLocationData[0:numThrusters] - CoM_B,
+                                  rcsDirectionData[0:numThrusters], moduleOutput[0][0:numThrusters],
+                                  np.array(module.thrForcMag[0:numThrusters]))
+    if not np.isclose(module.outTorqAngErr, expectedAngErr, atol=accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + module.ModelTag + " outTorqAngErr " + str(module.outTorqAngErr)
+                            + " rad does not match the expected " + str(expectedAngErr) + " rad\n")
+        return [testFailCount, ''.join(testMessages)]
 
     # Check that Torques are Sensible
     print("\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B))
@@ -355,6 +392,10 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     snippetTex += "D-Matrix:\n" + str(D) + "\n\n"
     snippetTex += "Forces:\n" + str(np.transpose(F)) + "\n\n"
+
+    if axesOrder != "leading":
+        # the AutoTeX snippets only document the leading control axes cases
+        return [testFailCount, ''.join(testMessages)]
 
     directory = "Nom/UnitVec/"
 
@@ -392,6 +433,127 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     return [testFailCount, ''.join(testMessages)]
 
 
+def torqueAngErr(LrBar_B, r_B, gt_B, F, FMag):
+    """
+    Compute the angle between the reduced requested torque and the saturation limited thruster torque.
+
+    :param LrBar_B: reduced requested torque :math:`[C]^T [C] {}^B\\bm L_r` in body frame components [Nm]
+    :param r_B: thruster locations relative to the center of mass, one row per thruster [m]
+    :param gt_B: thruster force unit direction vectors, one row per thruster
+    :param F: thruster force solution [N]
+    :param FMag: thruster force saturation limits [N]
+    :return: angle between the two torque vectors [rad]
+    """
+    if np.linalg.norm(LrBar_B) < 1e-12:
+        return 0.0
+    FClip = np.clip(F, -FMag, FMag)
+    tau_B = np.cross(r_B, gt_B).T @ FClip
+    cosAngle = np.dot(LrBar_B, tau_B) / (np.linalg.norm(LrBar_B) * np.linalg.norm(tau_B))
+    return np.arccos(np.clip(cosAngle, -1.0, 1.0))
+
+
+def runCubeRcsMapping(controlAxes, Lr_B, maxThrust, angErrThresh):
+    """
+    Run the module once with 8 RCS thrusters at the corners of a 2 m cube that fire tangentially.
+
+    :param controlAxes: control axes as rows of an array with up to 3 rows
+    :param Lr_B: requested control torque in body frame components [Nm]
+    :param maxThrust: thruster force saturation limit [N]
+    :param angErrThresh: torque angle error beyond which saturated forces are scaled [rad]
+    :return: thruster forces [N], ``outTorqAngErr`` [rad], thruster locations [m] and thruster directions
+    """
+    rThr_B = np.array([[1, 1, 1], [1, 1, -1], [-1, 1, 1], [-1, 1, -1],
+                       [1, -1, 1], [1, -1, -1], [-1, -1, 1], [-1, -1, -1]], dtype=float)  # [m]
+    gtThr_B = np.array([[-1, 0, 0], [-1, 0, 0], [1, 0, 0], [1, 0, 0],
+                        [0, 0, -1], [0, 0, 1], [0, 0, -1], [0, 0, 1]], dtype=float)
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.CreateNewProcess("TestProcess").addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(1.0)))
+
+    module = thrForceMapping.thrForceMapping()
+    module.ModelTag = "thrForceMapping"
+    module.thrForceSign = 1
+    module.use2ndLoop = 0
+    module.epsilon = 1e-6
+    module.angErrThresh = angErrThresh
+    axes = np.array(controlAxes, dtype=float)
+    module.controlAxes_B = axes.flatten().tolist() + [0.0] * (9 - axes.size)
+
+    fswSetupThrusters.clearSetup()
+    for r, g in zip(rThr_B, gtThr_B):
+        fswSetupThrusters.create(r, g, maxThrust)
+    thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
+    vcInMsg = messaging.VehicleConfigMsg().write(messaging.VehicleConfigMsgPayload(CoM_B=[0.0, 0.0, 0.0]))
+    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(
+        messaging.CmdTorqueBodyMsgPayload(torqueRequestBody=list(Lr_B)))
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
+    module.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
+
+    dataLog = module.thrForceCmdOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", module)
+    unitTestSim.AddModelToTask("unitTask", dataLog)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(0)
+    unitTestSim.ExecuteSimulation()
+
+    return np.array(dataLog.thrForce[-1][0:len(rThr_B)]), module.outTorqAngErr, rThr_B, gtThr_B
+
+
+@pytest.mark.parametrize("controlAxes", [
+    np.eye(3),
+    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
+    [[1, 0, 0], [0, 0, 1]],
+    [[0, 1, 0], [1, 0, 0]],
+    [[0, 1, 0]],
+    rbk.PRV2C([0.3, -0.4, 0.5]),
+    rbk.PRV2C([-0.2, 0.6, 0.1])[0:2],
+], ids=["identity", "permutedZXY", "nonLeadingXZ", "reversedYX", "singleY", "rotated3", "rotated2"])
+@pytest.mark.parametrize("saturated", [False, True])
+def test_controlAxesOrdering(controlAxes, saturated):
+    """
+    Validate that the torque angle error and the saturation scaling decision do not depend on the order or
+    orientation of the control axes.
+
+    The test uses 8 RCS thrusters and checks that
+
+    - the produced torque matches the requested torque on the control axes, :math:`[C][D]\\bm F = [C]\\bm L_r`,
+    - ``outTorqAngErr`` is the angle between :math:`[C]^T [C] \\bm L_r` and the produced torque :math:`[D]\\bm F`
+      in body frame components,
+    - with saturated thrusters and ``angErrThresh`` between the true angle error and the angle error obtained by
+      comparing control axis components with body frame components, the forces are not scaled and match the
+      forces found with the identity control axes.
+    """
+    Lr_B = np.array([0.3, -0.5, 0.8])  # [Nm]
+    C = np.array(controlAxes, dtype=float)
+    accuracy = 1e-9
+    if saturated:
+        maxThrust = 0.2  # [N]
+        angErrThresh = 10.0 * macros.D2R  # [rad]
+    else:
+        maxThrust = 10.0  # [N]
+        angErrThresh = 0.0  # [rad]
+
+    F, angErr, rThr_B, gtThr_B = runCubeRcsMapping(C, Lr_B, maxThrust, angErrThresh)
+    D = np.cross(rThr_B, gtThr_B).T  # [m]
+
+    expectedAngErr = torqueAngErr(C.T @ C @ Lr_B, rThr_B, gtThr_B, F, maxThrust * np.ones(len(F)))
+    # arccos amplifies round-off near zero angle, so the angle uses a looser tolerance than the forces
+    angAccuracy = 1e-6  # [rad]
+    assert angErr == pytest.approx(expectedAngErr, abs=angAccuracy), "outTorqAngErr is not the body frame angle error"
+
+    if not saturated:
+        np.testing.assert_allclose(C @ D @ F, C @ Lr_B, atol=accuracy,
+                                   err_msg="the produced torque does not match the request on the control axes")
+    elif len(C) == 3:
+        FIdentity, angErrIdentity, _, _ = runCubeRcsMapping(np.eye(3), Lr_B, maxThrust, angErrThresh)
+        assert angErrIdentity < angErrThresh, "the test threshold must be above the true angle error"
+        assert np.max(F) > maxThrust, "the forces must stay unscaled below the angle error threshold"
+        np.testing.assert_allclose(F, FIdentity, atol=accuracy,
+                                   err_msg="the forces depend on the order or orientation of the control axes")
+        assert angErr == pytest.approx(angErrIdentity, abs=angAccuracy)
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
@@ -406,5 +568,6 @@ if __name__ == "__main__":
                  3,               # num control axis
                  2,               # saturateThrusters
                  False,           # misconfigThruster
-                 False            # Use 2nd loop
+                 False,           # Use 2nd loop
+                 "leading"        # control axes order
     )

@@ -1,0 +1,1 @@
+- Fixed :ref:`thrForceMapping` computing ``outTorqAngErr`` and the ``angErrThresh`` saturation scaling decision with the control frame components of the reduced torque instead of the body frame components :math:`[C]^T[C]\mathbf{L}_r`; results no longer depend on the order or orientation of ``controlAxes_B``.
