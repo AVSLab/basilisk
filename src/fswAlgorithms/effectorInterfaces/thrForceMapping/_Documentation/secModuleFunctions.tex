@@ -1,13 +1,15 @@
-% !TEX root = ./Basilisk-rwNullspace-20190209.tex
+% !TEX root = ./Basilisk-ThrusterForces-20160627.tex
 
 
 \section{Module Functions}
 This module has the following functions:
 \begin{itemize}
-	\item \textbf{Evaluate RW null projection matrix $[\tau]$}: When reset the module will pull in the current RW configuration data and create the null motion projection matrix.  This matrix remains fixed unit the module is reset again.
-	\item \textbf{Compute a RW deceleration torque}: With each update call the module computes a decelerating RW torque solution that lies in the null space of the RW array.
-	\item \textbf{Output a net RW motor torque solution}:  The module combined the feedback control torque and the null space torque to slow down the RW speeds and outputs a net solution solution.
+	\item \textbf{Read in the thruster and spacecraft configuration}: When reset the module reads in the thruster locations, force directions and maximum thrust values, as well as the spacecraft center of mass.  The control axes $\hat{\bm c}_{j}$ are normalized, and a warning is logged if any two control axes are not orthogonal.
+	\item \textbf{Compute the thruster force solution}: With each update call the module reduces the commanded torque $\bm L_{r}$ onto the control axes and computes the minimum norm thruster force solution $\bm F$ that produces $\bar{\bm L}_{r}$.  If {\tt use2ndLoop} is set or off-pulsing is used ({\tt thrForceSign} $= -1$), the 2-stage solution is used to enforce the desired force sign.
+	\item \textbf{Evaluate the torque angle error}: The angle $\theta_{\bm\tau/\bar{\bm L}_{r}}$ between the saturated thruster torque $\bm\tau$ and the reduced torque $\bar{\bm L}_{r}$ is evaluated in body frame components, and is stored in {\tt outTorqAngErr}.
+	\item \textbf{Scale the thruster forces if saturated}: If this angle is larger than {\tt angErrThresh}, the thruster forces are scaled such that no thruster exceeds its maximum thrust.
+	\item \textbf{Output the thruster force commands}: The resulting thruster forces are written to the thruster force output message.
 \end{itemize}
 
 \section{Module Assumptions and Limitations}
-The module assumes all RW devices are operating and available.  It also assumes the RW spin axes don't change during the regular update cycles.  
+The module assumes all thrusters in the configuration message are operating and available.  It also assumes the thruster configuration and the spacecraft center of mass don't change between module resets.  Up to three control axes are supported, and these must be orthogonal for the reduced torque $\bar{\bm L}_{r}$ to be valid.
