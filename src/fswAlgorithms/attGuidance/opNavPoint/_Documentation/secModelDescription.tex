@@ -19,7 +19,11 @@ Note that this module does not establish a unique target-pointing reference fram
 
 \subsection{Equations}
 \subsubsection{Good Planet Direction Vector Case}\label{sec:withHeading}
-The planet heading $\bm h$ and the commanded vector $\hat{\bm h}_{c}$ are both measured in the camera-fixed frame $\cal C$.  The attitude of the body relative to the target reference frame $\cal R$ is written as a principal rotation from $\cal R$ to $\cal B$.  Because the camera is fixed in the body, this rotation has the same principal rotation axis and angle as the rotation from $\cal R$ to $\cal C$, but the axis must be expressed in body frame components.  The principal rotation vector is first computed in camera frame components
+The planet heading $\bm h$ and the commanded vector $\hat{\bm h}_{c}$ are both expressed in the camera-fixed frame $\cal C$.
+The attitude error of the body relative to the target reference frame $\cal R$ is written as a principal rotation from $\cal R$ to $\cal B$.
+The axis of this same physical rotation can be expressed in either camera or body frame components without changing its principal angle.
+The camera-to-reference attitude instead follows the frame composition $[CR] = [CB][BR]$ and generally has a different principal axis and angle.
+The principal rotation axis of the body attitude error is first computed in camera frame components
 \begin{equation}
 	\label{eq:ssp:1}
 	\leftexp{C}{\hat{\bm e}} = \frac{\leftexp{C}{\bm h} \times \leftexp{C}{\hat{\bm h}_{c}}}{|\leftexp{C}{\bm h} \times \leftexp{C}{\hat{\bm h}_{c}}|}
