@@ -45,9 +45,9 @@ Next, this rotation from $\cal R$ to $\cal B$ is written as a set of MRPs throug
 The set $\bm\sigma_{B/R}$ is the attitude error of the output attitude guidance message.  The module variable {\tt opNavMnvrVec} stores $\leftexp{B}{\hat{\bm e}}$.
 
 The rates are also tracked in the body frame.
-The module allows for a nominal spin rate about the planet heading axis by specifying the module parameter {\tt planetAxisSpinRate} called $\dot \theta$ in this description.  The nominal spin rate is thus given by
+The module allows for a nominal spin rate about the commanded camera axis $\hat{\bm h}_{c}$ by specifying the module parameter {\tt opNavAxisSpinRate}, in rad/s, called $\dot \theta$ in this description.  The commanded axis is mapped into body frame components with $[BC] = [CB]^{T}$, and the nominal spin rate is thus given by
 \begin{equation}
-	\leftexp{B}{\bm\omega}_{R/N} = [\cal B \cal C]\leftexp{C}{\hat{\bm h}} \dot\theta
+	\leftexp{B}{\bm\omega}_{R/N} = [CB]^{T}\leftexp{C}{\hat{\bm h}_{c}} \dot\theta
 \end{equation}
 Note that this constant nominal spin is only for the case where the planet is visible and the planet-heading vector measurement is available.
 
@@ -57,7 +57,7 @@ If the spacecraft is to be brought to rest, $\bm\omega_{R/N} = \bm 0$, then $\do
 	\bm\omega_{B/R} = \bm\omega_{B/N} - \bm\omega_{R/N}
 \end{equation}
 
-Finally, the attitude guidance message must specify the inertial reference frame  acceleration vector.  This is set to zero as the roll about the planet heading is assumed to have a constant magnitude and inertial heading.
+Finally, the attitude guidance message must specify the inertial reference frame  acceleration vector.  This is set to zero as the roll about the commanded camera axis $\hat{\bm h}_{c}$ is assumed to have a constant magnitude and inertial heading.
 \begin{equation}
 	\dot{\bm \omega}_{R/N} = \bm 0
 \end{equation}
@@ -66,7 +66,7 @@ Finally, the attitude guidance message must specify the inertial reference frame
 Each valid image updates the saved inertial heading $\leftexp{N}{\bm h} = [CN]^{T}\leftexp{C}{\bm h}$ and the time of the last valid image.  If the current image is not valid, the saved heading is mapped back into the camera frame with the current attitude, $\leftexp{C}{\bm h} = [CB][BN]\leftexp{N}{\bm h}$, and used in the equations above.  The saved heading is discarded once {\tt timeOut} seconds have passed without a valid image.  A valid image is used immediately regardless of how long the previous image is past.
 
 \subsubsection{No planet Direction Vector Case}
- If $\Phi$ is less then the module parameter {\tt minUnitMag}, it is assumed that no good planet heading vector is available and the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.
+ No good planet heading vector is available if the current image is not valid and no saved heading exists, either because no valid image has been received yet or because {\tt timeOut} seconds have passed since the last valid image.  A valid image with an all-zero {\tt r\_BN\_C} vector is also treated as having no heading, as the saved inertial heading is then zero.  In these cases the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.  Note that the module parameter {\tt minUnitMag} is currently not used by the module, and no norm threshold is applied to $\bm h$.
 
  Further, if the planet is not visible, the module allows for a non-zero body rate to be prescribed.  This allows the spacecraft to engage in a constant rate tumble specified through the module configuration vector {\tt omega\_RN\_B}.  In this case, the tracking error rate is evaluated through
  \begin{equation}

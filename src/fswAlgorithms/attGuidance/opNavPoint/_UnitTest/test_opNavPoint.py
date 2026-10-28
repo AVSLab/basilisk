@@ -256,7 +256,8 @@ def opNavPointTestFunction(show_plots, case):
     return [testFailCount, ''.join(testMessages)]
 
 
-def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeasurement=False):
+def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeasurement=False,
+                               sigma_BN_drop=None):
     """Run ``opNavPoint`` and return the boresight-to-target angles of the reference attitude.
 
     The reference attitude implied by the output is :math:`[RN] = [BR]^T [BN]`, with
@@ -270,6 +271,12 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
         alignAxis_C (list): camera axis to point at the target, in camera components
         dropMeasurement (bool): if True, the update after the measurement at 0 s receives an invalid
             measurement so the stored inertial heading is used instead
+        sigma_BN_drop (list): body MRP attitude relative to the inertial frame used for the update after
+            the measurement at 0 s.  If None, ``sigma_BN`` is kept.  A different attitude makes the
+            stored heading depend on the inertial frame storage, since a heading stored in camera
+            components would no longer point at the target after the rotation.
+
+    Each angle is evaluated with the body attitude in effect at the corresponding update.
 
     Returns:
         numpy.ndarray: angle between the reference camera axis and the target heading for each update [rad]
@@ -315,20 +322,28 @@ def runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeas
     dataLog = module.attGuidanceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
+    if sigma_BN_drop is None:
+        sigma_BN_drop = sigma_BN
+    dcm_BN_drop = rbk.MRP2C(sigma_BN_drop)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(0)
     unitTestSim.ExecuteSimulation()
+    imuData.sigma_BN = list(sigma_BN_drop)
+    imuInMsg.write(imuData)
     if dropMeasurement:
         opNavData.valid = 0
         opNavData.r_BN_C = [0.0, 0.0, 0.0]  # [m]
-        opNavInMsg.write(opNavData)
+    else:
+        opNavData.r_BN_C = (dcm_CB @ dcm_BN_drop @ r_BN_N).tolist()  # [m]
+    opNavInMsg.write(opNavData)
     unitTestSim.ConfigureStopTime(testProcessRate)
     unitTestSim.ExecuteSimulation()
 
     heading_N = -r_BN_N / np.linalg.norm(r_BN_N)
     angles = []
-    for sigma_BR in dataLog.sigma_BR:
-        dcm_RN = rbk.MRP2C(sigma_BR).T @ dcm_BN
+    for sigma_BR, dcm_BN_update in zip(dataLog.sigma_BR, [dcm_BN, dcm_BN_drop]):
+        dcm_RN = rbk.MRP2C(sigma_BR).T @ dcm_BN_update
         cameraAxis_N = (dcm_CB @ dcm_RN).T @ np.array(alignAxis_C)
         cameraAxis_N = cameraAxis_N / np.linalg.norm(cameraAxis_N)
         angles.append(np.arctan2(np.linalg.norm(np.cross(cameraAxis_N, heading_N)),
@@ -353,11 +368,17 @@ def test_nonZeroCameraMounting(sigma_CB, sigma_BN, dropMeasurement):
 
     The principal rotation axis is computed in camera components and must be mapped to body
     components before it is written to ``sigma_BR``.  The check is performed both with a fresh
-    measurement and with the stored inertial heading after a dropped measurement.
+    measurement and with the stored inertial heading after a dropped measurement.  In the dropped
+    measurement case the body attitude is rotated to ``sigma_BN_drop`` between the measurement and
+    the dropped update, so a heading that is not stored in inertial components, or that is not
+    mapped back with the current ``[CN]``, would no longer point the camera axis at the target.
     """
     r_BN_N = [7000e3, -2000e3, 1000e3]  # [m]
     alignAxis_C = [0.0, 0.0, 1.0]
-    angles = runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeasurement)
+    # rotated attitude for the dropped update, different from every sigma_BN case
+    sigma_BN_drop = [0.1, 0.4, -0.2] if dropMeasurement else None
+    angles = runReferenceBoresightCheck(sigma_CB, sigma_BN, r_BN_N, alignAxis_C, dropMeasurement,
+                                        sigma_BN_drop)
     np.testing.assert_allclose(angles, 0.0, atol=1e-10,  # [rad]
                                err_msg="reference camera axis does not point at the target")
 
@@ -430,16 +451,18 @@ def test_savedHeadingTimeout(firstMeasurementTime):
     unitTestSim.AddModelToTask("unitTask", dataLog)
     unitTestSim.InitializeSimulation()
 
-    # valid images: the first one times out, the second one is followed by a third exactly timeOut later
-    validTimes = [firstMeasurementTime,
-                  firstMeasurementTime + 2 * timeOut,
-                  firstMeasurementTime + 3 * timeOut]  # [s]
-    endTime = validTimes[-1]  # [s]
-    times = np.arange(0.0, endTime + timeStep / 2, timeStep)  # [s]
-    for t in times:
-        opNavData.valid = 1 if t in validTimes else 0
+    # valid images, defined by integer update index to avoid floating point time comparisons: the first one
+    # times out, the second one is followed by a third exactly timeOut later
+    firstStep = round(firstMeasurementTime / timeStep)
+    timeOutSteps = round(timeOut / timeStep)
+    validSteps = [firstStep,
+                  firstStep + 2 * timeOutSteps,
+                  firstStep + 3 * timeOutSteps]
+    steps = range(validSteps[-1] + 1)
+    for step in steps:
+        opNavData.valid = 1 if step in validSteps else 0
         opNavInMsg.write(opNavData)
-        unitTestSim.ConfigureStopTime(mc.sec2nano(t))
+        unitTestSim.ConfigureStopTime(step * mc.sec2nano(timeStep))
         unitTestSim.ExecuteSimulation()
 
     heading_C = -np.array(r_BN_C) / np.linalg.norm(r_BN_C)
@@ -447,11 +470,78 @@ def test_savedHeadingTimeout(firstMeasurementTime):
     eHat = eHat / np.linalg.norm(eHat)
     sigmaTrack = eHat * np.tan(np.arccos(heading_C[2]) / 4.0)
 
-    for t, sigma_BR, omega_RN_B in zip(times, dataLog.sigma_BR, dataLog.omega_RN_B):
-        lastValidTime = max(v for v in validTimes if v <= t) if t >= validTimes[0] else None  # [s]
-        tracking = lastValidTime is not None and t - lastValidTime < timeOut
+    for step, sigma_BR, omega_RN_B in zip(steps, dataLog.sigma_BR, dataLog.omega_RN_B):
+        t = step * timeStep  # [s]
+        lastValidStep = max((v for v in validSteps if v <= step), default=None)
+        tracking = lastValidStep is not None and step - lastValidStep < timeOutSteps
         sigmaTrue = sigmaTrack if tracking else np.zeros(3)
         omegaTrue = np.zeros(3) if tracking else np.array(omega_RN_B_Search)
+        np.testing.assert_allclose(sigma_BR, sigmaTrue, atol=1e-12,
+                                   err_msg=f"sigma_BR mismatch at t = {t} s")
+        np.testing.assert_allclose(omega_RN_B, omegaTrue, atol=1e-12,  # [rad/s]
+                                   err_msg=f"omega_RN_B mismatch at t = {t} s")
+
+
+def test_defaultTimeOut():
+    """Verify valid images are used when ``timeOut`` is left at its default value of zero.
+
+    Valid and invalid images alternate, starting with a valid image at 0 s and including consecutive
+    valid and consecutive invalid images.  With ``timeOut = 0`` each valid image is used once, on the
+    update where it arrives, and the saved heading is discarded on the next update without a valid
+    image, so it is never reused.  Every valid update must therefore produce the tracking error of the
+    image with a zero ``omega_RN_B``, and every invalid update must produce a zero ``sigma_BR`` with the
+    search rate.
+    """
+    timeStep = 1.0  # [s]
+    omega_RN_B_Search = [0.0, 0.0, 0.1]  # [rad/s]
+    omega_BN_B = [0.01, 0.50, -0.2]  # [rad/s]
+    r_BN_C = [1.0, 1.0, 0.0]  # [m]
+    # image validity flag for each update, starting at 0 s
+    validFlags = [1, 0, 1, 1, 0, 0, 1, 0]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", mc.sec2nano(timeStep)))
+
+    module = opNavPoint.opNavPoint()
+    module.ModelTag = "opNavPoint"
+    module.alignAxis_C = [0.0, 0.0, 1.0]
+    module.smallAngle = 0.01 * mc.D2R  # [rad]
+    module.omega_RN_B = omega_RN_B_Search
+    unitTestSim.AddModelToTask("unitTask", module)
+
+    opNavData = messaging.OpNavMsgPayload()
+    opNavData.r_BN_C = r_BN_C
+    opNavInMsg = messaging.OpNavMsg().write(opNavData)
+    imuData = messaging.NavAttMsgPayload()
+    imuData.omega_BN_B = omega_BN_B
+    imuInMsg = messaging.NavAttMsg().write(imuData)
+    camInMsg = messaging.CameraConfigMsg().write(messaging.CameraConfigMsgPayload())
+    module.opnavDataInMsg.subscribeTo(opNavInMsg)
+    module.imuInMsg.subscribeTo(imuInMsg)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
+
+    dataLog = module.attGuidanceOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", dataLog)
+    unitTestSim.InitializeSimulation()
+
+    for step, valid in enumerate(validFlags):
+        opNavData.valid = valid
+        opNavInMsg.write(opNavData)
+        unitTestSim.ConfigureStopTime(step * mc.sec2nano(timeStep))
+        unitTestSim.ExecuteSimulation()
+
+    heading_C = -np.array(r_BN_C) / np.linalg.norm(r_BN_C)
+    eHat = np.cross(heading_C, [0.0, 0.0, 1.0])
+    eHat = eHat / np.linalg.norm(eHat)
+    sigmaTrack = eHat * np.tan(np.arccos(heading_C[2]) / 4.0)
+
+    assert len(dataLog.sigma_BR) == len(validFlags)
+    for step, (valid, sigma_BR, omega_RN_B) in enumerate(zip(validFlags, dataLog.sigma_BR,
+                                                             dataLog.omega_RN_B)):
+        t = step * timeStep  # [s]
+        sigmaTrue = sigmaTrack if valid else np.zeros(3)
+        omegaTrue = np.zeros(3) if valid else np.array(omega_RN_B_Search)
         np.testing.assert_allclose(sigma_BR, sigmaTrue, atol=1e-12,
                                    err_msg=f"sigma_BR mismatch at t = {t} s")
         np.testing.assert_allclose(omega_RN_B, omegaTrue, atol=1e-12,  # [rad/s]

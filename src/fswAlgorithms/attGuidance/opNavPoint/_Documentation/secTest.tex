@@ -8,7 +8,7 @@ The mathematics in this module are straight forward and can be tested in a serie
 Here a check is performed where the planet heading vector measurement $\bm h$ has a non-zero length and is not aligned with $\hat{\bm h}_{c}$.
 
 \subsection{Check 2}
-The planet direction vector $\bm h$ is given a norm value that is less than {\tt minUnitMag}.  In this case the attitude tracking $\bm\sigma_{B/R}$ should be set to zero.  Further, the body rate errors are now evaluated relative to a fixed $\bm\omega_{R/N}$ vector.
+The planet direction vector measurement is marked as not valid and no previous valid image is available, so no saved heading exists.  In this case the attitude tracking $\bm\sigma_{B/R}$ should be set to zero.  Further, $\bm\omega_{R/N}$ is set to the prescribed search rate {\tt omega\_RN\_B} and the body rate errors are evaluated as $\bm\omega_{B/R} = \bm\omega_{B/N} - \bm\omega_{R/N}$.
 
 \subsection{Check 3}
 The planet direction vector $\bm h$ aligned with $\hat{\bm h}_{c}$.  In this case the attitude tracking $\bm\sigma_{B/R}$ should be set to zero.  Further, the body rate errors are simply the inertial body angular rates.
@@ -17,13 +17,16 @@ The planet direction vector $\bm h$ aligned with $\hat{\bm h}_{c}$.  In this cas
 The planet direction vector is not given. The spacecraft is given a search rate as a sole command.
 
 \subsection{Non-Zero Camera Mounting}
-The camera frame is rotated relative to the body frame by several non-zero $\bm\sigma_{C/B}$ values and the spacecraft is placed at several attitudes $\bm\sigma_{B/N}$.  The reference attitude implied by the output, $[RN] = [BR]^{T}[BN]$, must point $\hat{\bm h}_{c}$ at the target.  The check is repeated after the measurement is dropped, so that the stored inertial heading is used.  The test {\tt test\_nonZeroCameraMounting} requires the boresight-to-target angle to be below $10^{-10}$ rad.
+The camera frame is rotated relative to the body frame by several non-zero $\bm\sigma_{C/B}$ values and the spacecraft is placed at several attitudes $\bm\sigma_{B/N}$.  The reference attitude implied by the output, $[RN] = [BR]^{T}[BN]$, must point $\hat{\bm h}_{c}$ at the target.  The check is repeated after the measurement is dropped, so that the stored inertial heading is used.  In this case the spacecraft is rotated to a different attitude $\bm\sigma_{B/N}$ between the measurement and the dropped update, so the stored heading only points $\hat{\bm h}_{c}$ at the target if it is kept in inertial components and mapped back with the current $[CN] = [CB][BN]$.  The boresight-to-target angle of each update is evaluated with the attitude in effect at that update.  The test {\tt test\_nonZeroCameraMounting} requires the boresight-to-target angle to be below $10^{-10}$ rad.
 
 \subsection{Antiparallel Heading}
 The target is placed directly behind $\hat{\bm h}_{c}$ for zero and non-zero $\bm\sigma_{C/B}$, with $\hat{\bm h}_{c}$ set to both $\hat{\bm c}_{3}$ and $\hat{\bm c}_{1}$ to exercise both cross products of the 180 degree fallback axis.  The test {\tt test\_antiparallelHeading} requires the boresight-to-target angle of the reference attitude to be below $10^{-7}$ rad.
 
 \subsection{Saved Heading Timeout}
 Valid images are provided at selected times and invalid images otherwise, with the first image at 0 s and at 3 s.  The saved heading must produce the tracking error of the last image for less than {\tt timeOut} seconds after it, after which the module must output the search rate.  An image that arrives exactly {\tt timeOut} seconds after the previous one must be used on that update.  The test {\tt test\_savedHeadingTimeout} checks $\bm\sigma_{B/R}$ and $\bm\omega_{R/N}$ to $10^{-12}$.
+
+\subsection{Default Timeout}
+The module is run with {\tt timeOut} left at its default value of zero, while valid and invalid images alternate starting with a valid image at 0 s.  In this case each valid image is used once, on the update where it arrives, and the saved heading is discarded on the next update without a valid image, so it is never reused.  Every valid update must output the tracking error of the image with a zero $\bm\omega_{R/N}$, and every invalid update must output a zero $\bm\sigma_{B/R}$ with the search rate.  The test {\tt test\_defaultTimeOut} checks $\bm\sigma_{B/R}$ and $\bm\omega_{R/N}$ to $10^{-12}$.
 
 
 
