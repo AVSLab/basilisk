@@ -23,6 +23,13 @@ The output ``sigma_BR`` is built from this body frame axis, so the implied refer
 the body frame axis, while ``eHat180_C`` holds the fallback axis, in camera frame components, used when the target
 is nearly opposite ``alignAxis_C``.
 
+Saved Heading
+-------------
+Each valid image saves the target heading in inertial frame components.  While no valid image is available, the
+saved heading is mapped back into the camera frame with the current attitude and used for guidance until
+``timeOut`` seconds have passed since the last valid image; the module then switches to the search rate
+``omega_RN_B``.  A new valid image is always used immediately.
+
 Message Connection Descriptions
 -------------------------------
 The following diagram and table list all the module input and output messages.  The module message connection is

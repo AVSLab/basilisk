@@ -62,6 +62,9 @@ Finally, the attitude guidance message must specify the inertial reference frame
 	\dot{\bm \omega}_{R/N} = \bm 0
 \end{equation}
 
+\subsubsection{Saved Planet Direction Vector}
+Each valid image updates the saved inertial heading $\leftexp{N}{\bm h} = [CN]^{T}\leftexp{C}{\bm h}$ and the time of the last valid image.  If the current image is not valid, the saved heading is mapped back into the camera frame with the current attitude, $\leftexp{C}{\bm h} = [CB][BN]\leftexp{N}{\bm h}$, and used in the equations above.  The saved heading is discarded once {\tt timeOut} seconds have passed without a valid image.  A valid image is used immediately regardless of how long the previous image is past.
+
 \subsubsection{No planet Direction Vector Case}
  If $\Phi$ is less then the module parameter {\tt minUnitMag}, it is assumed that no good planet heading vector is available and the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.
 
