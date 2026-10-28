@@ -20,6 +20,8 @@
 #ifndef _FAULT_DETECTION_H_
 #define _FAULT_DETECTION_H_
 
+#include <stdint.h>
+
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
@@ -42,6 +44,8 @@ typedef struct
     double faultMode;     //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with
                           //!< secondary), 1 merges the measurements if they are both valid and similar.
     double sigmaFault;    //!< What is the sigma multiplication factor when comparing measurements
+    uint64_t lastWriteTime[2]; //!< [ns] Last consumed write time for primary (0) and secondary (1)
+    int hasReadMessage[2];     //!< Whether each input has been consumed since reset
 
     // added for bsk
     BSKLogger* bskLogger; //!< BSK Logging

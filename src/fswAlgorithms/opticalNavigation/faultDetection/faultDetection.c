@@ -42,6 +42,10 @@ void Reset_faultDetection(FaultDetectionData* configData, uint64_t callTime, int
 {
     (void)callTime;
     (void)moduleID;
+    for (size_t i = 0; i < 2; i++) {
+        configData->lastWriteTime[i] = 0; // [ns]
+        configData->hasReadMessage[i] = 0;
+    }
     // check that the opnave messages are linked
     if (!OpNavMsg_C_isLinked(&configData->navMeasPrimaryInMsg)) {
         _bskError(configData->bskLogger, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");
@@ -80,9 +84,24 @@ void Update_faultDetection(FaultDetectionData* configData, uint64_t callTime, in
     /* zero the output message */
     opNavMsgOut = OpNavMsg_C_zeroMsgPayload();
 
-    /*! - read input opnav messages */
-    opNavIn1 = OpNavMsg_C_read(&configData->navMeasPrimaryInMsg);
-    opNavIn2 = OpNavMsg_C_read(&configData->navMeasSecondaryInMsg);
+    /* Apply the existing fault modes only to newly written inputs. */
+    OpNavMsg_C* inputs[2] = { &configData->navMeasPrimaryInMsg, &configData->navMeasSecondaryInMsg };
+    OpNavMsgPayload* inputBuffers[2] = { &opNavIn1, &opNavIn2 };
+    int hasNewInput = 0;
+    for (size_t i = 0; i < 2; i++) {
+        *inputBuffers[i] = OpNavMsg_C_zeroMsgPayload();
+        uint64_t writeTime = OpNavMsg_C_timeWritten(inputs[i]);
+        if (OpNavMsg_C_isWritten(inputs[i]) &&
+            (!configData->hasReadMessage[i] || writeTime > configData->lastWriteTime[i])) {
+            *inputBuffers[i] = OpNavMsg_C_read(inputs[i]);
+            configData->lastWriteTime[i] = writeTime;
+            configData->hasReadMessage[i] = 1;
+            hasNewInput = 1;
+        }
+    }
+    if (!hasNewInput) {
+        return;
+    }
     /*! - read dcm messages */
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     attInfo = NavAttMsg_C_read(&configData->attInMsg);

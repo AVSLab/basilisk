@@ -20,6 +20,8 @@
 #ifndef _PIXEL_LINE_CONVERTER_H_
 #define _PIXEL_LINE_CONVERTER_H_
 
+#include <stdint.h>
+
 #include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/OpNavCirclesMsg_C.h"
@@ -39,7 +41,9 @@ typedef struct
     NavAttMsg_C attInMsg;                //!< attitude input message
     OpNavCirclesMsg_C circlesInMsg;      //!< circles input message
 
-    int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
+    int32_t planetTarget;   //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
+    uint64_t lastWriteTime; //!< [ns] Last consumed circles message write time
+    int hasReadMessage;     //!< Whether a circles message has been consumed since reset
 
     BSKLogger* bskLogger; //!< BSK Logging
 } PixelLineConvertData;

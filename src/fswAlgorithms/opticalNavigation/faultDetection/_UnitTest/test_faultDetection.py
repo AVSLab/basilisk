@@ -152,8 +152,11 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-    # The result isn't going to change with more time. The module will continue to produce the same result
-    unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(0)  # [ns]
+    unitTestSim.ExecuteSimulation()
+    op1InMsg.write(inputPrimary, testProcessRate)
+    op2InMsg.write(inputSecondary, testProcessRate)
+    unitTestSim.ConfigureStopTime(testProcessRate)  # [ns]
     unitTestSim.ExecuteSimulation()
 
     # Truth Vlaues
