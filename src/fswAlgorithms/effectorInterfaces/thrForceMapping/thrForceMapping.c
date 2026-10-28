@@ -229,7 +229,7 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     }
 
     configData->outTorqAngErr = computeTorqueAngErr(
-        D, LrReduced_B, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 16*/
+        D, LrReduced_B, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 21 */
     maxFractUse = 0.0;
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
         all thruster forces values to not exceed saturation.
@@ -375,7 +375,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
         /*! - evaluate the angle between the requested and thruster implemented torque vector */
         v3Normalize(tauActual_B, tauActual_B);
         if (v3Dot(BLr_hat_B, tauActual_B) < 1.0) {
-            returnAngle = safeAcos(v3Dot(BLr_hat_B, tauActual_B)); /* Eq 16 */
+            returnAngle = safeAcos(v3Dot(BLr_hat_B, tauActual_B)); /* Eq. 21 */
         }
     }
     return (returnAngle);
