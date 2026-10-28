@@ -15,7 +15,7 @@ The module has the following parameter that can be configured:
 \begin{itemize}
 	\item {\tt alignAxis\_C} -- [REQUIRED] This 3x1 array contains the commanded camera-relative vector $\hat{\bm h}_{c}$ that is to be aligned with the planet heading $\bm h$
 
-	\item {\tt minUnitMag} -- This double contains the minimum norm value of $\bm h$ such that a tracking error attitude solution $\bm\sigma_{B/R}$ is still computed.  If the norm is less than this, then $\bm\sigma_{B/R}$ is set to zero.  The default {\tt minUnitMag} value is zero.
+	\item {\tt minUnitMag} -- This double is currently not used by the module and is only kept for compatibility.  No norm threshold is applied to $\bm h$.  The default {\tt minUnitMag} value is zero.
 
 	\item {\tt omega\_RN\_B} -- This vectors specifies the body-fixed search rate to rotate and search for the sun if no good target vector is visible.  Default value is a zero vector.
 
@@ -23,6 +23,6 @@ The module has the following parameter that can be configured:
 
 	\item {\tt timeOut} -- Time in seconds for which the inertial heading of the last valid image is reused while no new valid image is available.  The saved heading is discarded once this time is reached, and a new valid image is always used immediately.  Default value is zero, which disables reuse of past images.
 
-	\item {\tt opNavAxisSpinRate} -- Specifies the nominal spin rate about the planet heading vector.  This is only used if a heading solution is available.  Default value is zero bring the spacecraft to rest.
+	\item {\tt opNavAxisSpinRate} -- Specifies the nominal spin rate, in rad/s, about the commanded camera axis {\tt alignAxis\_C}.  This is only used if a heading solution is available.  Default value is zero, which brings the spacecraft to rest.
 
 \end{itemize}
