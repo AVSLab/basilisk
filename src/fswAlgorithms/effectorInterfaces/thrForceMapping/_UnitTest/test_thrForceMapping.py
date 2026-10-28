@@ -531,17 +531,17 @@ def runCubeRcsMapping(controlAxes, Lr_B, maxThrust, angErrThresh):
 @pytest.mark.parametrize("saturated", [False, True])
 def test_controlAxesOrdering(controlAxes, saturated):
     """
-    Validate that the torque angle error and the saturation scaling decision do not depend on the order or
-    orientation of the control axes.
+    Validate the torque angle error for several controlled subspaces and the saturation scaling decision
+    for alternative orthonormal bases of the full three-dimensional space.
 
     The test uses 8 RCS thrusters and checks that
 
     - the produced torque matches the requested torque on the control axes, :math:`[C][D]\\bm F = [C]\\bm L_r`,
-    - ``outTorqAngErr`` is the angle between :math:`[C]^T [C] \\bm L_r` and the produced torque :math:`[D]\\bm F`
-      in body frame components,
-    - with saturated thrusters and ``angErrThresh`` between the true angle error and the angle error obtained by
-      comparing control axis components with body frame components, the forces are not scaled and match the
-      forces found with the identity control axes.
+    - ``outTorqAngErr`` is the angle between :math:`[C]^T [C] \\bm L_r` and the saturation-clipped torque
+      :math:`[D]\\bm F_{\\mathrm{clip}}` in body frame components,
+    - for the three-axis cases, with saturated thrusters and ``angErrThresh`` between the true angle error
+      and the angle error obtained by comparing control axis components with body frame components, the
+      forces are not scaled and match the forces found with the identity control axes.
     """
     Lr_B = np.array([0.3, -0.5, 0.8])  # [Nm]
     C = np.array(controlAxes, dtype=float)
