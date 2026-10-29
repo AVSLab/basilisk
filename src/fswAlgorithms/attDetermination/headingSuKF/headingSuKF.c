@@ -211,7 +211,7 @@ void Update_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_
     if (configData->putInCameraFrame == 1) {
         double dcm_CB[3][3], tempCovar[3][3];
         MRP2C(cameraConfig.sigma_CB, dcm_CB);
-        m33tMultV3(dcm_CB, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_C);
+        m33MultV3(dcm_CB, opnavOutputBuffer.r_BN_B, opnavOutputBuffer.r_BN_C);
         m33MultM33(dcm_CB, RECAST3X3 configData->covar, tempCovar);
         m33MultM33t(tempCovar, dcm_CB, RECAST3X3 opnavOutputBuffer.covar_C);
     }
