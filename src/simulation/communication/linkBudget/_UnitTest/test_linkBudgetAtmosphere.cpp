@@ -20,6 +20,7 @@
 #include "simulation/communication/linkBudget/linkBudget.h"
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -230,4 +231,39 @@ INSTANTIATE_TEST_SUITE_P(Geometry,
                          LinkBudgetRayPath,
                          ::testing::Combine(::testing::Values(0.0, 1500.0),              // [m]
                                             ::testing::Values(10.0, 30.0, 60.0, 90.0))); // [deg]
+
+/*! @brief Generate elevations around the existing rounded sine threshold.
+ *  @return Elevations in radians, including the horizon and both sides of the clamp.
+ */
+std::vector<double> clampElevations()
+{
+    const double clampElevation = std::asin(0.0872); // [rad] About 5.002545 degrees, not exactly 5 degrees.
+    const double offset = 1.0e-4 * D2R;              // [rad]
+    return {
+        0.0,      2.0 * D2R, 4.9 * D2R, 5.0 * D2R, clampElevation - offset, clampElevation, clampElevation + offset,
+        5.1 * D2R
+    }; // [rad]
+}
+
+class LinkBudgetElevationClamp : public ::testing::TestWithParam<std::tuple<double, double>>
+{};
+
+/*! @brief Verify the clamp plateau and the unclamped cosecant path with an exact synthetic atmosphere. */
+TEST_P(LinkBudgetElevationClamp, PreservesRoundedSineThreshold)
+{
+    const auto [altitude, elevation] = GetParam(); // [m, rad]
+    LinkBudget model;
+    const double actual = LinkBudgetTestAccess::syntheticLoss(model, altitude, elevation, true); // [dB]
+    const double specificAttenuation = 0.01;                                                     // [dB/km]
+    const double minimumSine = 0.0872; // [-] Independent expectation: preserve the existing production threshold.
+    const double pathLength = (topAltitude - altitude) * 1e-3 / std::max(std::sin(elevation), minimumSine); // [km]
+    const double expected = specificAttenuation * pathLength;                                               // [dB]
+    const double tolerance = 1.0e-9;                                                                        // [dB]
+    EXPECT_NEAR(actual, expected, tolerance);
+}
+
+INSTANTIATE_TEST_SUITE_P(Geometry,
+                         LinkBudgetElevationClamp,
+                         ::testing::Combine(::testing::Values(0.0, 1500.0), // [m]
+                                            ::testing::ValuesIn(clampElevations())));
 } // namespace

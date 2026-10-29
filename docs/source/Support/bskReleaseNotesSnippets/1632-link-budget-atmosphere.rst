@@ -1,3 +1,4 @@
 - Fixed :ref:`linkBudget` atmospheric slant attenuation by computing each layer's elevation from the ground ray invariant before accumulating its loss (GitHub issue 1632).
 - Fixed :ref:`linkBudget` atmospheric layer generation to cover the ground-to-100 km interval with finite exponential spacing and midpoint sampling, eliminating overflow and reducing the sea-level lookup table from 70,979 to 931 cells (GitHub issue 1632).
 - Split :ref:`linkBudget` atmospheric integration cells at temperature and pressure formula boundaries to reduce absolute attenuation errors near gas absorption lines (GitHub issue 1632).
+- Added a reproducible fine-grid reference utility and quantitative elevation-clamp regression tests for :ref:`linkBudget`, preserving its existing per-layer sine threshold of 0.0872.
