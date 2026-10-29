@@ -318,17 +318,46 @@ Atmospheric Integration Validation
 Native regression tests check complete altitude coverage, positive cell widths
 and midpoint sampling, including ground stations immediately below, at and above
 every atmospheric boundary. No cell may cross a temperature or pressure formula
-boundary.
+boundary. Constant-elevation synthetic atmospheres also check the analytic loss
+at the horizon, below the elevation clamp, at its precise rounded threshold and
+immediately above it, for ground altitudes of 0 m and 1500 m.
 
 Python regression tests use the real ``oxygen.json`` and ``waterVapour.json``
 absorption tables to compare absolute attenuation with a uniform 0.5 m midpoint
 reference integration. The references use the current atmospheric and spectral
 formulas; a separate 1 m calculation agrees within 0.00001 dB. Cases cover ground
-altitudes of 0 m and 1500 m, elevations of 5.1, 10 and 90 degrees, and both input
+altitudes of 0 m and 1500 m, elevations of 2, 4.9, 5, 5.1, 10 and 90 degrees, and both input
 antenna orders. Absolute tolerances are 0.0001 dB at 10 GHz, 0.05 dB at 60 GHz,
 and 0.02 dB at 118.750334 GHz and 183.310091 GHz. These checks measure integration
 accuracy for the existing atmosphere model; they do not independently validate
 its physical fidelity to the ITU recommendations.
+
+Reproducing the Reference Values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From the repository root, use a Python environment containing Basilisk and NumPy::
+
+   python src/simulation/communication/linkBudget/_UnitTest/Support/generate_atmosphere_references.py --check
+
+The utility uses ``DataFile`` and ``get_path`` to locate the registered oxygen
+and water-vapor tables on all supported platforms. It prints each table's source
+and SHA-256 hash, the NumPy version, the 1 m and 0.5 m losses and their absolute
+differences, and replacement ``ATMOSPHERE_ABSOLUTE_CASES`` entries. It exits with
+an error if any convergence difference reaches 0.00001 dB. With ``--check``, it
+also requires the same case matrix as the committed tests and agreement with
+every committed reference within 0.00000001 dB. Omitting ``--check`` generates
+values for review without comparing to the committed table. Neither mode edits
+the test file; normal regression tests use the committed values without running
+the fine-grid calculation.
+
+The utility independently evaluates uniform midpoint cells and reproduces the
+current atmosphere and spectral formulas from ``ItuRefAtmosphere.cpp`` and
+``linkBudget.cpp``, including their pressure branches, altitude conversion and
+water-vapor floor. It preserves the per-layer sine clamp of 0.0872. The source
+records the originating PR commit so formula changes can be reviewed explicitly
+when maintaining the references. Updating the production formulas requires
+reviewing the reference formulas and expected values together; regeneration
+alone does not establish physical correctness.
 
 Elevation Angle Constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -341,7 +370,17 @@ The atmospheric slant path integration uses the relationship:
 
 where :math:`\phi(h)` is the elevation angle at height :math:`h`. As :math:`\phi \to 0^\circ`, the denominator approaches zero, causing numerical issues.
 
-To ensure numerical stability, the module enforces a **minimum elevation angle of :math:`5^\circ`** for atmospheric attenuation calculations. This corresponds to a maximum air mass factor of approximately 11.5.
+To ensure numerical stability, each layer uses
+:math:`\max(\sin\phi(h), 0.0872)` in the denominator. The existing rounded
+constant corresponds to an elevation of approximately 5.002545 degrees and a
+maximum local air mass factor of approximately 11.46789. This behavior is
+preserved; the constant is not replaced by the exact sine of 5 degrees.
+
+The ground ray invariant still uses the actual ground elevation. Clamping is
+applied separately to each layer after computing that layer's refracted
+elevation. Upper layers can leave the clamped region, so total losses for
+different ground elevations below the threshold need not be equal. The clamp is
+a numerical limit and does not establish physical validity for grazing paths.
 
 .. list-table:: Elevation Angle and Air Mass Factor
    :widths: 25 25 50

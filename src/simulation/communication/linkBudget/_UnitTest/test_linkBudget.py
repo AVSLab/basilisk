@@ -37,6 +37,9 @@ simpleAntenna dependencies.
 
 """
 
+from pathlib import Path
+import runpy
+
 import numpy as np
 import pytest
 
@@ -1870,32 +1873,86 @@ def test_linkBudget_atmospheric_attenuation_elevation_dependence():
 # and the real oxygen.json and waterVapour.json tables. Repeating with 1 m cells
 # changes every reference by less than 1e-5 dB. These values validate integration
 # accuracy for the current atmosphere model, not its physical fidelity to ITU.
+# Reproduce and check with Support/generate_atmosphere_references.py --check.
+# The 2.0, 4.9 and 5.0 degree cases exercise the existing per-layer sine clamp
+# of 0.0872; 5.1 degrees is just above it. Real-atmosphere losses below the
+# threshold need not be equal because some upper layers remain unclamped.
 ATMOSPHERE_ABSOLUTE_CASES = [
+    (0.0, 10.0e9, 2.0, 0.73913091955873, 0.0001),
+    (0.0, 10.0e9, 4.9, 0.695863611338296, 0.0001),
+    (0.0, 10.0e9, 5.0, 0.686015971785629, 0.0001),
     (0.0, 10.0e9, 5.1, 0.674405627870, 1e-4),
     (0.0, 10.0e9, 10.0, 0.365788633708, 1e-4),
     (0.0, 10.0e9, 90.0, 0.0651973107843, 1e-4),
+    (1500.0, 10.0e9, 2.0, 0.530626295795731, 0.0001),
+    (1500.0, 10.0e9, 4.9, 0.494780705281705, 0.0001),
+    (1500.0, 10.0e9, 5.0, 0.487639189337712, 0.0001),
     (1500.0, 10.0e9, 5.1, 0.479550654765, 1e-4),
     (1500.0, 10.0e9, 10.0, 0.262189337581, 1e-4),
     (1500.0, 10.0e9, 90.0, 0.0469195476589, 1e-4),
+    (0.0, 60.0e9, 2.0, 2417.86624090375, 0.05),
+    (0.0, 60.0e9, 4.9, 2148.54549142479, 0.05),
+    (0.0, 60.0e9, 5.0, 2118.41165918122, 0.05),
     (0.0, 60.0e9, 5.1, 2086.84987158436, 0.05),
     (0.0, 60.0e9, 10.0, 1187.36152377926, 0.05),
     (0.0, 60.0e9, 90.0, 216.734190702406, 0.05),
+    (1500.0, 60.0e9, 2.0, 2181.73496740041, 0.05),
+    (1500.0, 60.0e9, 4.9, 1935.05649363071, 0.05),
+    (1500.0, 60.0e9, 5.0, 1907.8226152706, 0.05),
     (1500.0, 60.0e9, 5.1, 1879.43704686702, 0.05),
     (1500.0, 60.0e9, 10.0, 1069.87294242870, 0.05),
     (1500.0, 60.0e9, 90.0, 195.325379591458, 0.05),
+    (0.0, 118.750334e9, 2.0, 1170.13249602723, 0.02),
+    (0.0, 118.750334e9, 4.9, 975.850387897437, 0.02),
+    (0.0, 118.750334e9, 5.0, 965.099284676145, 0.02),
     (0.0, 118.750334e9, 5.1, 954.234001602237, 0.02),
     (0.0, 118.750334e9, 10.0, 597.776772083896, 0.02),
     (0.0, 118.750334e9, 90.0, 115.789794121404, 0.02),
+    (1500.0, 118.750334e9, 2.0, 1146.79554135026, 0.02),
+    (1500.0, 118.750334e9, 4.9, 955.916545174959, 0.02),
+    (1500.0, 118.750334e9, 5.0, 945.269417354956, 0.02),
     (1500.0, 118.750334e9, 5.1, 934.570016278601, 0.02),
     (1500.0, 118.750334e9, 10.0, 584.233509932637, 0.02),
     (1500.0, 118.750334e9, 90.0, 112.967089115958, 0.02),
+    (0.0, 183.310091e9, 2.0, 1772.51330373514, 0.02),
+    (0.0, 183.310091e9, 4.9, 1723.90198331452, 0.02),
+    (0.0, 183.310091e9, 5.0, 1699.66523659699, 0.02),
     (0.0, 183.310091e9, 5.1, 1668.96647637460, 0.02),
     (0.0, 183.310091e9, 10.0, 880.711914717179, 0.02),
     (0.0, 183.310091e9, 90.0, 154.784577120573, 0.02),
+    (1500.0, 183.310091e9, 2.0, 1037.36082890744, 0.02),
+    (1500.0, 183.310091e9, 4.9, 1006.12352730235, 0.02),
+    (1500.0, 183.310091e9, 5.0, 991.737401072793, 0.02),
     (1500.0, 183.310091e9, 5.1, 973.934564759451, 0.02),
     (1500.0, 183.310091e9, 10.0, 515.251071114997, 0.02),
     (1500.0, 183.310091e9, 90.0, 90.6712643381242, 0.02),
 ]
+
+
+@pytest.mark.parametrize(
+    "generated_loss", [np.nan, np.inf, -np.inf],
+    ids=["nan", "positive_infinity", "negative_infinity"],
+)
+def test_atmosphere_reference_checker_rejects_nonfinite(generated_loss):
+    """Reject nonfinite generated loss when the checker is called directly.
+
+    Use otherwise matching references so rejection must come from the invalid
+    result. Calling the helper bypasses the command-line entry point's earlier
+    finiteness checks.
+
+    :param generated_loss: Nonfinite generated attenuation in decibels.
+    """
+    utility_path = (
+        Path(__file__).resolve().parent / "Support"
+        / "generate_atmosphere_references.py"
+    )
+    check_references = runpy.run_path(str(utility_path))[
+        "check_committed_references"
+    ]
+    results = {tuple(case[:3]): case[3] for case in ATMOSPHERE_ABSOLUTE_CASES}
+    results[next(iter(results))] = generated_loss
+    with pytest.raises(ValueError, match="Reference mismatch"):
+        check_references(results)
 
 
 @pytest.mark.parametrize(
@@ -1911,8 +1968,9 @@ def test_atmospheric_attenuation_absolute(
 
     Cases cover an atmospheric window, two oxygen absorption bands and a
     water-vapor absorption line, at sea level and elevated ground. Zenith and
-    low-elevation rays exercise curvature and refraction. Absolute tolerances
-    bound midpoint integration error; ratios would hide a shared loss bias.
+    low-elevation rays exercise curvature, refraction and the existing rounded
+    sine clamp of 0.0872. Absolute tolerances bound midpoint integration error;
+    ratios would hide a shared loss bias.
 
     :param ground_altitude: Ground antenna altitude in meters.
     :param frequency: Common antenna frequency in hertz.
@@ -2774,6 +2832,13 @@ if __name__ == "__main__":
                 lambda args=case, first=ground_first:
                     test_atmospheric_attenuation_absolute(*args, first),
             ))
+
+    for generated_loss in [np.nan, np.inf, -np.inf]:  # [dB]
+        atm_tests.append((
+            f"Reference Checker Nonfinite Loss ({generated_loss})",
+            lambda loss=generated_loss:
+                test_atmosphere_reference_checker_rejects_nonfinite(loss),
+        ))
 
     passed_atm = 0
     failed_atm = 0

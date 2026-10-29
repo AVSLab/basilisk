@@ -6,4 +6,6 @@
   and samples atmospheric properties at layer midpoints. Cells are split at the atmosphere's temperature and
   pressure formula boundaries to reduce absolute attenuation errors near absorption lines. The resulting
   sea-level grid uses 931 cells instead of 70,979. Absolute attenuation regression tests use real oxygen and
-  water-vapor absorption tables and a converged fine-grid reference.
+  water-vapor absorption tables and a converged fine-grid reference. A committed reference-generation utility
+  reproduces the 1 m versus 0.5 m convergence comparison. Quantitative tests cover the existing per-layer sine
+  clamp of 0.0872, including low elevations and both sides of its threshold; clamp behavior is unchanged.
