@@ -24,6 +24,26 @@
 
 
 %include "stdint.i"
+%include "architecture/messaging/pythonSourceOwner.ih"
+
+// Preserve the original Python argument for the Message member setter below.
+%typemap(in) Message * (void *pointer = nullptr, PyObject *messageOwner_$1 = nullptr) {
+    int result = SWIG_ConvertPtr($input, &pointer, $descriptor, $disown | %convertptr_flags);
+    if (!SWIG_IsOK(result)) {
+        %argument_fail(result, "$type", $symname, $argnum);
+    }
+    $1 = reinterpret_cast<$1_ltype>(pointer);
+    messageOwner_$1 = $input;
+}
+
+// Python output assignment connects and retains a gateway; native assignment copies a value.
+%typemap(memberin, fragment="bsk_python_source_owner_init") Message {
+    if (!$input) {
+        SWIG_exception_fail(SWIG_ValueError, "A message gateway cannot be None");
+    }
+    $1.redirectTo(*$input, messageOwner_$input,
+                  &_bsk_readfunctor_acquire, &_bsk_readfunctor_release);
+}
 
 %define ARRAYASLIST(type, fromfunc, asfunc)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {

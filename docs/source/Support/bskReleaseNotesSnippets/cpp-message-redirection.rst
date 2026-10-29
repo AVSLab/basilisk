@@ -1,0 +1,1 @@
+- Fixed C++ output-message redirection through Python assignment, restoring shared OpNav circles measurements and retaining gateway storage for producers, readers, and recorders, including inputs connected through module registration methods. Native C++ copies and moves of redirected messages take independent snapshots without consuming the gateway payload.

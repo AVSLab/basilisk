@@ -214,6 +214,9 @@ def retainRecorderConstructorSource(recorder, source, messageType):
 
 def _retention_target(source):
     """Return the Python owner that must stay alive for ``source`` to be valid."""
+    storage_owner = getattr(type(source), "_storage_owner", None)
+    if storage_owner is not None:
+        return storage_owner(source)
     handle = _owner_handle_of(source)
     if handle is None:
         return source
