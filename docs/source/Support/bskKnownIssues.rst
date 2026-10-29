@@ -4,8 +4,19 @@
 Basilisk Known Issues
 =====================
 
+This page records issues affecting tagged Basilisk releases, including their
+fixes and workarounds. Issues introduced and fixed entirely within a beta cycle
+need no entry if they never affected a tagged release. Pending entries describe
+fixes for issues in tagged releases or limitations that will ship in the next
+tagged release.
+
 Version |release|
 -----------------
+
+.. Add new entries under bskKnownIssuesSnippets; see its README.md.
+   Existing entries below remain in place until this release is finalized.
+
+.. include:: bskKnownIssuesSnippets/_compiled_latest.rst
 
 - :ref:`thrForceMapping` could return positive commands during off-pulsing
   because its second unconstrained solve could reverse a selected thruster's

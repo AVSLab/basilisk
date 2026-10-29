@@ -27,13 +27,17 @@ clean :
 	-rm -rf $(SOURCEDIR)/examples
 
 release-notes-snippets:
-	$(PYTHON) source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py
+	$(PYTHON) source/_ext/rst_snippets.py release-notes
+
+known-issues-snippets:
+	$(PYTHON) source/_ext/rst_snippets.py known-issues
+
+snippets:
+	$(PYTHON) source/_ext/rst_snippets.py
 
 # Optional benchmark target for a clean Release build with MuJoCo enabled.
 comparison-runtime-tables:
 	$(PYTHON) generateDynamicsComparisonRuntimeTables.py
-
-html: release-notes-snippets
 
 view:
 	    # works on macOS
@@ -42,7 +46,7 @@ view:
 $(SOURCEDIR)/%.rst: FORCE
 	@$(SPHINXBUILD) -b html $(SPHINXOPTS) $(O) "$(SOURCEDIR)" "$(BUILDDIR)/html" "$@"
 
-.PHONY: help Makefile FORCE
+.PHONY: help Makefile FORCE snippets release-notes-snippets known-issues-snippets
 FORCE:
 
 # Catch-all target: route all unknown targets to Sphinx using the new
