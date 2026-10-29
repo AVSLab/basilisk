@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ * Distributed under the ISC license; see LICENSE.
+ */
+
+%fragment("bsk_python_source_owner", "header") %{
+#include <atomic>
+// --- issue #676: GIL-safe Python keep-alive callbacks installed on ReadFunctor ------------
+// A ReadFunctor stores an opaque owner token (the subscribed message's PyObject*) plus these
+// two callbacks. They are invoked from C++ (ReadFunctor copy/move/destruction), which can run
+// on a thread that does not hold the GIL and even during interpreter shutdown. Check that the
+// runtime can safely acquire the GIL before adjusting a reference count. The atexit callback
+// covers every supported Stable ABI level; Py_IsFinalizing() adds a direct check when exposed
+// by the active C API. Python reference counting stays in this SWIG layer;
+// messaging.h stays Python-free.
+static std::atomic<bool> _bsk_python_shutting_down{false};
+static bool _bsk_python_runtime_is_usable() {
+    if (!Py_IsInitialized()) return false;
+    if (_bsk_python_shutting_down.load(std::memory_order_acquire)) return false;
+#if PY_VERSION_HEX >= 0x030D0000 && (!defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x030D0000)
+    if (Py_IsFinalizing()) return false;
+#endif
+    return true;
+}
+static void _bsk_readfunctor_acquire(void* handle) {
+    if (!_bsk_python_runtime_is_usable()) return;
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    Py_XINCREF((PyObject*)handle);
+    PyGILState_Release(gstate);
+}
+static void _bsk_readfunctor_release(void* handle) {
+    if (!_bsk_python_runtime_is_usable()) return;
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    Py_XDECREF((PyObject*)handle);
+    PyGILState_Release(gstate);
+}
+static PyObject* _bsk_mark_python_shutting_down(PyObject*, PyObject*) {
+    _bsk_python_shutting_down.store(true, std::memory_order_release);
+    Py_RETURN_NONE;
+}
+static PyMethodDef _bsk_shutdown_method = {
+    "_bsk_mark_python_shutting_down", _bsk_mark_python_shutting_down, METH_NOARGS, nullptr
+};
+%}
+
+// Fragments also follow typemaps inherited through SWIG imports.
+%fragment("bsk_python_source_owner_init", "init", fragment="bsk_python_source_owner") %{
+{
+    PyObject* atexit = PyImport_ImportModule("atexit");
+    PyObject* callback = atexit ? PyCFunction_New(&_bsk_shutdown_method, nullptr) : nullptr;
+    PyObject* registered = callback ? PyObject_CallMethod(atexit, "register", "O", callback) : nullptr;
+    Py_XDECREF(callback);
+    Py_XDECREF(atexit);
+    if (!registered) {
+#if SWIG_VERSION >= 0x040500
+        return -1;  // SWIG 4.5 uses a multi-phase module initialization function.
+#else
+        return nullptr;
+#endif
+    }
+    Py_DECREF(registered);
+}
+%}

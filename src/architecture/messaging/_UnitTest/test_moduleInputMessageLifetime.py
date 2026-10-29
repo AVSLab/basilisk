@@ -161,6 +161,52 @@ def test_configuration_retains_and_releases_sources(case, release):
         assert replacement_ref() is None
 
 
+@pytest.mark.parametrize("release", ["reassign", "destroy"])
+@pytest.mark.parametrize("case", [case for case in CASES if case[4] == "SCStatesMsg"],
+                         ids=lambda case: case[0])
+def test_configuration_retains_redirected_gateway(case, release):
+    """Registered readers retain gateway storage after producer reassignment or deletion."""
+    from Basilisk.simulation import spacecraft
+
+    module_name, class_name, method, field, _ = case
+    module = importlib.import_module("Basilisk.simulation." + module_name)
+    consumer = getattr(module, class_name)()
+    producer = spacecraft.Spacecraft()
+    gateway = messaging.SCStatesMsg()
+    gateway_ref = weakref.ref(gateway)
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]
+    timestamp = 10  # [ns]
+    module_id = producer.moduleID
+    producer.scStateOutMsg = gateway
+    producer.scStateOutMsg.write(payload, timestamp, module_id)
+    _add_source(consumer, method, producer.scStateOutMsg)
+    del gateway
+
+    if release == "reassign":
+        producer.scStateOutMsg = messaging.SCStatesMsg()
+        producer.scStateOutMsg.write(messaging.SCStatesMsgPayload(), timestamp, module_id)
+    else:
+        del producer
+    gc.collect()
+    # Check ownership before reading, so a regression cannot access freed storage.
+    assert gateway_ref() is not None
+    reader = _reader(consumer, field, 0)
+    np.testing.assert_array_equal(reader().r_BN_N, payload.r_BN_N)
+    assert reader.timeWritten() == timestamp
+    assert reader.moduleID() == module_id
+
+    # The reader must remain attached to live gateway storage, not a payload snapshot.
+    payload.r_BN_N = [4.0, 5.0, 6.0]  # [m]
+    next_timestamp = 20  # [ns]
+    gateway_ref().write(payload, next_timestamp, module_id)
+    np.testing.assert_array_equal(reader().r_BN_N, payload.r_BN_N)
+    assert reader.timeWritten() == next_timestamp
+    reader.unsubscribe()
+    gc.collect()
+    assert gateway_ref() is None
+
+
 def test_copied_reader_outlives_module():
     """A copied native reader retains the source after its module is destroyed."""
     from Basilisk.simulation import eclipse
