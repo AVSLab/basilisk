@@ -206,6 +206,7 @@ def run(TheScenario, runLog):
         runLog.split("/")[-2] + "/" + runLog.split("/")[-1] + "/"
     )
     TheScenario.get_DynModel().vizInterface.noDisplay = True
+    # TheScenario.get_DynModel().vizInterface.liveStream = True
 
     # Modes: "None", "-directComm", "-noDisplay"
     # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
