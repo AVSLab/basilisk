@@ -45,7 +45,7 @@ releases newest first, including the development version where applicable.
 .. Hidden compatibility targets used by sidebar.js to forward old bookmarks
    directly to the corresponding release pages.
 
-.. container:: bsk-release-bookmarks
+.. container:: bsk-history-bookmarks
 
    - .. _version-release:
 

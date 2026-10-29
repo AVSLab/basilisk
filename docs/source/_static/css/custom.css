@@ -158,8 +158,8 @@ a.el:visited {
     color: var(--bsk-secondary-text);
 }
 
-/* Old release fragments are redirect targets, not a second visible index. */
-.bsk-release-bookmarks {
+/* Old history fragments forward to version pages without duplicating the index. */
+.bsk-history-bookmarks {
     display: none;
 }
 

@@ -185,10 +185,10 @@ running Sphinx.
 Rendering a Single Documentation Page
 -------------------------------------
 To quickly preview one documentation page while editing it, run ``make`` with
-the page path from the ``docs`` folder. For example, to render the known-issues
-page use::
+the page path from the ``docs`` folder. For example, to render the current
+known-issues series page use::
 
-    make source/Support/bskKnownIssues.rst
+    make source/Support/bskKnownIssues/2.13.rst
 
 This builds only the requested source page into ``docs/build/html`` and avoids
 regenerating the auto-created module documentation source files. This mode is
