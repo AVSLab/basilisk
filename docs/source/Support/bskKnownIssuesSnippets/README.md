@@ -2,7 +2,8 @@
 
 This folder is the source of truth for contributing known-issue entries.
 Known issues cover issues affecting tagged Basilisk releases, including their
-fixes and workarounds. New entries no longer require editing `bskKnownIssues.rst`.
+fixes and workarounds. New entries do not require editing the version-series
+pages under `bskKnownIssues/` or the `bskKnownIssues.rst` index.
 
 ## When an entry is required
 
@@ -45,8 +46,10 @@ The blank source lines between bullets do not add spacing to the rendered list.
 
 Sphinx compiles both snippet collections automatically before reading pages.
 This includes `make html`, `make.bat html`, direct Sphinx builds, and single-page
-previews. The known-issues page includes the generated
-`bskKnownIssuesSnippets/_compiled_latest.rst` under `Version |release|`.
+previews. The active series page, currently `bskKnownIssues/2.13.rst`, includes
+the generated `bskKnownIssuesSnippets/_compiled_latest.rst` under
+`Version |release|`. Its relative include is
+`.. include:: ../bskKnownIssuesSnippets/_compiled_latest.rst`.
 The generated file is ignored by Git; commit the authored snippets instead.
 
 Full documentation builds fail if either nonempty collection has no active
@@ -80,20 +83,37 @@ limitation affecting a tagged release must remain documented where users can
 find it. Consuming a snippet does not mean the issue was resolved.
 
 Before tagging a release, compile and review its known-issue entries, then
-replace the active include in `bskKnownIssues.rst` with the reviewed content
-under a literal version and release date. Preserve relevant existing inline
-entries in that section. Remove provisional entries for issues introduced and
-fixed entirely within the beta cycle if they never affected a tagged release.
+replace the active include in `bskKnownIssues/2.X.rst` with the reviewed content
+under a literal version and release date, newest first. Group longer lists under
+the topic headings and ordering in `../Developer/bskReleaseGuide.rst`, adding
+more specific subheadings within large topics when useful. Keep each entry in
+one topic with its impact, workaround, and references together; short patch
+lists can remain simple bullets. Add a permanent label
+such as `bsk-known-issues-2-13-0` above the finalized section, and retain existing
+version labels and heading anchors. Remove provisional entries for issues
+introduced and fixed entirely within the beta cycle if they never affected a
+tagged release.
 Delete consumed snippets only after their content is saved in the version
 history. Preserve this README and the underscore-prefixed sample. Builds never
 archive or delete snippets.
 
-For the next development cycle, create a new `Version |release|` section above
-the finalized section and place the include there. Keep exactly one active
+For the next development cycle in the same series, create a new
+`Version |release|` section above the finalized section and place the include
+there. For a new series, create its page and add it at the top of the
+`bskKnownIssues.rst` index. Move the `bsk-known-issues-current` label to the new
+active section so the development bookmark follows it. Keep exactly one active
 include for known issues, independently of the release-note include.
 
-For a maintenance release, consume only entries for the fixes on that branch.
-Do not clear snippets for newer development work.
+For a maintenance release, place the dated patch section in the matching series
+page; for example, `2.12.1` belongs above `2.12.0` in `2.12.rst`. On the
+maintenance branch, move `bsk-known-issues-current` to the newly finalized patch
+section, keeping only one copy of that label. Preserve permanent version labels
+on older sections so their links still work. The legacy `#version-release`
+bookmark will then open the latest patch. When forwarding patch history to
+`develop`, leave its current label on the active beta section.
+
+Consume only entries for the fixes on that branch. Do not clear snippets for
+newer development work. Keep the `1.x-and-earlier.rst` archive last in the index.
 
 ## Updating an existing issue
 
@@ -122,4 +142,5 @@ changing their text. Their fixed `2.13-NNN-` filename prefixes preserve the
 original order, including references to neighboring entries. These prefixes
 are only for this one-time migration: do not renumber them or continue the
 sequence for new entries. Use the issue-based or descriptive filenames above
-for new snippets. Earlier tagged-release sections remain in `bskKnownIssues.rst`.
+for new snippets. Earlier tagged-release sections are preserved in the
+version-series pages under `bskKnownIssues/`.

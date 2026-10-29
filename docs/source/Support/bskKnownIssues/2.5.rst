@@ -1,0 +1,25 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.5 Known Issues
+========================
+
+.. _bsk-known-issues-2-5-0:
+
+Version 2.5.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
+- If the :ref:`simIncludeRW` python tool was provided a specific ``Js`` value, it was being falsely converted
+  before being assigned.  This is now corrected.
+- If ``supportData/EphemerisData/de430.bsp`` is not present the current build system will download the file
+  from JPL server.  However, if the download is interrupted, then the next build will find the file and
+  not attempt to re-download it.  This is now fixed in the current version where the file is only
+  stored in the ``supportData`` folder if the download was complete.
+- :ref:`vizInterface` was not able to save to a binary data file.
+  This is now fixed in the current release.
+- :ref:`vizInterface` was not saving the Vizard settings to the binary file.  Fixed now.
+- Installing Basilisk 2.4.0 while ``packaging<22`` is installed can lead to an incompatibility and raise a
+  "TypeError: ``canonicalize_version()`` got an unexpected keyword argument ``strip_trailing_zero``" error.
+  Newer versions of Basilisk now upgrade ``packaging>=22`` to solve this issue.
+- :ref:`simIncludeRW` didn't allow ``fCoulomb``, ``fStatic`` and ``cViscous`` to be
+  specified even if a prebuilt RW data set is used. This is corrected in the current release.

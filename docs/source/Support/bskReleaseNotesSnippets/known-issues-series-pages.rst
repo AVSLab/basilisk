@@ -1,0 +1,1 @@
+- Split known issues into version-series pages, preserving the historical entries and existing bookmarks, and organized the 2.12 and 2.11 entries by topic. Contributors continue using the same known-issue snippets; maintainers finalize tagged releases in the matching series page and group longer lists under topic headings.

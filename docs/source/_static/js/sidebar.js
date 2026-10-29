@@ -73,10 +73,10 @@
                 const target = document.getElementById(
                     decodeURIComponent(window.location.hash.slice(1))
                 );
-                const releaseLink = target?.closest(".bsk-release-bookmarks")
+                const historyLink = target?.closest(".bsk-history-bookmarks")
                     ? target.querySelector("a[href]") : null;
-                if (releaseLink) {
-                    window.location.replace(releaseLink.href);
+                if (historyLink) {
+                    window.location.replace(historyLink.href);
                     return;
                 }
             } catch (_) {

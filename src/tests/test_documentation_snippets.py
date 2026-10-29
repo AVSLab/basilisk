@@ -237,14 +237,27 @@ def test_snippets_render_as_one_compact_list(snippet_project, folder):
 @pytest.mark.docsIntegration
 @pytest.mark.parametrize("folder", COMPILER.SNIPPET_FOLDERS.values())
 def test_sphinx_validates_snippets_across_release_cycles(snippet_project, folder):
-    """Archive a release, reject unpublished new snippets, and restore the active include."""
+    """Preserve bookmarks across tags, patches, and a new development cycle."""
     source, output = snippet_project
     snippets = source / "Support" / folder
     generated = snippets / "_compiled_latest.rst"
-    include = f".. include:: Support/{folder}/_compiled_latest.rst\n"
+    include = f".. include:: ../{folder}/_compiled_latest.rst\n"
+    prefix = (
+        "bsk-release" if folder == "bskReleaseNotesSnippets" else "bsk-known-issues"
+    )
+    current_label = f".. _{prefix}-current:\n\n"
     title = "History\n=======\n\n"
-    active = "Version |release|\n-----------------\n\n" + include + "\n"
-    page = source / "index.rst"
+    active = current_label + "Version |release|\n-----------------\n\n" + include + "\n"
+    series_path = Path("Support") / folder.removesuffix("Snippets") / "2.13.rst"
+    _write(source / "index.rst", (
+        "Documentation\n=============\n\n.. toctree::\n\n"
+        f"   {series_path.with_suffix('').as_posix()}\n\n"
+        ".. container:: bsk-history-bookmarks\n\n"
+        "   .. raw:: html\n\n      <div id=\"version-release\">\n\n"
+        f"   :ref:`Current version <{prefix}-current>`\n\n"
+        "   .. raw:: html\n\n      </div>\n"
+    ))
+    page = source / series_path
     _write(page, title + active)
     _write(snippets / "issue.rst", "- Archived issue.\n")
     result = _build_snippet_project(source, output)
@@ -253,17 +266,58 @@ def test_sphinx_validates_snippets_across_release_cycles(snippet_project, folder
     # Finalization removes the active include and consumes the authored snippet.
     # Examples and comments mentioning an include must not count as publication.
     archived = (
+        f".. _{prefix}-2-13-0:\n\n"
         "Version 2.13.0\n--------------\n\n"
         + generated.read_text(encoding="utf-8")
         + "\n.. Reserved for the next development cycle:\n\n   " + include
         + "\n.. code-block:: rst\n\n   " + include
     )
-    _write(page, title + archived)
+    _write(page, title + current_label + archived)
     (snippets / "issue.rst").unlink()
+    index = source / "index.rst"
+    _write(index, index.read_text(encoding="utf-8") + (
+        f"\n:ref:`Original release <{prefix}-2-13-0>`\n"
+    ))
     result = _build_snippet_project(source, output)
     assert result.returncode == 0, result.stdout + result.stderr
     assert generated.read_text(encoding="utf-8") == ""
-    assert "Archived issue." in (output / "index.html").read_text(encoding="utf-8")
+    assert "Archived issue." in (
+        output / series_path.with_suffix(".html")
+    ).read_text(encoding="utf-8")
+
+    # A maintenance branch starts at the tag. Compile and consume only its
+    # patch snippet, moving the current label and keeping the original label.
+    patch_snippet = snippets / "patch.rst"
+    _write(patch_snippet, "- Patch workaround.\n")
+    COMPILER.compile_snippets(snippets)
+    patch = (
+        f".. _{prefix}-2-13-1:\n\n"
+        "Version 2.13.1\n--------------\n\n"
+        + generated.read_text(encoding="utf-8") + "\n"
+    )
+    _write(page, title + current_label + patch + archived)
+    patch_snippet.unlink()
+    result = _build_snippet_project(source, output)
+    assert result.returncode == 0, result.stdout + result.stderr
+    rendered = (output / series_path.with_suffix(".html")).read_text(encoding="utf-8")
+    patch_section = rendered.split('<section id="version-2-13-1">')[1].split(
+        '</section>'
+    )[0]
+    original_section = rendered.split('<section id="version-2-13-0">')[1].split(
+        '</section>'
+    )[0]
+    assert f'id="{prefix}-current"' in patch_section
+    assert f'id="{prefix}-2-13-1"' in patch_section
+    assert "Patch workaround." in patch_section
+    assert f'id="{prefix}-2-13-0"' in original_section
+    assert f'id="{prefix}-current"' not in original_section
+    index_html = (output / "index.html").read_text(encoding="utf-8")
+    bookmark = index_html.split('<div id="version-release">')[1].split('</div>')[0]
+    html_path = series_path.with_suffix(".html").as_posix()
+    assert f'href="{html_path}#{prefix}-current"' in bookmark
+    assert f'href="{html_path}#{prefix}-2-13-0"' in index_html
+    assert generated.read_text(encoding="utf-8") == ""
+    archived = patch + archived
 
     # Only an excluded snippet changes: validation must run even when no page
     # is outdated, and must keep failing on a repeated build with no changes.
@@ -274,12 +328,23 @@ def test_sphinx_validates_snippets_across_release_cycles(snippet_project, folder
         assert "Nonempty snippet collections are not included" in result.stderr
         assert f"Support/{folder}/_compiled_latest.rst" in result.stderr
 
+    config = source / "conf.py"
+    _write(config, config.read_text(encoding="utf-8").replace("2.13.0b0", "2.13.2b0"))
     _write(page, title + active + archived)
     result = _build_snippet_project(source, output)
     assert result.returncode == 0, result.stdout + result.stderr
-    rendered = (output / "index.html").read_text(encoding="utf-8")
+    rendered = (output / series_path.with_suffix(".html")).read_text(encoding="utf-8")
     assert rendered.count("Archived issue.") == 1
+    assert rendered.count("Patch workaround.") == 1
     assert rendered.count("New beta issue.") == 1
+    beta_section = rendered.split('<section id="version-release">')[1].split(
+        '</section>'
+    )[0]
+    assert "Version 2.13.2b0" in beta_section
+    assert f'id="{prefix}-current"' in beta_section
+    assert rendered.count(f'id="{prefix}-current"') == 1
+    assert f'id="{prefix}-2-13-0"' in rendered
+    assert f'id="{prefix}-2-13-1"' in rendered
 
 
 @pytest.mark.ciSkip
