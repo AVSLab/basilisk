@@ -1,0 +1,1 @@
+- Fixed :ref:`headingSuKF` using the inverse camera mounting rotation for ``r_BN_C``. Camera-frame headings now use the body-to-camera rotation defined by ``sigma_CB``; regression tests cover aligned cameras and 90-degree mountings about two axes.

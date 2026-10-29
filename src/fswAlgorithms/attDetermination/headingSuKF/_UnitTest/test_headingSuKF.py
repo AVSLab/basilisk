@@ -21,6 +21,7 @@ import math
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import headingSuKF
 from Basilisk.utilities import SimulationBaseClass, macros
@@ -98,6 +99,53 @@ def test_all_heading_kf(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = StateUpdateSunLine(show_plots)
     assert testResults < 1, testMessage
+
+
+# Camera MRPs and expected camera-frame unit vectors are dimensionless.
+@pytest.mark.parametrize("sigma_cb,expected_direction_c", [
+    pytest.param([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], id="identity"),
+    pytest.param([math.tan(math.pi / 8), 0.0, 0.0], [0.0, -1.0, 0.0], id="x90"),
+    pytest.param([0.0, math.tan(math.pi / 8), 0.0], [1.0, 0.0, 0.0], id="y90"),
+])
+def test_camera_output_frame(sigma_cb, expected_direction_c):
+    """Rotate a known body heading into camera coordinates for distinct mountings.
+
+    The quarter-turn cases use analytic expected directions to distinguish the
+    body-to-camera rotation from its inverse. The identity case checks the
+    aligned-camera behavior, with the optional camera input explicitly connected.
+    """
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    process.addTask(sim.CreateNewTask("task", macros.sec2nano(1.0)))  # [s]
+    model = headingSuKF.headingSuKF()
+    setupFilterData(model)
+    model.noiseSF = 1.0  # [-]
+
+    distance = 1000.0  # [m]
+    payload = messaging.OpNavMsgPayload()
+    payload.valid = 1
+    payload.r_BN_B = [0.0, 0.0, -distance]  # [m]
+    payload.covar_B = np.eye(3).ravel().tolist()  # [m^2]
+    source = messaging.OpNavMsg().write(payload)
+    model.opnavDataInMsg.subscribeTo(source)
+    camera = messaging.CameraConfigMsgPayload()
+    camera.sigma_CB = sigma_cb
+    camera_source = messaging.CameraConfigMsg().write(camera)
+    model.cameraConfigInMsg.subscribeTo(camera_source)
+    recorder = model.opnavDataOutMsg.recorder()
+    sim.AddModelToTask("task", model)
+    sim.AddModelToTask("task", recorder)
+
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)  # [ns]
+    sim.ExecuteSimulation()
+
+    tolerance = 1e-10  # [m]
+    assert recorder.valid[0] == 1
+    np.testing.assert_allclose(recorder.r_BN_B[0], payload.r_BN_B, rtol=0, atol=tolerance)
+    np.testing.assert_allclose(recorder.r_BN_C[0], distance * np.array(expected_direction_c),
+                               rtol=0, atol=tolerance)
+
 
 def heading_utilities_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
