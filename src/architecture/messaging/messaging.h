@@ -529,6 +529,34 @@ class Message : public MessageBase
     ReadFunctor<messageType> addSubscriber();
     //! -- request write rights.
     WriteFunctor<messageType> addAuthor();
+    /**
+     * @brief Redirect this message's reads and writes to a gateway message.
+     * @param target Gateway whose storage receives subsequent writes.
+     * @param owner Optional owner of target storage, borrowed on entry.
+     * @param acquire Callback to retain owner; required when owner is supplied.
+     * @param release Callback to release owner; required when owner is supplied.
+     * @note Configure redirection before subscribing to this output. The target
+     *       must outlive the redirected message and its subscribers unless its
+     *       owner is retained. An existing target owner propagates to subscribers.
+     */
+    void redirectTo(Message& target,
+                    void* owner = nullptr,
+                    void (*acquire)(void*) = nullptr,
+                    void (*release)(void*) = nullptr)
+    {
+        if (this->pointers.payload != target.pointers.payload) {
+            auto reader = target.addSubscriber();
+            if (owner && !reader.getSourceHandle()) {
+                acquire(owner);
+                reader.setSource(owner, acquire, release);
+            }
+            this->read = std::move(reader);
+            this->write = target.addAuthor();
+            this->setPointerData(target.pointers.header, target.pointers.payload);
+        }
+    }
+    /** @return Borrowed storage owner for the SWIG keep-alive bridge, or nullptr. */
+    void* getSourceHandle() const { return this->read.getSourceHandle(); }
     //! for plain ole c modules
     messageType* subscribeRaw(MsgHeader** msgPtr);
 
@@ -541,16 +569,16 @@ class Message : public MessageBase
     messageType zeroMsgPayload = {}; //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
-    bool isLinked() { return this->header.isLinked; };
+    bool isLinked() { return static_cast<MsgHeader*>(this->pointers.header)->isLinked; };
 
     //! Return the memory size of the payload, be careful about dynamically sized things
     uint64_t getPayloadSize() { return sizeof(messageType); };
 
     //! Return the raw address of the message payload struct
-    uintptr_t getPayloadAddress() { return reinterpret_cast<uintptr_t>(&payload); }
+    uintptr_t getPayloadAddress() { return reinterpret_cast<uintptr_t>(this->pointers.payload); }
 
     //! Return the raw address of the message header struct
-    uintptr_t getHeaderAddress() { return reinterpret_cast<uintptr_t>(&header); }
+    uintptr_t getHeaderAddress() { return reinterpret_cast<uintptr_t>(this->pointers.header); }
 };
 
 template<typename messageType>
@@ -570,9 +598,11 @@ template<typename messageType>
 Message<messageType>& Message<messageType>::operator=(const Message& other)
 {
     if (this != &other) {
-        this->payload = other.payload;
-        this->header = other.header;
+        this->payload = *static_cast<const messageType*>(other.pointers.payload);
+        this->header = *static_cast<const MsgHeader*>(other.pointers.header);
         this->zeroMsgPayload = other.zeroMsgPayload;
+        this->read = ReadFunctor<messageType>(&this->payload, &this->header);
+        this->write = WriteFunctor<messageType>(&this->payload, &this->header);
         this->setPointerData(&this->header, &this->payload);
     }
     return *this;
@@ -589,9 +619,15 @@ template<typename messageType>
 Message<messageType>& Message<messageType>::operator=(Message&& other)
 {
     if (this != &other) {
+        // A redirected message borrows its gateway's payload; moving must not consume it.
+        if (other.pointers.payload != &other.payload) {
+            return *this = static_cast<const Message&>(other);
+        }
         this->payload = std::move(other.payload);
-        this->header = std::move(other.header);
+        this->header = other.header;
         this->zeroMsgPayload = std::move(other.zeroMsgPayload);
+        this->read = ReadFunctor<messageType>(&this->payload, &this->header);
+        this->write = WriteFunctor<messageType>(&this->payload, &this->header);
         this->setPointerData(&this->header, &this->payload);
     }
     return *this;
@@ -600,7 +636,7 @@ Message<messageType>& Message<messageType>::operator=(Message&& other)
 template<typename messageType>
 ReadFunctor<messageType> Message<messageType>::addSubscriber()
 {
-    this->header.isLinked = 1;
+    static_cast<MsgHeader*>(this->pointers.header)->isLinked = 1;
     return this->read;
 }
 
@@ -613,16 +649,16 @@ WriteFunctor<messageType> Message<messageType>::addAuthor()
 template<typename messageType>
 messageType* Message<messageType>::subscribeRaw(MsgHeader** msgPtr)
 {
-    *msgPtr = &this->header;
-    this->header.isLinked = 1;
-    return &this->payload;
+    messageType* payloadPointer = this->getMsgPointers(msgPtr);
+    (*msgPtr)->isLinked = 1;
+    return payloadPointer;
 }
 
 template<typename messageType>
 messageType* Message<messageType>::getMsgPointers(MsgHeader** msgPtr)
 {
-    *msgPtr = &this->header;
-    return &this->payload;
+    *msgPtr = static_cast<MsgHeader*>(this->pointers.header);
+    return static_cast<messageType*>(this->pointers.payload);
 }
 
 /*! Keep a time history of messages accessible to users from python */

@@ -257,7 +257,7 @@ def _render_read_functor_namespace():
     """Render the generated ``ReadFunctor`` Python helpers for execution."""
 
     template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
-    start = template.index("            def subscribeTo(self, source):")
+    start = template.index("            def _install_keepalive(self, source):")
     end = template.index("        %}", start)
     read_functor_methods = template[start:end]
     read_functor_methods = read_functor_methods.replace("messageType ## _C", "CustomMsg_C")
@@ -268,7 +268,8 @@ def _render_read_functor_namespace():
     namespace = {}
     class_source = "\n".join([
         "class CustomMsg:",
-        "    pass",
+        "    def _storage_owner(self):",
+        "        return self",
         "",
         "class OtherMsg:",
         "    pass",
@@ -281,7 +282,7 @@ def _render_read_functor_namespace():
         "    def __subscribe_to(self, source):",
         "        self.subscribed_to = source",
         "",
-        "    def _install_keepalive(self, source):",
+        "    def _set_source_owner(self, source):",
         "        self.keepalive_source = source",
         "",
         "    def __is_subscribed_to(self, source):",
@@ -324,7 +325,7 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
 def test_keepalive_callbacks_skip_python_finalization():
     """Keep-alive callbacks do not acquire the GIL while Python is finalizing."""
 
-    template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
+    template = (NEW_MESSAGING_TEMPLATE.parent / "pythonSourceOwner.ih").read_text(encoding="utf-8")
 
     finalizing_guard = (
         "#if PY_VERSION_HEX >= 0x030D0000 && "
@@ -333,9 +334,9 @@ def test_keepalive_callbacks_skip_python_finalization():
     assert finalizing_guard in template
     assert "if (Py_IsFinalizing()) return false;" in template
     assert "_bsk_python_shutting_down.load(std::memory_order_acquire)" in template
-    assert "_bsk_atexit.register(_bsk_mark_python_shutting_down)" in template
+    assert 'PyObject_CallMethod(atexit, "register", "O", callback)' in template
     assert template.count("if (!_bsk_python_runtime_is_usable()) return;") == 2
-    assert "_bsk_readfunctor_acquire(source);" in template
+    assert "_bsk_readfunctor_acquire(source);" in NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
 
 
 def test_generated_interface_hides_read_functor_ownership_operations(tmp_path):
