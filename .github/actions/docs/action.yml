@@ -37,6 +37,7 @@ runs:
           tests/test_generated_documentation_sync.py \
           tests/test_module_catalog.py \
           tests/test_scenario_documentation_navigation.py \
+          tests/test_documentation_snippets.py \
           -m docsIntegration --error-for-skips --timeout=300 -v
     - name: Test documentation search ranking
       shell: bash
@@ -57,6 +58,5 @@ runs:
     - name: Compile docs
       shell: bash
       run: |
-        python3 docs/source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py
         make -C docs html SPHINXOPTS="-W"
         echo "DOCS_HTML=${{ inputs.html-dir }}" >> "$GITHUB_ENV"

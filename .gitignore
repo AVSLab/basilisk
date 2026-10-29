@@ -16,6 +16,7 @@ docs/source/externalTools/*
 docs/source/examples/*
 docs/source/supportData.rst
 docs/source/Support/bskReleaseNotesSnippets/_compiled_latest.rst
+docs/source/Support/bskKnownIssuesSnippets/_compiled_latest.rst
 src/tests/scenarios/data
 bsk-dev-env/
 bin/

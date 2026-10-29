@@ -91,6 +91,9 @@ single_page_docname = _normalize_single_page_docname(
     os.environ.get("BSK_DOCS_SINGLE_PAGE", "")
 ) or _single_page_docname_from_cli()
 
+# A single-page preview may intentionally omit both snippet consumers.
+bsk_snippets_check_includes = not bool(single_page_docname)
+
 if single_page_docname:
     print(f"Basilisk docs single-page mode: {single_page_docname}")
 
@@ -187,6 +190,7 @@ extensions = [
     'breathe',
     'doxygen_cache',
     'generated_documentation',
+    'rst_snippets',
     'scenario_navigation',
     'module_catalog',
     'module_examples',
@@ -256,10 +260,11 @@ exclude_patterns = [
     # Internal helpers and generated result artifacts are not documentation pages.
     'examples/dynamicsComparison/_runtimeTable.rst',
     'examples/dynamicsComparison/results/**',
-    # Release note snippets are included in the active version-series page and
-    # should not be treated as standalone documentation pages.
+    # Snippets are included in their parent pages, not standalone documents.
     'Support/bskReleaseNotesSnippets/*.rst',
     'Support/bskReleaseNotesSnippets/*.md',
+    'Support/bskKnownIssuesSnippets/*.rst',
+    'Support/bskKnownIssuesSnippets/*.md',
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.

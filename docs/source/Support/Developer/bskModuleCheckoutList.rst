@@ -135,3 +135,14 @@ Update Release Notes
 --------------------
 Follow ``docs/source/Support/bskReleaseNotesSnippets/README.md`` for when a
 release-note snippet is required and how snippet files should be formatted.
+
+Known-issue entries cover issues affecting tagged releases. Follow
+``docs/source/Support/bskKnownIssuesSnippets/README.md`` for fixes, changes,
+or documentation of these issues and their workarounds. An issue introduced
+and fixed within the same beta cycle needs no known-issue entry if no tagged
+release was affected. Document unresolved issues that will ship in the next
+tagged release before tagging. Release-note requirements still apply separately.
+
+Update an existing pending entry when revising the same issue, including inline
+entries in the current version during migration. Add a snippet for a newly
+documented issue affecting a tagged release or a follow-up to published history.

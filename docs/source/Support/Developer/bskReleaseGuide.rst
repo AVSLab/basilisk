@@ -107,10 +107,12 @@ release:
    containing the active
    ``.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst`` directive.
    Move the ``bsk-release-current`` label to this section. Keep only one active
-   snippet include in the documentation so notes appear once.
+   release-note snippet include in the documentation so notes appear once.
 #. In ``bskKnownIssues.rst``, change the completed release heading to its
    literal version and create a new ``Version |release|`` section above it for
-   the new beta cycle.
+   the new beta cycle. Place
+   ``.. include:: bskKnownIssuesSnippets/_compiled_latest.rst`` in that new
+   section, keeping exactly one active known-issue include.
 #. Open a PR from the beta branch to ``develop`` and wait for CI to pass before
    merging.
 #. After merging, manually run the ``Nightly Wheels`` workflow on ``develop``
@@ -207,15 +209,27 @@ Finalize the Release Notes and Known Issues
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normal PRs contribute release-note snippets under
-``docs/source/Support/bskReleaseNotesSnippets``. Maintainers gather, review,
-and place the finalized notes in the appropriate version-series RST file;
-the snippet compiler does not assign notes to releases. At release time:
+``docs/source/Support/bskReleaseNotesSnippets`` and known-issue snippets under
+``docs/source/Support/bskKnownIssuesSnippets``. Follow each folder's README
+for when entries are required and how to format them. Maintainers gather,
+review, and place finalized release notes in the appropriate version-series
+RST file and known issues in ``bskKnownIssues.rst``. Both collections use the
+same compiler; it does not assign entries to releases or delete snippets.
+
+Known issues cover issues affecting tagged releases. An issue introduced and
+fixed by a commit within the same beta cycle does not need a known-issue entry
+if it never affected a tagged release. An issue discovered during beta
+development that also affects a tagged release still needs an entry. Document
+unresolved issues that will ship in the upcoming tagged release before tagging.
+Release-note requirements apply separately.
+
+At release time:
 
 #. Compile the current snippets:
 
    .. code-block:: bash
 
-      make -C docs release-notes-snippets
+      make -C docs snippets
 
 #. Collect and edit the notes for the release. Put them in
    ``docs/source/Support/bskReleaseNotes/2.X.rst`` under a literal version and
@@ -249,15 +263,30 @@ the snippet compiler does not assign notes to releases. At release time:
    the include present but commented if useful for the next development cycle.
    Retain existing section labels and anchors when finalizing a heading so
    bookmarks continue to work.
-#. Add the release date to the corresponding heading in ``bskKnownIssues.rst``.
-#. Review the notes for duplicate, internal-only, or unclear entries and verify
-   that every RST reference resolves.
-#. Delete only the consumed snippet files. Preserve ``README.md``, the compiler
-   script, the sample, and other underscore-prefixed support files.
+#. In ``bskKnownIssues.rst``, replace the active known-issue include with its
+   reviewed content under a literal version and release date. Preserve relevant
+   existing inline entries in that section. Keep unresolved limitations and
+   workarounds documented; archiving an entry does not imply it was resolved.
+#. Review the notes for duplicate, internal-only, unclear, or contradictory
+   entries and verify that every RST reference resolves. Reconcile multiple
+   pending descriptions of the same issue or workaround before archiving.
+   Remove provisional entries for issues introduced and fixed entirely within
+   the beta cycle if no tagged release was affected.
+#. After saving the reviewed content, delete only the consumed snippet files
+   from each collection. Preserve each ``README.md``, the compiler wrapper,
+   samples, and other underscore-prefixed support files.
 
 For a patch release, create dated ``2.X.Y`` sections for the selected patch
 notes in ``bskReleaseNotes/2.X.rst`` and for the known issues in
 ``bskKnownIssues.rst``, without disturbing newer ``develop`` release content.
+Consume only snippets for the selected patch fixes; do not clear either
+collection wholesale when it also contains entries for newer work.
+
+Full documentation builds reject nonempty snippet collections with no active
+include. After finalization, empty collections may have no include. Restore the
+active includes when starting the next development cycle, before publishing
+new snippets. Standalone compilation remains available while preparing a
+release, and single-page previews are exempt from this full-build check.
 
 Each series page starts with a title followed by its release sections. Use this
 structure when adding a new series, replacing ``2.X`` with its version series:

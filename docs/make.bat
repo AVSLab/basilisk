@@ -20,6 +20,16 @@ if /I "%1"=="comparison-runtime-tables" (
 	goto end
 )
 
+set "SNIPPET_COLLECTION="
+if /I "%1"=="snippets" set "SNIPPET_COLLECTION=all"
+if /I "%1"=="release-notes-snippets" set "SNIPPET_COLLECTION=release-notes"
+if /I "%1"=="known-issues-snippets" set "SNIPPET_COLLECTION=known-issues"
+if defined SNIPPET_COLLECTION (
+	py -3 source\_ext\rst_snippets.py %SNIPPET_COLLECTION% || python source\_ext\rst_snippets.py %SNIPPET_COLLECTION%
+	if errorlevel 1 exit /b 1
+	goto end
+)
+
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
 	echo.
@@ -31,11 +41,6 @@ if errorlevel 9009 (
 	echo.If you don't have Sphinx installed, grab it from
 	echo.http://sphinx-doc.org/
 	exit /b 1
-)
-
-if /I "%1"=="html" (
-	py -3 source\Support\bskReleaseNotesSnippets\_compile_release_notes_snippets.py || python source\Support\bskReleaseNotesSnippets\_compile_release_notes_snippets.py
-	if errorlevel 1 exit /b 1
 )
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%

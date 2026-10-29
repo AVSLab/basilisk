@@ -19,6 +19,12 @@ formatting/lint-only changes, comment-only changes, generated-file cleanup, or s
 internal plumbing changes with no user/developer-facing behavior, API, documentation,
 build/install, packaging, performance, or validation impact.
 
+Known-issue entries have a narrower scope: they cover issues affecting tagged
+releases. An issue introduced and fixed entirely within a beta cycle needs no
+known-issue entry if no tagged release was affected. This exemption does not
+change the release-note requirements above; see
+``../bskKnownIssuesSnippets/README.md`` for the known-issue policy.
+
 What to add
 -----------
 1. Add a new .rst file in this folder when a release-note snippet is required.
@@ -33,18 +39,39 @@ The active development section in the matching version-series page includes:
 
 ``docs/source/Support/bskReleaseNotesSnippets/_compiled_latest.rst``
 
-When you run the regular ``make html`` command, this will create the compiled release notes file by running the python file:
+Sphinx creates the compiled release notes before reading pages, using the shared
+compiler and Sphinx extension:
 
-``docs/source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py``
+``docs/source/_ext/rst_snippets.py``
 
-The generator reads snippet files in this folder, concatenates them in filename-sorted order,
-and writes the compiled output file.
+This runs for ``make html``, ``make.bat html``, direct Sphinx commands, and
+single-page previews. The same compiler independently compiles known-issue
+snippets from ``docs/source/Support/bskKnownIssuesSnippets``.
+
+To compile both collections without building documentation, run
+``make -C docs snippets``. Use ``make -C docs release-notes-snippets`` for only
+release notes, or ``make -C docs known-issues-snippets`` for only known issues.
+On Windows, run ``make.bat`` with the same target from ``docs``.
+The original ``_compile_release_notes_snippets.py`` command remains available
+and compiles only release notes.
+
+The generator reads snippet files in this folder, concatenates them in
+case-insensitive filename order with a blank line between files, and preserves
+internal indentation and blank lines. It writes the compiled output only when
+the content changes. Neither collection is archived or deleted during builds.
 
 For example, development notes for ``2.13.0b0`` appear in
 ``docs/source/Support/bskReleaseNotes/2.13.rst`` beneath ``Version |release|``.
 The relative include from a series page is
 ``.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst``.
-Keep exactly one active include in the documentation.
+Keep exactly one active release-note include in the documentation. Known issues
+have their own active include and release-time review; see the README in
+``../bskKnownIssuesSnippets``.
+
+Full documentation builds fail if either nonempty collection has no active
+include. Comments and code examples do not count as active includes. Empty
+collections need no include after finalization, and single-page previews are
+exempt from this check.
 
 At release time, maintainers replace the include with reviewed bullet content
 under a literal version and release date, then remove only the consumed
