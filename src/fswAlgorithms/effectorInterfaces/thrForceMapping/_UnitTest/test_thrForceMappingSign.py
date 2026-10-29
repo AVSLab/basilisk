@@ -173,6 +173,9 @@ def test_off_pulsing_sign_repair_oracle(dimension, count, capfd):
         # Select cases that exercise the repair; this is not the expected constrained solution.
         first = np.linalg.lstsq(matrix, target, rcond=None)[0]
         selected = first > 0.0
+        # Older NumPy versions cannot compute the rank of an empty matrix.
+        if np.count_nonzero(selected) < dimension:
+            continue
         if np.linalg.matrix_rank(matrix[:, selected]) < dimension:
             continue
         second = np.linalg.lstsq(matrix[:, selected], target, rcond=None)[0]
@@ -258,6 +261,9 @@ def test_sign_repair_minimum_norm(dimension, count):
         target = rng.normal(size=dimension)  # [N*m]
         first = np.linalg.lstsq(matrix, target, rcond=None)[0]
         selected = first > 0.0
+        # Older NumPy versions cannot compute the rank of an empty matrix.
+        if np.count_nonzero(selected) < dimension:
+            continue
         if np.linalg.matrix_rank(matrix[:, selected]) < dimension:
             continue
         second = np.linalg.lstsq(matrix[:, selected], target, rcond=None)[0]
@@ -294,10 +300,15 @@ def test_sign_repair_nearly_dependent_axes(capfd):
          0.04298679015671169, -0.8385381946136046, 1.2562983566668235],
     ])  # [m]
     target = np.array([-0.6488054473181674, 0.07208248387471818, 0.11832321311352825])  # [N*m]
+    # Establish feasibility independently with an SVD solve on a known positive support.
+    # Older SciPy NNLS implementations lose accuracy on this nearly dependent map.
+    feasible_map = matrix[:, [2, 4, 5]]
+    feasible_forces = np.linalg.lstsq(feasible_map, target, rcond=None)[0]
+    assert np.all(feasible_forces >= 0.0)
+    assert np.linalg.norm(feasible_map @ feasible_forces - target) < 1e-9  # [N*m]
     forces, _ = run_mapping(-matrix, target, np.eye(3), np.full(6, 10.0))  # [N]
     assert np.all(forces <= 0.0)
-    _, expected_residual = nnls(matrix, target)
-    assert np.linalg.norm(matrix @ (-forces) - target) == pytest.approx(expected_residual, abs=1e-9)  # [N*m]
+    assert np.linalg.norm(matrix @ (-forces) - target) < 1e-9  # [N*m]
     assert "did not converge" not in capfd.readouterr().out
 
 
