@@ -1,0 +1,4 @@
+- GitHub issue 1605: The :ref:`groundLocation`, :ref:`stripLocation` and :ref:`groundMapping` modules crossed the
+  planet angular velocity, which they computed in planet-fixed components, with inertial vectors when removing the
+  planet rotation from the spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access
+  message fields were in error when the planet spin axis was not aligned with the inertial 3-axis.

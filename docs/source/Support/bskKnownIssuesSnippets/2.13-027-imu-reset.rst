@@ -1,0 +1,1 @@
+- :ref:`imuSensor` did not discard the state of the previous IMU call in ``Reset()``.

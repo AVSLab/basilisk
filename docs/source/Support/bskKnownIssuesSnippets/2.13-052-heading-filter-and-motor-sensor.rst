@@ -1,0 +1,3 @@
+- A buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates and invalid
+  zero-noise sampling in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>` are fixed. Both
+  defects affected Debug and Release builds.

@@ -1,0 +1,4 @@
+- Windows builds could abort Python when a directly wrapped C function raised
+  ``BasiliskError``, including invalid planet identifiers passed to
+  ``pixelLineBiasUKFMeasModel``. The MSVC exception settings now allow these errors
+  to propagate through C calls to the Python exception handler.

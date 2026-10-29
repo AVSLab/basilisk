@@ -59,6 +59,7 @@ The generator reads snippet files in this folder, concatenates them in
 case-insensitive filename order with a blank line between files, and preserves
 internal indentation and blank lines. It writes the compiled output only when
 the content changes. Neither collection is archived or deleted during builds.
+The blank source lines between bullets do not add spacing to the rendered list.
 
 For example, development notes for ``2.13.0b0`` appear in
 ``docs/source/Support/bskReleaseNotes/2.13.rst`` beneath ``Version |release|``.

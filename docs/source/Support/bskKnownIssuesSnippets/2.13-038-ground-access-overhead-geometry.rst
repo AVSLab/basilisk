@@ -1,0 +1,7 @@
+- The :ref:`groundLocation` and :ref:`groundMapping` modules did not guard the division by the horizontal distance
+  to the spacecraft in the ``azimuth``, ``az_dot`` and ``el_dot`` access message fields, so these fields were
+  undefined for a spacecraft exactly overhead of the location. The overhead test first used a fixed threshold of
+  1e-12 m on the horizontal distance, which is below the floating-point round-off of the SEZ position, so it
+  could miss an exactly overhead spacecraft and leave ``azimuth`` dependent on round-off and ``az_dot`` and
+  ``el_dot`` very large. The guard now accounts separately for distant-origin position quantization and local
+  frame-transformation round-off, preserving resolvable near-overhead offsets in all three ground access modules.

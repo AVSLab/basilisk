@@ -1,0 +1,3 @@
+- With MuJoCo 3.16, :ref:`MJScene` XML exports could silently produce no file when generated body sites or
+  subsequent structural edits had not been compiled. XML export now compiles pending changes and reports
+  write failures, including an invalid output path.

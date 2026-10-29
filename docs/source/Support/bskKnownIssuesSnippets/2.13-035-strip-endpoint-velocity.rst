@@ -1,0 +1,3 @@
+- The :ref:`stripLocation` module held its target at the endpoint after completion but continued reporting
+  motion at the acquisition speed. The target velocity relative to the planet-fixed frame is now zero at
+  and after completion, keeping the strip state and access rate outputs consistent with the fixed endpoint.

@@ -1,0 +1,3 @@
+- GitHub issue 1606: The :ref:`groundLocation` and :ref:`groundMapping` modules did not subtract the planet velocity
+  of ``planetInMsg`` from the spacecraft velocity, so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access
+  message fields were in error by the planet velocity.

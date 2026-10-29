@@ -1,0 +1,7 @@
+- The deprecated ``Basilisk.simulation.spacecraftSystem`` module and its
+  supporting effector APIs have been removed. Use :ref:`spacecraft` with
+  :ref:`constraintDynamicEffector` for connected spacecraft; see
+  :ref:`scenarioConstrainedDynamics` for a working example. API migration details
+  are listed in the :ref:`release notes <bsk-release-current>`. The supported
+  prescribed-motion branches also no longer emit a missing-state warning when
+  looking up an unused hub-attitude state during initialization.

@@ -1,0 +1,4 @@
+- Two-axis spinning-body default names could collide with single-axis state
+  and property names once instance counters reached multiple digits. The
+  two-axis names now separate the axis and instance numbers with ``_``.
+  Access these records through each effector's public name fields.

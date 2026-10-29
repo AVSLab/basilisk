@@ -1,5 +1,3 @@
-<!-- Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder -->
-
 # Known Issues Snippets
 
 This folder is the source of truth for contributing known-issue entries.
@@ -41,6 +39,7 @@ release-note snippet is required.
 Files beginning with `_`, non-RST files, and empty files are ignored. The shared
 compiler sorts snippets by filename without regard to case, inserts a blank
 line between files, and preserves internal indentation and blank lines.
+The blank source lines between bullets do not add spacing to the rendered list.
 
 ## Building and reviewing
 
@@ -99,10 +98,8 @@ Do not clear snippets for newer development work.
 ## Updating an existing issue
 
 - **Pending entries:** Update the existing snippet when a later PR changes
-  the same issue's description or workaround. During adoption, update the
-  existing inline entry in the current `Version |release|` section of
-  `bskKnownIssues.rst` if it has not yet moved to a snippet. Keep one consistent
-  description of the current behavior; do not add a second entry that
+  the same issue's description or workaround. Keep one consistent description
+  of the current behavior; do not add a second entry that
   contradicts or supersedes the first.
   Preserve still-relevant impact, migration instructions, and references.
   If a provisional entry concerns an issue introduced and fixed entirely within
@@ -116,5 +113,13 @@ separate snippets avoid conflicts between unrelated changes. Filename order does
 not establish which description supersedes another.
 
 The complete release procedure is in
-`../Developer/bskReleaseGuide.rst`. Existing inline entries are deliberately
-retained during adoption so this workflow does not require rewriting history.
+`../Developer/bskReleaseGuide.rst`.
+
+## Migrated 2.13 beta entries
+
+The existing 2.13 beta bullets were moved into individual snippets without
+changing their text. Their fixed `2.13-NNN-` filename prefixes preserve the
+original order, including references to neighboring entries. These prefixes
+are only for this one-time migration: do not renumber them or continue the
+sequence for new entries. Use the issue-based or descriptive filenames above
+for new snippets. Earlier tagged-release sections remain in `bskKnownIssues.rst`.

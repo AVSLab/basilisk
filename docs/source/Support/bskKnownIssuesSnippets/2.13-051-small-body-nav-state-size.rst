@@ -1,0 +1,4 @@
+- ``scenarioSmallBodyNav`` supplied an 18-element state to the 12-state
+  :ref:`smallBodyNavEKF <smallBodyNavEKF>`, causing Debug builds to abort. The example now supplies
+  12 elements. Invalid state and matrix dimensions raise ``BasiliskError`` in
+  Python during reset or update.

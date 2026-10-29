@@ -1,0 +1,7 @@
+- GitHub issue 1646: The :ref:`linearAlgebra` utilities had correctness and memory-safety defects in
+  rectangular matrix operations, overlapping-buffer use, comparisons, zero and
+  empty inputs, matrix inverses, and root and spectral calculations. These are
+  corrected while retaining the pure-C implementation and public API. Matrices
+  near numerical singularity may now be rejected by inverse routines; see the
+  API documentation for the numerical checks, supported dimensions, overlap
+  rules, and remaining numerical limits.

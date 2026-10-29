@@ -1,0 +1,3 @@
+- Visual Studio 2026 solution-wide clean could fail because the C-message
+  target used an absolute path as its solution folder. It now uses a valid
+  relative folder name.

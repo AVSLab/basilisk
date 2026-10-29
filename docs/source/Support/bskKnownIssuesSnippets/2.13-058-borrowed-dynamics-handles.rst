@@ -1,0 +1,5 @@
+- Dynamics-manager references and callback-created state handles are borrowed.
+  Keep the owning dynamics object or MuJoCo scene alive while using them.
+  Replacing an integrator destroys the old method; reacquire the integrator
+  property afterward. Python rejects reinstalling a previously transferred or
+  borrowed integrator after replacement or owner destruction.

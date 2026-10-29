@@ -1,0 +1,7 @@
+- The :ref:`stripLocation` module did not copy the computed SEZ relative velocity into the
+  ``v_BL_L`` field of its access messages, which therefore always reported zero. The :ref:`groundMapping` module never
+  assigned its planet-fixed to SEZ rotation matrix, so its ``r_BL_L``, ``v_BL_L``, azimuth and rate outputs were
+  computed from an uninitialized matrix. :ref:`groundMapping` also crossed the planet angular velocity in planet-fixed
+  components with inertial vectors, and did not subtract the planet velocity of ``planetInMsg``, as described in the
+  two entries below. The :ref:`groundMapping` module also did not populate the ``rHat_LP_N`` field of its ground state
+  messages.
