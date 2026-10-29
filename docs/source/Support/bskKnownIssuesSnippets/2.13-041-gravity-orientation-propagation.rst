@@ -1,0 +1,3 @@
+- The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
+  matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order
+  :math:`(\omega\,\Delta t)^2`. The orientation is now advanced as a rotation about the planet angular velocity.

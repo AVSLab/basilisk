@@ -1,0 +1,3 @@
+- The :ref:`stripLocation` module omitted rotation of the local SEZ frame as the target moved along a strip.
+  Its ``v_BL_L``, ``az_dot`` and ``el_dot`` outputs therefore disagreed with the derivatives of the published
+  geometry for a moving target. These outputs now include the local-frame rotation; the range rate is unchanged.

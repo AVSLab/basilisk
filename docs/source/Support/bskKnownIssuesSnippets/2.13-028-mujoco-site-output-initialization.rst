@@ -1,0 +1,2 @@
+- :ref:`MJSite` left the fields of ``stateOutMsg`` other than the position, velocity, attitude and angular rate
+  of the site uninitialized.

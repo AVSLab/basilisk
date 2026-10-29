@@ -1,0 +1,4 @@
+- The :ref:`msisAtmosphere`, :ref:`windBase`, :ref:`magneticFieldBase`, and :ref:`magneticFieldWMM` modules converted
+  the UTC epoch with ``mktime``, which uses the time zone of the computer. On a computer in a time zone with daylight
+  saving time, the local solar time was one hour wrong for the part of a simulation on the other side of a daylight
+  saving transition than the epoch. The epoch is now converted as UTC.

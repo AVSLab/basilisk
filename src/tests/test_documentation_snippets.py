@@ -208,6 +208,34 @@ def _build_snippet_project(source, output):
 @pytest.mark.ciSkip
 @pytest.mark.docsIntegration
 @pytest.mark.parametrize("folder", COMPILER.SNIPPET_FOLDERS.values())
+def test_snippets_render_as_one_compact_list(snippet_project, folder):
+    """Render adjacent snippets as one compact list in filename order."""
+    source, output = snippet_project
+    snippets = source / "Support" / folder
+    _write(source / "index.rst", (
+        "Entries\n=======\n\n"
+        f".. include:: Support/{folder}/_compiled_latest.rst\n"
+    ))
+    for filename, entry in (
+        ("a.rst", "First entry."),
+        ("b.rst", "Second entry."),
+        ("c.rst", "Third entry."),
+    ):
+        _write(snippets / filename, f"- {entry}\n")
+
+    result = _build_snippet_project(source, output)
+    assert result.returncode == 0, result.stdout + result.stderr
+    rendered = (output / "index.html").read_text(encoding="utf-8")
+    section = rendered.split('<section id="entries">', 1)[1].split('</section>', 1)[0]
+    assert section.count('<ul class="simple">') == 1
+    assert section.count("<li>") == 3
+    assert section.index("First entry.") < section.index("Second entry.")
+    assert section.index("Second entry.") < section.index("Third entry.")
+
+
+@pytest.mark.ciSkip
+@pytest.mark.docsIntegration
+@pytest.mark.parametrize("folder", COMPILER.SNIPPET_FOLDERS.values())
 def test_sphinx_validates_snippets_across_release_cycles(snippet_project, folder):
     """Archive a release, reject unpublished new snippets, and restore the active include."""
     source, output = snippet_project

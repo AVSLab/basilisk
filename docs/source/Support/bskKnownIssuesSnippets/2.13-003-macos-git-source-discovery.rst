@@ -1,0 +1,3 @@
+- Editable installs and wheel builds could hang during Git source discovery
+  on macOS. Packaging now avoids the pipe deadlock without requiring
+  dependency downgrades.

@@ -76,10 +76,8 @@ the surrounding work is already touching that area.
      require a known-issue entry if no tagged release was affected. Document
      unresolved issues that will ship in the next tagged release before tagging.
      Update an existing pending entry when revising the same issue;
-     otherwise add a snippet. Existing inline entries in the current
-     `Version |release|` section of `docs/source/Support/bskKnownIssues.rst`
-     may also be updated during migration. Preserve published history except
-     to correct errors, and describe later changes in a new snippet.
+     otherwise add a snippet. Preserve published history except to correct
+     errors, and describe later changes in a new snippet.
 
 8. **SysModel documentation requirement**
    - Every new SysModel must include a corresponding `.rst` documentation file.
@@ -91,7 +89,8 @@ the surrounding work is already touching that area.
 9. **Basilisk Module Creation**
     - Ensure new Basilisk modules have a unit test
     - Unit test method needs to have documentation strings
-    - Ensure the copyright statement is in new files using the current year
+    - Ensure the copyright statement is in new files using the current year.
+      Release-note and known-issue snippets do not require copyright statements.
 
 
 10. **Basilisk Example Files**

@@ -1,0 +1,5 @@
+- GitHub issue 1629 (orbital calculations): Fixed defects in convergence,
+  orbital geometry, and numerical stability across the C and Python orbital utilities,
+  including singular and degenerate orbits, mean/osculating conversions, and
+  environmental helpers. Also corrected characteristic orbital energy in
+  :ref:`keplerianOrbit` and related controller, ephemeris, and eclipse calculations.

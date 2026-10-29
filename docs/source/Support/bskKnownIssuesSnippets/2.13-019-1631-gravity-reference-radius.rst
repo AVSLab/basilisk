@@ -1,0 +1,6 @@
+- GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
+  coefficient file with ``radEquator`` of the gravity body when the body was initialized. When the two radii
+  differ, every term of degree :math:`n` was scaled by :math:`(R_{body}/R_{file})^n`.
+  Spherical harmonics body initialization also rejects an unset, nonpositive, or nonfinite ``mu`` so the
+  field cannot use the file GM while gravity-gradient torque uses an invalid body GM. To use the file GM,
+  set ``planet.mu = planet.spherHarm.muBody`` after loading the file and before initializing the simulation.

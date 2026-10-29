@@ -1,0 +1,9 @@
+- GitHub issue 282: Synchronized dynamics could retain a dangling pointer after a
+  secondary was destroyed, or leave a surviving secondary marked as synchronized
+  after its primary was destroyed. Python connections now retain their supplied
+  secondary objects, and native destruction removes synchronization links in
+  either order. Repeated connections are harmless; invalid self, nested, or
+  competing-primary connections now raise ``BasiliskError``. Python calls through
+  borrowed primary proxies are rejected before changing connections; use the
+  owning primary object so retention survives temporary aliases. See
+  :ref:`bskSynchronizedDynamicsLifetime`.

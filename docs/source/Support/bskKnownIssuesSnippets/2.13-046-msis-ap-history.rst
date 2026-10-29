@@ -1,0 +1,3 @@
+- The :ref:`msisAtmosphere` module used the daily Ap index and did not use the array of 3-hour Ap values that
+  NRLMSISE-00 uses in its storm mode, so during a geomagnetic storm the density followed the daily mean from midnight.
+  The 3-hour history is now available with ``setUseApHistory()``, which is disabled by default.

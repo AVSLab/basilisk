@@ -1,0 +1,4 @@
+- Optional wheel packaging could fail when independent runners supplied different
+  Rust and Cargo versions. Nightly, release, and optional-wheel test workflows now
+  resolve stable Rust once per run and use that exact toolchain for all core and
+  opNav wheel builds, including builds inside Linux containers.

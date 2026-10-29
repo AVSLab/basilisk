@@ -1,0 +1,2 @@
+- The :ref:`facetSRPDynamicEffector` module used a solar flux of 1368 W/m\ :sup:`2` at 1 AU, while
+  :ref:`radiationPressure` uses 1361 W/m\ :sup:`2`. Both now use ``SOLAR_FLUX_EARTH``.

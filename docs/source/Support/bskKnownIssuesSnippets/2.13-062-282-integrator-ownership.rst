@@ -1,0 +1,9 @@
+- GitHub issue 282: Passing the active integrator back to ``setIntegrator()``
+  could delete it and leave the dynamics object with a dangling pointer. The
+  operation is now a no-op, and persistent integrator ownership uses
+  ``std::unique_ptr``. Python ``integrator`` attribute assignment now transfers
+  ownership through the same setter. Explicitly disowning a newly constructed
+  Python integrator before installation remains supported. Custom C++ dynamics
+  classes should replace direct raw-pointer assignments to the owning member
+  with ``setIntegrator(std::make_unique<IntegratorType>(this))`` or transfer an
+  existing ``unique_ptr`` with ``std::move``; see :ref:`creatingDynObject`.

@@ -1,0 +1,3 @@
+- macOS builds could retain the previous MuJoCo framework after a dependency upgrade, mixing new headers
+  with the old library and failing to load the resulting binaries. Framework discovery now refreshes
+  during configuration, so an existing build directory follows the selected MuJoCo package.

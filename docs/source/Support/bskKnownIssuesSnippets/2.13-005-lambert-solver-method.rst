@@ -1,0 +1,6 @@
+- :ref:`lambertSolver` silently returned invalid solutions for unknown
+  ``solverMethod`` values. The message now carries the selection as a raw
+  integer, and values other than ``IZZO`` (0) or ``GOODING`` (1) raise
+  ``BasiliskError`` before conversion to the internal enum or publication of a
+  new output. Corrected requests recover without resetting the module, and
+  zero-initialized messages retain the Izzo default.

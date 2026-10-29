@@ -1,0 +1,3 @@
+- The :ref:`msisAtmosphere` module computed the altitude over a sphere and used the mean solar time. The altitude above
+  an oblate planet is now available with ``setPlanetPolarRadius()``, and the apparent solar time with
+  ``setUseApparentSolarTime()``. Both are disabled by default.

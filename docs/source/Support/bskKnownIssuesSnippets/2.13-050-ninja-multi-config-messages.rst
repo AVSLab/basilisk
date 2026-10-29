@@ -1,0 +1,3 @@
+- Ninja Multi-Config builds could fail on C message interface dependencies.
+  CMake now preserves these configured sources across native clean operations
+  and avoids dependencies on other build configurations.

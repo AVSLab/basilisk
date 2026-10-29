@@ -1,0 +1,5 @@
+- GitHub issue 1619: The :ref:`imuSensor` module computed ``DVFramePlatform`` by rotating the whole
+  ``TotalAccumDV_BN_B`` of :ref:`spacecraft` with the attitudes of the current and the previous IMU call.
+  :ref:`spacecraft` builds this field by adding the delta v of each integration step in the body frame of that
+  step, so every attitude change between two IMU calls turned the delta v accumulated since the start of the
+  simulation into a spurious delta v.

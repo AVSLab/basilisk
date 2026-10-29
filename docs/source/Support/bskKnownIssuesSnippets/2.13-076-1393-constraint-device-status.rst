@@ -1,0 +1,4 @@
+- GitHub issue 1393: The :ref:`constraintDynamicEffector` applied its constraint force and torque
+  regardless of the device status message, which gated only the load filtering and the output
+  message write. Commanding the effector off left its logged force at zero whereas the constraint
+  kept acting on the dynamics. This is fixed in the current version.

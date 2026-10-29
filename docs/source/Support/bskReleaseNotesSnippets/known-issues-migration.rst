@@ -1,0 +1,1 @@
+- Moved the existing 2.13 beta known-issue entries into individual RST snippets, preserving their text, order, and compact bullet formatting. Earlier tagged-release sections remain in the known-issues page.

@@ -143,6 +143,6 @@ and fixed within the same beta cycle needs no known-issue entry if no tagged
 release was affected. Document unresolved issues that will ship in the next
 tagged release before tagging. Release-note requirements still apply separately.
 
-Update an existing pending entry when revising the same issue, including inline
-entries in the current version during migration. Add a snippet for a newly
-documented issue affecting a tagged release or a follow-up to published history.
+Update an existing pending snippet when revising the same issue. Add a snippet
+for a newly documented issue affecting a tagged release or a follow-up to
+published history.

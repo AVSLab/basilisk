@@ -1,0 +1,4 @@
+- Importing ``svIntegrators`` could make shared ``DoubleVector`` and ``MultiArray`` inputs fail SWIG
+  conversion depending on import and first-use order, including when gravity and MuJoCo tests ran together.
+  The integrator bindings now use matching vector type declarations, preserving both shared vector objects
+  and Python lists as inputs.

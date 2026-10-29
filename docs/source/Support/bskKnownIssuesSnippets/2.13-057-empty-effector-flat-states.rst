@@ -1,0 +1,3 @@
+- Empty reaction-wheel and thruster effectors remain usable with flat-state
+  registration. They do not create zero-sized state records, and their device
+  counts still become immutable after successful registration.

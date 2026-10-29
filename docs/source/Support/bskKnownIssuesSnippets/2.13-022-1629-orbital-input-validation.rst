@@ -1,0 +1,6 @@
+- GitHub issue 1629 (compatibility and validation): Existing methods, NumPy
+  scalar outputs, and legacy orbital conventions remain supported without
+  deprecation. Optional checked APIs provide explicit input validation.
+  Element inputs now require inclinations in [0, pi] radians (0 to 180 degrees),
+  and invalid or unsupported calculations may fail explicitly. See
+  :ref:`orbitalMotionMigration` for detailed compatibility guidance and limitations.

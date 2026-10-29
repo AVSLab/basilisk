@@ -1,0 +1,3 @@
+- The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the previous
+  step, which made the solar radiation pressure shadow entries and exits a step late. The state can now be extrapolated
+  to the middle of the step with ``setExtrapolateScStateToStepMidpoint()``, which is disabled by default.
