@@ -9,7 +9,9 @@ requires = [
     # needed to find the numpy include headers,
     # pin to lowest runtime allowed version to take advantage of backwards compatibility
     "numpy>=1.24.4,<2.4.0;  python_version < '3.13'",
-    "numpy>=2.0,<2.4.0;     python_version >= '3.13'",
+    "numpy>=2.0,<2.4.0;     python_version >= '3.13' and python_version < '3.15'",
+    # NumPy 2.5.2 introduced wheels for standard CPython 3.15.
+    "numpy>=2.5.2,<=2.5.4;  python_version >= '3.15'",
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.4.0,<=2.33.0",
@@ -21,7 +23,7 @@ requires = [
 [project]
 name        = 'bsk'
 dynamic     = ["version", "dependencies"]
-requires-python = ">=3.9, <3.15"
+requires-python = ">=3.9, <3.16"
 
 readme      = "README.md"
 license     = "ISC"
@@ -36,6 +38,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
 ]
@@ -72,8 +75,9 @@ examples = [
   'scipy==1.13.1; python_version < "3.10"',
   'scipy==1.15.3; python_version >= "3.10" and python_version < "3.11"',
   'scipy>=1.17.1,<=1.18.1; python_version >= "3.11"',
-  # Match development requirements so NumPy 2.5 upgrades also update Numba.
-  'numba>=0.67.0,<=0.68.0; python_version >= "3.12"',
+  # Match development requirements for NumPy 2.5 and Python 3.15 compatibility.
+  'numba>=0.68.0,<=0.68.0; python_version >= "3.15"',
+  'numba>=0.67.0,<=0.68.0; python_version >= "3.12" and python_version < "3.15"',
   'numba<=0.68.0; python_version < "3.12"',
 ]
 opnav = [

@@ -24,6 +24,13 @@ import subprocess
 import sys
 
 import pytest
+from packaging.markers import default_environment
+from packaging.requirements import Requirement
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -50,21 +57,83 @@ def version_checker():
     ("3.13.0", True),
     ("3.14.0", True),
     ("3.14.99", True),
-    ("3.15.0", False),
-    ("3.15.2", False),
+    ("3.15.0", True),
+    ("3.15.2", True),
+    ("3.15.99", True),
+    ("3.16.0", False),
     ("4.0.0", False),
 ])
-def test_python_version_boundaries(tmp_path, version_checker, version, supported):
+def test_python_version_boundaries(version_checker, version, supported):
     """Enforce both endpoints while preserving every supported minor version."""
-    metadata = tmp_path / "pyproject.toml"
-    metadata.write_text('[project]\nrequires-python = ">=3.9, <3.15"\n', encoding="utf-8")
+    metadata = REPOSITORY_ROOT / "pyproject.toml"
     check_version = version_checker["check_python_version"]
     if supported:
         check_version(metadata, version)
     else:
-        with pytest.raises(ValueError, match=r"Basilisk requires Python >=3.9, <3.15") as error:
+        with pytest.raises(ValueError, match="Basilisk requires Python") as error:
             check_version(metadata, version)
         assert f"found Python {version}" in str(error.value)
+
+
+@pytest.fixture(scope="module")
+def dependency_groups():
+    """Read the build, runtime, development, and example requirements."""
+    with (REPOSITORY_ROOT / "pyproject.toml").open("rb") as metadata_file:
+        metadata = tomllib.load(metadata_file)
+    return {
+        "build": metadata["build-system"]["requires"],
+        "runtime": (REPOSITORY_ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines(),
+        "development": (REPOSITORY_ROOT / "requirements_dev.txt").read_text(encoding="utf-8").splitlines(),
+        "examples": metadata["project"]["optional-dependencies"]["examples"],
+    }
+
+
+def active_requirement(requirements, name, python_version):
+    """Select the unique requirement for a dependency on a target interpreter."""
+    environment = default_environment()
+    environment.update(python_version=python_version, python_full_version=f"{python_version}.0")
+    active = []
+    for line in requirements:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        requirement = Requirement(line)
+        if requirement.name == name and (
+            requirement.marker is None or requirement.marker.evaluate(environment)
+        ):
+            active.append(requirement)
+    assert len(active) == 1, (name, python_version, active)
+    return active[0]
+
+
+@pytest.mark.parametrize("python_version, numpy_version, numba_version", [
+    ("3.9", "2.0.2", "0.60.0"),
+    ("3.10", "2.2.6", "0.68.0"),
+    ("3.11", "2.3.5", "0.68.0"),
+    ("3.12", "2.3.5", "0.67.0"),
+    ("3.13", "2.3.5", "0.67.0"),
+    ("3.14", "2.3.5", "0.67.0"),
+    ("3.15", "2.5.2", "0.68.0"),
+])
+def test_dependency_ranges_preserve_supported_interpreters(
+        dependency_groups, python_version, numpy_version, numba_version,
+):
+    """Keep compatible dependency choices available across Python 3.9 through 3.15."""
+    for group in ("build", "runtime"):
+        requirement = active_requirement(dependency_groups[group], "numpy", python_version)
+        assert requirement.specifier.contains(numpy_version)
+    for group in ("development", "examples"):
+        requirement = active_requirement(dependency_groups[group], "numba", python_version)
+        assert requirement.specifier.contains(numba_version)
+
+
+def test_python315_excludes_incompatible_dependencies(dependency_groups):
+    """Prevent older NumPy and Numba releases from being selected on Python 3.15."""
+    for group in ("build", "runtime"):
+        requirement = active_requirement(dependency_groups[group], "numpy", "3.15")
+        assert not requirement.specifier.contains("2.5.1")
+    for group in ("development", "examples"):
+        requirement = active_requirement(dependency_groups[group], "numba", "3.15")
+        assert not requirement.specifier.contains("0.67.0")
 
 
 def test_updated_metadata_controls_supported_versions(tmp_path, version_checker):
