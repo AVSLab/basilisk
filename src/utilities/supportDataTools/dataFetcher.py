@@ -124,14 +124,12 @@ def find_local_support_data() -> Optional[Path]:
     return None
 
 
-# Compute the base GitHub URL once at import time.
 LOCAL_SUPPORT = find_local_support_data()
 
-# For remote fetches (wheel installs), check if the version tag exists. Fall
-# back to develop if not
+# Start with the versioned URL without accessing GitHub. The downloader resolves
+# the develop fallback only after Pooch determines that a download is needed.
 _version_tag_url = f"https://github.com/AVSLab/basilisk/releases/tag/{DATA_VERSION}"
-_remote_version = DATA_VERSION if tag_exists(_version_tag_url) else "develop"
-BASE_URL = f"https://raw.githubusercontent.com/AVSLab/basilisk/{_remote_version}/"
+BASE_URL = f"https://raw.githubusercontent.com/AVSLab/basilisk/{DATA_VERSION}/"
 
 POOCH = pooch.create(
     path=_POOCH_PATH,
@@ -139,6 +137,16 @@ POOCH = pooch.create(
     registry=REGISTRY,
     urls=EXTERNAL_KERNEL_URLS,
 )
+
+
+def _resolve_github_url(url: str) -> str:
+    """Resolve the release-tag fallback only for Basilisk GitHub downloads."""
+    if url.startswith(BASE_URL) and not tag_exists(_version_tag_url):
+        return (
+            "https://raw.githubusercontent.com/AVSLab/basilisk/develop/"
+            + url[len(BASE_URL):]
+        )
+    return url
 
 
 def _is_retryable_error(error: Exception) -> bool:
@@ -178,6 +186,7 @@ class RetryingHTTPDownloader:
         self.backup_urls_for = backup_urls_for
 
     def __call__(self, url, output_file, pooch_obj, check_only=False):
+        url = _resolve_github_url(url)
         last_error = None
         downloader = self.downloader_factory(
             progressbar=self.progressbar,
