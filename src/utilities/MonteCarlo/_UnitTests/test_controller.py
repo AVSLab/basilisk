@@ -19,9 +19,7 @@
 import inspect
 import json
 import os
-import _thread
 from collections import Counter
-import threading
 import multiprocessing as mp
 import signal
 
@@ -313,28 +311,22 @@ def test_writer_failure_raises_and_cleans_up(tmp_path, monkeypatch, workers, wri
 @pytest.mark.timeout(30)  # [s]
 @pytest.mark.parametrize("workers", [1, 2])
 def test_interrupt_with_full_retention_queue_cleans_up(tmp_path, monkeypatch, workers):
-    """Cancel blocked producers and the deferred writer on a keyboard interrupt."""
+    """Verify interrupt cleanup with a full retention queue and paused writer."""
     controller = make_retention_controller(tmp_path, workers)
     original_children = {child.pid for child in mp.active_children()}
     monkeypatch.setattr(controller_module, "DataWriter", DeferredDataWriter)
-    stopped = threading.Event()
+    check_writer = controller_module._check_writer
 
-    def interrupt_when_full():
-        interval = 0.01  # [s]
-        while not stopped.wait(interval):
-            queue = controller.dataOutQueue
-            if queue is not None and queue.full():
-                _thread.interrupt_main()
-                return
+    def interrupt_when_full(writer):
+        check_writer(writer)
+        if controller.dataOutQueue.full():
+            # Raise in the parent after IPC returns: Windows pipe reads can
+            # suppress an asynchronous KeyboardInterrupt when a read completes.
+            raise KeyboardInterrupt("Simulated interrupt with a full retention queue")
 
-    watcher = threading.Thread(target=interrupt_when_full)
-    watcher.start()
-    try:
-        with pytest.raises(KeyboardInterrupt):
-            controller.executeSimulations()
-    finally:
-        stopped.set()
-        watcher.join()
+    monkeypatch.setattr(controller_module, "_check_writer", interrupt_when_full)
+    with pytest.raises(KeyboardInterrupt, match="Simulated interrupt with a full retention queue"):
+        controller.executeSimulations()
     assert_controller_closed(controller, original_children)
 
 
