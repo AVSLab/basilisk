@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import runpy
 import shutil
 import shlex
 import stat
@@ -13,12 +14,20 @@ from typing import Callable, Optional
 
 import importlib.metadata
 
+REPOSITORY_ROOT = Path(__file__).resolve().parent
+if __name__ == "__main__":
+    # Reject unsupported interpreters before loading build tools or changing files.
+    version_check = runpy.run_path(
+        str(REPOSITORY_ROOT / "src" / "buildSupport" / "checkPythonVersion.py")
+    )
+    if version_check["main"]([str(REPOSITORY_ROOT / "pyproject.toml")]):
+        sys.exit(1)
+
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.microsoft import is_msvc
 from conan.tools.files import copy
 
-REPOSITORY_ROOT = Path(__file__).resolve().parent
 sys.path.insert(1, str(REPOSITORY_ROOT / "src" / "utilities"))
 import makeDraftModule
 
@@ -574,7 +583,7 @@ class BasiliskConan(ConanFile):
     }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "setup.py", "CMakeLists.txt", "src/*", "include/*"
+    exports_sources = "setup.py", "pyproject.toml", "CMakeLists.txt", "src/*", "include/*"
 
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: value[0]})

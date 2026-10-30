@@ -113,7 +113,9 @@ def test_script_builds_repository_from_another_directory(
         repo_root = tmp_path / "repository with spaces"
         for resource in (
                 "conanfile.py",
+                "pyproject.toml",
                 "docs/source/bskVersion.txt",
+                "src/buildSupport/checkPythonVersion.py",
                 "src/utilities/makeDraftModule.py",
         ):
             destination = repo_root / resource
