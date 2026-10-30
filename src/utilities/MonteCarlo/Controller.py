@@ -876,8 +876,9 @@ class SimulationExecutor:
                     print("Retaining data for run in", retentionFile)
 
                 retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
+                # Manager.Queue.put() completes before returning; the controller
+                # joins the writer before shutting down the queue manager.
                 dataOutQueue.put((retainedData, simParams.index, None))
-                time.sleep(1)
 
                 with gzip.open(retentionFile, "w") as archive:
                     retainedData["index"] = simParams.index # add run index

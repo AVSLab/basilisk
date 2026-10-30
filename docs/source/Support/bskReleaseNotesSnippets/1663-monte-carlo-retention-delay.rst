@@ -1,0 +1,1 @@
+- Removed the fixed one-second delay after each Monte Carlo run queues retained data. The controller still waits for the data writer to finish before returning; worker-pool behavior is unchanged.
