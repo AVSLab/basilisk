@@ -134,7 +134,7 @@ runs:
 
     - name: Build wheel
       if: ${{ inputs.cibw-build == '' }}
-      uses: pypa/cibuildwheel@v3.4.1
+      uses: pypa/cibuildwheel@v4.3.5
       with:
         output-dir: ${{ inputs.output-dir }}
       env:
@@ -143,7 +143,7 @@ runs:
 
     - name: Build selected wheel
       if: ${{ inputs.cibw-build != '' }}
-      uses: pypa/cibuildwheel@v3.4.1
+      uses: pypa/cibuildwheel@v4.3.5
       with:
         output-dir: ${{ inputs.output-dir }}
       env:

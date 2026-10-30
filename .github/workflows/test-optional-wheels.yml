@@ -65,7 +65,7 @@ jobs:
           rust-toolchain: ${{ needs.resolve-rust-toolchain.outputs.version }}
           output-dir: ${{ matrix.output-dir }}
           conan-args: ${{ matrix.conan-args }}
-          cibw-build: cp314-*
+          cibw-build: cp315-*
           save-conan-cache: ${{ matrix.save-conan-cache }}
 
       - name: Upload wheel input
@@ -110,7 +110,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.14"
+          python-version: "3.15"
 
       - name: Download core wheel input
         uses: actions/download-artifact@v6
