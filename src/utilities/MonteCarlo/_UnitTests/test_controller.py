@@ -17,13 +17,18 @@
 #
 
 import inspect
+import multiprocessing as mp
+import signal
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from Basilisk.simulation import motorVoltageInterface, spacecraft
 from Basilisk.utilities import simHelpers
+from Basilisk.utilities.MonteCarlo import Controller as controller_module
 from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor, SimulationParameters
+from Basilisk.utilities.MonteCarlo.DataWriter import DataWriter
 from Basilisk.utilities.MonteCarlo.Dispersions import (
     NormalVectorAngleDispersion,
     NormalVectorDispersion,
@@ -74,6 +79,73 @@ class DummySimulation:
 
     def get_DynModel(self):
         return self.dynModel
+
+
+class DeferredDataWriter(DataWriter):
+    """Hold retained data in the queue until the controller starts shutdown."""
+
+    def __init__(self, queue):
+        super().__init__(queue)
+        self.release = mp.Event()
+
+    def run(self):
+        """Drain and consolidate the backlog after all producers finish."""
+        timeout = 30.0  # [s]
+        assert self.release.wait(timeout), "Controller did not release the writer"
+        super().run()
+
+
+def execute_retention_simulation(sim):
+    times = np.arange(32)  # [ns]
+    sim.retained = np.column_stack((times, np.random.random((32, 3))))
+
+
+def retain_simulation_data(sim):
+    return {"samples": sim.retained}
+
+
+@pytest.mark.parametrize("workers", [1, 2, 4])
+def test_controller_drains_retained_data_before_return(tmp_path, monkeypatch, workers):
+    """Verify a delayed writer saves every run before the controller returns."""
+    controller = controller_module.Controller()
+    controller.setSimulationFunction(DummySimulation)
+    controller.setExecutionFunction(execute_retention_simulation)
+    controller.setExecutionCount(8)
+    controller.setThreadCount(workers)
+    controller.setArchiveDir(str(tmp_path / "archive"))
+    controller.setVerbose(False)
+    controller.setShowProgressBar(False)
+    policy = controller_module.RetentionPolicy()
+    policy.addRetentionFunction(retain_simulation_data)
+    controller.addRetentionPolicy(policy)
+    shutdown = controller_module.Controller._shutdown_data_writer
+
+    def release_and_shutdown(self):
+        writer = self.dataWriter
+        writer.release.set()
+        shutdown(self)
+        assert writer.exitcode == 0
+
+    monkeypatch.setattr(controller_module, "DataWriter", DeferredDataWriter)
+    monkeypatch.setattr(
+        controller_module.Controller, "_shutdown_data_writer", release_and_shutdown
+    )
+    interrupt_handler = signal.getsignal(signal.SIGINT)
+    try:
+        assert controller.executeSimulations() == []
+    finally:
+        signal.signal(signal.SIGINT, interrupt_handler)
+
+    combined = pd.read_pickle(tmp_path / "archive" / "samples.data")
+    expected_columns = [(run, component) for run in range(8) for component in range(3)]
+    assert list(combined.columns) == expected_columns
+    np.testing.assert_array_equal(combined.index, np.arange(32))
+    for run in range(8):
+        expected = np.random.RandomState(run * 10).random_sample((32, 3))
+        retained = controller.getRetainedData(run)
+        assert retained["index"] == run
+        np.testing.assert_array_equal(retained["custom"]["samples"][:, 1:], expected)
+        np.testing.assert_array_equal(combined[run].to_numpy(), expected)
 
 
 @pytest.mark.parametrize(
