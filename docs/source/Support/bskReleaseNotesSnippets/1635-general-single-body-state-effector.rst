@@ -1,0 +1,1 @@
+- Added a new :ref:`generalSingleBodyStateEffector` which enables simulation of a general rigid component with up to six sequential degrees of freedom (3 translation, 3 rotation). The :ref:`scenarioGeneralSingleBody` tutorial demonstrates three moving blocks in Mars orbit with Vizard visualization.
