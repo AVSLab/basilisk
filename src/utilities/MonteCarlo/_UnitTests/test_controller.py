@@ -17,6 +17,11 @@
 #
 
 import inspect
+import json
+import os
+import _thread
+from collections import Counter
+import threading
 import multiprocessing as mp
 import signal
 
@@ -111,6 +116,7 @@ def test_controller_drains_retained_data_before_return(tmp_path, monkeypatch, wo
     controller.setSimulationFunction(DummySimulation)
     controller.setExecutionFunction(execute_retention_simulation)
     controller.setExecutionCount(8)
+    controller.setRetentionQueueSize(8)
     controller.setThreadCount(workers)
     controller.setArchiveDir(str(tmp_path / "archive"))
     controller.setVerbose(False)
@@ -120,11 +126,13 @@ def test_controller_drains_retained_data_before_return(tmp_path, monkeypatch, wo
     controller.addRetentionPolicy(policy)
     shutdown = controller_module.Controller._shutdown_data_writer
 
-    def release_and_shutdown(self):
+    def release_and_shutdown(self, abort=False):
         writer = self.dataWriter
-        writer.release.set()
-        shutdown(self)
-        assert writer.exitcode == 0
+        if writer is not None:
+            writer.release.set()
+        shutdown(self, abort=abort)
+        if writer is not None and not abort:
+            assert writer.exitcode == 0
 
     monkeypatch.setattr(controller_module, "DataWriter", DeferredDataWriter)
     monkeypatch.setattr(
@@ -146,6 +154,258 @@ def test_controller_drains_retained_data_before_return(tmp_path, monkeypatch, wo
         assert retained["index"] == run
         np.testing.assert_array_equal(retained["custom"]["samples"][:, 1:], expected)
         np.testing.assert_array_equal(combined[run].to_numpy(), expected)
+
+
+class ExitingDataWriter(DataWriter):
+    """Exit abruptly after receiving the first retained result."""
+
+    def run(self):
+        """Simulate a writer process dying while producers are active."""
+        self._queue.get()
+        os._exit(7)
+
+
+class FailedConsolidationWriter(DataWriter):
+    """Fail after accepting all retained results and the end marker."""
+
+    def run(self):
+        """Simulate an output error during final consolidation."""
+        while not self._queue.get()[2]:
+            pass
+        raise OSError("Simulated consolidation failure")
+
+
+def retain_worker_pid(sim):
+    return {"worker_pid": np.array([[0, os.getpid()]])}
+
+
+def fail_simulation(sim):
+    raise ValueError("Simulated run failure")
+
+
+def make_retention_controller(tmp_path, workers, archive=True):
+    controller = controller_module.Controller()
+    controller.setSimulationFunction(DummySimulation)
+    controller.setExecutionFunction(execute_retention_simulation)
+    controller.setExecutionCount(9)
+    controller.setThreadCount(workers)
+    controller.setRetentionQueueSize(1)
+    controller.setVerbose(False)
+    controller.setShowProgressBar(False)
+    if archive:
+        controller.setArchiveDir(str(tmp_path / "archive"))
+    policy = controller_module.RetentionPolicy()
+    policy.addRetentionFunction(retain_simulation_data)
+    policy.addRetentionFunction(retain_worker_pid)
+    controller.addRetentionPolicy(policy)
+    return controller
+
+
+def assert_controller_closed(controller, original_children):
+    assert controller.dataWriter is None
+    assert controller.dataOutQueue is None
+    assert controller.multiProcManager is None
+    assert {child.pid for child in mp.active_children()} == original_children
+
+
+@pytest.mark.timeout(30)  # [s]
+def test_pool_reuse_recycling_and_repeated_execution(tmp_path):
+    """Reuse workers, bound their lifetimes, and finish a partial final batch."""
+    controller = make_retention_controller(tmp_path, 2)
+    original_children = {child.pid for child in mp.active_children()}
+    for limit in (None, 2):
+        controller.setMaxTasksPerChild(limit)
+        assert controller.executeSimulations() == []
+        assert_controller_closed(controller, original_children)
+        counts = Counter(
+            int(controller.getRetainedData(run)["custom"]["worker_pid"][0, 1])
+            for run in range(9)
+        )
+        if limit is None:
+            assert len(counts) <= 2
+            assert max(counts.values()) > 1
+        else:
+            assert max(counts.values()) <= limit
+            assert len(counts) >= 5
+        combined = pd.read_pickle(tmp_path / "archive" / "samples.data")
+        for run in range(9):
+            expected = np.random.RandomState(run * 10).random_sample((32, 3))
+            np.testing.assert_array_equal(combined[run].to_numpy(), expected)
+
+
+@pytest.mark.timeout(30)  # [s]
+@pytest.mark.parametrize("initial_conditions", [False, True])
+@pytest.mark.parametrize("failure_stage", ["preparation", "submission"])
+def test_task_failures_report_indices_and_preserve_successes(
+    tmp_path, monkeypatch, initial_conditions, failure_stage
+):
+    """Report preparation and submission errors while retaining later runs."""
+    controller = make_retention_controller(tmp_path, 2)
+    controller.setExecutionCount(6)
+    original_children = {child.pid for child in mp.active_children()}
+    cases = list(range(6))
+    archive = tmp_path / "archive"
+    failure_directory = archive
+    generator_name = "generateSims"
+    if initial_conditions:
+        cases = [2, 4, 6, 8, 10, 12]
+        failure_directory = tmp_path / "initial"
+        failure_directory.mkdir()
+        for run in cases:
+            (failure_directory / f"run{run}.json").write_text("{}")
+        controller.setICDir(str(failure_directory))
+        controller.setICRunFlag(True)
+        generator_name = "generateICSims"
+
+    rejected = [cases[0], cases[1], cases[3]]
+    failed = cases[:4] if failure_stage == "preparation" else rejected
+    generate = getattr(controller_module.Controller, generator_name)
+
+    def generate_with_errors(self, case_list):
+        for sim in generate(self, case_list):
+            if sim.index in rejected:
+                if failure_stage == "preparation":
+                    raise TypeError("Simulated task-preparation failure")
+                sim.configureFunction = lambda sim: None
+            yield sim
+
+    monkeypatch.setattr(
+        controller_module.Controller, generator_name, generate_with_errors
+    )
+    if initial_conditions:
+        result = controller.runInitialConditions(cases)
+    else:
+        result = controller.executeSimulations()
+    assert result == failed
+    assert json.loads((failure_directory / "failures.txt").read_text()) == failed
+    assert_controller_closed(controller, original_children)
+    combined = pd.read_pickle(archive / "samples.data")
+    successful = [run for run in cases if run not in failed]
+    assert list(combined.dropna(axis=1, how="all").columns) == [
+        (run, component) for run in successful for component in range(3)
+    ]
+    for run in successful:
+        expected = np.random.RandomState(run * 10).random_sample((32, 3))
+        np.testing.assert_array_equal(combined[run].to_numpy(), expected)
+
+
+@pytest.mark.parametrize("method", ["setMaxTasksPerChild", "setRetentionQueueSize"])
+@pytest.mark.parametrize("invalid", [0, -1, True, 1.5, "8"])
+def test_worker_settings_reject_invalid_values(method, invalid):
+    """Reject settings that cannot provide a positive worker or queue limit."""
+    with pytest.raises(ValueError, match="positive integer or None"):
+        getattr(controller_module.Controller(), method)(invalid)
+
+
+@pytest.mark.timeout(30)  # [s]
+@pytest.mark.parametrize("workers", [1, 2])
+@pytest.mark.parametrize("writer", [ExitingDataWriter, FailedConsolidationWriter])
+def test_writer_failure_raises_and_cleans_up(tmp_path, monkeypatch, workers, writer):
+    """Report writer failure during production or shutdown without hanging."""
+    controller = make_retention_controller(tmp_path, workers)
+    original_children = {child.pid for child in mp.active_children()}
+    monkeypatch.setattr(controller_module, "DataWriter", writer)
+    with pytest.raises(RuntimeError, match="Monte Carlo data writer"):
+        controller.executeSimulations()
+    assert_controller_closed(controller, original_children)
+
+
+@pytest.mark.timeout(30)  # [s]
+@pytest.mark.parametrize("workers", [1, 2])
+def test_interrupt_with_full_retention_queue_cleans_up(tmp_path, monkeypatch, workers):
+    """Cancel blocked producers and the deferred writer on a keyboard interrupt."""
+    controller = make_retention_controller(tmp_path, workers)
+    original_children = {child.pid for child in mp.active_children()}
+    monkeypatch.setattr(controller_module, "DataWriter", DeferredDataWriter)
+    stopped = threading.Event()
+
+    def interrupt_when_full():
+        interval = 0.01  # [s]
+        while not stopped.wait(interval):
+            queue = controller.dataOutQueue
+            if queue is not None and queue.full():
+                _thread.interrupt_main()
+                return
+
+    watcher = threading.Thread(target=interrupt_when_full)
+    watcher.start()
+    try:
+        with pytest.raises(KeyboardInterrupt):
+            controller.executeSimulations()
+    finally:
+        stopped.set()
+        watcher.join()
+    assert_controller_closed(controller, original_children)
+
+
+@pytest.mark.timeout(30)  # [s]
+@pytest.mark.parametrize("workers", [1, 2])
+@pytest.mark.parametrize("archive", [False, True])
+def test_initial_conditions_with_and_without_writer(tmp_path, workers, archive):
+    """Run saved cases with a bounded writer or only their individual archives."""
+    controller = make_retention_controller(tmp_path, workers, archive=archive)
+    original_children = {child.pid for child in mp.active_children()}
+    initial = tmp_path / "initial"
+    initial.mkdir()
+    cases = [1, 2, 3, 4, 5]
+    for run in cases:
+        (initial / f"run{run}.json").write_text("{}")
+    controller.setICDir(str(initial))
+    controller.setICRunFlag(True)
+    controller.setMaxTasksPerChild(2)
+    assert controller.runInitialConditions(cases) == []
+    assert_controller_closed(controller, original_children)
+    for run in cases:
+        expected = np.random.RandomState(run * 10).random_sample((32, 3))
+        retained = controller.getRetainedData(run)
+        np.testing.assert_array_equal(retained["custom"]["samples"][:, 1:], expected)
+        if archive:
+            combined = pd.read_pickle(tmp_path / "archive" / "samples.data")
+            np.testing.assert_array_equal(combined[run].to_numpy(), expected)
+    controller.setExecutionFunction(fail_simulation)
+    assert controller.runInitialConditions([2, 5]) == [2, 5]
+    assert json.loads((initial / "failures.txt").read_text()) == [2, 5]
+    assert_controller_closed(controller, original_children)
+
+
+@pytest.mark.timeout(30)  # [s]
+@pytest.mark.parametrize("cases", [[], [0], [0, 2]])
+def test_initial_conditions_accept_numpy_indices(tmp_path, cases):
+    """Execute NumPy case arrays, including case zero and an empty selection."""
+    controller = make_retention_controller(tmp_path, 2)
+    original_children = {child.pid for child in mp.active_children()}
+    initial = tmp_path / "initial"
+    initial.mkdir()
+    for run in cases:
+        (initial / f"run{run}.json").write_text("{}")
+    controller.setICDir(str(initial))
+    controller.setICRunFlag(True)
+
+    assert controller.runInitialConditions(np.array(cases, dtype=np.int64)) == []
+    assert_controller_closed(controller, original_children)
+    for run in cases:
+        expected = np.random.RandomState(run * 10).random_sample((32, 3))
+        retained = controller.getRetainedData(run)
+        np.testing.assert_array_equal(retained["custom"]["samples"][:, 1:], expected)
+
+
+def test_empty_campaign_and_legacy_controller_settings(tmp_path):
+    """Handle empty campaigns and controller archives predating the new settings."""
+    controller = make_retention_controller(tmp_path, 2)
+    controller.setExecutionCount(0)
+    original_children = {child.pid for child in mp.active_children()}
+    assert controller.executeSimulations() == []
+    assert_controller_closed(controller, original_children)
+    del controller.maxTasksPerChild
+    del controller.retentionQueueSize
+    controller.setExecutionCount(3)
+    assert controller.executeSimulations() == []
+    loaded = controller_module.Controller.load(str(tmp_path / "archive"))
+    loaded.setExecutionCount(1)
+    assert loaded.executeSimulations() == []
+    worker_pid = loaded.getRetainedData(0)["custom"]["worker_pid"][0, 1]
+    assert worker_pid != os.getpid()
+    assert_controller_closed(loaded, original_children)
 
 
 @pytest.mark.parametrize(
