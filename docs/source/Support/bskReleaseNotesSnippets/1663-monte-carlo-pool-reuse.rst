@@ -1,0 +1,1 @@
+- Monte Carlo campaigns now reuse their process pool, recycling each worker after eight simulations by default. Configure worker lifetime with ``setMaxTasksPerChild()`` and bounded retention-queue capacity with ``setRetentionQueueSize()``. Writer failures now raise ``RuntimeError`` and release campaign resources, including during initial-condition reruns.

@@ -164,8 +164,37 @@ monteCarlo.setExecutionCount(100)
 monteCarlo.setThreadCount(4)
 monteCarlo.setVerbose(False)
 
+# Optional resource limits (these values are the defaults for four workers).
+monteCarlo.setMaxTasksPerChild(8)
+monteCarlo.setRetentionQueueSize(8)
+
 failures = monteCarlo.executeSimulations()
 ```
+
+Parallel campaigns reuse one process pool across batches. By default, each worker
+is replaced after eight simulations. `setMaxTasksPerChild(1)` gives each simulation
+a fresh worker; `setMaxTasksPerChild(None)` allows unlimited reuse. Application
+globals and native caches can persist between simulations in a reused worker.
+The one-worker path still executes in the calling process, where this recycling
+setting does not apply.
+
+The retention queue defaults to twice the active worker count. Set a positive
+capacity with `setRetentionQueueSize(count)`, or restore automatic sizing with
+`setRetentionQueueSize(None)`. The capacity counts retained simulation results,
+not bytes. Producers wait when the queue is full, limiting queued data without
+discarding results. Individual results and the writer's final dataframe
+consolidation still require memory proportional to their size.
+
+These settings also apply to `runInitialConditions()`. Initial-condition runs
+without a separate output archive save individual run data without creating a
+dataframe writer or retention queue.
+
+Successful execution waits for the writer to finish all output. If the writer
+exits unexpectedly or fails during consolidation, the controller raises
+`RuntimeError` and cleans up its workers and queue manager. A keyboard interrupt
+also stops those processes. After an aborted campaign, individual run files may
+remain, but combined dataframes may be incomplete and must not be treated as a
+successful archive.
 
 `executeSimulations()` returns the indices of failed runs. Once execution is complete, the
 controller and retained data can be reloaded in the same script or a later analysis script:
