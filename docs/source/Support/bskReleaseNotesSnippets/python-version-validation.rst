@@ -1,0 +1,1 @@
+- The build script now rejects unsupported Python versions before starting build operations, and CMake validates its selected interpreter against the same ``project.requires-python`` range in ``pyproject.toml``.

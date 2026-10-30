@@ -2,6 +2,7 @@ wheel
 cmake
 conan
 packaging
+tomli; python_version < "3.11"
 setuptools
 setuptools-scm
 swig

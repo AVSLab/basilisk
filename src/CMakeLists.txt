@@ -70,10 +70,10 @@ list(FILTER BSK_CUSTOM_CMAKE_FILES INCLUDE REGEX "(^|/)Custom\\.cmake$")
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
 
-# enforce minimum supported Python version and warn on deprecated versions
-if(Python3_VERSION VERSION_LESS "3.9")
-    message(FATAL_ERROR "Basilisk requires Python 3.9 or newer, but found Python ${Python3_VERSION}.")
-elseif(Python3_VERSION VERSION_LESS "3.10")
+# Enforce the package's supported Python range and warn on deprecated versions.
+include(bskCheckPythonVersion)
+bsk_check_python_version("${CMAKE_CURRENT_SOURCE_DIR}/../pyproject.toml")
+if(Python3_VERSION VERSION_LESS "3.10")
     message(WARNING "You are using Python ${Python3_VERSION}, but support for Python 3.9 is deprecated and will be removed in March 2027.")
 endif()
 

@@ -4,6 +4,7 @@ requires = [
     "setuptools>=77.0.3,<=84.0.0",   # Required for "bdist_wheel" to work correctly and for PEP 639 license metadata.
     "setuptools-scm>=8.0,<=10.3.4",  # Automatically include all Git-controlled files in sdist
     "packaging>=24.0,<=26.3",
+    "tomli>=2.0.1,<3; python_version < '3.11'",
 
     # needed to find the numpy include headers,
     # pin to lowest runtime allowed version to take advantage of backwards compatibility
