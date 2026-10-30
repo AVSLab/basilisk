@@ -56,7 +56,7 @@ supportData/EphemerisData/*.bsp
 **/tests/report/
 **/__pycache__/
 venv/
-.venv/
+.venv*/
 
 # VSCode / VS
 .devcontainer
