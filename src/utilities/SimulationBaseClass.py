@@ -15,6 +15,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
+# Python 3.15 defers these imports until a diagram is drawn. Older Python
+# versions keep the ordinary eager imports below.
+__lazy_modules__ = ("matplotlib.pyplot", "matplotlib.patches")
+
 # Import some architectural stuff that we will probably always use
 import html
 import math

@@ -20,7 +20,10 @@
 Unit tests for Basilisk supportData fetching (Pooch + local fallback).
 """
 
+import hashlib
+import importlib.util
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 import requests
@@ -57,6 +60,122 @@ def fake_fetch(monkeypatch, tmp_path):
     monkeypatch.setattr(dataFetcher, "LOCAL_SUPPORT", None)
 
     return dummy
+
+
+@pytest.fixture
+def isolated_fetcher(monkeypatch, tmp_path):
+    """Import fresh fetcher state with network requests forbidden."""
+    def reject_request(*args, **kwargs):
+        pytest.fail("Unexpected network request while accessing support data")
+
+    monkeypatch.setattr(requests.sessions.Session, "request", reject_request)
+    monkeypatch.setenv("BSK_SUPPORT_DATA_CACHE", str(tmp_path / "cache"))
+    spec = importlib.util.spec_from_file_location(
+        "isolated_data_fetcher", dataFetcher.__file__
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture
+def recorded_downloads(isolated_fetcher, monkeypatch):
+    """Use real Pooch cache handling with an in-memory HTTP response."""
+    content = b"test support data\n"
+    urls = []
+
+    def download(url, output_file, pooch_obj, check_only=False):
+        urls.append(url)
+        Path(output_file).write_bytes(content)
+
+    downloader_type = isolated_fetcher.RetryingHTTPDownloader
+    monkeypatch.setattr(
+        isolated_fetcher,
+        "RetryingHTTPDownloader",
+        lambda **kwargs: downloader_type(
+            downloader_factory=lambda **options: download, **kwargs
+        ),
+    )
+    monkeypatch.setattr(isolated_fetcher, "LOCAL_SUPPORT", None)
+    return content, urls
+
+
+def test_import_does_not_access_network(isolated_fetcher):
+    """Importing the fetcher must initialize its registry without HTTP requests."""
+    assert isolated_fetcher.POOCH.registry
+
+
+def test_local_support_file_does_not_access_network(isolated_fetcher, monkeypatch, tmp_path):
+    """A checkout's support file must be usable without a GitHub tag lookup."""
+    file_enum = isolated_fetcher.DataFile.MagneticFieldData.WMM
+    rel = isolated_fetcher.relpath(file_enum)
+    local_root = tmp_path / "supportData"
+    local_file = tmp_path / rel
+    local_file.parent.mkdir(parents=True)
+    local_file.write_text("local data")
+    monkeypatch.setattr(isolated_fetcher, "LOCAL_SUPPORT", local_root)
+
+    assert isolated_fetcher.get_path(file_enum) == local_file
+
+
+def test_cached_support_file_does_not_access_network(isolated_fetcher, monkeypatch):
+    """A valid Pooch cache entry must be returned without HTTP requests."""
+    file_enum = isolated_fetcher.DataFile.MagneticFieldData.WMM
+    rel = isolated_fetcher.relpath(file_enum)
+    cached_file = isolated_fetcher.POOCH.abspath / rel
+    cached_file.parent.mkdir(parents=True)
+    content = b"cached data"
+    cached_file.write_bytes(content)
+    monkeypatch.setattr(isolated_fetcher, "LOCAL_SUPPORT", None)
+    monkeypatch.setitem(isolated_fetcher.POOCH.registry, rel, hashlib.sha256(content).hexdigest())
+
+    assert isolated_fetcher.get_path(file_enum) == cached_file
+
+
+@pytest.mark.parametrize("cache_state", ["missing", "stale"])
+@pytest.mark.parametrize("tag_status", [200, 404, "timeout"])
+def test_remote_fetch_resolves_tag_once(
+    isolated_fetcher, recorded_downloads, monkeypatch, cache_state, tag_status
+):
+    """Resolve release or develop URLs on download and reuse the tag result."""
+    content, downloaded_urls = recorded_downloads
+    file_enum = isolated_fetcher.DataFile.MagneticFieldData.WMM
+    rel = isolated_fetcher.relpath(file_enum)
+    another_rel = "supportData/another.dat"
+    content_hash = hashlib.sha256(content).hexdigest()
+    monkeypatch.setitem(isolated_fetcher.POOCH.registry, rel, content_hash)
+    monkeypatch.setitem(isolated_fetcher.POOCH.registry, another_rel, content_hash)
+    cached_file = isolated_fetcher.POOCH.abspath / rel
+    if cache_state == "stale":
+        cached_file.parent.mkdir(parents=True)
+        cached_file.write_text("outdated data")
+
+    if tag_status == "timeout":
+        head = Mock(side_effect=requests.exceptions.Timeout("tag lookup timed out"))
+    else:
+        response = requests.Response()
+        response.status_code = tag_status
+        head = Mock(return_value=response)
+    monkeypatch.setattr(requests, "head", head)
+
+    assert isolated_fetcher.get_path(file_enum).read_bytes() == content
+    assert isolated_fetcher.get_path(file_enum) == cached_file
+    assert Path(isolated_fetcher.fetch_support_data(another_rel)).read_bytes() == content
+
+    version = isolated_fetcher.DATA_VERSION if tag_status == 200 else "develop"
+    base_url = f"https://raw.githubusercontent.com/AVSLab/basilisk/{version}/"
+    assert downloaded_urls == [base_url + rel, base_url + another_rel]
+    assert head.call_count == 1
+
+
+def test_external_download_does_not_check_github(isolated_fetcher, recorded_downloads):
+    """Explicit external data URLs must not require Basilisk's release tag."""
+    content, downloaded_urls = recorded_downloads
+    file_enum = isolated_fetcher.DataFile.EphemerisData.de430
+    rel = isolated_fetcher.relpath(file_enum)
+
+    assert isolated_fetcher.get_path(file_enum).read_bytes() == content
+    assert downloaded_urls == [isolated_fetcher.EXTERNAL_KERNEL_URLS[rel]]
 
 
 def test_all_enum_entries_are_in_registry():

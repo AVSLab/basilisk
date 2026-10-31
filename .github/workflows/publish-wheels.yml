@@ -128,7 +128,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: 3.14
+          python-version: "3.15"
 
       - name: Download core wheel input
         uses: actions/download-artifact@v6
@@ -197,7 +197,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: 3.14
+          python-version: "3.15"
 
       - name: Download sdist
         uses: actions/download-artifact@v6

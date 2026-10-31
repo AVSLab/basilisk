@@ -1,7 +1,8 @@
 pandas>=2.0.3,<=3.0.6
 matplotlib>=3.7.5,<=3.11.2
 numpy>=1.24.4,<=2.5.4; python_version < "3.13"
-numpy>=2.0,<=2.5.4; python_version >= "3.13"
+numpy>=2.0,<=2.5.4; python_version >= "3.13" and python_version < "3.15"
+numpy>=2.5.2,<=2.5.4; python_version >= "3.15"
 colorama==0.4.6
 tqdm>=4.67.3,<=4.70.1
 pillow>=10.4.0,<=13.0.0

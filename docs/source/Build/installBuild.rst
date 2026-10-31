@@ -47,6 +47,12 @@ shown in the platform-specific installation instructions. The editable installat
 virtual environment; subsequent incremental or clean native rebuilds update the same ``dist3`` package in place and
 do not require another editable installation.
 
+Before starting build operations, ``conanfile.py`` checks the running Python version against
+``project.requires-python`` in ``pyproject.toml``. CMake checks its selected Python interpreter against
+the same range during configuration, including when invoked directly. An unsupported version stops the
+build with an error identifying the interpreter and supported range. Create or activate a virtual
+environment with a supported Python version before retrying.
+
 By default the build is for Python3 with the support for :ref:`vizInterface`
 included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>`.
 

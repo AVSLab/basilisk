@@ -1,0 +1,1 @@
+- On Python 3.15, ``SimulationBaseClass`` defers its Matplotlib imports until plotting functionality is used, reducing startup work for simulations that do not draw diagrams. Python 3.9–3.14 retain eager imports and the same plotting interfaces.

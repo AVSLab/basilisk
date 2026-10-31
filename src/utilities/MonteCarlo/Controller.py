@@ -27,7 +27,6 @@
 import os
 import random
 import shutil
-import sys
 import traceback
 import warnings
 import ast
@@ -38,13 +37,49 @@ import copy
 import gzip
 import json
 import signal
-import time
+from numbers import Integral
+from operator import index
+from queue import Full
 import numpy as np
 import multiprocessing as mp
 import pickle as pickle
 from Basilisk.utilities.MonteCarlo.DataWriter import DataWriter
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
+
+
+_WRITER_POLL_INTERVAL = 0.1  # [s]
+
+
+def _check_writer(writer):
+    """Raise if a writer exits before receiving its end marker."""
+    if writer is not None and writer.exitcode is not None:
+        raise RuntimeError(
+            f"Monte Carlo data writer exited unexpectedly (exit code {writer.exitcode})"
+        )
+
+
+def _initialize_worker():
+    """Let the controller handle keyboard interrupts for pool workers."""
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+class _CheckedRetentionQueue:
+    """Check writer health while the calling process waits for queue space."""
+
+    def __init__(self, queue, writer):
+        self.queue = queue
+        self.writer = writer
+
+    def put(self, item):
+        """Enqueue an item or raise if the writer has exited."""
+        while True:
+            _check_writer(self.writer)
+            try:
+                self.queue.put(item, timeout=_WRITER_POLL_INTERVAL)
+                return
+            except Full:
+                continue
 
 
 class Controller:
@@ -61,6 +96,8 @@ class Controller:
         self.archiveDir = None
         self.varCast = None
         self.numProcess = mp.cpu_count()
+        self.maxTasksPerChild = 8
+        self.retentionQueueSize = None
         self.multiProcManager = None
         self.dataOutQueue = None
         self.dataWriter = None
@@ -77,26 +114,137 @@ class Controller:
             icfilename=""
         )
 
-    def _shutdown_data_writer(self):
-        if self.dataWriter is not None:
+    def _start_data_writer(self, logDir, workers):
+        """Start a writer with bounded retention storage when requested."""
+        if logDir is None:
+            return
+        self.multiProcManager = mp.Manager()
+        capacity = getattr(self, "retentionQueueSize", None) or 2 * workers
+        self.dataOutQueue = self.multiProcManager.Queue(maxsize=capacity)
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
+        self.dataWriter.setLogDir(logDir)
+        self.dataWriter.setVarCast(self.varCast)
+        self.dataWriter.start()
+
+    def _shutdown_data_writer(self, abort=False):
+        """Finish retained data, or stop immediately when aborting a campaign.
+
+        :param bool abort: Stop the writer without consolidating partial data.
+        :raises RuntimeError: The writer exits before completing its output.
+        """
+        writer = self.dataWriter
+        try:
+            if writer is not None and writer.pid is not None and not abort:
+                queue = _CheckedRetentionQueue(self.dataOutQueue, writer)
+                queue.put((None, None, True))
+                writer.join()
+                if writer.exitcode != 0:
+                    raise RuntimeError(
+                        f"Monte Carlo data writer failed (exit code {writer.exitcode})"
+                    )
+        finally:
             try:
-                if self.dataOutQueue is not None and getattr(self.dataWriter, "pid", None) is not None:
-                    self.dataOutQueue.put((None, None, True))
-            except Exception:
-                pass
+                if writer is not None and writer.pid is not None:
+                    if writer.is_alive():
+                        writer.terminate()
+                    writer.join()
+            finally:
+                try:
+                    if self.multiProcManager is not None:
+                        self.multiProcManager.shutdown()
+                finally:
+                    self.dataWriter = None
+                    self.dataOutQueue = None
+                    self.multiProcManager = None
+
+    def _execute_cases(self, caseList, generator, logDir):
+        """Execute bounded batches in one pool and supervise retained output."""
+        if len(caseList) == 0:
+            return []
+        workers = min(self.numProcess, len(caseList))
+        if workers < 1:
+            raise ValueError("Monte Carlo worker count must be positive")
+        failed = []
+        finished = 0
+        pool = None
+        progressBar = SimulationProgressBar(len(caseList), self.simParams.showProgressBar)
+        try:
+            self._start_data_writer(logDir, workers)
+            executor = SimulationExecutor()
+            if self.numProcess > 1:
+                pool = mp.Pool(
+                    workers,
+                    initializer=_initialize_worker,
+                    maxtasksperchild=getattr(self, "maxTasksPerChild", 8),
+                )
+            queue = self.dataOutQueue
+            if pool is None and queue is not None:
+                queue = _CheckedRetentionQueue(queue, self.dataWriter)
+            for start in range(0, len(caseList), workers):
+                _check_writer(self.dataWriter)
+                # Normalize NumPy indices without materializing the entire campaign.
+                cases = [index(case) for case in caseList[start:start + workers]]
+                try:
+                    batch = [(sim, queue) for sim in generator(cases)]
+                except Exception as error:
+                    _check_writer(self.dataWriter)
+                    print("Error preparing Monte Carlo simulations:", error)
+                    traceback.print_exc()
+                    # Nothing in this batch has been submitted yet.
+                    failed.extend(cases)
+                    finished += len(cases)
+                    progressBar.update(finished)
+                    continue
+                if pool is None:
+                    results = map(executor, batch)
+                else:
+                    results = pool.imap_unordered(executor, batch, chunksize=1)
+                pending = [sim.index for sim, _ in batch]
+                remaining = len(batch)
+                while remaining:
+                    _check_writer(self.dataWriter)
+                    try:
+                        if pool is None:
+                            result = next(results)
+                        else:
+                            result = results.next(_WRITER_POLL_INTERVAL)
+                    except mp.TimeoutError:
+                        continue
+                    except Exception as error:
+                        if pool is None:
+                            raise
+                        # A submission error consumes one result without its
+                        # run index. Collect the missing indices after draining
+                        # the rest of this batch, including successful runs.
+                        print("Error receiving Monte Carlo worker result:", error)
+                        traceback.print_exc()
+                    else:
+                        pending.remove(result[1])
+                        if not result[0]:
+                            failed.append(result[1])
+                    _check_writer(self.dataWriter)
+                    remaining -= 1
+                    finished += 1
+                    progressBar.update(finished)
+                failed.extend(pending)
+            if pool is not None:
+                pool.close()
+                pool.join()
+                pool = None
+            self._shutdown_data_writer()
+            progressBar.markComplete()
+        except BaseException:
             try:
-                if getattr(self.dataWriter, "pid", None) is not None:
-                    self.dataWriter.join()
-            except Exception:
-                pass
-        if self.multiProcManager is not None:
-            try:
-                self.multiProcManager.shutdown()
-            except Exception:
-                pass
-        self.dataWriter = None
-        self.dataOutQueue = None
-        self.multiProcManager = None
+                if pool is not None:
+                    pool.terminate()
+                    pool.join()
+            finally:
+                self._shutdown_data_writer(abort=True)
+            raise
+        finally:
+            progressBar.close()
+        return sorted(failed)
 
     def setShowProgressBar(self, value):
         """
@@ -211,6 +359,39 @@ class Controller:
                 Number of threads to execute the montecarlo run on.
         """
         self.numProcess = threads
+
+    def setMaxTasksPerChild(self, count):
+        """Set how many simulations each pool worker runs before replacement.
+
+        The default is eight simulations. One restores a fresh process for
+        each simulation; ``None`` keeps workers for the entire campaign.
+        This setting does not affect the one-worker path, which runs in the
+        calling process.
+
+        :param int count: Positive simulation count, or ``None`` for no limit.
+        :raises ValueError: The count is neither a positive integer nor ``None``.
+        """
+        if count is not None and (
+            isinstance(count, bool) or not isinstance(count, Integral) or count < 1
+        ):
+            raise ValueError("Worker task limit must be a positive integer or None")
+        self.maxTasksPerChild = None if count is None else int(count)
+
+    def setRetentionQueueSize(self, count):
+        """Set the maximum number of retained results awaiting the writer.
+
+        ``None`` selects twice the active worker count. The limit counts
+        simulation results, not bytes; large retained arrays still require
+        corresponding memory. Producers wait when the queue is full.
+
+        :param int count: Positive queue capacity, or ``None`` for automatic sizing.
+        :raises ValueError: The capacity is neither a positive integer nor ``None``.
+        """
+        if count is not None and (
+            isinstance(count, bool) or not isinstance(count, Integral) or count < 1
+        ):
+            raise ValueError("Retention queue size must be a positive integer or None")
+        self.retentionQueueSize = None if count is None else int(count)
 
     def setVerbose(self, verbose):
         """
@@ -380,18 +561,14 @@ class Controller:
 
     def runInitialConditions(self, caseList):
         """
-        Run initial conditions given in a file
+        Execute saved initial conditions with the configured worker lifecycle.
 
-        Args:
-            caseList: int[]
-                The list of runs to repeat, a list of numbers.
-        Returns:
-            failures: int[]
-                The list of failed runs.
+        :param caseList: Sequence of integer indices of the saved simulations to execute.
+        :return: Sorted indices of failed simulations.
+        :rtype: list[int]
+        :raises RuntimeError: The data writer exits before finishing the archive.
+        :raises ValueError: The output archive would overwrite the input archive.
         """
-        # the list of failures
-        failed = []
-
         assert self.icDirectory != "", "No initial condition directory was given"
         assert self.ICrunFlag is not False, "IC run flag was not set"
 
@@ -410,91 +587,17 @@ class Controller:
             except Exception as e:
                 print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
 
-        # Create Queue, but don't ever start it.
-        self.multiProcManager = mp.Manager()
-        self.dataOutQueue = self.multiProcManager.Queue()
-        self.dataWriter = DataWriter(self.dataOutQueue)
-        self.dataWriter.daemon = False
-
-        # If archiving the rerun data -- make sure not to delete the original data!
+        # Preserve the input archive when saving consolidated rerun data.
         if self.archiveDir is not None:
-            if self.archiveDir != self.icDirectory:
-                if os.path.exists(self.archiveDir):
-                    shutil.rmtree(self.archiveDir)
-                os.mkdir(self.archiveDir)
-                self.dataWriter.setLogDir(self.archiveDir)
-                self.dataWriter.start()
-            else:
-                print("ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
-                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n")
-                sys.exit("Change the archive directory to a new location when rerunning cases.")
-        else:
-            print("No archive data specified; no data will be logged to dataframes")
+            if self.archiveDir == self.icDirectory:
+                raise ValueError(
+                    "The archive directory must differ from the initial-condition directory"
+                )
+            if os.path.exists(self.archiveDir):
+                shutil.rmtree(self.archiveDir)
+            os.mkdir(self.archiveDir)
 
-        jobsFinished = 0  # keep track of what simulations have finished
-
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor()
-        #
-        progressBar = SimulationProgressBar(len(caseList), self.simParams.showProgressBar)
-        if self.numProcess == 1:  # don't make child thread
-            if self.simParams.verbose:
-                print("Executing sequentially...")
-            i = 0
-            for i in range(len(caseList)):
-                simGenerator = self.generateICSims(caseList[i:i+1])
-                for sim in simGenerator:
-                    try:
-                        simulationExecutor([sim,  self.dataOutQueue])
-                    except:
-                        failed.append(i)
-                i += 1
-                progressBar.update(i)
-        else:
-            numSims = len(caseList)
-            if self.numProcess > numSims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
-                self.numProcess = numSims
-            for i in range(numSims//self.numProcess):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
-                    offset = numSims % self.numProcess
-                else:
-                    offset = 0
-
-                simGenerator = self.generateICSims(caseList[self.numProcess*i:self.numProcess*(i+1)+offset])
-                pool = mp.Pool(self.numProcess)
-                try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
-
-                        jobsFinished += 1
-                        progressBar.update(jobsFinished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
-                except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    pool.join()
-
-        progressBar.markComplete()
-        progressBar.close()
-        # If the data was archiving, close the queue.
-        if self.archiveDir is not None and self.archiveDir != self.icDirectory:
-            while not self.dataOutQueue.empty():
-               time.sleep(1)
-            self._shutdown_data_writer()
+        failed = self._execute_cases(caseList, self.generateICSims, self.archiveDir)
 
         # if there are failures
         if len(failed) > 0:
@@ -594,10 +697,11 @@ class Controller:
 
     def executeSimulations(self):
         """
-        Execute simulations in parallel
+        Execute simulations with a reusable worker pool and bounded retention.
 
-        :return: failed: int[]
-                 A list of the indices of all failed simulation runs.
+        :return: Sorted indices of failed simulations.
+        :rtype: list[int]
+        :raises RuntimeError: The data writer exits before finishing the archive.
         """
 
         if self.simParams.verbose:
@@ -615,94 +719,9 @@ class Controller:
             except Exception as e:
                 print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
 
-        self.multiProcManager = mp.Manager()
-        self.dataOutQueue = self.multiProcManager.Queue()
-        self.dataWriter = DataWriter(self.dataOutQueue)
-        self.dataWriter.daemon = False
-
-        numSims = self.executionCount
-
-        # start data writer process
-        self.dataWriter.setLogDir(self.archiveDir)
-        self.dataWriter.setVarCast(self.varCast)
-        self.dataWriter.start()
-
-        # Avoid building a full list of all simulations to run in memory,
-        # instead only generating simulations right before they are needed by a waiting worker
-        # This is accomplished using a generator and pool.imap, -- simulations are only built
-        # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
-        # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        # simGenerator = self.generateSims(range(numSims))
-        failed = []  # keep track of the indices of failed simulations
-        jobsFinished = 0  # keep track of what simulations have finished
-
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor()
-
-        progressBar = SimulationProgressBar(numSims, self.simParams.showProgressBar)
-
-        # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
-        # is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting
-        # garbage properly. # TODO: Find a more permenant solution to the leak.
-
-        try:
-            if self.numProcess == 1:  # don't make child thread
-                if self.simParams.verbose:
-                    print("Executing sequentially...")
-                i = 0
-                for i in range(numSims):
-                    simGenerator = self.generateSims(list(range(i,i+1)))
-                    for sim in simGenerator:
-                        try:
-                            run_ok = simulationExecutor([sim, self.dataOutQueue])[0]
-                        except:
-                            failed.append(i)
-                        else:
-                            if not run_ok:
-                                failed.append(i)
-                        i += 1
-                        progressBar.update(i)
-            else:
-                if self.numProcess > numSims:
-                    print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
-                    self.numProcess = numSims
-                for i in range(numSims//self.numProcess):
-                    # If number of sims doesn't factor evenly into the number of processes:
-                    if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
-                        offset = numSims % self.numProcess
-                    else:
-                        offset = 0
-                    simGenerator = self.generateSims(list(range(self.numProcess*i, self.numProcess*(i+1)+offset)))
-                    pool = mp.Pool(self.numProcess)
-                    try:
-                        # yields results *as* the workers finish jobs
-                        for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                            if result[0] is not True:  # workers return True on success
-                                failed.append(result[1])  # add failed jobs to the list of failures
-                                print("Job", result[1], "failed...")
-
-                            jobsFinished += 1
-                            progressBar.update(jobsFinished)
-                        pool.close()
-                    except KeyboardInterrupt as e:
-                        print("Ctrl-C was hit, closing pool")
-                        failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                        pool.terminate()
-                        raise e
-                    except Exception as e:
-                        print("Unknown exception while running simulations:", e)
-                        failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                        traceback.print_exc()
-                        pool.terminate()
-                    finally:
-                        # Wait until all data is logged from the spawned runs before proceeding with the next set.
-                        pool.join()
-
-            progressBar.markComplete()
-        finally:
-            progressBar.close()
-            self._shutdown_data_writer()
+        failed = self._execute_cases(
+            range(self.executionCount), self.generateSims, self.archiveDir
+        )
 
         # if there are failures
         if len(failed) > 0:
@@ -784,8 +803,6 @@ class SimulationExecutor:
         dataOutQueue = params[1]
 
         try:
-            signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
-
             # must make new random seed on each new thread.
             np.random.seed(simParams.index * 10)
             random.seed(simParams.index * 10)
@@ -876,8 +893,10 @@ class SimulationExecutor:
                     print("Retaining data for run in", retentionFile)
 
                 retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
-                dataOutQueue.put((retainedData, simParams.index, None))
-                time.sleep(1)
+                # Manager.Queue.put() completes before returning; the controller
+                # joins the writer before shutting down the queue manager.
+                if dataOutQueue is not None:
+                    dataOutQueue.put((retainedData, simParams.index, None))
 
                 with gzip.open(retentionFile, "w") as archive:
                     retainedData["index"] = simParams.index # add run index

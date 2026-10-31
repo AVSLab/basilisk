@@ -4,11 +4,14 @@ requires = [
     "setuptools>=77.0.3,<=84.0.0",   # Required for "bdist_wheel" to work correctly and for PEP 639 license metadata.
     "setuptools-scm>=8.0,<=10.3.4",  # Automatically include all Git-controlled files in sdist
     "packaging>=24.0,<=26.3",
+    "tomli>=2.0.1,<3; python_version < '3.11'",
 
     # needed to find the numpy include headers,
     # pin to lowest runtime allowed version to take advantage of backwards compatibility
     "numpy>=1.24.4,<2.4.0;  python_version < '3.13'",
-    "numpy>=2.0,<2.4.0;     python_version >= '3.13'",
+    "numpy>=2.0,<2.4.0;     python_version >= '3.13' and python_version < '3.15'",
+    # NumPy 2.5.2 introduced wheels for standard CPython 3.15.
+    "numpy>=2.5.2,<=2.5.4;  python_version >= '3.15'",
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.4.0,<=2.33.0",
@@ -20,7 +23,7 @@ requires = [
 [project]
 name        = 'bsk'
 dynamic     = ["version", "dependencies"]
-requires-python = ">=3.9, <3.15"
+requires-python = ">=3.9, <3.16"
 
 readme      = "README.md"
 license     = "ISC"
@@ -35,6 +38,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
 ]
@@ -71,8 +75,9 @@ examples = [
   'scipy==1.13.1; python_version < "3.10"',
   'scipy==1.15.3; python_version >= "3.10" and python_version < "3.11"',
   'scipy>=1.17.1,<=1.18.1; python_version >= "3.11"',
-  # Match development requirements so NumPy 2.5 upgrades also update Numba.
-  'numba>=0.67.0,<=0.68.0; python_version >= "3.12"',
+  # Match development requirements for NumPy 2.5 and Python 3.15 compatibility.
+  'numba>=0.68.0,<=0.68.0; python_version >= "3.15"',
+  'numba>=0.67.0,<=0.68.0; python_version >= "3.12" and python_version < "3.15"',
   'numba<=0.68.0; python_version < "3.12"',
 ]
 opnav = [
@@ -83,9 +88,11 @@ all = [
 ]
 
 [tool.cibuildwheel]
-build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*", "cp315-*"]
 skip  = ["*-win32", "*-musllinux_*"]
 build-verbosity = 1
+# Preserve the existing wheel checks; cibuildwheel 4 enables an ABI audit by default.
+audit-command = ""
 before-build = "python .github/scripts/configure_conan_retries.py && pip install \"libclang>=15.0.6.1,<=18.1.1\" ninja"
 test-extras = ["test"]
 test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip and not scenarioTest\""

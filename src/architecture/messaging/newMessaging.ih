@@ -28,6 +28,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %}
 
 %{
+// Keep abi3 wheels compatible with the oldest supported NumPy runtime,
+// including when the build uses newer headers with a higher default API target.
+#define NPY_TARGET_VERSION NPY_1_24_API_VERSION
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 %}

@@ -1,0 +1,1 @@
+- Deferred the support-data GitHub release-tag lookup until a repository-hosted file needs downloading, eliminating this network request during imports, local and valid cached file access, and external data downloads.
