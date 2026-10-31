@@ -134,23 +134,12 @@ jobs:
           grep -F "BUILD_RUST_MODULES:BOOL=ON" dist3/CMakeCache.txt
           python -c "from Basilisk import getBuildInfo; assert getBuildInfo()['diagnostics']['tools']['corrosion']"
       - name: Pytest
-        id: windows-pytest
         shell: pwsh
         working-directory: src
         run: |
           pip install pytest-error-for-skips pytest-timeout
           pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
-      - name: Diagnose Monte Carlo interruption failure
-        if: ${{ failure() && steps.windows-pytest.outcome == 'failure' }}
-        shell: pwsh
-        working-directory: src
-        timeout-minutes: 2  # [min]
-        run: |
-          # Run outside xdist with live output so a terminated worker cannot lose the stacks.
-          # Dump all thread stacks after 10 s and retain the test's 30 s timeout.
-          python -u -X faulthandler -m pytest -n 0 -s -vv -o faulthandler_timeout=10 --timeout=30 --timeout-method=thread "utilities/MonteCarlo/_UnitTests/test_controller.py::test_interrupt_with_full_retention_queue_cleans_up[1]"
-          if ($LastExitCode -ne 0) { exit $LastExitCode }
       - name: Build integration tests
         shell: pwsh
         working-directory: src
