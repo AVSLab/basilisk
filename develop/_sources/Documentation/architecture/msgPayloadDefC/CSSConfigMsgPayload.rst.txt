@@ -1,0 +1,10 @@
+.. _CSSConfigMsgPayload:
+
+CSSConfigMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CSSConfigMsgPayload.h
+   :project: msgPayloadDefC
+

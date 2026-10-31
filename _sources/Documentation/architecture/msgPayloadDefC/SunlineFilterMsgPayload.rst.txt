@@ -1,0 +1,10 @@
+.. _SunlineFilterMsgPayload:
+
+SunlineFilterMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SunlineFilterMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _MJSpec:
+
+MJSpec
+======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJSpec.h
+   :project: _GeneralModuleFiles6
+

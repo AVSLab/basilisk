@@ -1,0 +1,15 @@
+.. _scenarioFormationMeanOEFeedback:
+
+scenarioFormationMeanOEFeedback
+===============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioFormationMeanOEFeedback
+   :members:
+   :show-inheritance:
+

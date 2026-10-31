@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_rustModuleTemplate:
+
+rustModuleTemplate
+==================
+
+:doc:`Module documentation <rustModuleTemplate>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

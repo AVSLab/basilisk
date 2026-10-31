@@ -1,0 +1,15 @@
+.. _test_atmospherePolarRadius:
+
+test_atmospherePolarRadius
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_atmospherePolarRadius
+   :members:
+   :show-inheritance:
+

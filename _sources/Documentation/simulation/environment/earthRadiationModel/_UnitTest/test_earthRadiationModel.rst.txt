@@ -1,0 +1,15 @@
+.. _test_earthRadiationModel:
+
+test_earthRadiationModel
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_earthRadiationModel
+   :members:
+   :show-inheritance:
+

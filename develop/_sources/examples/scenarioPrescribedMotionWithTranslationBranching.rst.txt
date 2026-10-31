@@ -1,0 +1,15 @@
+.. _scenarioPrescribedMotionWithTranslationBranching:
+
+scenarioPrescribedMotionWithTranslationBranching
+================================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioPrescribedMotionWithTranslationBranching
+   :members:
+   :show-inheritance:
+

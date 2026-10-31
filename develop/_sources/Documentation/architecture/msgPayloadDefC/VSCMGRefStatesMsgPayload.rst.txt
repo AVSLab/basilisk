@@ -1,0 +1,10 @@
+.. _VSCMGRefStatesMsgPayload:
+
+VSCMGRefStatesMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VSCMGRefStatesMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,21 @@
+.. _Folder_Documentation:
+
+Documentation
+=============
+
+Module Catalog
+--------------
+
+Find simulation modules, flight software algorithms, and module templates. Select a module name to open its documentation. Some modules require optional build features; see the module guide for requirements.
+
+.. bsk-module-catalog::
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   architecture/index
+   fswAlgorithms/index
+   moduleTemplates/index
+   simulation/index
+   utilities/index

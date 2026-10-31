@@ -1,0 +1,10 @@
+.. _AlbedoMsgPayload:
+
+AlbedoMsgPayload
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AlbedoMsgPayload.h
+   :project: msgPayloadDefC
+

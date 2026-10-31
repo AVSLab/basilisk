@@ -1,0 +1,15 @@
+.. _test_genRustUtilities:
+
+test_genRustUtilities
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_genRustUtilities
+   :members:
+   :show-inheritance:
+

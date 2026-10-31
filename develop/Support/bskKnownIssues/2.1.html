@@ -1,0 +1,279 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.1 Known Issues &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.0 Known Issues" href="2.0.html" />
+    <link rel="prev" title="Version 2.2 Known Issues" href="2.2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+      <li class="breadcrumb-item active">Version 2.1 Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskKnownIssues/2.1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-1-known-issues">
+<h1>Version 2.1 Known Issues<a class="headerlink" href="#version-2-1-known-issues" title="Link to this heading"></a></h1>
+<section id="version-2-1-7">
+<span id="bsk-known-issues-2-1-7"></span><h2>Version 2.1.7<a class="headerlink" href="#version-2-1-7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The way to include effector bodies in Vizard has changed in this release.</p></li>
+<li><p>The streaming between <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and Vizard was not reliable because of a ZMQ compatibility
+issue between the two code bases.  BSK is reverting to using ZMQ 4.3.0 for now to avoid this issue.</p></li>
+<li><p>Building Basilisk with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> mode was no longer working as a conan package dependency issue came up.
+This has been corrected in the new version by specifying <code class="docutils literal notranslate"><span class="pre">xz_utils/5.4.0</span></code> in <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code>.  Note
+that building with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> now also appears to require <code class="docutils literal notranslate"><span class="pre">conan&gt;=1.59.0</span></code>, but less than 2.0.0.</p></li>
+</ul>
+</section>
+<section id="version-2-1-6">
+<span id="bsk-known-issues-2-1-6"></span><h2>Version 2.1.6<a class="headerlink" href="#version-2-1-6" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>in <a class="reference internal" href="../../Documentation/simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.html#boreangcalc"><span class="std std-ref">C++ Module: boreAngCalc</span></a>, the variable <code class="docutils literal notranslate"><span class="pre">boreVecPoint</span></code> is now called <code class="docutils literal notranslate"><span class="pre">boreVec_Po</span></code>.</p></li>
+</ul>
+</section>
+<section id="version-2-1-5">
+<span id="bsk-known-issues-2-1-5"></span><h2>Version 2.1.5<a class="headerlink" href="#version-2-1-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found
+when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> module inertial state outputs are relative to the central gravity body,
+not the inertial frame.  This is now corrected.</p></li>
+<li><p>Adding an instrument camera to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> has changed.  See <a class="reference internal" href="../../Vizard/vizardAdvanced/vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a> on how
+to use the new method <code class="docutils literal notranslate"><span class="pre">addCamMsgToModule()</span></code>.</p></li>
+</ul>
+</section>
+<section id="version-2-1-4">
+<span id="bsk-known-issues-2-1-4"></span><h2>Version 2.1.4<a class="headerlink" href="#version-2-1-4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found
+when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p>prior version had a bug in computer the latitude in <code class="docutils literal notranslate"><span class="pre">PCPF2LLA()</span></code> inside <a class="reference internal" href="../../Documentation/architecture/utilities/geodeticConversion.html#geodeticconversion"><span class="std std-ref">geodeticConversion</span></a>.  This is used
+in the <code class="docutils literal notranslate"><span class="pre">specifyLocationPCPF()</span></code> method inside <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a>, and in
+<a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/albedo/albedo.html#albedo"><span class="std std-ref">C++ Module: albedo</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">C++ Module: coarseSunSensor</span></a> now receives in <code class="docutils literal notranslate"><span class="pre">sensorList</span></code> a list of CSS configuration state pointers, not
+a copy to the configuration structures.  This allows these values to be changed on the fly from
+within python.  However, the simulation code must ensure that the CSS configuration structures
+are retained in memory or a segmentation fault will ensue.</p></li>
+<li><p>How stand alone C-wrapped message objects are created in python has moved from <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code>
+to <code class="docutils literal notranslate"><span class="pre">messaging</span></code>.  Old scripts still using <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code> still work as a link has been
+created to <code class="docutils literal notranslate"><span class="pre">messaging</span></code>.  But, the use of <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code> is no depreciated and code should
+be updated to using <code class="docutils literal notranslate"><span class="pre">messaging</span></code> instead.</p></li>
+<li><p>The use of custom message in the external modules folders is broke with the new build
+modification in this release.  This is fixed in the latest release.</p></li>
+</ul>
+</section>
+<section id="version-2-1-3">
+<span id="bsk-known-issues-2-1-3"></span><h2>Version 2.1.3<a class="headerlink" href="#version-2-1-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found
+when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/environment/planetEphemeris/planetEphemeris.html#planetephemeris"><span class="std std-ref">C++ Module: planetEphemeris</span></a> was not computing the correct orientation, this is fixed in current release</p></li>
+<li><p>updated <code class="docutils literal notranslate"><span class="pre">examples/OpNavScenarios/BSK_OpNav.py</span></code> path to the Vizard binary. If you are calling
+Vizard 2.1+ from the python script, the Vizard binary name changed from <code class="docutils literal notranslate"><span class="pre">Basilisk</span> <span class="pre">Vizard`</span> <span class="pre">to</span>
+<span class="pre">simply</span> <span class="pre">``Vizard</span></code>.</p></li>
+<li><p>using newer versions of Python, such as 3.9.13 or 3.10.5, running <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> runs into errors
+and fails.  This is now addressed in the next release.  Upgrading <code class="docutils literal notranslate"><span class="pre">pip</span></code> to the newest version
+manually can resolve this issue as well.</p></li>
+</ul>
+</section>
+<section id="version-2-1-2">
+<span id="bsk-known-issues-2-1-2"></span><h2>Version 2.1.2<a class="headerlink" href="#version-2-1-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found
+when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">conan</span></code> version 1.44 is causing build issues because the way the source and build folders are set has
+changed.  This is fixed in current version of Basilisk.</p></li>
+<li><p>building Basilisk from scratch with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> turned on was failing because <code class="docutils literal notranslate"><span class="pre">conan</span></code> was not able to
+install <code class="docutils literal notranslate"><span class="pre">opencv/4.1.1</span></code>.  In particular, the package <code class="docutils literal notranslate"><span class="pre">jasper</span></code> was now failing as a required argument
+is no longer supported.  This is fixed in the current release by turning off this <code class="docutils literal notranslate"><span class="pre">jasper</span></code> requirement.</p></li>
+</ul>
+</section>
+<section id="version-2-1-1">
+<span id="bsk-known-issues-2-1-1"></span><h2>Version 2.1.1<a class="headerlink" href="#version-2-1-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p>On windows when building with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> mode on,
+the <code class="docutils literal notranslate"><span class="pre">gettext</span></code> library was not included with the <code class="docutils literal notranslate"><span class="pre">conan</span></code> software unless the version is 0.21,
+not 0.20.1.  This dependency has been upgraded.  This might require deleting the <code class="docutils literal notranslate"><span class="pre">.conan</span></code> folder in your
+home directory and re-installing all dependencies.</p></li>
+</ul>
+</section>
+<section id="version-2-1-0">
+<span id="bsk-known-issues-2-1-0"></span><h2>Version 2.1.0<a class="headerlink" href="#version-2-1-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">conan</span></code> changed the default repos in version 1.40 onwards which broke the Basilisk installation.
+This is now corrected in the latest release.  After pulling the latest code release, you’ll need to
+delete the <code class="docutils literal notranslate"><span class="pre">.conan</span></code> folder in your home directory to create a fresh copy.  This only has to be done once.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/formationFlying/spacecraftReconfig/spacecraftReconfig.html#spacecraftreconfig"><span class="std std-ref">C Module: spacecraftReconfig</span></a> has been changed to read in the spacecraft mass from an input message, not be set as
+a module variable</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.2.html" class="btn btn-neutral float-left" title="Version 2.2 Known Issues" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.0.html" class="btn btn-neutral float-right" title="Version 2.0 Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

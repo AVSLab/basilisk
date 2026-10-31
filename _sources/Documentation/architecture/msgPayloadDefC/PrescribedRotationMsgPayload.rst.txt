@@ -1,0 +1,10 @@
+.. _PrescribedRotationMsgPayload:
+
+PrescribedRotationMsgPayload
+============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PrescribedRotationMsgPayload.h
+   :project: msgPayloadDefC
+

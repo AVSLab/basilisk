@@ -1,0 +1,80 @@
+.. _autoCppModule:
+
+:module-type:`C++` Module: autoCppModule
+========================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+This is an auto-created sample C++ module.  The description is included with the module class definition
+
+Module Assumptions and Limitations
+----------------------------------
+Describe the model assumptions, required inputs, and limits on valid use.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  
+The module message connection is set by the user from Python.  
+The message type contains a link to the message structure definition, while the description 
+provides information on what this message is used for.
+
+.. bsk-module-io:: autoCppModule
+    :caption: Module I/O Messages
+    :module-type: C++
+
+    input someInMsg AttRefMsgPayload
+        Input message description.
+
+    input some2InMsg AttRefMsgPayload
+        Input message description.
+
+    input anotherInMsg CSSConfigMsgPayload
+        Input message description.
+
+    input anotherCppInMsg CSSConfigLogMsgPayload
+        Input message description.
+
+    output some2OutMsg AttRefMsgPayload
+        Output message description.
+
+    output someOutMsg SCStatesMsgPayload
+        Output message description.
+
+    output anotherCppOutMsg DataStorageStatusMsgPayload
+        Output message description.
+
+
+Detailed Module Description
+---------------------------
+Describe the implemented algorithm and mathematics, including units and reset behavior.
+This section is optional for modules whose behavior is fully explained above.
+
+User Guide
+----------
+Provide a runnable Python example with configuration, message connections, and expected results.
+Explain which variables are configuration and which are runtime state.
+Use ``_UnitTest/test_autoCppModule.py`` as a starting point for simulation setup;
+its smoke checks verify execution and publication, not numerical payload values.
+
+See :ref:`makingModules-3` for RST authoring instructions and :ref:`cModuleTemplate`
+and :ref:`cppModuleTemplate` for completed module documentation examples.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: autoCppModule.h
+   :project: autoCppModule
+

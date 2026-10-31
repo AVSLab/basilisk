@@ -1,0 +1,630 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.13 Known Issues &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.12 Known Issues" href="2.12.html" />
+    <link rel="prev" title="Basilisk Known Issues" href="../bskKnownIssues.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+      <li class="breadcrumb-item active">Version 2.13 Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskKnownIssues/2.13.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-13-known-issues">
+<h1>Version 2.13 Known Issues<a class="headerlink" href="#version-2-13-known-issues" title="Link to this heading"></a></h1>
+<section id="version-release">
+<span id="bsk-known-issues-current"></span><h2>Version 2.13.0b0
+<a class="headerlink" href="#version-release" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Since 2.12.0, assigning a C++ module output to a stand-alone message copied
+its initial contents instead of redirecting subsequent writes. This left
+shared circles messages in the OpNav scenarios at zero despite successful
+image processing. Python output assignment now redirects reads and writes
+again and retains the gateway for producers, readers, and recorders, including
+inputs connected through module registration methods. Native C++ copies and
+moves of redirected messages take independent snapshots without consuming the
+gateway payload.</p></li>
+<li><p>GitHub issue 1632: <a class="reference internal" href="../../Documentation/simulation/communication/linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a> underestimated atmospheric attenuation on Earth-space slant paths by
+repeatedly applying a ground-to-layer refraction ratio to the running elevation cosine. Each layer now uses
+the ground ray invariant and its own elevation when accumulating loss. Atmospheric layer generation also
+produced nearly constant one-meter steps and overflowed near 72.4 km for a sea-level station, silently
+stopping below the intended 100 km limit. A finite exponential grid now covers the complete altitude interval
+and samples atmospheric properties at layer midpoints. Cells are split at the atmosphere’s temperature and
+pressure formula boundaries to reduce absolute attenuation errors near absorption lines. The resulting
+sea-level grid uses 931 cells instead of 70,979. Absolute attenuation regression tests use real oxygen and
+water-vapor absorption tables and a converged fine-grid reference. A committed reference-generation utility
+reproduces the 1 m versus 0.5 m convergence comparison. Quantitative tests cover the existing per-layer sine
+clamp of 0.0872, including low elevations and both sides of its threshold; clamp behavior is unchanged.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/headingSuKF/headingSuKF.html#headingsukf"><span class="std std-ref">C Module: headingSuKF</span></a> applied the inverse camera mounting rotation when writing
+<code class="docutils literal notranslate"><span class="pre">r_BN_C</span></code>, producing incorrect camera-frame headings for rotated cameras.
+It now uses the body-to-camera rotation defined by <code class="docutils literal notranslate"><span class="pre">sigma_CB</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/imageProcessing/pixelLineConverter/pixelLineConverter.html#pixellineconverter"><span class="std std-ref">C Module: pixelLineConverter</span></a>, <a class="reference internal" href="../../Documentation/fswAlgorithms/imageProcessing/horizonOpNav/horizonOpNav.html#horizonopnav"><span class="std std-ref">C Module: horizonOpNav</span></a>, and <a class="reference internal" href="../../Documentation/fswAlgorithms/opticalNavigation/faultDetection/faultDetection.html#faultdetection"><span class="std std-ref">C Module: faultDetection</span></a>
+republished retained valid measurements with new output timestamps, which could
+prevent downstream <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/opNavPoint/opNavPoint.html#opnavpoint"><span class="std std-ref">C Module: opNavPoint</span></a> timeout. They now consume each input write
+once, preserve the output and its timestamp between writes, and publish invalid
+output when new inputs provide no usable measurement. This allows slower
+consumers to read valid observations without continually refreshing their age.
+Fault detection checks freshness independently for its primary and secondary
+inputs; mode 2 requires both to be fresh in the same update.</p></li>
+<li><p>GitHub issue 1657: <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/opNavPoint/opNavPoint.html#opnavpoint"><span class="std std-ref">C Module: opNavPoint</span></a> wrote a principal rotation axis in
+camera frame components into the body-relative attitude error <code class="docutils literal notranslate"><span class="pre">sigma_BR</span></code>,
+including the 180 degree fallback axis. The commanded rotation was correct
+only when the camera frame coincided with the body frame
+(<code class="docutils literal notranslate"><span class="pre">sigma_CB</span> <span class="pre">=</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></code>); any other camera mounting rotated the spacecraft
+about the wrong axis.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/opNavPoint/opNavPoint.html#opnavpoint"><span class="std std-ref">C Module: opNavPoint</span></a> treated a retained <code class="docutils literal notranslate"><span class="pre">valid=1</span></code> message as a new image on
+every update, preventing timeout and reinterpreting its camera vector with
+the current attitude. The module now accepts each valid message write time
+once and reuses the saved inertial heading until it expires.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/opNavPoint/opNavPoint.html#opnavpoint"><span class="std std-ref">C Module: opNavPoint</span></a> used <code class="docutils literal notranslate"><span class="pre">lastTime</span> <span class="pre">==</span> <span class="pre">0</span></code> to mark that no heading was saved.
+The heading of a valid image at simulation time 0 was therefore discarded on
+the next update, and the module switched to the search rate if the following
+image was invalid. A valid image that arrived exactly <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> seconds
+after the previous one was also ignored for one update, and with the
+default <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> of zero, valid images were never used.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.html#thrforcemapping"><span class="std std-ref">C Module: thrForceMapping</span></a> could return positive commands during off-pulsing
+because its second unconstrained solve could reverse a selected thruster’s
+sign.  Such results now trigger a nonnegative least-squares fallback over
+all configured thrusters, followed by force-norm minimization at fixed
+achieved torque.  Roundoff-sized positive commands are clamped to zero.
+This also avoids weak-thruster and proportional-column selection artifacts.
+Row-space projection prevents cycling at zero-force boundaries.
+Valid allocations and the existing
+<code class="docutils literal notranslate"><span class="pre">angErrThresh</span></code> saturation policy are retained.</p></li>
+<li><p>GitHub issue 1658: <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.html#thrforcemapping"><span class="std std-ref">C Module: thrForceMapping</span></a> compared the commanded torque
+reduced onto the control axes, expressed in control axis components, with
+the thruster torque expressed in body frame components. For control axes
+other than the leading rows of the identity matrix (for example permuted,
+non-leading, or rotated axes) the <code class="docutils literal notranslate"><span class="pre">outTorqAngErr</span></code> output was wrong and the
+<code class="docutils literal notranslate"><span class="pre">angErrThresh</span></code> saturation scaling could be applied or skipped incorrectly,
+so the same torque request produced different thruster forces depending only
+on the control axis order.</p></li>
+<li><p>Editable installs and wheel builds could hang during Git source discovery
+on macOS. Packaging now avoids the pipe deadlock without requiring
+dependency downgrades.</p></li>
+<li><p>GitHub issue 1654: Some Apple Silicon Rust toolchains, including 1.99.1,
+report <code class="docutils literal notranslate"><span class="pre">rust-objcopy</span></code> debug-stripping failures because <code class="docutils literal notranslate"><span class="pre">libLLVM.dylib</span></code>
+is missing from the tool’s library search path. Compilation and tests can
+still succeed despite these warnings. Rust-enabled macOS CI and wheel jobs
+now install the selected toolchain’s matching <code class="docutils literal notranslate"><span class="pre">llvm-tools-preview</span></code>
+component and verify direct tool execution and debug stripping before
+building. Local source builds need the same component; see
+<a class="reference internal" href="../../Build/installOnMacOS.html#installmacos"><span class="std std-ref">Setup On macOS</span></a> for installation and verification commands.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> silently returned invalid solutions for unknown
+<code class="docutils literal notranslate"><span class="pre">solverMethod</span></code> values. The message now carries the selection as a raw
+integer, and values other than <code class="docutils literal notranslate"><span class="pre">IZZO</span></code> (0) or <code class="docutils literal notranslate"><span class="pre">GOODING</span></code> (1) raise
+<code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> before conversion to the internal enum or publication of a
+new output. Corrected requests recover without resetting the module, and
+zero-initialized messages retain the Izzo default.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> could accept nonfinite flight time or gravity, unusable
+endpoint vectors, and invalid alignment thresholds, allowing invalid
+arithmetic or bypassing the transfer-plane check. Numeric inputs are now
+validated before solving and invalid values raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.
+<code class="docutils literal notranslate"><span class="pre">setAlignmentThreshold</span></code> now accepts only finite values strictly between
+0 and 90 degrees, preserving its previous value when a new value is rejected.
+A componentwise roundoff bound rejects parallel and antiparallel endpoints
+even when normalization produces a tiny nonzero cross product and the
+configured angular threshold would otherwise allow it. Alignment rejection
+occurs before computing <code class="docutils literal notranslate"><span class="pre">lambda</span></code> and the scaled flight time, avoiding
+invalid square roots or division by zero for rejected collinear geometry.</p></li>
+<li><p>An aligned input to <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> could permanently disable solutions
+on that module instance, even after a later input defined a valid transfer
+plane. Alignment rejection now applies only to the current update. Both
+solution and performance slots are cleared for a rejected input, and later
+acceptable geometry or a relaxed alignment threshold can recover without
+resetting or recreating the module.</p></li>
+<li><p>The Izzo method in <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> used an incorrect exponent for its
+intermediate zero-revolution starter, producing a negative guess for a
+positive root. The corrected logarithmic interpolation is continuous at both
+ends of the interval and reduces unnecessary safeguarded iterations. Some
+transfers near the parabolic boundary previously exceeded the default
+<a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertValidator/lambertValidator.html#lambertvalidator"><span class="std std-ref">C++ Module: lambertValidator</span></a> iteration limit despite converging to a valid root.
+The Python test reference uses the corrected exponent as well and safely
+refines starters at the parabolic boundary without producing NaN results.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> could publish unconverged roots as valid after reaching its
+iteration limit, including short transfers and multi-revolution transfers just
+above the minimum time. Root searches now use safeguarded branch brackets and
+require finite results, a small final step, and a small flight-time residual.
+A failed branch returns zero velocities with its validity flag cleared; a later
+resolvable request can recover. Accurate hyperbolic starters and converged tiny
+corrections are retained to avoid unnecessary bisection and downstream
+iteration-limit rejection. Step-shrink checks compare consecutive high-order
+steps; bisection clears that history so high-order refinement can resume.
+Parabolic solutions use the same residual tolerance;
+nearby flight times use a smooth evaluator instead of a constant approximation.
+Requests beyond the evaluator’s numerical resolution can still be rejected.</p></li>
+<li><p>GitHub issue 1652: <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> previously assumed prograde motion about
+the input frame’s positive z-axis, so retrograde problems could return the
+opposite transfer with a valid flag. <code class="docutils literal notranslate"><span class="pre">LambertProblemMsgPayload.transferDirection</span></code>
+now selects <code class="docutils literal notranslate"><span class="pre">PROGRADE</span></code> (the zero/default value) or <code class="docutils literal notranslate"><span class="pre">RETROGRADE</span></code> for both
+algorithms. <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertPlanner/lambertPlanner.html#lambertplanner"><span class="std std-ref">C++ Module: lambertPlanner</span></a> forwards the selection made with
+<code class="docutils literal notranslate"><span class="pre">setTransferDirection</span></code>. Existing callers retain prograde behavior; retrograde
+callers must select their intended direction explicitly. Polar geometry uses a
+deterministic short/long transfer convention that accounts for floating-point
+cancellation. Unknown direction values are validated as integers before enum
+conversion, so rejection does not depend on undefined enum behavior.</p></li>
+<li><p>GitHub issue 1651: The Gooding method in <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> could return the same
+multi-revolution transfer in both valid solution slots, losing the other orbit.
+The initial guesses now use consistent minimum-time data and corrected branch
+formulas. A safeguarded minimum-time search also prevents divergence for
+transfers close to a full revolution, which could produce nonfinite velocities
+marked valid. Both methods return the coalesced orbit in both slots at the minimum
+time, within floating-point roundoff. Users of older releases can select
+<code class="docutils literal notranslate"><span class="pre">IZZO</span></code> to avoid the reported Gooding duplicate-solution issue.</p></li>
+<li><p>GitHub issue 1649: Linux wheel builds could fail on upstream source-download errors despite an available
+backup because the Conan configuration helper ignored <code class="docutils literal notranslate"><span class="pre">CONAN_HOME</span></code> and wrote settings to an unused cache.
+The helper now configures the selected cache, retaining TLS and source-checksum verification.
+Source-distribution release validation also runs this helper before installation,
+so an upstream download failure can use the same backup server as wheel builds.</p></li>
+<li><p>GitHub issue 1644: The C <code class="docutils literal notranslate"><span class="pre">ukfLUBckSlv()</span></code> utility could return a wrong solution when the first nonzero entry of
+the pivoted right-hand side was below 1 in magnitude, because it cast that entry to <code class="docutils literal notranslate"><span class="pre">int</span></code> before testing it for
+zero. No module calls it, and <code class="docutils literal notranslate"><span class="pre">ukfMatInv()</span></code>, which back-solves unit vectors, was not affected.</p></li>
+<li><p>GitHub issue 1646: The <a class="reference internal" href="../../Documentation/architecture/utilities/linearAlgebra.html#linearalgebra"><span class="std std-ref">linearAlgebra</span></a> utilities had correctness and memory-safety defects in
+rectangular matrix operations, overlapping-buffer use, comparisons, zero and
+empty inputs, matrix inverses, and root and spectral calculations. These are
+corrected while retaining the pure-C implementation and public API. Matrices
+near numerical singularity may now be rejected by inverse routines; see the
+API documentation for the numerical checks, supported dimensions, overlap
+rules, and remaining numerical limits.</p></li>
+<li><p>GitHub issue 1638: With <code class="docutils literal notranslate"><span class="pre">setUseApHistory(True)</span></code>, the <a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a> module omitted the UT and longitude
+dependent magnetic activity term of NRLMSISE-00, because <code class="docutils literal notranslate"><span class="pre">globe7()</span></code> cast its coefficient to <code class="docutils literal notranslate"><span class="pre">int</span></code> before
+testing it for zero. The density and temperature errors grew with the 3-hour Ap and exceeded 20 % and 100 K at some
+locations at Ap 100. The default daily Ap mode was not affected.</p></li>
+<li><p>Windows builds could abort Python when a directly wrapped C function raised
+<code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>, including invalid planet identifiers passed to
+<code class="docutils literal notranslate"><span class="pre">pixelLineBiasUKFMeasModel</span></code>. The MSVC exception settings now allow these errors
+to propagate through C calls to the Python exception handler.</p></li>
+<li><p>macOS builds could retain the previous MuJoCo framework after a dependency upgrade, mixing new headers
+with the old library and failing to load the resulting binaries. Framework discovery now refreshes
+during configuration, so an existing build directory follows the selected MuJoCo package.</p></li>
+<li><p>With MuJoCo 3.16, <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> XML exports could silently produce no file when generated body sites or
+subsequent structural edits had not been compiled. XML export now compiles pending changes and reports
+write failures, including an invalid output path.</p></li>
+<li><p>GitHub issue 1631: The spherical harmonics gravity model replaced the reference radius loaded from the
+coefficient file with <code class="docutils literal notranslate"><span class="pre">radEquator</span></code> of the gravity body when the body was initialized. When the two radii
+differ, every term of degree <span class="math notranslate nohighlight">\(n\)</span> was scaled by <span class="math notranslate nohighlight">\((R_{body}/R_{file})^n\)</span>.
+Spherical harmonics body initialization also rejects an unset, nonpositive, or nonfinite <code class="docutils literal notranslate"><span class="pre">mu</span></code> so the
+field cannot use the file GM while gravity-gradient torque uses an invalid body GM. To use the file GM,
+set <code class="docutils literal notranslate"><span class="pre">planet.mu</span> <span class="pre">=</span> <span class="pre">planet.spherHarm.muBody</span></code> after loading the file and before initializing the simulation.</p></li>
+<li><p>Importing <code class="docutils literal notranslate"><span class="pre">svIntegrators</span></code> could make shared <code class="docutils literal notranslate"><span class="pre">DoubleVector</span></code> and <code class="docutils literal notranslate"><span class="pre">MultiArray</span></code> inputs fail SWIG
+conversion depending on import and first-use order, including when gravity and MuJoCo tests ran together.
+The integrator bindings now use matching vector type declarations, preserving both shared vector objects
+and Python lists as inputs.</p></li>
+<li><p>GitHub issue 1629 (orbital calculations): Fixed defects in convergence,
+orbital geometry, and numerical stability across the C and Python orbital utilities,
+including singular and degenerate orbits, mean/osculating conversions, and
+environmental helpers. Also corrected characteristic orbital energy in
+<a class="reference internal" href="../../Documentation/architecture/utilities/keplerianOrbit.html#keplerianorbit"><span class="std std-ref">keplerianOrbit</span></a> and related controller, ephemeris, and eclipse calculations.</p></li>
+<li><p>GitHub issue 1629 (compatibility and validation): Existing methods, NumPy
+scalar outputs, and legacy orbital conventions remain supported without
+deprecation. Optional checked APIs provide explicit input validation.
+Element inputs now require inclinations in [0, pi] radians (0 to 180 degrees),
+and invalid or unsupported calculations may fail explicitly. See
+<a class="reference internal" href="../User/orbitalMotionMigration.html#orbitalmotionmigration"><span class="std std-ref">Orbital Motion Compatibility</span></a> for detailed compatibility guidance and limitations.</p></li>
+<li><p>GitHub issue 1618: <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.html#celestialtwobodypoint"><span class="std std-ref">C Module: celestialTwoBodyPoint</span></a> mixed reference-frame angular-rate
+components with inertial-frame basis-vector derivatives when computing
+<code class="docutils literal notranslate"><span class="pre">domega_RN_N</span></code>. The resulting angular acceleration was incorrect for general
+reference motion, including the single-body fallback. The zero-valued geometric
+terms are now omitted; the reference attitude and angular rate are unchanged.</p></li>
+<li><p>Builds with Vizard or optical navigation used Protobuf C++ 3.21.12, which is no
+longer supported upstream. They now use Protobuf 6.33.5, with OpenCV 4.14.0 for
+optical navigation.
+Source builds require Conan 2.4.0 or newer, and the generated visualization
+bindings require Python Protobuf 6.33.5 or newer. The Vizard message schema is
+unchanged. CMake now refreshes the Protobuf compiler path when dependencies
+change, preventing existing build directories from retaining an incompatible
+compiler.</p></li>
+<li><p>GitHub issue 1621: <code class="docutils literal notranslate"><span class="pre">tleHandling.frame_bias()</span></code> applied the GCRS to mean J2000 frame bias rotations in the
+reverse order and with the wrong sign of <span class="math notranslate nohighlight">\(\xi_0\)</span>. The TEME to J2000/ICRF conversion used by
+<code class="docutils literal notranslate"><span class="pre">tleHandling</span></code> and <code class="docutils literal notranslate"><span class="pre">ommHandling</span></code> therefore shifted TLE and OMM initial states by about 1.3 m in LEO.</p></li>
+<li><p>GitHub issue 1619: The <a class="reference internal" href="../../Documentation/simulation/sensors/imuSensor/imuSensor.html#imusensor"><span class="std std-ref">C++ Module: imuSensor</span></a> module computed <code class="docutils literal notranslate"><span class="pre">DVFramePlatform</span></code> by rotating the whole
+<code class="docutils literal notranslate"><span class="pre">TotalAccumDV_BN_B</span></code> of <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> with the attitudes of the current and the previous IMU call.
+<a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> builds this field by adding the delta v of each integration step in the body frame of that
+step, so every attitude change between two IMU calls turned the delta v accumulated since the start of the
+simulation into a spurious delta v.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/sensors/imuSensor/imuSensor.html#imusensor"><span class="std std-ref">C++ Module: imuSensor</span></a> did not discard the state of the previous IMU call in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJSite.html#mjsite"><span class="std std-ref">MJSite</span></a> left the fields of <code class="docutils literal notranslate"><span class="pre">stateOutMsg</span></code> other than the position, velocity, attitude and angular rate
+of the site uninitialized.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> did not initialize <code class="docutils literal notranslate"><span class="pre">nonConservativeAccelpntB_B</span></code> and <code class="docutils literal notranslate"><span class="pre">omegaDot_BN_B</span></code> of
+<code class="docutils literal notranslate"><span class="pre">scStateOutMsg</span></code>. They held uninitialized values in the message written before the first integration step
+and, with <code class="docutils literal notranslate"><span class="pre">pointMassTranslationalOnly</span></code>, during the whole simulation. They are now zero until computed.</p></li>
+<li><p>GitHub issue 1615: The <a class="reference internal" href="../../Documentation/simulation/environment/eclipse/eclipse.html#eclipse"><span class="std std-ref">C++ Module: eclipse</span></a> module returned the occulted fraction <span class="math notranslate nohighlight">\((b/a)^2\)</span> of the solar disk
+instead of the visible fraction <span class="math notranslate nohighlight">\(1 - (b/a)^2\)</span> when the disk of the occulting body lies entirely inside the
+solar disk, where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the apparent radii of the Sun and the body. The same formula in
+<code class="docutils literal notranslate"><span class="pre">PlanetRadiationBase</span></code>, used by <a class="reference internal" href="../../Documentation/simulation/environment/albedo/albedo.html#albedo"><span class="std std-ref">C++ Module: albedo</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/earthRadiationModel/earthRadiationModel.html#earthradiationmodel"><span class="std std-ref">C++ Module: earthRadiationModel</span></a>, was also corrected, even though
+that case is not reached for patches on the planet surface.</p></li>
+<li><p>GitHub issue 1612: The <a class="reference internal" href="../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a> module computed the GPS time of <code class="docutils literal notranslate"><span class="pre">spiceTimeOutMsg</span></code> as the
+elapsed TDB time since the GPS epoch instead of atomic time. <code class="docutils literal notranslate"><span class="pre">GPSSeconds</span></code> was in error by a periodic term of
+a few milliseconds, and <code class="docutils literal notranslate"><span class="pre">GPSWeek</span></code> and <code class="docutils literal notranslate"><span class="pre">GPSRollovers</span></code> could be one week early at a week boundary. <code class="docutils literal notranslate"><span class="pre">JulianDateCurrent</span></code>
+was read from a SPICE Julian date string, which has at most seven decimals, and was therefore quantized to
+1e-7 day. <code class="docutils literal notranslate"><span class="pre">GPSSeconds</span></code> overflowed a 32-bit integer after GPS week 3550, and a simulation start
+before the GPS epoch produced invalid GPS outputs.  The corrected UTC Julian date preserves the SPICE
+convention of holding at the following midnight during an inserted leap second, avoiding backward jumps.</p></li>
+<li><p>GitHub issues 1610 and 1611: Rigid-body kinematics conversions and composition
+now preserve identity, small rotations, half-turns, and Euler singularities;
+PRV rate maps use analytic limits at zero and angle wrapping handles multiple
+revolutions. Python and Numba retain sequence inputs and non-contiguous PRV
+arrays. Numba uses wrappers and overloads to avoid deprecated list reflection;
+see <a class="reference internal" href="../../Learn/makingModules/numbaModules.html#numbamodules-rbkn"><span class="std std-ref">RigidBodyKinematicsNumba</span></a> for compiled-call requirements and the public
+callable interface. Representation singularities and extreme floating-point
+magnitudes remain outside the numerical guarantees; see <a class="reference internal" href="../../Documentation/architecture/utilities/rigidBodyKinematics.html#rbknumericallimits"><span class="std std-ref">Numerical scope and representation limits</span></a>.</p></li>
+<li><p>GitHub issue 1609: <a class="reference internal" href="../../Documentation/architecture/utilities/keplerianOrbit.html#keplerianorbit"><span class="std std-ref">keplerianOrbit</span></a> returned incorrect eccentric and mean anomalies,
+lost the sign of the flight-path angle, and returned zero rates after construction or stale
+rates after <code class="docutils literal notranslate"><span class="pre">set_a()</span></code>. These outputs are now consistent with the current elliptic orbit.
+<code class="docutils literal notranslate"><span class="pre">set_mu()</span></code> now refreshes the derived state immediately, and <code class="docutils literal notranslate"><span class="pre">oe().rmag</span></code> reports the current
+radius instead of zero. Anomalies follow the <code class="docutils literal notranslate"><span class="pre">orbitalMotion.f2E()</span></code> and <code class="docutils literal notranslate"><span class="pre">E2M()</span></code> conventions
+without additional normalization to the interval from zero to two pi radians.</p></li>
+<li><p>Optional wheel packaging could fail when independent runners supplied different
+Rust and Cargo versions. Nightly, release, and optional-wheel test workflows now
+resolve stable Rust once per run and use that exact toolchain for all core and
+opNav wheel builds, including builds inside Linux containers.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a> module held its target at the endpoint after completion but continued reporting
+motion at the acquisition speed. The target velocity relative to the planet-fixed frame is now zero at
+and after completion, keeping the strip state and access rate outputs consistent with the fixed endpoint.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a> module omitted rotation of the local SEZ frame as the target moved along a strip.
+Its <code class="docutils literal notranslate"><span class="pre">v_BL_L</span></code>, <code class="docutils literal notranslate"><span class="pre">az_dot</span></code> and <code class="docutils literal notranslate"><span class="pre">el_dot</span></code> outputs therefore disagreed with the derivatives of the published
+geometry for a moving target. These outputs now include the local-frame rotation; the range rate is unchanged.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a> module did not copy the computed SEZ relative velocity into the
+<code class="docutils literal notranslate"><span class="pre">v_BL_L</span></code> field of its access messages, which therefore always reported zero. The <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> module never
+assigned its planet-fixed to SEZ rotation matrix, so its <code class="docutils literal notranslate"><span class="pre">r_BL_L</span></code>, <code class="docutils literal notranslate"><span class="pre">v_BL_L</span></code>, azimuth and rate outputs were
+computed from an uninitialized matrix. <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> also crossed the planet angular velocity in planet-fixed
+components with inertial vectors, and did not subtract the planet velocity of <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code>, as described in the
+two entries below. The <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> module also did not populate the <code class="docutils literal notranslate"><span class="pre">rHat_LP_N</span></code> field of its ground state
+messages.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> modules did not guard the division by the horizontal distance
+to the spacecraft in the <code class="docutils literal notranslate"><span class="pre">azimuth</span></code>, <code class="docutils literal notranslate"><span class="pre">az_dot</span></code> and <code class="docutils literal notranslate"><span class="pre">el_dot</span></code> access message fields, so these fields were
+undefined for a spacecraft exactly overhead of the location. The overhead test first used a fixed threshold of
+1e-12 m on the horizontal distance, which is below the floating-point round-off of the SEZ position, so it
+could miss an exactly overhead spacecraft and leave <code class="docutils literal notranslate"><span class="pre">azimuth</span></code> dependent on round-off and <code class="docutils literal notranslate"><span class="pre">az_dot</span></code> and
+<code class="docutils literal notranslate"><span class="pre">el_dot</span></code> very large. The guard now accounts separately for distant-origin position quantization and local
+frame-transformation round-off, preserving resolvable near-overhead offsets in all three ground access modules.</p></li>
+<li><p>GitHub issue 1606: The <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> modules did not subtract the planet velocity
+of <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> from the spacecraft velocity, so the <code class="docutils literal notranslate"><span class="pre">v_BL_L</span></code>, <code class="docutils literal notranslate"><span class="pre">range_dot</span></code>, <code class="docutils literal notranslate"><span class="pre">az_dot</span></code> and <code class="docutils literal notranslate"><span class="pre">el_dot</span></code> access
+message fields were in error by the planet velocity.</p></li>
+<li><p>GitHub issue 1605: The <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a>, <a class="reference internal" href="../../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">C++ Module: stripLocation</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> modules crossed the
+planet angular velocity, which they computed in planet-fixed components, with inertial vectors when removing the
+planet rotation from the spacecraft velocity. The <code class="docutils literal notranslate"><span class="pre">v_BL_L</span></code>, <code class="docutils literal notranslate"><span class="pre">range_dot</span></code>, <code class="docutils literal notranslate"><span class="pre">az_dot</span></code> and <code class="docutils literal notranslate"><span class="pre">el_dot</span></code> access
+message fields were in error when the planet spin axis was not aligned with the inertial 3-axis.</p></li>
+<li><p>The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
+matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order
+<span class="math notranslate nohighlight">\((\omega\,\Delta t)^2\)</span>. The orientation is now advanced as a rotation about the planet angular velocity.</p></li>
+<li><p>The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the previous
+step, which made the solar radiation pressure shadow entries and exits a step late. The state can now be extrapolated
+to the middle of the step with <code class="docutils literal notranslate"><span class="pre">setExtrapolateScStateToStepMidpoint()</span></code>, which is disabled by default.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a> module computed the altitude over a sphere and used the mean solar time. The altitude above
+an oblate planet is now available with <code class="docutils literal notranslate"><span class="pre">setPlanetPolarRadius()</span></code>, and the apparent solar time with
+<code class="docutils literal notranslate"><span class="pre">setUseApparentSolarTime()</span></code>. Both are disabled by default.</p></li>
+<li><p>Atmosphere models that are evaluated once per integration step still show a step-size dependent drag error, which is
+second order in the step.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a>, <a class="reference internal" href="../../Documentation/simulation/environment/_GeneralModuleFiles/windBase.html#windbase"><span class="std std-ref">C++ Module: windBase</span></a>, <a class="reference internal" href="../../Documentation/simulation/environment/_GeneralModuleFiles/magneticFieldBase.html#magneticfieldbase"><span class="std std-ref">C++ Module: magneticFieldBase</span></a>, and <a class="reference internal" href="../../Documentation/simulation/environment/magneticFieldWMM/magneticFieldWMM.html#magneticfieldwmm"><span class="std std-ref">C++ Module: magneticFieldWMM</span></a> modules converted
+the UTC epoch with <code class="docutils literal notranslate"><span class="pre">mktime</span></code>, which uses the time zone of the computer. On a computer in a time zone with daylight
+saving time, the local solar time was one hour wrong for the part of a simulation on the other side of a daylight
+saving transition than the epoch. The epoch is now converted as UTC.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a> module used the daily Ap index and did not use the array of 3-hour Ap values that
+NRLMSISE-00 uses in its storm mode, so during a geomagnetic storm the density followed the daily mean from midnight.
+The 3-hour history is now available with <code class="docutils literal notranslate"><span class="pre">setUseApHistory()</span></code>, which is disabled by default.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> module used a solar flux of 1368 W/m<sup>2</sup> at 1 AU, while
+<a class="reference internal" href="../../Documentation/simulation/dynamics/RadiationPressure/radiationPressure.html#radiationpressure"><span class="std std-ref">C++ Module: radiationPressure</span></a> uses 1361 W/m<sup>2</sup>. Both now use <code class="docutils literal notranslate"><span class="pre">SOLAR_FLUX_EARTH</span></code>.</p></li>
+<li><p>GitHub issue 1598: Compilation database export requires Ninja or a Makefile generator; Xcode and Visual Studio
+do not support export. Clangd does not automatically discover the generated database in the default <code class="docutils literal notranslate"><span class="pre">dist3</span></code> build
+directory. Configure clangd to use the directory containing <code class="docutils literal notranslate"><span class="pre">compile_commands.json</span></code>; see <a class="reference internal" href="../../Build/installBuildConan.html#clangdsetup"><span class="std std-ref">Configuring clangd</span></a>
+for generator selection and the default and custom build-directory settings. Disabling export now removes an
+existing database from the selected build directory so clangd cannot keep reading stale compilation commands.</p></li>
+<li><p>Visual Studio 2026 solution-wide clean could fail because the C-message
+target used an absolute path as its solution folder. It now uses a valid
+relative folder name.</p></li>
+<li><p>Ninja Multi-Config builds could fail on C message interface dependencies.
+CMake now preserves these configured sources across native clean operations
+and avoids dependencies on other build configurations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scenarioSmallBodyNav</span></code> supplied an 18-element state to the 12-state
+<a class="reference internal" href="../../Documentation/fswAlgorithms/smallBodyNavigation/smallBodyNavEKF/smallBodyNavEKF.html#smallbodynavekf"><span class="std std-ref">smallBodyNavEKF</span></a>, causing Debug builds to abort. The example now supplies
+12 elements. Invalid state and matrix dimensions raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in
+Python during reset or update.</p></li>
+<li><p>A buffer overflow in <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/headingSuKF/headingSuKF.html#headingsukf"><span class="std std-ref">headingSuKF</span></a> covariance updates and invalid
+zero-noise sampling in <a class="reference internal" href="../../Documentation/simulation/sensors/hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor.html#hingedrigidbodymotorsensor"><span class="std std-ref">hingedRigidBodyMotorSensor</span></a> are fixed. Both
+defects affected Debug and Release builds.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/fswAlgorithms/imageProcessing/horizonOpNav/horizonOpNav.html#horizonopnav"><span class="std std-ref">horizonOpNav</span></a> could use incorrect or uninitialized planet radii. A zero
+limb-message planet ID now preserves <code class="docutils literal notranslate"><span class="pre">planetTarget</span></code>; a supported nonzero ID
+updates it before the calculation. Unsupported IDs raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.</p></li>
+<li><p>On macOS, validating many native extensions could delay the first Basilisk
+import after a build. Message, core FSW, core simulation, MuJoCo, and OpenCV
+bindings now use fewer libraries to reduce this overhead. Python imports and
+recorder APIs are unchanged. Rebuilt libraries still require validation, so
+first imports can remain slower than subsequent runs.</p></li>
+<li><p>GitHub issue 1587: The <code class="docutils literal notranslate"><span class="pre">vscmg</span></code> case in <code class="docutils literal notranslate"><span class="pre">benchmarks/dynamics/benchmark_state_effectors.py</span></code>
+failed during initialization with two or more components because of left-handed gimbal frames.
+The affected axes now form right-handed frames, fixing the benchmark in the current version.</p></li>
+<li><p>Two-axis spinning-body default names could collide with single-axis state
+and property names once instance counters reached multiple digits. The
+two-axis names now separate the axis and instance numbers with <code class="docutils literal notranslate"><span class="pre">_</span></code>.
+Access these records through each effector’s public name fields.</p></li>
+<li><p>Empty reaction-wheel and thruster effectors remain usable with flat-state
+registration. They do not create zero-sized state records, and their device
+counts still become immutable after successful registration.</p></li>
+<li><p>Dynamics-manager references and callback-created state handles are borrowed.
+Keep the owning dynamics object or MuJoCo scene alive while using them.
+Replacing an integrator destroys the old method; reacquire the integrator
+property afterward. Python rejects reinstalling a previously transferred or
+borrowed integrator after replacement or owner destruction.</p></li>
+<li><p>GitHub issue 1581: The C <code class="docutils literal notranslate"><span class="pre">debyeLength()</span></code> utility could read beyond its lookup
+arrays for altitudes from 2,000 km through 30,000 km, producing undefined
+results such as NaN. The interval search now includes the final table endpoint
+and returns the intended constant value of 0.0396 m throughout this range.
+NaN altitudes could also trigger an out-of-bounds read; they now produce an
+error diagnostic and return NaN before interpolation.</p></li>
+<li><p>The deprecated <code class="docutils literal notranslate"><span class="pre">Basilisk.simulation.spacecraftSystem</span></code> module and its
+supporting effector APIs have been removed. Use <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> with
+<a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">C++ Module: constraintDynamicEffector</span></a> for connected spacecraft; see
+<a class="reference internal" href="../../examples/scenarioConstrainedDynamics.html#scenarioconstraineddynamics"><span class="std std-ref">scenarioConstrainedDynamics</span></a> for a working example. API migration details
+are listed in the <a class="reference internal" href="../bskReleaseNotes/2.13.html#bsk-release-current"><span class="std std-ref">release notes</span></a>. The supported
+prescribed-motion branches also no longer emit a missing-state warning when
+looking up an unused hub-attitude state during initialization.</p></li>
+<li><p>GitHub issue 1563: <code class="docutils literal notranslate"><span class="pre">BSpline.approximate()</span></code> could ignore the second and third
+components of the final-acceleration constraint by reading uninitialized
+constraint-vector entries. All three components now use the correct constraint
+row. This is fixed in the current version.</p></li>
+<li><p>GitHub issue 282: Passing the active integrator back to <code class="docutils literal notranslate"><span class="pre">setIntegrator()</span></code>
+could delete it and leave the dynamics object with a dangling pointer. The
+operation is now a no-op, and persistent integrator ownership uses
+<code class="docutils literal notranslate"><span class="pre">std::unique_ptr</span></code>. Python <code class="docutils literal notranslate"><span class="pre">integrator</span></code> attribute assignment now transfers
+ownership through the same setter. Explicitly disowning a newly constructed
+Python integrator before installation remains supported. Custom C++ dynamics
+classes should replace direct raw-pointer assignments to the owning member
+with <code class="docutils literal notranslate"><span class="pre">setIntegrator(std::make_unique&lt;IntegratorType&gt;(this))</span></code> or transfer an
+existing <code class="docutils literal notranslate"><span class="pre">unique_ptr</span></code> with <code class="docutils literal notranslate"><span class="pre">std::move</span></code>; see <a class="reference internal" href="../../Learn/makingModules/advancedTopics/creatingDynObject.html#creatingdynobject"><span class="std std-ref">Creating DynamicObject Basilisk Modules</span></a>.</p></li>
+<li><p>GitHub issue 282: Synchronized dynamics could retain a dangling pointer after a
+secondary was destroyed, or leave a surviving secondary marked as synchronized
+after its primary was destroyed. Python connections now retain their supplied
+secondary objects, and native destruction removes synchronization links in
+either order. Repeated connections are harmless; invalid self, nested, or
+competing-primary connections now raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>. Python calls through
+borrowed primary proxies are rejected before changing connections; use the
+owning primary object so retention survives temporary aliases. See
+<a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-9.html#bsksynchronizeddynamicslifetime"><span class="std std-ref">Lifetime of Synchronized Objects</span></a>.</p></li>
+<li><p>GitHub issue 282: Resetting simulation threads could clear process assignments
+while a worker was still using them, and shutdown requests used an unsynchronized
+flag. Worker ownership now guarantees stop and join before releasing thread state
+or changing assignments. <code class="docutils literal notranslate"><span class="pre">requestStop()</span></code> and the compatible <code class="docutils literal notranslate"><span class="pre">killThread()</span></code>
+now wake idle workers on the first stop request; repeated calls are harmless.
+Pool shutdown signals all workers before joining. See <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-13.html#bskthreadownership"><span class="std std-ref">Reinitialization, ownership, and shutdown</span></a>
+for configuration and C++ migration details.</p></li>
+<li><p>GitHub issue 282: Dynamically allocated output messages now use private
+<code class="docutils literal notranslate"><span class="pre">std::unique_ptr</span></code> storage, preserving the public message-vector interfaces.
+This fixes missing cleanup in the two-axis spinning-body effector, joint
+controllers, thruster on-time converter, and the nested wheel/thruster outputs
+of <code class="docutils literal notranslate"><span class="pre">DataFileToViz</span></code>. Partially constructed output collections are also cleaned
+up when allocation fails. The shared <code class="docutils literal notranslate"><span class="pre">addOwnedMessage()</span></code> helper rolls back
+each owner/view insertion if either append fails; earlier module configuration
+changes are not rolled back. See <a class="reference internal" href="../../Learn/makingModules/cppModules/cppModules-1.html#bskoutputmessageownership"><span class="std std-ref">Vector of Output Messages</span></a> for the
+ownership and reconfiguration contract.</p></li>
+<li><p>GitHub issue 282: Spacecraft-input configuration methods in the atmosphere,
+magnetic-field, wind, eclipse, location, charging, MSM, and formation-barycenter
+models could retain pointers to standalone Python messages after those messages
+were collected. These methods, along with <code class="docutils literal notranslate"><span class="pre">Eclipse.addPlanetToModel()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">EphemerisConverter.addSpiceInputMsg()</span></code>, now retain each source through its
+native reader and release it on unsubscribe, replacement, or reader destruction.
+The same protection now covers power and data storage, transmitters, downlink
+handling, mapping instruments, simple-antenna and albedo planet inputs,
+articulated facets, thruster attached-body inputs, small-body navigation
+thruster inputs, and Vizard camera configuration messages. Pending and copied
+readers retain their sources until the last connected copy is released.
+Module-owned outputs still require their producing module to remain alive.
+See <a class="reference internal" href="../../Learn/makingModules/cppModules/cppModules-4.html#bskmoduleinputmessagelifetime"><span class="std std-ref">Retaining Sources in Configuration Methods</span></a>.</p></li>
+<li><p>GitHub issue 282: SPICE scratch buffers could leak when spacecraft-name
+validation or allocation raised an exception. Fixed-size arrays and an
+automatically managed time-output buffer now guarantee cleanup. The internal
+<code class="docutils literal notranslate"><span class="pre">SpiceInterface.spiceBuffer</span></code> and <code class="docutils literal notranslate"><span class="pre">charBufferSize</span></code> fields are now private;
+custom code must remove direct access to them. Standard simulation configuration
+is unchanged. Time-output formats that leave insufficient buffer capacity now
+raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> before calling SPICE.</p></li>
+<li><p>GitHub issue 282: Fuel tanks could keep dangling pointers to thruster effectors
+and fuel-slosh particles created in a local Python scope. <code class="docutils literal notranslate"><span class="pre">addThrusterSet()</span></code>
+and <code class="docutils literal notranslate"><span class="pre">pushFuelSloshParticle()</span></code> now retain their supplied Python objects until
+the tank is destroyed. Null connections, and dynamic-thruster connections made
+before <code class="docutils literal notranslate"><span class="pre">setTankModel()</span></code>, now raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>. C++ callers must still
+keep borrowed effectors alive. See <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a>.</p></li>
+<li><p>GitHub issue 281: The C and C++ template documentation now explains the implemented
+calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
+examples previously embedded in <a class="reference internal" href="../../Documentation/moduleTemplates/cModuleTemplate/cModuleTemplate.html#cmoduletemplate"><span class="std std-ref">C Module: cModuleTemplate</span></a> are now in <a class="reference internal" href="../../Learn/makingModules/makingModules-3.html#makingmodules-3"><span class="std std-ref">Module RST Documentation</span></a>.</p></li>
+<li><p>GitHub issue 281: Draft module tests generated by <a class="reference internal" href="../../Documentation/utilities/makeDraftModule.html#makedraftmodule"><span class="std std-ref">makeDraftModule</span></a> previously
+reported success without checking execution or outputs. Newly generated tests check
+scheduled call counts, output written status, and recording and write timestamps.
+Existing module tests must be updated manually; regenerating a draft replaces its folder.</p></li>
+<li><p>GitHub issue 281: <a class="reference internal" href="../../Documentation/utilities/makeDraftModule.html#makedraftmodule"><span class="std std-ref">makeDraftModule</span></a> could generate invalid test imports for
+nested paths or paths without a trailing separator, change the caller’s working
+directory, and delete an existing module before rejecting an invalid specification.
+Generation now normalizes paths, preserves the working directory, validates inputs,
+and stages complete drafts before replacement. Failures raise Python exceptions.</p></li>
+<li><p>GitHub issue 281: The C and C++ module template fields <code class="docutils literal notranslate"><span class="pre">dummy</span></code> and <code class="docutils literal notranslate"><span class="pre">dumVector</span></code>
+are now named <code class="docutils literal notranslate"><span class="pre">updateCounter</span></code> and <code class="docutils literal notranslate"><span class="pre">sampleConfigVector</span></code>. Update Python assignments
+and logger field names accordingly. The C++ accessors are now <code class="docutils literal notranslate"><span class="pre">setUpdateCounter()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">getUpdateCounter()</span></code>, <code class="docutils literal notranslate"><span class="pre">setSampleConfigVector()</span></code>, and <code class="docutils literal notranslate"><span class="pre">getSampleConfigVector()</span></code>;
+the old names are no longer available. <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> still clears the counter and
+preserves the sample configuration vector, which is used for logging examples.</p></li>
+<li><p>GitHub issue 1573: Rust input <code class="docutils literal notranslate"><span class="pre">MsgReader</span></code> ports exposed <code class="docutils literal notranslate"><span class="pre">is_linked</span></code> but not
+whether the subscribed source had been written, when it was written, or which
+module wrote it. Readers now provide <code class="docutils literal notranslate"><span class="pre">is_written</span></code>, <code class="docutils literal notranslate"><span class="pre">time_written</span></code> in
+nanoseconds, and <code class="docutils literal notranslate"><span class="pre">module_id</span></code>, following the subscribed source header. A
+linked message that has never been published reports unwritten, time zero,
+and an error for the module ID. Output writers do not expose these queries.</p></li>
+<li><p>Incremental native builds could retain an old version in
+<code class="docutils literal notranslate"><span class="pre">Basilisk.getBuildInfo()</span></code> after <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code> changed.
+CMake now tracks that file and reads the current source version instead of
+Conan’s cached version. Running <code class="docutils literal notranslate"><span class="pre">ninja</span> <span class="pre">-j</span> <span class="pre">12</span></code> in an existing build directory
+applies the fix and refreshes the metadata without a clean build.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#spacecraftlocation"><span class="std std-ref">C++ Module: spacecraftLocation</span></a> formed its Sun direction from the inertial origin and its viewing direction from the
+primary spacecraft center instead of the configured body-fixed location. Illumination and viewing angles for
+translated or offset locations are corrected in the current version (issue #864).
+NaN <code class="docutils literal notranslate"><span class="pre">glareThreshold</span></code> values are now rejected during initialization rather than silently bypassing glare rejection.</p></li>
+<li><p>GitHub issue 1393: The <a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">C++ Module: constraintDynamicEffector</span></a> applied its constraint force and torque
+regardless of the device status message, which gated only the load filtering and the output
+message write. Commanding the effector off left its logged force at zero whereas the constraint
+kept acting on the dynamics. This is fixed in the current version.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../bskKnownIssues.html" class="btn btn-neutral float-left" title="Basilisk Known Issues" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.12.html" class="btn btn-neutral float-right" title="Version 2.12 Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

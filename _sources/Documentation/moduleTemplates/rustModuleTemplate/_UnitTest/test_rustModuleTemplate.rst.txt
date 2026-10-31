@@ -1,0 +1,15 @@
+.. _test_rustModuleTemplate:
+
+test_rustModuleTemplate
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_rustModuleTemplate
+   :members:
+   :show-inheritance:
+

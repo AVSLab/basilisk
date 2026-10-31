@@ -1,0 +1,10 @@
+.. _TypesTestMsgPayload:
+
+TypesTestMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TypesTestMsgPayload.h
+   :project: msgPayloadDefC
+

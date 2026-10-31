@@ -1,0 +1,15 @@
+.. _test_igbmAtmDensity:
+
+test_igbmAtmDensity
+===================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_igbmAtmDensity
+   :members:
+   :show-inheritance:
+

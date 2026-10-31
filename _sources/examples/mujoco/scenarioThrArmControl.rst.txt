@@ -1,0 +1,15 @@
+.. _scenarioThrArmControl:
+
+scenarioThrArmControl
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioThrArmControl
+   :members:
+   :show-inheritance:
+

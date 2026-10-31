@@ -1,0 +1,15 @@
+.. _test_coarseSunSensorNoise:
+
+test_coarseSunSensorNoise
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_coarseSunSensorNoise
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_MJSystemCoM:
+
+MJSystemCoM
+===========
+
+:doc:`Module documentation <MJSystemCoM>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

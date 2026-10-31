@@ -1,0 +1,10 @@
+.. _avsEigenSupport:
+
+avsEigenSupport
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: avsEigenSupport.h
+   :project: utilities
+
