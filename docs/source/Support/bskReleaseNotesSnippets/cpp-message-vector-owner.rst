@@ -1,0 +1,2 @@
+- Fixed C++ output redirection through message vectors so indexing, front/back access, and iteration preserve the actual module owner, including iterator copies and movement after later module imports.
+- Redirecting to a borrowed message with an unknown storage owner, including elements of raw pointer-vector copies and slices, now raises ``ReferenceError``. Use the original module-owned output, a stand-alone message, or a selection from ``list(module.outputMsgs)``.

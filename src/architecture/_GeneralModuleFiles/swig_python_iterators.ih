@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ * Distributed under the ISC license; see LICENSE.
+ */
+
+// value() creates Python objects; movement methods can set StopIteration via
+// the Python C API. Keep the GIL in every generated entry point, including the
+// arithmetic operators that call those movement methods. Apply this policy
+// before std_vector.i or another container declares SwigPyIterator.
+%nothread swig::SwigPyIterator::value;
+%nothread swig::SwigPyIterator::incr;
+%nothread swig::SwigPyIterator::decr;
+%nothread swig::SwigPyIterator::advance;
+%nothread swig::SwigPyIterator::operator +=;
+%nothread swig::SwigPyIterator::operator -=;
+%nothread swig::SwigPyIterator::operator +;
+%nothread swig::SwigPyIterator::operator -;

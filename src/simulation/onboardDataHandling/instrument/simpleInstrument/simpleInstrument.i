@@ -43,7 +43,8 @@ struct DeviceCmdMsg_C;
 // without the std::vector<double> typemap SWIG emits an un-destructed proxy on
 // access (memory leak, issue #422).
 %include "std_vector.i"
-%template() std::vector<double>;
+// Match messagingSupport's type registration, including the default allocator.
+%template() std::vector<double, std::allocator<double>>;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 
 %pythoncode %{

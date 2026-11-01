@@ -1,3 +1,6 @@
+// Shared binding policy must precede container declarations in every module.
+%include "architecture/_GeneralModuleFiles/swig_python_iterators.ih"
+
 %include "exception.i"
 
 %{

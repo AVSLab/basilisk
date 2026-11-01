@@ -7,19 +7,22 @@ Basilisk Known Issues
 Version |release| (unreleased)
 ------------------------------
 
-- GitHub issue 1226: Since 2.12.0, assigning a C++ module output to a stand-alone
-  message copied its initial contents instead of redirecting subsequent writes.
-  This left shared circles messages in the OpNav scenarios at zero despite
-  successful image processing. Python output assignment now redirects reads and
-  writes again and retains the gateway for producers, readers, and recorders,
-  including inputs connected through module registration methods. Native C++
-  copies and moves of redirected messages take independent snapshots without
-  consuming the gateway payload.
-- GitHub issue 1226 follow-up: Redirecting an output to another module's embedded
-  output could retain only a non-owning proxy, allowing the source module to be
-  deleted while its storage was still in use. Redirection now retains the source
-  module, and readers and recorders retain that owner independently. Assigning a
-  saved output proxy after its module has been deleted raises ``ReferenceError``.
+- GitHub issue 1226: Fixed C++ output redirection and message lifetimes,
+  restoring shared OpNav outputs. Message-vector access now preserves the correct
+  source owner across later module imports, preventing premature deletion and
+  false deleted-module errors. The native ABI is unchanged.
+- Configure redirection before connecting readers or recorders, and keep modules
+  alive during simulation. Use stand-alone gateways for redirected feedback;
+  native ownership cycles remain unsupported and are not automatically detected.
+  Redirecting through raw pointer-vector copies or slices raises
+  ``ReferenceError``; use the original module output or a Python list selection.
+  Keep the module's output-vector entries intact.
+- Camera and Vizard image buffers are valid only until the producer replaces
+  them. Message recorders do not archive image bytes; save images or copy their
+  bytes while current.
+- Fixed Python iterator crashes and numeric-vector access errors that depended
+  on module import order, including storage-message reads and :ref:`linkBudget`
+  lookup tables.
 
 See the version 2.12.1 section below for existing issues and workarounds.
 

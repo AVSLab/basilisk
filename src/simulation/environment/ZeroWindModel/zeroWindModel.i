@@ -47,7 +47,8 @@ struct SCStatesMsg_C;
 struct WindMsg_C;
 
 namespace std {
-    %template(VectorDouble) vector<double>;
+    // Match messagingSupport's type registration, including the default allocator.
+    %template(VectorDouble) vector<double, allocator<double>>;
 };
 
 %pythoncode %{

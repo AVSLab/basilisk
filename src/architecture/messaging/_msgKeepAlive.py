@@ -16,7 +16,12 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""Keep-alive helpers for C-message (``Msg_C``) readers -- issue #1433.
+"""Keep-alive helpers for C-message readers and C++ output-vector views.
+
+C++ pointer-vector views preserve a weak reference to their storage owner.
+Output redirection promotes that reference to a native keep-alive; ordinary
+subscriptions retain their existing behavior. Ownership cycles involving
+native keep-alives are unsupported and are not detected by these helpers.
 
 When a ``Msg_C`` reader (for example a C module's ``dataInMsg``) subscribes to a
 stand-alone source, it stores *raw pointers* into that source's memory. If the
@@ -55,7 +60,81 @@ recorder construction, subscribe/unsubscribe calls, and ``weakref`` finalizers
 all run in the interpreter thread), so the registries need no additional locking.
 """
 
+import types
 import weakref
+from functools import wraps
+
+
+def _instance_attributes(value):
+    """Read stored attributes without invoking dynamic attribute lookup."""
+    for cls in type(value).__mro__:
+        descriptor = vars(cls).get("__dict__")
+        if descriptor is not None:
+            if isinstance(descriptor, types.GetSetDescriptorType):
+                return descriptor.__get__(value, type(value))
+            return {}
+    return {}
+
+
+def preserveCppPointerVectorOwner(vector_type):
+    """Carry a pointer vector's weak module owner through its native iterators."""
+    vector_type._bskPointerVector = True
+    if vars(vector_type).get("_bskOwnerAwarePointerVector", False):
+        return
+
+    def wrap(method):
+        @wraps(method)
+        def with_owner(self, *args, **kwargs):
+            reference = _instance_attributes(self).get("_bskMessageOwner")
+            parent = reference() if reference is not None else None
+            if reference is not None and parent is None:
+                raise ReferenceError("The module owning this message has been deleted")
+            iterator = method(self, *args, **kwargs)
+            if reference is not None and iterator is not None:
+                _tag_cpp_pointer_iterator(iterator, reference)
+            return iterator
+        return with_owner
+
+    for name in ("iterator", "begin", "end", "rbegin", "rend", "insert", "erase"):
+        setattr(vector_type, name, wrap(getattr(vector_type, name)))
+    vector_type._bskOwnerAwarePointerVector = True
+
+
+def _tag_cpp_pointer_iterator(iterator, reference):
+    """Preserve SWIG iterator APIs while tagging borrowed message results."""
+    object.__setattr__(iterator, "_bskMessageOwner", reference)
+    iterator_type = type(iterator)
+    if vars(iterator_type).get("_bskOwnerAwareIterator", False):
+        return
+
+    def wrap(method, returns_iterator):
+        @wraps(method)
+        def with_owner(self, *args, **kwargs):
+            reference = _instance_attributes(self).get("_bskMessageOwner")
+            parent = reference() if reference is not None else None
+            if reference is not None and parent is None:
+                raise ReferenceError("The module owning this message has been deleted")
+            result = method(self, *args, **kwargs)
+            if reference is not None:
+                if returns_iterator and not isinstance(result, int):
+                    # A late module import can replace SWIG's iterator class.
+                    # Tag and wrap the returned class as well as the instance.
+                    _tag_cpp_pointer_iterator(result, reference)
+                elif hasattr(type(result), "_storage_owner") and not result.thisown:
+                    object.__setattr__(result, "_bskMessageOwner", reference)
+            return result
+        return with_owner
+
+    # SWIG shares this iterator class with other vector types. Results without
+    # an owner tag, including owning value/reader copies, retain their semantics.
+    for name in ("value", "__next__", "previous"):
+        setattr(iterator_type, name, wrap(getattr(iterator_type, name), returns_iterator=False))
+    # These methods return iterators, except subtraction of two iterators,
+    # which returns an integer distance and must retain that result unchanged.
+    for name in ("copy", "incr", "decr", "advance", "__add__", "__sub__", "__iadd__", "__isub__"):
+        setattr(iterator_type, name, wrap(getattr(iterator_type, name), returns_iterator=True))
+    iterator_type._bskOwnerAwareIterator = True
+
 
 #: Embedded ``Msg_C`` C-address (``int``) -> (weak owner handle, owner token).
 _owner_by_address = {}
