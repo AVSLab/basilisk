@@ -1,0 +1,2 @@
+- Documented message-lifetime limits for output redirection: configure wiring before simulation, retain participating modules, and use stand-alone gateways for redirected feedback connections. Native ownership cycles remain unsupported and are not automatically detected.
+- Clarified that camera and Vizard image buffers belong to their producers and must be consumed before replacement; message recorders do not archive the image bytes.

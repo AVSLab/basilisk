@@ -68,5 +68,9 @@ namespace std {
 
 %pythoncode %{
 import sys
+from Basilisk.architecture.messaging import _msgKeepAlive
+# These classes replace the messaging wrappers in SWIG's shared type table.
+_msgKeepAlive.preserveCppPointerVectorOwner(THROutputMsgOutMsgsPtrVector)
+_msgKeepAlive.preserveCppPointerVectorOwner(RWConfigLogMsgOutMsgsPtrVector)
 protectAllClasses(sys.modules[__name__])
 %}

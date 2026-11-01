@@ -18,6 +18,7 @@
 
 %module(threads="1", package="Basilisk.architecture.messaging") messagingSupport
 
+%include "architecture/_GeneralModuleFiles/swig_python_iterators.ih"
 %include "std_vector.i"
 %include "std_string.i"
 %include "_GeneralModuleFiles/swig_eigen.i"

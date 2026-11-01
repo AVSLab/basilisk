@@ -1,0 +1,1 @@
+- Fixed import-order-dependent numeric-vector binding errors affecting storage-message reads after importing :ref:`simpleInstrument`, ``zeroWindModel.VectorDouble``, and :ref:`linkBudget` lookup tables. Indexing, slicing, and mutation now work with the shared messaging vector without changing the native ABI.
