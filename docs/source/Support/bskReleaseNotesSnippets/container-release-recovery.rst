@@ -1,0 +1,1 @@
+- Container release builds now free runner disk space before Docker setup and support rebuilding an existing release tag without moving it, with image-version and multi-architecture manifest checks.
