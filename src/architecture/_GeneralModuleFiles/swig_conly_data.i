@@ -26,6 +26,31 @@
 %include "stdint.i"
 %include "architecture/messaging/pythonSourceOwner.ih"
 
+// Capture the owning proxy only for instance methods, including member getters.
+// The shared local also exists for free/static Message-returning functions, where
+// it stays null. This avoids treating their first argument as an owning instance.
+%typemap(check) SWIGTYPE *self (PyObject *_global_bskMessageParent = nullptr) {
+    _global_bskMessageParent = $self;
+    (void)_global_bskMessageParent;
+}
+
+%typemap(out) Message * (PyObject *_global_bskMessageParent = nullptr) {
+    $result = SWIG_NewPointerObj(SWIG_as_voidptr($1), $descriptor, $owner | %newpointer_flags);
+    if ($result && $1 && !$owner && _global_bskMessageParent) {
+        // Remember the module without changing ordinary subscription ownership.
+        // The redirection setter promotes this weak reference to a retained owner.
+        PyObject *ownerName = PyUnicode_FromString("_bskMessageOwner");
+        PyObject *ownerReference = ownerName ? PyWeakref_NewRef(_global_bskMessageParent, nullptr) : nullptr;
+        int status = ownerReference ? PyObject_GenericSetAttr($result, ownerName, ownerReference) : -1;
+        Py_XDECREF(ownerReference);
+        Py_XDECREF(ownerName);
+        if (status < 0) {
+            Py_CLEAR($result);
+            SWIG_fail;
+        }
+    }
+}
+
 // Preserve the original Python argument for the Message member setter below.
 %typemap(in) Message * (void *pointer = nullptr, PyObject *messageOwner_$1 = nullptr) {
     int result = SWIG_ConvertPtr($input, &pointer, $descriptor, $disown | %convertptr_flags);
@@ -41,8 +66,14 @@
     if (!$input) {
         SWIG_exception_fail(SWIG_ValueError, "A message gateway cannot be None");
     }
-    $1.redirectTo(*$input, messageOwner_$input,
-                  &_bsk_readfunctor_acquire, &_bsk_readfunctor_release);
+    PyObject *storageOwner = PyObject_CallMethod(messageOwner_$input, "_redirection_owner", nullptr);
+    if (!storageOwner) {
+        SWIG_fail;
+    }
+    $1.redirectTo(*$input, storageOwner,
+                  &_bsk_readfunctor_acquire, &_bsk_readfunctor_release,
+                  _global_bskMessageParent);
+    Py_DECREF(storageOwner);
 }
 
 %define ARRAYASLIST(type, fromfunc, asfunc)

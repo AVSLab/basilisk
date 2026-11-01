@@ -15,6 +15,11 @@ Version |release| (unreleased)
   including inputs connected through module registration methods. Native C++
   copies and moves of redirected messages take independent snapshots without
   consuming the gateway payload.
+- GitHub issue 1226 follow-up: Redirecting an output to another module's embedded
+  output could retain only a non-owning proxy, allowing the source module to be
+  deleted while its storage was still in use. Redirection now retains the source
+  module, and readers and recorders retain that owner independently. Assigning a
+  saved output proxy after its module has been deleted raises ``ReferenceError``.
 
 See the version 2.12.1 section below for existing issues and workarounds.
 

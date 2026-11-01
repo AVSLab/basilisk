@@ -508,6 +508,7 @@ public:
      * @param owner Optional owner of target storage, borrowed on entry.
      * @param acquire Callback to retain owner; required when owner is supplied.
      * @param release Callback to release owner; required when owner is supplied.
+     * @param enclosingOwner Owner of this message, which must not retain itself.
      * @note Configure redirection before subscribing to this output. The target
      *       must outlive the redirected message and its subscribers unless its
      *       owner is retained. An existing target owner propagates to subscribers.
@@ -515,11 +516,15 @@ public:
     void redirectTo(Message& target,
                     void* owner = nullptr,
                     void (*acquire)(void*) = nullptr,
-                    void (*release)(void*) = nullptr)
+                    void (*release)(void*) = nullptr,
+                    void* enclosingOwner = nullptr)
     {
         if (this->pointers.payload != target.pointers.payload) {
             auto reader = target.addSubscriber();
-            if (owner && !reader.getSourceHandle()) {
+            if (enclosingOwner && reader.getSourceHandle() == enclosingOwner) {
+                reader.setSource(nullptr, nullptr, nullptr);
+            }
+            if (owner && owner != enclosingOwner && !reader.getSourceHandle()) {
                 acquire(owner);
                 reader.setSource(owner, acquire, release);
             }

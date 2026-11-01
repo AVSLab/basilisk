@@ -195,6 +195,16 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
             """Return the owner of the currently addressed message storage."""
             return self._get_storage_owner(self)
 
+        def _redirection_owner(self):
+            """Resolve an embedded target's module before borrowing its storage."""
+            parent_reference = getattr(self, "_bskMessageOwner", None)
+            if parent_reference is None:
+                return self._storage_owner()
+            parent = parent_reference()
+            if parent is None:
+                raise ReferenceError("The module owning this message has been deleted")
+            return self._get_storage_owner(parent)
+
         def addSubscriber(self):
             """Create a reader that keeps this message alive."""
             return self._add_subscriber_with_keepalive(self._storage_owner())

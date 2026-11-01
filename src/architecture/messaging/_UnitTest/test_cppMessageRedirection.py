@@ -11,6 +11,7 @@ import pytest
 
 from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cppModuleTemplate
+from Basilisk.simulation import twoHingeDamper
 
 
 @pytest.mark.parametrize("subscribe_to_output", [False, True])
@@ -92,11 +93,17 @@ def test_cpp_output_retains_gateway():
 @pytest.mark.parametrize("consumer_kind", ["subscriber", "cpp_reader", "c_reader",
                                           "recorder", "direct_recorder", "payload"])
 @pytest.mark.parametrize("replace_gateway", [False, True])
-def test_cpp_output_consumers_retain_original_gateway(consumer_kind, replace_gateway):
+@pytest.mark.parametrize("embedded_gateway", [False, True])
+def test_cpp_output_consumers_retain_original_gateway(consumer_kind, replace_gateway, embedded_gateway):
     """Consumers retain their original storage after producer deletion or redirection."""
     producer = cppModuleTemplate.CppModuleTemplate()
-    gateway = messaging.CModuleTemplateMsg()
-    reference = weakref.ref(gateway)
+    if embedded_gateway:
+        source = cppModuleTemplate.CppModuleTemplate()
+        gateway = source.dataOutMsg
+        reference = weakref.ref(source)
+    else:
+        source = gateway = messaging.CModuleTemplateMsg()
+        reference = weakref.ref(gateway)
     producer.dataOutMsg = gateway
     timestamp = 10  # [ns]
     producer.UpdateState(timestamp)
@@ -114,7 +121,7 @@ def test_cpp_output_consumers_retain_original_gateway(consumer_kind, replace_gat
         consumer = messaging.CModuleTemplateMsgRecorder(producer.dataOutMsg)
     else:
         consumer = producer.dataOutMsg.read()
-    del gateway
+    del gateway, source
     if replace_gateway:
         producer.dataOutMsg = messaging.CModuleTemplateMsg()
         producer.UpdateState(timestamp)
@@ -137,6 +144,93 @@ def test_cpp_output_consumers_retain_original_gateway(consumer_kind, replace_gat
         np.testing.assert_array_equal(consumer().dataVector, [1.0, 0.0, 0.0])
         assert consumer.timeWritten() == timestamp
     del consumer
+    gc.collect()
+    assert reference() is None
+
+
+@pytest.mark.parametrize("replace_gateway", [False, True])
+def test_cpp_output_redirection_retains_source_module(replace_gateway):
+    """An embedded gateway keeps its module alive until the destination releases it."""
+    source = cppModuleTemplate.CppModuleTemplate()
+    destination = cppModuleTemplate.CppModuleTemplate()
+    reference = weakref.ref(source)
+    destination.dataOutMsg = source.dataOutMsg
+    del source
+    gc.collect()
+    # Check lifetime before writing, so a regression cannot access freed storage.
+    assert reference() is not None
+
+    unrelated = cppModuleTemplate.CppModuleTemplate()
+    unrelated.setDummy(100.0)  # [-]
+    timestamp = 10  # [ns]
+    unrelated.UpdateState(timestamp)
+    destination.UpdateState(timestamp)
+    np.testing.assert_array_equal(reference().dataOutMsg.read().dataVector, [1.0, 0.0, 0.0])
+    np.testing.assert_array_equal(unrelated.dataOutMsg.read().dataVector, [101.0, 0.0, 0.0])
+
+    if replace_gateway:
+        destination.dataOutMsg = messaging.CModuleTemplateMsg()
+    else:
+        del destination
+    gc.collect()
+    assert reference() is None
+
+
+def test_cpp_output_redirection_keeps_original_embedded_storage():
+    """Rerouting the source output does not change the destination's storage owner."""
+    source = cppModuleTemplate.CppModuleTemplate()
+    destination = cppModuleTemplate.CppModuleTemplate()
+    reference = weakref.ref(source)
+    destination.dataOutMsg = source.dataOutMsg
+    gateway = messaging.CModuleTemplateMsg()
+    source.dataOutMsg = gateway
+    reader = destination.dataOutMsg.addSubscriber()
+    del source
+    gc.collect()
+    assert reference() is not None
+
+    timestamp = 10  # [ns]
+    destination.UpdateState(timestamp)
+    np.testing.assert_array_equal(reader().dataVector, [1.0, 0.0, 0.0])
+    np.testing.assert_array_equal(gateway.read().dataVector, [0.0, 0.0, 0.0])
+    del destination
+    gc.collect()
+    assert reference() is not None
+    del reader
+    gc.collect()
+    assert reference() is None
+
+
+def test_cpp_output_redirection_rejects_deleted_source_module():
+    """A saved non-owning output proxy cannot redirect into a deleted module."""
+    source = cppModuleTemplate.CppModuleTemplate()
+    output = source.dataOutMsg
+    reference = weakref.ref(source)
+    del source
+    gc.collect()
+    assert reference() is None
+    destination = cppModuleTemplate.CppModuleTemplate()
+    with pytest.raises(ReferenceError, match="module owning this message has been deleted"):
+        destination.dataOutMsg = output
+
+
+@pytest.mark.parametrize("through_another_module", [False, True])
+def test_cpp_output_redirection_does_not_retain_its_own_module(through_another_module):
+    """Redirecting co-owned outputs must not make their module retain itself."""
+    owner = twoHingeDamper.TwoHingeDamper()
+    reference = weakref.ref(owner)
+    if through_another_module:
+        intermediate = twoHingeDamper.TwoHingeDamper()
+        intermediate.phiTorqueOutMsg = owner.thetaTorqueOutMsg
+        owner.phiTorqueOutMsg = intermediate.phiTorqueOutMsg
+        del intermediate
+    else:
+        owner.phiTorqueOutMsg = owner.thetaTorqueOutMsg
+    payload = messaging.SingleActuatorMsgPayload()
+    payload.input = 3.0  # [N*m]
+    owner.phiTorqueOutMsg.write(payload)
+    assert owner.thetaTorqueOutMsg.read().input == payload.input
+    del owner
     gc.collect()
     assert reference() is None
 

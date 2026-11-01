@@ -1,0 +1,1 @@
+- Fixed a lifetime issue when redirecting a C++ output to another module's embedded output: the source module now remains alive while its storage is used by the redirected output, readers, or recorders. Redirecting to an output whose module has already been deleted raises ``ReferenceError``.
