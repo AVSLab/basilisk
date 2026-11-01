@@ -11,7 +11,7 @@ import pytest
 
 from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.simulation import twoHingeDamper
+from Basilisk.simulation import dualHingedRigidBodyStateEffector, spacecraft, twoHingeDamper
 
 
 @pytest.mark.parametrize("subscribe_to_output", [False, True])
@@ -252,3 +252,146 @@ def test_cpp_output_redirection_chain_retains_gateway():
     del second
     gc.collect()
     assert reference() is None
+
+
+@pytest.mark.parametrize("accessor", ["index", "front", "back", "list_slice", "iter", "list",
+                                      "iterator_value", "iterator_copy", "iterator_advance",
+                                      "reverse_iterator", "iterator_previous", "slice_iter"])
+def test_cpp_output_vector_redirection(accessor):
+    """Temporary vector views resolve to the module that owns their messages."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    destination = spacecraft.Spacecraft()
+    reference = weakref.ref(source)
+    accessors = {
+        "index": lambda vector: vector[0],
+        "front": lambda vector: vector.front(),
+        "back": lambda vector: vector.back(),
+        "list_slice": lambda vector: list(vector)[:][0],
+        "iter": lambda vector: next(iter(vector)),
+        "list": lambda vector: list(vector)[0],
+        "iterator_value": lambda vector: vector.iterator().value(),
+        "iterator_copy": lambda vector: next(vector.iterator().copy()),
+        "iterator_advance": lambda vector: (vector.begin() + 1).value(),
+        "reverse_iterator": lambda vector: vector.rbegin().value(),
+        "iterator_previous": lambda vector: vector.end().previous(),
+        "slice_iter": lambda vector: next(iter(list(vector)[:])),
+    }
+    destination.scStateOutMsg = accessors[accessor](source.dualHingedRigidBodyConfigLogOutMsgs)
+    del source
+    gc.collect()
+    assert reference() is not None
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]
+    destination.scStateOutMsg.write(payload)
+    index = 1 if accessor in ("back", "iterator_advance", "reverse_iterator", "iterator_previous") else 0
+    np.testing.assert_array_equal(
+        reference().dualHingedRigidBodyConfigLogOutMsgs[index].read().r_BN_N,
+        payload.r_BN_N,
+    )
+    del destination
+    gc.collect()
+    assert reference() is None
+
+
+@pytest.mark.parametrize("iterate", [False, True])
+def test_cpp_output_vector_rejects_deleted_module(iterate):
+    """Keeping a vector view does not hide deletion of the owning module."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    vector = source.dualHingedRigidBodyConfigLogOutMsgs
+    output = next(iter(vector)) if iterate else vector[0]
+    assert getattr(output, "_bskMessageOwner", lambda: None)() is source
+    reference = weakref.ref(source)
+    del source
+    gc.collect()
+    assert reference() is None
+    destination = spacecraft.Spacecraft()
+    with pytest.raises(ReferenceError, match="module owning this message has been deleted"):
+        destination.scStateOutMsg = output
+
+
+def test_cpp_output_iterator_rejects_deleted_module():
+    """An iterator checks its weak module owner before accessing native storage."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    iterator = iter(source.dualHingedRigidBodyConfigLogOutMsgs)
+    # Check tagging before deleting storage so regressions cannot dereference it.
+    assert getattr(iterator, "_bskMessageOwner", lambda: None)() is source
+    reference = weakref.ref(source)
+    del source
+    gc.collect()
+    assert reference() is None
+    with pytest.raises(ReferenceError, match="module owning this message has been deleted"):
+        next(iterator)
+
+
+def test_cpp_pointer_iterator_preserves_other_vector_semantics():
+    """The shared iterator still returns numeric values and owning reader copies."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    next(iter(source.dualHingedRigidBodyConfigLogOutMsgs))
+    numbers = messaging.DoubleVector([1.0, 2.0])  # [-]
+    assert list(numbers) == [1.0, 2.0]
+    assert (numbers.begin() + 1).value() == 2.0
+    message = messaging.NavTransMsg()
+    readers = messaging.NavTransMsgInMsgsVector([message.addSubscriber()])
+    reader = next(iter(readers))
+    assert reader.thisown
+    assert getattr(reader, "_bskMessageOwner", None) is None
+    reader.unsubscribe()
+    assert readers[0].isSubscribedTo(message)
+
+
+def test_cpp_feedback_using_standalone_gateway_is_supported():
+    """A standalone gateway permits feedback without retaining the source module."""
+    producer = cppModuleTemplate.CppModuleTemplate()
+    reference = weakref.ref(producer)
+    gateway = messaging.CModuleTemplateMsg()
+    producer.dataOutMsg = gateway
+    producer.dataInMsg.subscribeTo(gateway)
+    timestamp = 10  # [ns]
+    producer.UpdateState(timestamp)
+    np.testing.assert_array_equal(producer.dataInMsg().dataVector, [1.0, 0.0, 0.0])
+    del producer
+    gc.collect()
+    assert reference() is None
+
+
+@pytest.mark.parametrize("iterate", [False, True])
+@pytest.mark.parametrize("delete_source", [False, True])
+@pytest.mark.parametrize("copy_kind", ["constructor", "slice"])
+def test_cpp_unowned_pointer_vector_redirection_is_rejected(iterate, delete_source, copy_kind):
+    """A raw pointer-vector copy cannot establish ownership of its pointees."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    vector = source.dualHingedRigidBodyConfigLogOutMsgs
+    copied = messaging.SCStatesMsgOutMsgsPtrVector(vector) if copy_kind == "constructor" else vector[:]
+    output = next(iter(copied)) if iterate else copied[0]
+    destination = spacecraft.Spacecraft()
+    original_address = destination.scStateOutMsg.getPayloadAddress()
+    with pytest.raises(ReferenceError, match="storage owner is unknown"):
+        destination.scStateOutMsg = output
+    if delete_source:
+        del source
+        gc.collect()
+        with pytest.raises(ReferenceError, match="storage owner is unknown"):
+            destination.scStateOutMsg = output
+    assert destination.scStateOutMsg.getPayloadAddress() == original_address
+
+
+@pytest.mark.parametrize("iterate", [False, True])
+def test_cpp_mutated_pointer_vector_slice_has_no_owner(iterate):
+    """Replacing a raw slice element cannot attribute its storage to the original module."""
+    source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    copied = source.dualHingedRigidBodyConfigLogOutMsgs[:]
+    foreign = messaging.SCStatesMsg()
+    reference = weakref.ref(foreign)
+    copied[0] = foreign
+    output = next(iter(copied)) if iterate else copied[0]
+    destination = spacecraft.Spacecraft()
+    original_address = destination.scStateOutMsg.getPayloadAddress()
+    # Check rejection while storage is live so older builds fail safely.
+    with pytest.raises(ReferenceError, match="storage owner is unknown"):
+        destination.scStateOutMsg = output
+    del foreign
+    gc.collect()
+    assert reference() is None
+    with pytest.raises(ReferenceError, match="storage owner is unknown"):
+        destination.scStateOutMsg = output
+    assert destination.scStateOutMsg.getPayloadAddress() == original_address

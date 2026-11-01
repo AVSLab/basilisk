@@ -1,0 +1,1 @@
+- Fixed Python interpreter aborts in shared SWIG iterator element access and boundary-error handling that depended on module import order. Native class layouts and the messaging ABI are unchanged.
