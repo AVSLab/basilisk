@@ -23,6 +23,8 @@ Version |release| (unreleased)
 - Fixed Python iterator crashes and numeric-vector access errors that depended
   on module import order, including storage-message reads and :ref:`linkBudget`
   lookup tables.
+- Container release builds now free runner disk space and support recovery from
+  an existing release tag without moving it.
 
 See the version 2.12.1 section below for existing issues and workarounds.
 

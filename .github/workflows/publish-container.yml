@@ -5,6 +5,16 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing release tag to build without moving it, such as v2.12.2"
+        required: true
+        type: string
+      publish_latest:
+        description: "Also update latest when recovering this release"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -14,12 +24,55 @@ env:
   IMAGE_GHCR: ghcr.io/${{ github.repository }}
 
 concurrency:
-  group: publish-container-${{ github.ref }}
-  cancel-in-progress: true
+  group: publish-container-${{ inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
+  release:
+    name: Resolve Release Tag
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - name: Validate release tag
+        id: tag
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9][A-Za-z0-9._-]*$ ]]; then
+            echo "::error::An existing version tag is required, such as v2.12.2"
+            exit 1
+          fi
+          git check-ref-format "refs/tags/$RELEASE_TAG"
+          printf 'tag=%s\n' "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+
+      - name: Verify source version and resolve commit
+        id: source
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          version=$(tr -d '\r\n' < docs/source/bskVersion.txt)
+          if [[ "$RELEASE_TAG" != "v$version" ]]; then
+            echo "::error::Release tag does not match the tagged source version"
+            exit 1
+          fi
+          printf 'sha=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build and Push (${{ matrix.arch }})
+    needs: release
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     strategy:
@@ -36,6 +89,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.release.outputs.sha }}
+
+      - name: Free runner disk for container build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker system prune -af
+          echo "Disk space after cleanup:"
+          df -h
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -58,10 +127,14 @@ jobs:
             latest=false
             suffix=-${{ matrix.arch }}
           tags: |
-            type=ref,event=tag
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{ needs.release.outputs.tag }}
+            type=raw,value=latest,enable=${{ github.event_name == 'push' || inputs.publish_latest }}
+          labels: |
+            org.opencontainers.image.revision=${{ needs.release.outputs.sha }}
+            org.opencontainers.image.version=${{ needs.release.outputs.tag }}
 
       - name: Build and push arch image
+        id: image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -74,11 +147,31 @@ jobs:
           # Cache export is best-effort and must not invalidate a published image.
           cache-to: type=gha,mode=max,scope=container-${{ matrix.arch }},ignore-error=true
 
+      - name: Verify published image
+        shell: bash
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+          BSK_RELEASE_TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          image_tag=${IMAGE_TAGS%%$'\n'*}
+          docker run --rm -e BSK_RELEASE_TAG "$image_tag@$IMAGE_DIGEST" python -c '
+          import os
+          import Basilisk
+          from Basilisk.architecture import messaging
+          from Basilisk.simulation import camera, spacecraft, vizInterface
+          expected = os.environ["BSK_RELEASE_TAG"][1:]
+          assert Basilisk.__version__ == expected, (Basilisk.__version__, expected)
+          assert all(Basilisk.hasBuildFeature(name) for name in ("opNav", "mujoco", "vizInterface"))
+          print("Container import and version checks passed:", Basilisk.__version__)
+          '
+
   publish:
     name: Publish Multi-Arch Manifests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    needs: build
+    needs: [release, build]
 
     steps:
       - name: Set up Docker Buildx
@@ -98,19 +191,32 @@ jobs:
         with:
           images: |
             ${{ env.IMAGE_GHCR }}
+          flavor: latest=false
           tags: |
-            type=ref,event=tag
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{ needs.release.outputs.tag }}
+            type=raw,value=latest,enable=${{ github.event_name == 'push' || inputs.publish_latest }}
 
       - name: Create and push manifest lists
         shell: bash
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
         run: |
           set -euo pipefail
+          release_image="${IMAGE_GHCR,,}:$RELEASE_TAG"
           while IFS= read -r tag; do
             [[ -z "$tag" ]] && continue
             docker buildx imagetools create \
               -t "$tag" \
-              "$tag-amd64" \
-              "$tag-arm64"
+              "$release_image-amd64" \
+              "$release_image-arm64"
             docker buildx imagetools inspect "$tag"
-          done <<< "${{ steps.meta.outputs.tags }}"
+            docker buildx imagetools inspect "$tag" --raw | python3 -c '
+          import json, sys
+          manifest = json.load(sys.stdin)
+          architectures = {item["platform"]["architecture"] for item in manifest["manifests"]
+                           if item.get("platform", {}).get("os") == "linux"}
+          assert architectures == {"amd64", "arm64"}, architectures
+          print("Verified Linux architectures:", ", ".join(sorted(architectures)))
+          '
+          done <<< "$IMAGE_TAGS"
