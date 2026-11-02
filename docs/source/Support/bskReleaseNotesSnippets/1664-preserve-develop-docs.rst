@@ -1,0 +1,1 @@
+- Fixed documentation deployment so publishing the main site preserves the development documentation at ``/develop`` (#1664).
