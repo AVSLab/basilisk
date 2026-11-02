@@ -9,6 +9,7 @@ import weakref
 import numpy as np
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.simulation import dualHingedRigidBodyStateEffector, spacecraft, twoHingeDamper
@@ -212,6 +213,83 @@ def test_cpp_output_redirection_rejects_deleted_source_module():
     destination = cppModuleTemplate.CppModuleTemplate()
     with pytest.raises(ReferenceError, match="module owning this message has been deleted"):
         destination.dataOutMsg = output
+
+
+@pytest.fixture(params=["origin", "center_of_mass", "body_site", "scene_site", "scene_round_trip"])
+def mujoco_output_scene(request):
+    """Create scenes with output accessors that leave no intermediate proxies alive."""
+    if not hasBuildFeature("mujoco"):
+        pytest.skip("Requires Basilisk built with --mujoco True")
+    from Basilisk.simulation import mujoco
+
+    accessors = {
+        "origin": lambda owner: owner.getBody("hub").getOrigin().stateOutMsg,
+        "center_of_mass": lambda owner: owner.getBody("hub").getCenterOfMass().stateOutMsg,
+        "body_site": lambda owner: owner.getBody("hub").getSite("site").stateOutMsg,
+        "scene_site": lambda owner: owner.getSite("site").stateOutMsg,
+        "scene_round_trip": lambda owner: owner.getBody("hub").getScene().getBody("hub").getOrigin().stateOutMsg,
+    }
+
+    def create_scene():
+        scene = mujoco.MJScene(
+            '<mujoco><worldbody><body name="hub"><site name="site"/></body></worldbody></mujoco>'
+        )
+        return scene, accessors[request.param]
+
+    return create_scene
+
+
+@pytest.mark.parametrize("replace_gateway", [False, True])
+def test_cpp_output_redirection_retains_mujoco_scene(mujoco_output_scene, replace_gateway):
+    """Temporary MuJoCo accessor chains retain the scene until redirection ends."""
+    scene, get_output = mujoco_output_scene()
+    reference = weakref.ref(scene)
+    destination = spacecraft.Spacecraft()
+    destination.scStateOutMsg = get_output(scene)
+    del scene
+    gc.collect()
+    # Check lifetime before accessing native storage if retention regresses.
+    assert reference() is not None
+
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]
+    destination.scStateOutMsg.write(payload)
+    np.testing.assert_array_equal(get_output(reference()).read().r_BN_N, payload.r_BN_N)
+
+    if replace_gateway:
+        destination.scStateOutMsg = messaging.SCStatesMsg()
+    else:
+        del destination
+    gc.collect()
+    assert reference() is None
+
+
+def test_cpp_output_redirection_rejects_deleted_mujoco_scene(mujoco_output_scene):
+    """A saved MuJoCo output does not keep its scene alive before redirection."""
+    scene, get_output = mujoco_output_scene()
+    output = get_output(scene)
+    reference = weakref.ref(scene)
+    del scene
+    gc.collect()
+    assert reference() is None
+
+    destination = spacecraft.Spacecraft()
+    with pytest.raises(ReferenceError, match="module owning this message has been deleted"):
+        destination.scStateOutMsg = output
+
+
+def test_cpp_output_redirection_does_not_retain_its_own_mujoco_scene(mujoco_output_scene):
+    """Redirecting two outputs within a scene must not make the scene retain itself."""
+    scene, get_output = mujoco_output_scene()
+    reference = weakref.ref(scene)
+    scene.getBody("hub").getOrigin().stateOutMsg = get_output(scene)
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]
+    scene.getBody("hub").getOrigin().stateOutMsg.write(payload)
+    np.testing.assert_array_equal(get_output(scene).read().r_BN_N, payload.r_BN_N)
+    del scene
+    gc.collect()
+    assert reference() is None
 
 
 @pytest.mark.parametrize("through_another_module", [False, True])
