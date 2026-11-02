@@ -82,12 +82,12 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
     // Get access to the hub's states needed for dynamic coupling
     this->hubOmega = states.getStateObject("hubOmega");
 
-
+    // Hub-attached effectors receive these properties. A prescribed parent does not, so they stay null.
     if (!this->propName_centerOfMassSC.empty()) {
-        this->c_B = nullptr;
+        this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
     }
     if (!this->propName_centerOfMassPrimeSC.empty()) {
-        this->cPrime_B = nullptr;
+        this->cPrime_B = states.getPropertyReference(this->propName_centerOfMassPrimeSC);
     }
 
     return;
