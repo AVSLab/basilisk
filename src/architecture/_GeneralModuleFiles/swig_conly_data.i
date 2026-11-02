@@ -35,26 +35,57 @@
 }
 
 %fragment("bsk_message_parent", "header") %{
+// Borrowed MuJoCo and configuration proxies retain their native storage owner
+// through this chain. Return an owned reference to its terminal Python owner.
+static PyObject* _bsk_message_storage_owner(PyObject* parent) {
+    PyObject* owner = PyObject_GetAttrString(parent, "_swig_bsk_owner");
+    if (!owner) {
+        if (!PyErr_ExceptionMatches(PyExc_AttributeError)) return nullptr;
+        PyErr_Clear();
+        Py_INCREF(parent);
+        return parent;
+    }
+    if (Py_EnterRecursiveCall(" while resolving a message storage owner")) {
+        Py_DECREF(owner);
+        return nullptr;
+    }
+    PyObject* result = _bsk_message_storage_owner(owner);
+    Py_LeaveRecursiveCall();
+    Py_DECREF(owner);
+    return result;
+}
+
 // Flatten borrowed container views to their actual owner. A stand-alone pointer
 // vector does not own its elements and must not masquerade as their owner.
 static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
-    PyObject* reference = PyObject_GetAttrString(parent, "_bskMessageOwner");
+    PyObject* owner = _bsk_message_storage_owner(parent);
+    if (!owner) return -1;
+    PyObject* reference = PyObject_GetAttrString(owner, "_bskMessageOwner");
     if (!reference) {
-        if (!PyErr_ExceptionMatches(PyExc_AttributeError)) return -1;
+        if (!PyErr_ExceptionMatches(PyExc_AttributeError)) {
+            Py_DECREF(owner);
+            return -1;
+        }
         PyErr_Clear();
-        PyObject* pointerVector = PyObject_GetAttrString(parent, "_bskPointerVector");
+        PyObject* pointerVector = PyObject_GetAttrString(owner, "_bskPointerVector");
         if (pointerVector) {
             int isPointerVector = PyObject_IsTrue(pointerVector);
             Py_DECREF(pointerVector);
-            if (isPointerVector < 0) return -1;
-            if (isPointerVector) return 0;
+            if (isPointerVector != 0) {
+                Py_DECREF(owner);
+                return isPointerVector < 0 ? -1 : 0;
+            }
         } else {
-            if (!PyErr_ExceptionMatches(PyExc_AttributeError)) return -1;
+            if (!PyErr_ExceptionMatches(PyExc_AttributeError)) {
+                Py_DECREF(owner);
+                return -1;
+            }
             PyErr_Clear();
         }
-        reference = PyWeakref_NewRef(parent, nullptr);
-        if (!reference) return -1;
+        reference = PyWeakref_NewRef(owner, nullptr);
     }
+    Py_DECREF(owner);
+    if (!reference) return -1;
     PyObject* name = PyUnicode_FromString("_bskMessageOwner");
     int status = name ? PyObject_GenericSetAttr(proxy, name, reference) : -1;
     Py_XDECREF(name);
@@ -100,7 +131,7 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
 }
 
 // Python output assignment connects and retains a gateway; native assignment copies a value.
-%typemap(memberin, fragment="bsk_python_source_owner_init") Message {
+%typemap(memberin, fragment="bsk_python_source_owner_init,bsk_message_parent") Message {
     if (!$input) {
         SWIG_exception_fail(SWIG_ValueError, "A message gateway cannot be None");
     }
@@ -108,9 +139,16 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
     if (!storageOwner) {
         SWIG_fail;
     }
+    PyObject *enclosingOwner = _global_bskMessageParent
+        ? _bsk_message_storage_owner(_global_bskMessageParent) : nullptr;
+    if (_global_bskMessageParent && !enclosingOwner) {
+        Py_DECREF(storageOwner);
+        SWIG_fail;
+    }
     $1.redirectTo(*$input, storageOwner,
                   &_bsk_readfunctor_acquire, &_bsk_readfunctor_release,
-                  _global_bskMessageParent);
+                  enclosingOwner);
+    Py_XDECREF(enclosingOwner);
     Py_DECREF(storageOwner);
 }
 
