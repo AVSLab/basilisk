@@ -82,11 +82,12 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
     // Get access to the hub's states needed for dynamic coupling
     this->hubOmega = states.getStateObject("hubOmega");
 
+
     if (!this->propName_centerOfMassSC.empty()) {
-        this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
+        this->c_B = nullptr;
     }
     if (!this->propName_centerOfMassPrimeSC.empty()) {
-        this->cPrime_B = states.getPropertyReference(this->propName_centerOfMassPrimeSC);
+        this->cPrime_B = nullptr;
     }
 
     return;
@@ -296,6 +297,8 @@ void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]
 
 void LinearSpringMassDamper::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
 {
+    // SMD frame is denoted with T and prescribed frame is denoted with P within the scope of this method
+
     // Access prescribed motion properties
     Eigen::Vector3d r_PB_B = (Eigen::Vector3d) * this->prescribedPositionProperty;
     Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d) * this->prescribedVelocityProperty;
@@ -316,14 +319,14 @@ void LinearSpringMassDamper::addPrescribedMotionCouplingContributions(BackSubMat
     backSubContr.matrixB += -this->massSMD * tHat_P * this->aRho.transpose() * rTilde_PB_P;
 
     Eigen::Matrix3d omegaTilde_PB_P = eigenTilde(omega_PB_P);
-    Eigen::Vector3d rPPrime_TB_B = this->rPrime_PcB_B;
+    Eigen::Vector3d rPPrime_TP_P = this->rPrime_PcB_B;
     Eigen::Matrix3d omegaPrimeTilde_PB_P = eigenTilde(omegaPrime_PB_P);
-    Eigen::Vector3d r_TB_P = this->r_PcB_B;
+    Eigen::Vector3d r_TP_P = this->r_PcB_B;
     Eigen::Vector3d rPrimePrime_PB_P = dcm_PB * rPrimePrime_PB_B;
     Eigen::Matrix3d omegaTilde_BN_P = eigenTilde(omega_BN_P);
     Eigen::Vector3d rPrime_PB_P = dcm_PB * rPrime_PB_B;
-    Eigen::Vector3d term1 = 2.0 * omegaTilde_PB_P * rPPrime_TB_B + omegaPrimeTilde_PB_P * r_TB_P +
-                            omegaTilde_PB_P * omegaTilde_PB_P * r_TB_P + rPrimePrime_PB_P;
+    Eigen::Vector3d term1 = 2.0 * omegaTilde_PB_P * rPPrime_TP_P + omegaPrimeTilde_PB_P * r_TP_P +
+                            omegaTilde_PB_P * omegaTilde_PB_P * r_TP_P + rPrimePrime_PB_P;
     Eigen::Vector3d term2 =
         rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P;
     Eigen::Vector3d term3 = omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P;
@@ -333,21 +336,21 @@ void LinearSpringMassDamper::addPrescribedMotionCouplingContributions(BackSubMat
     // Prescribed motion rotation coupling contributions
     backSubContr.matrixC += this->massSMD * rTilde_PB_P * tHat_P * this->aRho.transpose();
 
-    Eigen::Vector3d r_FcB_P = r_TB_P + r_PB_P;
-    Eigen::Matrix3d rTilde_FcB_P = eigenTilde(r_FcB_P);
+    Eigen::Vector3d r_TB_P = r_TP_P + r_PB_P;
+    Eigen::Matrix3d rTilde_TB_P = eigenTilde(r_TB_P);
     backSubContr.matrixD += +this->massSMD * rTilde_PB_P * tHat_P * this->bRho.transpose() -
-                            this->massSMD * rTilde_FcB_P * tHat_P * this->aRho.transpose() * rTilde_PB_P;
+                            this->massSMD * rTilde_TB_P * tHat_P * this->aRho.transpose() * rTilde_PB_P;
 
-    Eigen::Matrix3d rTilde_FcP_P = eigenTilde(r_TB_P);
+    Eigen::Matrix3d rTilde_TP_P = eigenTilde(r_TP_P);
 
-    Eigen::Vector3d vecRotTerm2 = -this->massSMD * rTilde_FcB_P * term1;
-    Eigen::Vector3d vecRotTerm3 =
-        -this->massSMD * (omegaTilde_BN_P * rTilde_PB_P - omegaTilde_PB_P * rTilde_FcP_P) * rPPrime_TB_B -
-        this->massSMD * omegaTilde_BN_P * rTilde_FcB_P * (omegaTilde_PB_P * r_TB_P + rPrime_PB_P);
-    Eigen::Vector3d vecRotTerm4 = -this->massSMD * this->cRho * rTilde_PB_P * tHat_P;
-    Eigen::Vector3d vecRotTerm5 = -this->massSMD * rTilde_FcB_P * tHat_P * (this->aRho.transpose() * term2) -
-                                  this->massSMD * rTilde_FcB_P * tHat_P * (this->bRho.transpose() * term3);
-    backSubContr.vecRot += vecRotTerm2 + vecRotTerm3 + vecRotTerm4 + vecRotTerm5;
+    Eigen::Vector3d vecRotTerm1 = -this->massSMD * rTilde_TB_P * term1;
+    Eigen::Vector3d vecRotTerm2 =
+        -this->massSMD * (omegaTilde_BN_P * rTilde_PB_P - omegaTilde_PB_P * rTilde_TP_P) * rPPrime_TP_P -
+        this->massSMD * omegaTilde_BN_P * rTilde_TB_P * (omegaTilde_PB_P * r_TP_P + rPrime_PB_P);
+    Eigen::Vector3d vecRotTerm3 = -this->massSMD * this->cRho * rTilde_PB_P * tHat_P;
+    Eigen::Vector3d vecRotTerm4 = -this->massSMD * rTilde_TB_P * tHat_P * (this->aRho.transpose() * term2) -
+                                  this->massSMD * rTilde_TB_P * tHat_P * (this->bRho.transpose() * term3);
+    backSubContr.vecRot += vecRotTerm1 + vecRotTerm2 + vecRotTerm3 + vecRotTerm4;
 }
 
 /*! This method is for the SMD to add its contributions to energy and momentum
