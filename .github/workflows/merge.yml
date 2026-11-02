@@ -66,6 +66,7 @@ jobs:
           publish_dir: ./docs/build/html
           destination_dir: .
           force_orphan: true
+          keep_files: true
       - name: Deploy develop branch merges to /develop
         if: success() && github.ref_name == 'develop'
         uses: peaceiris/actions-gh-pages@v3
