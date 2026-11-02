@@ -1,0 +1,278 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_cppMessageRedirection &mdash; Basilisk 2.12.2
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=17b890f7"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="test_deprecatedRecorderFormat" href="test_deprecatedRecorderFormat.html" />
+    <link rel="prev" title="test_CMsgTypes" href="test_CMsgTypes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">messaging</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../messaging.html">messaging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../messagingBase.html">messagingBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msgHeader.html">msgHeader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../payloadEqualityTraits.html">payloadEqualityTraits</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_UnitTest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cMsgCInterface/index.html">cMsgCInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rust/index.html">rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">messaging</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_cppMessageRedirection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-cppmessageredirection">
+<span id="id1"></span><h1>test_cppMessageRedirection<a class="headerlink" href="#test-cppmessageredirection" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_cppMessageRedirection">Exercise the documented Python assignment used for C++ output gateways.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_feedback_using_standalone_gateway_is_supported">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_feedback_using_standalone_gateway_is_supported</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_feedback_using_standalone_gateway_is_supported"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_feedback_using_standalone_gateway_is_supported" title="Link to this definition"></a></dt>
+<dd><p>A standalone gateway permits feedback without retaining the source module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_mutated_pointer_vector_slice_has_no_owner">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_mutated_pointer_vector_slice_has_no_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_mutated_pointer_vector_slice_has_no_owner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_mutated_pointer_vector_slice_has_no_owner" title="Link to this definition"></a></dt>
+<dd><p>Replacing a raw slice element cannot attribute its storage to the original module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_consumers_retain_original_gateway">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_consumers_retain_original_gateway</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace_gateway</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedded_gateway</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_consumers_retain_original_gateway"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_consumers_retain_original_gateway" title="Link to this definition"></a></dt>
+<dd><p>Consumers retain their original storage after producer deletion or redirection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_iterator_rejects_deleted_module">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_iterator_rejects_deleted_module</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_iterator_rejects_deleted_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_iterator_rejects_deleted_module" title="Link to this definition"></a></dt>
+<dd><p>An iterator checks its weak module owner before accessing native storage.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscribe_to_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection" title="Link to this definition"></a></dt>
+<dd><p>Two native producers publish through one gateway to C/C++ readers and recorders.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection_chain_retains_gateway">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection_chain_retains_gateway</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection_chain_retains_gateway"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection_chain_retains_gateway" title="Link to this definition"></a></dt>
+<dd><p>Assigning a redirected output retains the terminal gateway independently.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection_does_not_retain_its_own_module">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection_does_not_retain_its_own_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">through_another_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection_does_not_retain_its_own_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection_does_not_retain_its_own_module" title="Link to this definition"></a></dt>
+<dd><p>Redirecting co-owned outputs must not make their module retain itself.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection_keeps_original_embedded_storage">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection_keeps_original_embedded_storage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection_keeps_original_embedded_storage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection_keeps_original_embedded_storage" title="Link to this definition"></a></dt>
+<dd><p>Rerouting the source output does not change the destination’s storage owner.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection_rejects_deleted_source_module">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection_rejects_deleted_source_module</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection_rejects_deleted_source_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection_rejects_deleted_source_module" title="Link to this definition"></a></dt>
+<dd><p>A saved non-owning output proxy cannot redirect into a deleted module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_redirection_retains_source_module">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_redirection_retains_source_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replace_gateway</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_redirection_retains_source_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_redirection_retains_source_module" title="Link to this definition"></a></dt>
+<dd><p>An embedded gateway keeps its module alive until the destination releases it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_reredirection">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_reredirection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_reredirection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_reredirection" title="Link to this definition"></a></dt>
+<dd><p>Replacing a gateway redirects future writes and updates borrowed pointer views.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_retains_gateway">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_retains_gateway</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_retains_gateway"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_retains_gateway" title="Link to this definition"></a></dt>
+<dd><p>A producer retains a temporary gateway and releases it on reassignment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_vector_redirection">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_vector_redirection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accessor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_vector_redirection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_vector_redirection" title="Link to this definition"></a></dt>
+<dd><p>Temporary vector views resolve to the module that owns their messages.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_output_vector_rejects_deleted_module">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_output_vector_rejects_deleted_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_output_vector_rejects_deleted_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_output_vector_rejects_deleted_module" title="Link to this definition"></a></dt>
+<dd><p>Keeping a vector view does not hide deletion of the owning module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_pointer_iterator_preserves_other_vector_semantics">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_pointer_iterator_preserves_other_vector_semantics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_pointer_iterator_preserves_other_vector_semantics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_pointer_iterator_preserves_other_vector_semantics" title="Link to this definition"></a></dt>
+<dd><p>The shared iterator still returns numeric values and owning reader copies.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_cppMessageRedirection.test_cpp_unowned_pointer_vector_redirection_is_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_cppMessageRedirection.</span></span><span class="sig-name descname"><span class="pre">test_cpp_unowned_pointer_vector_redirection_is_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_cppMessageRedirection.html#test_cpp_unowned_pointer_vector_redirection_is_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_cppMessageRedirection.test_cpp_unowned_pointer_vector_redirection_is_rejected" title="Link to this definition"></a></dt>
+<dd><p>A raw pointer-vector copy cannot establish ownership of its pointees.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_CMsgTypes.html" class="btn btn-neutral float-left" title="test_CMsgTypes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_deprecatedRecorderFormat.html" class="btn btn-neutral float-right" title="test_deprecatedRecorderFormat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

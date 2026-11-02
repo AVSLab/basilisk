@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_boreAngCalc:
+
+boreAngCalc
+===========
+
+:doc:`Module documentation <boreAngCalc>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

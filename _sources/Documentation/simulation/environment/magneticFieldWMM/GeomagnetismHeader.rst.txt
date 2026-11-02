@@ -1,0 +1,10 @@
+.. _GeomagnetismHeader:
+
+GeomagnetismHeader
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: GeomagnetismHeader.h
+   :project: magneticFieldWMM
+

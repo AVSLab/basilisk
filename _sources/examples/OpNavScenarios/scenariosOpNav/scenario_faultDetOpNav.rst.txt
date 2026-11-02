@@ -1,0 +1,15 @@
+.. _scenario_faultDetOpNav:
+
+scenario_faultDetOpNav
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenario_faultDetOpNav
+   :members:
+   :show-inheritance:
+

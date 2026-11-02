@@ -1,0 +1,10 @@
+.. _reactionWheelSupport:
+
+reactionWheelSupport
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: reactionWheelSupport.h
+   :project: reactionWheels
+
