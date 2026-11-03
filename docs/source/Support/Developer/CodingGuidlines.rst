@@ -18,7 +18,7 @@ the coding guidelines developed by Stroustrup and Sutter.
 
 **Python foundational guidelines**: the `PEP
 8 <https://www.python.org/dev/peps/pep-0008/>`__ guidelines are to be
-followed for python code development.
+followed for Python code development, with the exceptions described below.
 
 The both of these foundational sets of guidelines are extensive and
 where the Basilisk document is silent these guidelines will prevail.
@@ -278,9 +278,12 @@ C/C++ Exceptions
 Python Exceptions
 -----------------
 
--  General-purpose Python implementation and tooling names are to follow
-   PEP 8. This includes using ``under_scored`` names for functions, methods,
-   local variables, and parameters.
+-  Python functions, methods, local variables, and parameters may use either
+   ``snake_case`` or ``lowerCamelCase``. This applies to general-purpose
+   implementation and tooling as well as BSK architecture code. Follow the
+   established convention in the surrounding file or API, and avoid mixing
+   naming styles within the same interface. Do not rename existing interfaces
+   solely to change naming style.
 -  Public BSK module attributes, message variables, mathematical quantities,
    and names shared across C/C++ and Python interfaces are to retain the
    established Basilisk naming conventions. This includes lower ``camelCase``
