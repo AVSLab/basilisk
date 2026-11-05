@@ -655,11 +655,54 @@ def test_zero_mass_member_does_not_contribute():
     assert_state(actual, np.concatenate(first))
 
 
-def test_runtime_selection():
-    """The new selector can be configured after initialization, like the old switch."""
-    state = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
-    actual = run_module([state], [100.0], CLASSICAL, after_reset={"orbitalElementType": EQUINOCTIAL_PROGRADE})  # [kg]
-    assert_state(actual, np.concatenate(state))
+@pytest.mark.parametrize("initial_type,selected_type", [
+    pytest.param(CLASSICAL, EQUINOCTIAL_PROGRADE, id="classical-to-prograde"),
+    pytest.param(CLASSICAL, EQUINOCTIAL_RETROGRADE, id="classical-to-retrograde"),
+    pytest.param(EQUINOCTIAL_PROGRADE, CLASSICAL, id="prograde-to-classical"),
+    pytest.param(EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE, id="prograde-to-retrograde"),
+    pytest.param(EQUINOCTIAL_RETROGRADE, CLASSICAL, id="retrograde-to-classical"),
+    pytest.param(EQUINOCTIAL_RETROGRADE, EQUINOCTIAL_PROGRADE, id="retrograde-to-prograde"),
+])
+def test_runtime_selection(initial_type, selected_type):
+    """Observe every orbital-selector transition before and after an update.
+
+    Two equal-mass members share axis, eccentricity, inclination and mean
+    anomaly, with symmetric offsets in ascending node and periapsis. Thus
+    the classical reference uses the midpoint angles exactly. Equinoctial
+    references use the independent element-average and classical-rotation
+    helper. All three references differ in both position and velocity.
+
+    Initialize with one choice, select another before the first update, then
+    switch back after that update. Each C and C++ output must match its own
+    reference without another Reset, detecting a choice cached at either
+    initialization or the first update.
+    """
+    axis, eccentricity, inclination = 7e6, 0.2, 0.9  # [m, -, rad]
+    node, periapsis, mean_anomaly = 0.3, 0.5, 0.8  # [rad]
+    orbits = [
+        (axis, eccentricity, inclination, node+offset, periapsis+offset, mean_anomaly)
+        for offset in (-0.2, 0.2)  # [rad]
+    ]  # [m, -, rad, rad, rad, rad]
+    masses = [100.0, 100.0]  # [kg]
+    states = [classical_state(*orbit) for orbit in orbits]
+    expected = {
+        CLASSICAL: np.concatenate(classical_state(axis, eccentricity, inclination, node, periapsis, mean_anomaly)),
+        EQUINOCTIAL_PROGRADE: weighted_reference(orbits, masses, 1),
+        EQUINOCTIAL_RETROGRADE: weighted_reference(orbits, masses, -1),
+    }
+    # Keep each transition observable even if the fixture is changed later.
+    difference = expected[selected_type]-expected[initial_type]
+    assert np.linalg.norm(difference[:3]) > 1.0  # [m]
+    assert np.linalg.norm(difference[3:]) > 1e-3  # [m/s]
+
+    simulation, module, messages, recorder, recorder_c = make_simulation(states, masses, initial_type)
+    for element_type in (selected_type, initial_type):
+        module.orbitalElementType = element_type
+        simulation.TotalSim.SingleStepProcesses()
+        assert_state(recorded_state(recorder, recorder_c), expected[element_type], rtol=0.0)
+    expected_times = np.array([0, macros.sec2nano(1.0)], dtype=np.uint64)  # [ns]; one-second task period
+    np.testing.assert_array_equal(recorder.times(), expected_times)
+    np.testing.assert_array_equal(recorder_c.times(), expected_times)
 
 
 @pytest.mark.parametrize("changes", [{"orbitalElementType": 3}, {"mu": math.nan}])
