@@ -162,6 +162,93 @@ def test_cartesian_ignores_element_selector(element_type):
     np.testing.assert_allclose(actual, expected, rtol=relative_tolerance, atol=0.0)
 
 
+@pytest.mark.parametrize("configuration", ["default", "explicit-classical", "legacy-runtime"])
+@pytest.mark.parametrize("orbits,masses,expected", [
+    pytest.param(
+        [
+            (7e6, 0.1, 0.5, 0.2, 0.4, 0.6),
+            (8e6, 0.2, 0.7, 0.3, 0.5, 0.8),
+            (9e6, 0.3, 1.0, 0.4, 0.6, 1.0),
+        ],  # [m, -, rad, rad, rad, rad]
+        [100.0, 200.0, 400.0],  # [kg]
+        [
+            -3805024.012545443, 3691119.6983278044, 5336085.789998154,  # [m]
+            -7017.942535029498, -3023.7993314431715, -547.6782626053625,  # [m/s]
+        ],
+        id="weighted-inclined",
+    ),
+    pytest.param(
+        [
+            (7e6, 0.1, 0.9, 6.20, 6.15, 6.24),
+            (7.2e6, 0.15, 0.8, 0.04, 0.08, 0.03),
+            (6.8e6, 0.05, 1.0, 0.12, 0.20, 0.10),
+        ],  # [m, -, rad, rad, rad, rad]
+        [100.0, 200.0, 300.0],  # [kg]
+        [
+            6194409.791060193, 1002729.1491828125, 824797.744204107,  # [m]
+            -1614.2214430779236, 4893.206053782084, 6495.775280548105,  # [m/s]
+        ],
+        id="angle-wrap",
+    ),
+    pytest.param(
+        [
+            (2e7, 0.6, 2.5, 2.8, 0.5, 0.3),
+            (2.1e7, 0.7, 2.6, 2.9, 0.6, 0.6),
+            (1.9e7, 0.8, 2.7, 3.0, 0.7, 1.2),
+        ],  # [m, -, rad, rad, rad, rad]
+        [400.0, 100.0, 200.0],  # [kg]
+        [
+            10068721.357163044, 5134873.813868816, 4896469.296928595,  # [m]
+            6254.6602691876315, -2322.4582653040334, -364.5000674161748,  # [m/s]
+        ],
+        id="eccentric-retrograde",
+    ),
+    pytest.param(
+        [
+            (7e6, 0.01, 0.78, 0.84, 6.07, 1.48),
+            (7e6, 0.0105, 0.82, 0.84, 6.07, 1.56),
+            (7e6, 0.0095, 0.70, 0.84, 6.07, 1.63),
+        ],  # [m, -, rad, rad, rad, rad]
+        [100.0, 150.0, 250.0],  # [kg]
+        [
+            -2881895.08515755, 4314497.779819102, 4700781.108437926,  # [m]
+            -5735.687341594877, -4798.5621701086875, 999.1089719904237,  # [m/s]
+        ],
+        id="low-eccentricity",
+    ),
+])
+def test_classical_compatibility(orbits, masses, expected, configuration):
+    """Preserve pre-PR classical position and velocity on both output interfaces.
+
+    Fixed reference states were captured using the unmodified C++ module and
+    header from PR 1668's base commit ``d0f9832f3b0a40923329c23c2f9255c6c2f1b08b``.
+    Input tuples specify semimajor axis, eccentricity, inclination, ascending
+    node, argument of periapsis and mean anomaly. The cases cover unequal
+    weights, angular wrapping, eccentric retrograde motion and low eccentricity.
+    They avoid classical singularities so tight absolute tolerances remain
+    portable: 2 micrometers in position and 2e-8 meters/second in velocity.
+
+    Check the omitted selector, explicit ``CLASSICAL``, and the legacy pattern
+    of enabling orbital averaging after a Cartesian update using only
+    ``useOrbitalElements`` and ``mu``. Expected outputs are never recomputed
+    with the current module during the test.
+    """
+    states = [classical_state(*orbit) for orbit in orbits]
+    if configuration == "legacy-runtime":
+        simulation, module, messages, recorder, recorder_c = make_simulation(
+            states, masses, use_orbital=False, mu=0.0  # [m^3/s^2]
+        )
+        simulation.TotalSim.SingleStepProcesses()
+        module.useOrbitalElements = True
+        module.mu = MU
+        simulation.TotalSim.SingleStepProcesses()
+        actual = recorded_state(recorder, recorder_c)
+    else:
+        element_type = CLASSICAL if configuration == "explicit-classical" else None
+        actual = run_module(states, masses, element_type)
+    assert_state(actual, expected, rtol=0.0)
+
+
 @pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("eccentricity", [0.0, 1e-8, 0.2, 0.7, 0.95])  # [-]
 @pytest.mark.parametrize("tilt_index", range(4))
