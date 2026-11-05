@@ -144,15 +144,22 @@ def test_default_and_named_choices():
 
 @pytest.mark.parametrize("element_type", [CLASSICAL, EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE, -1])
 def test_cartesian_ignores_element_selector(element_type):
-    """The extra orbital setting cannot change the original Cartesian branch."""
+    """Keep Cartesian selection exact while allowing reference roundoff.
+
+    The C++ weighted sum can use fused multiply-add, whereas NumPy may round
+    multiplication and addition separately.
+    """
     states = [
         classical_state(7e6, 0.1, 0.9, 0.3, 0.4, phase)  # [m, -, rad, rad, rad, rad]
         for phase in (0.7, 0.9)  # [rad]
     ]
     masses = np.array([100.0, 300.0])  # [kg]
     expected = np.average([np.concatenate(state) for state in states], weights=masses, axis=0)
-    actual = run_module(states, masses, element_type, use_orbital=False, mu=0.0)
-    np.testing.assert_array_equal(actual, expected)
+    baseline = run_module(states, masses, use_orbital=False, mu=0.0)  # [m^3/s^2]
+    actual = run_module(states, masses, element_type, use_orbital=False, mu=0.0)  # [m^3/s^2]
+    np.testing.assert_array_equal(actual, baseline)
+    relative_tolerance = 8*np.finfo(float).eps  # [-]
+    np.testing.assert_allclose(actual, expected, rtol=relative_tolerance, atol=0.0)
 
 
 @pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
