@@ -264,6 +264,83 @@ def weighted_reference(orbits, masses, factor):
     return np.concatenate(classical_state(axis, eccentricity, inclination, node, periapsis, mean_anomaly))
 
 
+@pytest.mark.parametrize("element_type,factor", [
+    pytest.param(EQUINOCTIAL_PROGRADE, 1, id="prograde"),
+    pytest.param(EQUINOCTIAL_RETROGRADE, -1, id="retrograde"),
+])
+@pytest.mark.parametrize("equator_offset", [0.0, 1e-10], ids=["equatorial", "near-equatorial"])  # [rad]
+@pytest.mark.parametrize("eccentricity", [0.0, 1e-8, 0.2], ids=["circular", "near-circular", "eccentric"])  # [-]
+def test_equatorial_formation(element_type, factor, equator_offset, eccentricity):
+    """Average unequal members at or near the selected representation's equator.
+
+    Widely separated ascending nodes accompany nearby periapsis longitudes.
+    Each member has a different axis, phase and mass; eccentric members also
+    have different eccentricities. The reference uses the prescribed classical
+    elements, avoiding recovery of undefined angles from Cartesian states.
+    Both output interfaces must match the reference in position and velocity.
+    """
+    inclination = equator_offset if factor == 1 else math.pi-equator_offset  # [rad]
+    orbits = [
+        (7e6, 0.5*eccentricity, inclination, 0.1, 0.4-factor*0.1, 0.2),
+        (7.1e6, eccentricity, inclination, 2.2, 0.5-factor*2.2, 0.3),
+        (6.9e6, 1.5*eccentricity, inclination, 4.3, 0.3-factor*4.3, 0.4),
+    ]  # [m, -, rad, rad, rad, rad]
+    masses = [100.0, 200.0, 400.0]  # [kg]
+    states = [classical_state(*orbit) for orbit in orbits]
+    expected = weighted_reference(orbits, masses, factor)
+    actual = run_module(states, masses, element_type)
+    assert_state(actual, expected, rtol=0.0)
+
+
+@pytest.mark.parametrize("element_type,factor", [
+    pytest.param(EQUINOCTIAL_PROGRADE, 1, id="prograde"),
+    pytest.param(EQUINOCTIAL_RETROGRADE, -1, id="retrograde"),
+])
+@pytest.mark.parametrize("cancelled_components", ["eccentricity", "inclination", "both"])
+def test_equinoctial_component_cancellation(element_type, factor, cancelled_components):
+    """Recover a circular or equatorial mean from nonsingular member orbits.
+
+    The masses have ratio 1:3. For each cancelled component pair, the first
+    member has three times the magnitude and the opposite direction to the
+    second. Uncancelled components are identical, and both mean longitudes
+    are equal. Thus the expected averaged orbit is known analytically without
+    using ``weighted_reference`` or recovering singular classical angles.
+    Test eccentricity and inclination cancellation separately and together,
+    including both position and velocity on both output interfaces.
+    """
+    cancel_eccentricity = cancelled_components in ("eccentricity", "both")
+    cancel_inclination = cancelled_components in ("inclination", "both")
+    axes = [7e6, 9e6]  # [m]
+    masses = [100.0, 300.0]  # [kg]
+    eccentricities = [0.3, 0.1] if cancel_eccentricity else [0.2, 0.2]  # [-]
+    periapsis_longitudes = [0.7, 0.7+math.pi] if cancel_eccentricity else [0.7, 0.7]  # [rad]
+    tilts = [0.3, 0.1] if cancel_inclination else [0.1, 0.1]  # [-]
+    nodes = [0.4, 0.4+math.pi] if cancel_inclination else [0.4, 0.4]  # [rad]
+    mean_longitude = 0.8  # [rad]
+    states = []
+    for axis, eccentricity, tilt, node, periapsis_longitude in zip(
+        axes, eccentricities, tilts, nodes, periapsis_longitudes
+    ):
+        inclination = 2*math.atan(tilt) if factor == 1 else 2*math.atan2(1, tilt)  # [rad]
+        states.append(classical_state(
+            axis, eccentricity, inclination, node, periapsis_longitude-factor*node,
+            mean_longitude-periapsis_longitude,
+        ))
+
+    mean_axis = 8.5e6  # [m]
+    mean_eccentricity = 0.0 if cancel_eccentricity else 0.2  # [-]
+    mean_tilt = 0.0 if cancel_inclination else 0.1  # [-]
+    mean_inclination = 2*math.atan(mean_tilt) if factor == 1 else 2*math.atan2(1, mean_tilt)  # [rad]
+    mean_node = 0.0 if cancel_inclination else 0.4  # [rad]
+    mean_periapsis_longitude = 0.0 if cancel_eccentricity else 0.7  # [rad]
+    expected = classical_state(
+        mean_axis, mean_eccentricity, mean_inclination, mean_node,
+        mean_periapsis_longitude-factor*mean_node, mean_longitude-mean_periapsis_longitude,
+    )
+    actual = run_module(states, masses, element_type)
+    assert_state(actual, np.concatenate(expected), rtol=0.0)
+
+
 @pytest.mark.parametrize("element_type,factor", [(EQUINOCTIAL_PROGRADE, 1), (EQUINOCTIAL_RETROGRADE, -1)])
 def test_weighting_wrap_and_reordering(element_type, factor):
     """Check unequal shapes/tilts/masses, wraparound and mass/permutation invariance."""
