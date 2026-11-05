@@ -35,8 +35,8 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
 MU = 3.986004418e14  # [m^3/s^2]
 CLASSICAL = 0
-EQUINOCTIAL = 1
-RETROGRADE_EQUINOCTIAL = 2
+EQUINOCTIAL_PROGRADE = 1
+EQUINOCTIAL_RETROGRADE = 2
 
 
 def classical_state(axis, eccentricity, inclination, node, periapsis, mean_anomaly):
@@ -138,11 +138,11 @@ def test_default_and_named_choices():
     assert module.useOrbitalElements is False
     assert module.orbitalElementType == CLASSICAL
     assert module.CLASSICAL == CLASSICAL
-    assert module.EQUINOCTIAL == EQUINOCTIAL
-    assert module.RETROGRADE_EQUINOCTIAL == RETROGRADE_EQUINOCTIAL
+    assert module.EQUINOCTIAL_PROGRADE == EQUINOCTIAL_PROGRADE
+    assert module.EQUINOCTIAL_RETROGRADE == EQUINOCTIAL_RETROGRADE
 
 
-@pytest.mark.parametrize("element_type", [CLASSICAL, EQUINOCTIAL, RETROGRADE_EQUINOCTIAL, -1])
+@pytest.mark.parametrize("element_type", [CLASSICAL, EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE, -1])
 def test_cartesian_ignores_element_selector(element_type):
     """The extra orbital setting cannot change the original Cartesian branch."""
     states = [
@@ -155,14 +155,14 @@ def test_cartesian_ignores_element_selector(element_type):
     np.testing.assert_array_equal(actual, expected)
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("eccentricity", [0.0, 1e-8, 0.2, 0.7, 0.95])  # [-]
 @pytest.mark.parametrize("tilt_index", range(4))
 @pytest.mark.parametrize("mean_anomaly", [0.0, 0.7, 3.4, 6.1])  # [rad]
 def test_single_spacecraft_identity(element_type, eccentricity, tilt_index, mean_anomaly):
     """Each representation recovers a single input, including its nonsingular pole."""
     inclinations = (
-        [0.0, 1e-12, 0.9, 2.8] if element_type == EQUINOCTIAL
+        [0.0, 1e-12, 0.9, 2.8] if element_type == EQUINOCTIAL_PROGRADE
         else [0.2, 0.9, math.pi-1e-12, math.pi]
     )  # [rad]
     state = classical_state(
@@ -175,7 +175,7 @@ def test_single_spacecraft_identity(element_type, eccentricity, tilt_index, mean
     (0, 120, 240), (0, 120.1, 240), (0, 121, 240),
     (0, 125, 240), (0, 140, 240), (0, 90, 180, 270),
 ])  # [deg]
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 def test_reported_compact_formation(phases, element_type):
     """Require an independent state reference and a 1 cm locality budget.
 
@@ -206,7 +206,7 @@ def test_reported_compact_formation(phases, element_type):
         assert elements.e > 1e-7 and 0.1 < elements.i < math.pi-0.1  # [-, rad]
         mean_anomaly = orbitalMotion.E2M(orbitalMotion.f2E(elements.f, elements.e), elements.e)  # [rad]
         orbits.append((elements.a, elements.e, elements.i, elements.Omega, elements.omega, mean_anomaly))
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     expected = weighted_reference(orbits, masses, factor)
     actual = run_module(states, masses, element_type)
     assert_state(actual, expected, rtol=0.0)
@@ -215,12 +215,12 @@ def test_reported_compact_formation(phases, element_type):
     assert np.linalg.norm(actual[:3]-cartesian) < locality_budget
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("elapsed", [0.0, 60.0, 200.0])  # [s]
 def test_equal_axis_preserves_orbital_clock(element_type, elapsed):
     """On one ellipse, equal-mass symmetric phases retain their time midpoint."""
     axis = 2e7  # [m]
-    inclination = 0.9 if element_type == EQUINOCTIAL else math.pi  # [rad]
+    inclination = 0.9 if element_type == EQUINOCTIAL_PROGRADE else math.pi  # [rad]
     mean_midpoint = 1.1+math.sqrt(MU/axis**3)*elapsed  # [rad]
     orbits = [
         (axis, 0.6, inclination, 0.3, 1.2, mean_midpoint+delta)  # [m, -, rad, rad, rad, rad]
@@ -257,7 +257,7 @@ def weighted_reference(orbits, masses, factor):
     return np.concatenate(classical_state(axis, eccentricity, inclination, node, periapsis, mean_anomaly))
 
 
-@pytest.mark.parametrize("element_type,factor", [(EQUINOCTIAL, 1), (RETROGRADE_EQUINOCTIAL, -1)])
+@pytest.mark.parametrize("element_type,factor", [(EQUINOCTIAL_PROGRADE, 1), (EQUINOCTIAL_RETROGRADE, -1)])
 def test_weighting_wrap_and_reordering(element_type, factor):
     """Check unequal shapes/tilts/masses, wraparound and mass/permutation invariance."""
     orbits = [
@@ -276,7 +276,7 @@ def test_weighting_wrap_and_reordering(element_type, factor):
     assert_state(run_module(states, np.asarray(masses)*7, element_type), actual)
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 def test_multiple_updates_refresh_navigation_and_mass(element_type):
     """Check six scheduler updates with changing navigation and mass messages.
 
@@ -288,7 +288,7 @@ def test_multiple_updates_refresh_navigation_and_mass(element_type):
     """
     axis = 2e7  # [m]
     rate = math.sqrt(MU/axis**3)  # [rad/s]
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     orbits = [
         (axis, 0.2, 0.6, 0.1, 0.2, 0.8),
         (axis, 0.4, 0.8, 0.2, 0.1, 1.0),
@@ -322,7 +322,7 @@ def test_multiple_updates_refresh_navigation_and_mass(element_type):
     np.testing.assert_array_equal(recorder_c.times(), expected_times)
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("binding_eps,accepted", [(8, False), (64, True)])
 def test_binding_energy_cutoff(element_type, binding_eps, accepted):
     """Bracket the resolvable elliptic-energy cutoff without an accuracy claim.
@@ -333,7 +333,7 @@ def test_binding_energy_cutoff(element_type, binding_eps, accepted):
     """
     epsilon = np.finfo(float).eps
     speed = math.sqrt(2.0-binding_eps*epsilon)  # [m/s]
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     state = (np.array([1.0, 0.0, 0.0]), np.array([0.0, factor*speed, 0.0]))  # [m, m/s]
     binding = 2.0-speed*speed
     cutoff = 8*epsilon*max(2.0, speed*speed)
@@ -345,7 +345,7 @@ def test_binding_energy_cutoff(element_type, binding_eps, accepted):
             run_module([state], [1.0], element_type, mu=1.0)  # [kg, m^3/s^2]
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("transverse_eps,first_guard", [(4, True), (8, True), (16, False)])
 def test_near_radial_cutoff(element_type, transverse_eps, first_guard):
     """Above the radial guard, an unrepresentable ellipse must still be rejected.
@@ -356,7 +356,7 @@ def test_near_radial_cutoff(element_type, transverse_eps, first_guard):
     Crossing this guard alone must not turn an unresolved ellipse into a valid one.
     """
     epsilon = np.finfo(float).eps
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     transverse_speed = transverse_eps*epsilon  # [m/s]
     state = (np.array([1.0, 0.0, 0.0]), np.array([1.0, factor*transverse_speed, 0.0]))  # [m, m/s]
     assert (transverse_speed <= 8*epsilon*math.sqrt(1+transverse_speed**2)) == first_guard
@@ -365,7 +365,7 @@ def test_near_radial_cutoff(element_type, transverse_eps, first_guard):
         run_module([state], [1.0], element_type, mu=1.0)  # [kg, m^3/s^2]
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("tilt_eps,accepted", [(4, False), (8, False), (16, True)])
 def test_excluded_pole_cutoff(element_type, tilt_eps, accepted):
     """Reject at/below the pole cutoff and recover a state just outside it.
@@ -375,7 +375,7 @@ def test_excluded_pole_cutoff(element_type, tilt_eps, accepted):
     precision and points toward the selected representation's excluded pole.
     """
     epsilon = np.finfo(float).eps
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     transverse_speed = tilt_eps*epsilon  # [m/s]
     state = (np.array([1.0, 0.0, 0.0]), np.array([0.0, -factor, transverse_speed]))  # [m, m/s]
     assert (transverse_speed > 8*epsilon) == accepted
@@ -387,7 +387,7 @@ def test_excluded_pole_cutoff(element_type, tilt_eps, accepted):
             run_module([state], [1.0], element_type, mu=1.0)  # [kg, m^3/s^2]
 
 
-@pytest.mark.parametrize("element_type", [EQUINOCTIAL, RETROGRADE_EQUINOCTIAL])
+@pytest.mark.parametrize("element_type", [EQUINOCTIAL_PROGRADE, EQUINOCTIAL_RETROGRADE])
 @pytest.mark.parametrize("offset_eps,accepted", [(64, False), (256, True)])
 def test_longitude_cancellation_cutoff(element_type, offset_eps, accepted):
     """Bracket the 64-epsilon circular-resultant cutoff with equal near-opposites.
@@ -398,7 +398,7 @@ def test_longitude_cancellation_cutoff(element_type, offset_eps, accepted):
     """
     epsilon = np.finfo(float).eps
     offset = offset_eps*epsilon  # [rad]
-    factor = 1 if element_type == EQUINOCTIAL else -1
+    factor = 1 if element_type == EQUINOCTIAL_PROGRADE else -1
     states = [
         (np.array([1.0, 0.0, 0.0]), np.array([0.0, factor, 0.0])),
         (np.array([-1.0, offset, 0.0]), np.array([-factor*offset, -factor, 0.0])),
@@ -426,7 +426,7 @@ def test_invalid_gravity(mu):
     """New orbital modes require a finite positive gravitational parameter."""
     state = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
     with pytest.raises(bskLogging.BasiliskError, match="gravitational parameter"):
-        run_module([state], [100.0], EQUINOCTIAL, mu=mu)  # [kg]
+        run_module([state], [100.0], EQUINOCTIAL_PROGRADE, mu=mu)  # [kg]
 
 
 @pytest.mark.parametrize("masses", [[0.0], [-1.0], [math.inf], [math.nan]])  # [kg]
@@ -434,7 +434,7 @@ def test_invalid_mass(masses):
     """Undefined weights cannot produce a fabricated formation reference."""
     state = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
     with pytest.raises(bskLogging.BasiliskError, match="mass"):
-        run_module([state], masses, EQUINOCTIAL)
+        run_module([state], masses, EQUINOCTIAL_PROGRADE)
 
 
 @pytest.mark.parametrize("velocity", [[0.0, 1.0, 1.0], [0.0, 2.0, 0.0]])  # [m/s]
@@ -442,10 +442,12 @@ def test_nonelliptic_input_is_rejected(velocity):
     """Exact unit-scale parabolic and hyperbolic inputs are outside the new modes."""
     with pytest.raises(bskLogging.BasiliskError, match="elliptic"):
         state = (np.array([1.0, 0.0, 0.0]), np.array(velocity))  # [m, m/s]
-        run_module([state], [1.0], EQUINOCTIAL, mu=1.0)  # [kg, m^3/s^2]
+        run_module([state], [1.0], EQUINOCTIAL_PROGRADE, mu=1.0)  # [kg, m^3/s^2]
 
 
-@pytest.mark.parametrize("element_type,inclination", [(EQUINOCTIAL, math.pi), (RETROGRADE_EQUINOCTIAL, 0.0)])  # [rad]
+@pytest.mark.parametrize("element_type,inclination", [
+    (EQUINOCTIAL_PROGRADE, math.pi), (EQUINOCTIAL_RETROGRADE, 0.0),
+])  # [rad]
 def test_opposite_chart_pole_is_rejected(element_type, inclination):
     """A representation's excluded pole is an explicit error, not silent fallback."""
     state = classical_state(7e6, 0.1, inclination, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
@@ -459,7 +461,7 @@ def test_undefined_longitude_is_rejected():
     state = (np.array([7e6, 0.0, 0.0]), np.array([0.0, speed, 0.0]))  # [m, m/s]
     opposite = (-state[0], -state[1])
     with pytest.raises(bskLogging.BasiliskError, match="longitude"):
-        run_module([state, opposite], [100.0, 100.0], EQUINOCTIAL)  # [kg]
+        run_module([state, opposite], [100.0, 100.0], EQUINOCTIAL_PROGRADE)  # [kg]
 
 
 @pytest.mark.parametrize("bad_state", [
@@ -471,21 +473,21 @@ def test_undefined_longitude_is_rejected():
 def test_invalid_navigation(bad_state):
     """New modes stop on invalid navigation instead of writing nonfinite output."""
     with pytest.raises(bskLogging.BasiliskError):
-        run_module([bad_state], [100.0], EQUINOCTIAL)  # [kg]
+        run_module([bad_state], [100.0], EQUINOCTIAL_PROGRADE)  # [kg]
 
 
 def test_zero_mass_member_does_not_contribute():
     """A zero-weight spacecraft cannot move an otherwise defined reference."""
     first = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
     second = classical_state(8e6, 0.3, 1.1, 0.5, 0.6, 1.7)  # [m, -, rad, rad, rad, rad]
-    actual = run_module([first, second], [100.0, 0.0], EQUINOCTIAL)  # [kg]
+    actual = run_module([first, second], [100.0, 0.0], EQUINOCTIAL_PROGRADE)  # [kg]
     assert_state(actual, np.concatenate(first))
 
 
 def test_runtime_selection():
     """The new selector can be configured after initialization, like the old switch."""
     state = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
-    actual = run_module([state], [100.0], CLASSICAL, after_reset={"orbitalElementType": EQUINOCTIAL})  # [kg]
+    actual = run_module([state], [100.0], CLASSICAL, after_reset={"orbitalElementType": EQUINOCTIAL_PROGRADE})  # [kg]
     assert_state(actual, np.concatenate(state))
 
 
@@ -494,7 +496,7 @@ def test_runtime_validation(changes):
     """Invalid changes after Reset are rejected again before new-mode computation."""
     state = classical_state(7e6, 0.1, 0.9, 0.3, 0.4, 0.7)  # [m, -, rad, rad, rad, rad]
     with pytest.raises(bskLogging.BasiliskError):
-        run_module([state], [100.0], EQUINOCTIAL, after_reset=changes)  # [kg]
+        run_module([state], [100.0], EQUINOCTIAL_PROGRADE, after_reset=changes)  # [kg]
 
 
 if __name__ == "__main__":

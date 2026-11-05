@@ -40,9 +40,9 @@ class FormationBarycenter : public SysModel
     /** @brief Orbital averaging choices; the existing classical method is the default. */
     enum OrbitalElementType
     {
-        CLASSICAL = 0,   //!< Existing classical-element average.
-        EQUINOCTIAL = 1, //!< Mean-longitude equinoctial average, excluding the retrograde equatorial pole.
-        RETROGRADE_EQUINOCTIAL =
+        CLASSICAL = 0,            //!< Existing classical-element average.
+        EQUINOCTIAL_PROGRADE = 1, //!< Mean-longitude equinoctial average, excluding the retrograde equatorial pole.
+        EQUINOCTIAL_RETROGRADE =
             2 //!< Mean-longitude retrograde equinoctial average, excluding the prograde equatorial pole.
     };
 
