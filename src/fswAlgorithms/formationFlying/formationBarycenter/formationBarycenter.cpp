@@ -18,14 +18,40 @@
 */
 
 #include "fswAlgorithms/formationFlying/formationBarycenter/formationBarycenter.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
+#include <cmath>
+#include <cstddef>
+#include <limits>
 #include <math.h>
+
+namespace {
+/**
+ * @brief Construct the orthonormal equinoctial plane axes for one common representation.
+ * @param tiltSine Dimensionless inclination coordinate, tan(i/2)^factor sin(Omega).
+ * @param tiltCosine Dimensionless inclination coordinate, tan(i/2)^factor cos(Omega).
+ * @param factor Common retrograde factor, +1 or -1.
+ * @param firstAxis_N First dimensionless plane axis in the inertial frame.
+ * @param secondAxis_N Second dimensionless plane axis in the inertial frame.
+ */
+void equinoctialPlane(double tiltSine, double tiltCosine, double factor, double firstAxis_N[3], double secondAxis_N[3])
+{
+    const double denominator = 1.0 + tiltSine * tiltSine + tiltCosine * tiltCosine;
+    firstAxis_N[0] = (1.0 - tiltSine * tiltSine + tiltCosine * tiltCosine) / denominator;
+    firstAxis_N[1] = 2.0 * tiltSine * tiltCosine / denominator;
+    firstAxis_N[2] = -2.0 * factor * tiltSine / denominator;
+    secondAxis_N[0] = 2.0 * factor * tiltSine * tiltCosine / denominator;
+    secondAxis_N[1] = factor * (1.0 + tiltSine * tiltSine - tiltCosine * tiltCosine) / denominator;
+    secondAxis_N[2] = 2.0 * tiltCosine / denominator;
+}
+}
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
 FormationBarycenter::FormationBarycenter()
 {
     this->useOrbitalElements = false;
+    this->orbitalElementType = CLASSICAL;
     this->mu = 0;
 }
 
@@ -53,6 +79,9 @@ void FormationBarycenter::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (this->mu == 0 && this->useOrbitalElements) {
         bskLogger.bskError(
             "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
+    }
+    if (this->useOrbitalElements && this->orbitalElementType != CLASSICAL) {
+        this->validateEquinoctialConfiguration();
     }
 }
 
@@ -110,6 +139,8 @@ void FormationBarycenter::computeBaricenter()
             barycenter[n] /= totalMass;
             barycenterVelocity[n] /= totalMass;
         }
+    } else if (this->orbitalElementType != CLASSICAL) {
+        this->computeEquinoctialBarycenter(barycenter, barycenterVelocity);
     } else {
         ClassicElements orbitElements = {}; // zero the orbit elements first
         ClassicElements tempElements;
@@ -154,6 +185,149 @@ void FormationBarycenter::computeBaricenter()
     for (int n = 0; n < 3; n++) {
         this->transOutBuffer.r_BN_N[n] = barycenter[n];
         this->transOutBuffer.v_BN_N[n] = barycenterVelocity[n];
+    }
+}
+
+void FormationBarycenter::validateEquinoctialConfiguration()
+{
+    if (this->orbitalElementType != EQUINOCTIAL && this->orbitalElementType != RETROGRADE_EQUINOCTIAL) {
+        this->bskLogger.bskError("FormationBarycenter orbitalElementType is not a supported choice.");
+    }
+    if (!std::isfinite(this->mu) || this->mu <= 0.0) {
+        this->bskLogger.bskError(
+            "FormationBarycenter equinoctial averaging requires a finite positive gravitational parameter.");
+    }
+}
+
+void FormationBarycenter::computeEquinoctialBarycenter(double position_N[3], double velocity_N[3])
+{
+    this->validateEquinoctialConfiguration();
+    const double factor = this->orbitalElementType == EQUINOCTIAL ? 1.0 : -1.0;
+    const double roundoff = 8.0 * std::numeric_limits<double>::epsilon();
+    double totalMass = 0.0; // [kg]
+    for (const auto& payload : this->scPayloadBuffer) {
+        if (!std::isfinite(payload.massSC) || payload.massSC < 0.0) {
+            this->bskLogger.bskError(
+                "FormationBarycenter equinoctial averaging requires finite nonnegative spacecraft mass.");
+        }
+        totalMass += payload.massSC;
+    }
+    if (!std::isfinite(totalMass) || totalMass <= 0.0) {
+        this->bskLogger.bskError("FormationBarycenter equinoctial averaging requires finite positive total mass.");
+    }
+
+    double semimajorAxis = 0.0; // [m]
+    double shapeSine = 0.0, shapeCosine = 0.0;
+    double tiltSine = 0.0, tiltCosine = 0.0;
+    double longitudeSine = 0.0, longitudeCosine = 0.0;
+    for (std::size_t index = 0; index < this->scNavBuffer.size(); ++index) {
+        auto& navigation = this->scNavBuffer[index];
+        const double weight = this->scPayloadBuffer[index].massSC / totalMass;
+        if (weight == 0.0) {
+            continue;
+        }
+        for (int component = 0; component < 3; ++component) {
+            if (!std::isfinite(navigation.r_BN_N[component]) || !std::isfinite(navigation.v_BN_N[component])) {
+                this->bskLogger.bskError(
+                    "FormationBarycenter equinoctial averaging requires finite position and velocity.");
+            }
+        }
+        const double radius = v3Norm(navigation.r_BN_N); // [m]
+        if (!std::isfinite(radius) || radius <= 0.0) {
+            this->bskLogger.bskError(
+                "FormationBarycenter equinoctial averaging requires a nonzero finite orbital radius.");
+        }
+        const double speedScale = std::sqrt(this->mu / radius); // [m/s]
+        if (!std::isfinite(speedScale) || speedScale <= 0.0) {
+            this->bskLogger.bskError(
+                "FormationBarycenter equinoctial averaging requires a representable elliptic state.");
+        }
+        double radial_N[3], scaledVelocity_N[3], momentum_N[3], normal_N[3], eccentricity_N[3];
+        v3Scale(1.0 / radius, navigation.r_BN_N, radial_N);
+        v3Scale(1.0 / speedScale, navigation.v_BN_N, scaledVelocity_N);
+        const double speedSquared = v3Dot(scaledVelocity_N, scaledVelocity_N);
+        const double binding = 2.0 - speedSquared;
+        v3Cross(radial_N, scaledVelocity_N, momentum_N);
+        const double momentum = v3Norm(momentum_N);
+        if (!std::isfinite(binding) || binding <= roundoff * std::fmax(2.0, speedSquared) || !std::isfinite(momentum) ||
+            momentum <= roundoff * std::sqrt(speedSquared)) {
+            this->bskLogger.bskError("FormationBarycenter equinoctial averaging supports only resolvable nonradial "
+                                     "elliptic states (e < 1).");
+        }
+        const double memberAxis = radius / binding; // [m]
+        v3Scale(1.0 / momentum, momentum_N, normal_N);
+        const double transverse = std::hypot(normal_N[0], normal_N[1]);
+        const double pole = factor * normal_N[2];
+        if (pole < 0.0 && transverse <= roundoff) {
+            this->bskLogger.bskError(
+                "FormationBarycenter selected equinoctial representation is singular at the opposite equatorial pole.");
+        }
+        // Rationalize the denominator near the excluded pole to avoid subtracting nearly equal numbers.
+        const double tiltScale = pole >= 0.0 ? 1.0 / (1.0 + pole) : (1.0 - pole) / (transverse * transverse);
+        const double memberTiltSine = normal_N[0] * tiltScale;
+        const double memberTiltCosine = -normal_N[1] * tiltScale;
+        double firstAxis_N[3], secondAxis_N[3];
+        equinoctialPlane(memberTiltSine, memberTiltCosine, factor, firstAxis_N, secondAxis_N);
+        v3Cross(scaledVelocity_N, momentum_N, eccentricity_N);
+        v3Subtract(eccentricity_N, radial_N, eccentricity_N);
+        const double memberShapeSine = v3Dot(eccentricity_N, secondAxis_N);
+        const double memberShapeCosine = v3Dot(eccentricity_N, firstAxis_N);
+        const double eccentricity = std::hypot(memberShapeSine, memberShapeCosine);
+        if (!std::isfinite(memberAxis) || !std::isfinite(eccentricity) || eccentricity >= 1.0) {
+            this->bskLogger.bskError(
+                "FormationBarycenter equinoctial averaging requires representable elliptic elements (e < 1).");
+        }
+        const double trueLongitude =
+            std::atan2(v3Dot(navigation.r_BN_N, secondAxis_N), v3Dot(navigation.r_BN_N, firstAxis_N)); // [rad]
+        const double ellipticFactor = std::sqrt((1.0 - eccentricity) * (1.0 + eccentricity));
+        const double eccentricLongitude =
+            trueLongitude +
+            2.0 * std::atan2(memberShapeSine * std::cos(trueLongitude) - memberShapeCosine * std::sin(trueLongitude),
+                             1.0 + ellipticFactor + memberShapeCosine * std::cos(trueLongitude) +
+                                 memberShapeSine * std::sin(trueLongitude)); // [rad]
+        const double meanLongitude = eccentricLongitude - memberShapeCosine * std::sin(eccentricLongitude) +
+                                     memberShapeSine * std::cos(eccentricLongitude); // [rad]
+        semimajorAxis += weight * memberAxis;
+        shapeSine += weight * memberShapeSine;
+        shapeCosine += weight * memberShapeCosine;
+        tiltSine += weight * memberTiltSine;
+        tiltCosine += weight * memberTiltCosine;
+        longitudeSine += weight * std::sin(meanLongitude);
+        longitudeCosine += weight * std::cos(meanLongitude);
+    }
+    if (std::hypot(longitudeSine, longitudeCosine) <= 64.0 * std::numeric_limits<double>::epsilon()) {
+        this->bskLogger.bskError(
+            "FormationBarycenter mean longitude is undefined because the weighted directions cancel.");
+    }
+    const double eccentricity = std::hypot(shapeSine, shapeCosine);
+    if (!std::isfinite(semimajorAxis) || semimajorAxis <= 0.0 || !std::isfinite(eccentricity) || eccentricity >= 1.0) {
+        this->bskLogger.bskError("FormationBarycenter averaged equinoctial elements are not a representable ellipse.");
+    }
+    const double meanLongitude = std::atan2(longitudeSine, longitudeCosine);                          // [rad]
+    const double periapsisLongitude = eccentricity == 0.0 ? 0.0 : std::atan2(shapeSine, shapeCosine); // [rad]
+    const double eccentricLongitude =
+        M2E(meanLongitude - periapsisLongitude, eccentricity) + periapsisLongitude; // [rad]
+    const double cosine = std::cos(eccentricLongitude);
+    const double sine = std::sin(eccentricLongitude);
+    const double beta = 1.0 / (1.0 + std::sqrt((1.0 - eccentricity) * (1.0 + eccentricity)));
+    const double crossTerm = beta * shapeSine * shapeCosine;
+    const double firstScale = 1.0 - beta * shapeSine * shapeSine;
+    const double secondScale = 1.0 - beta * shapeCosine * shapeCosine;
+    const double longitudeRate = (std::sqrt(this->mu / semimajorAxis) / semimajorAxis) /
+                                 (1.0 - shapeCosine * cosine - shapeSine * sine); // [rad/s]
+    double firstAxis_N[3], secondAxis_N[3];
+    equinoctialPlane(tiltSine, tiltCosine, factor, firstAxis_N, secondAxis_N);
+    for (int component = 0; component < 3; ++component) {
+        position_N[component] =
+            semimajorAxis * ((firstScale * cosine + crossTerm * sine - shapeCosine) * firstAxis_N[component] +
+                             (secondScale * sine + crossTerm * cosine - shapeSine) * secondAxis_N[component]);
+        velocity_N[component] = semimajorAxis * longitudeRate *
+                                ((-firstScale * sine + crossTerm * cosine) * firstAxis_N[component] +
+                                 (secondScale * cosine - crossTerm * sine) * secondAxis_N[component]);
+        if (!std::isfinite(position_N[component]) || !std::isfinite(velocity_N[component])) {
+            this->bskLogger.bskError(
+                "FormationBarycenter equinoctial reference is not representable as finite position and velocity.");
+        }
     }
 }
 

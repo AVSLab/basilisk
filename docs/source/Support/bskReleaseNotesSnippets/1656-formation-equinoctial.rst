@@ -1,0 +1,1 @@
+- Added opt-in prograde and retrograde mean-longitude equinoctial averaging to :ref:`formationBarycenter` for circular and equatorial elliptic formations; existing Cartesian and default classical-element results remain unchanged.
