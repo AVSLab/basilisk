@@ -58,7 +58,7 @@ As stated before, the module outputs both a C++ and C-wrapped navigation message
 Equinoctial elements
 ~~~~~~~~~~~~~~~~~~~~
 
-The opt-in choices average one common equinoctial representation for all spacecraft. Let :math:`I=+1` for ``EQUINOCTIAL`` and :math:`I=-1` for ``RETROGRADE_EQUINOCTIAL``. The element definitions are
+The opt-in choices average one common equinoctial representation for all spacecraft. Let :math:`I=+1` for ``EQUINOCTIAL_PROGRADE`` and :math:`I=-1` for ``EQUINOCTIAL_RETROGRADE``. The element definitions are
 
 .. math::
 
@@ -70,7 +70,7 @@ The semimajor axis :math:`a`, :math:`P_1`, :math:`P_2`, :math:`Q_1` and :math:`Q
 
 Mean longitude retains the shared two-body mean motion when all members have the same semimajor axis and the circular mean is defined. For unequal semimajor axes, the output velocity is the Keplerian velocity of the averaged instantaneous orbit; it need not equal the time derivative of a reference recomputed from the whole formation. An orbital-element average is generally different from the physical Cartesian center of mass.
 
-The same value of :math:`I` is used throughout one average. The module does not automatically change representations near an inclination boundary. ``RETROGRADE_EQUINOCTIAL`` covers :math:`i=\pi`, where the prograde representation is singular, but has its own singularity at :math:`i=0`. These choices describe the same individual orbit where both are defined, but averaging different representations need not produce the same formation reference.
+The same value of :math:`I` is used throughout one average. The module does not automatically change representations near an inclination boundary. ``EQUINOCTIAL_RETROGRADE`` covers :math:`i=\pi`, where the prograde representation is singular, but has its own singularity at :math:`i=0`. These choices describe the same individual orbit where both are defined, but averaging different representations need not produce the same formation reference.
 
 Model Assumptions and Limitations
 ---------------------------------
@@ -146,12 +146,12 @@ This retains classical averaging because ``orbitalElementType`` defaults to ``CL
 
 .. code-block:: python
 
-    barycenterModule.orbitalElementType = barycenterModule.EQUINOCTIAL
+    barycenterModule.orbitalElementType = barycenterModule.EQUINOCTIAL_PROGRADE
 
 For a formation near the retrograde equator, select the common retrograde representation instead:
 
 .. code-block:: python
 
-    barycenterModule.orbitalElementType = barycenterModule.RETROGRADE_EQUINOCTIAL
+    barycenterModule.orbitalElementType = barycenterModule.EQUINOCTIAL_RETROGRADE
 
 When ``useOrbitalElements`` is false, ``orbitalElementType`` is ignored and the existing Cartesian calculation is unchanged.

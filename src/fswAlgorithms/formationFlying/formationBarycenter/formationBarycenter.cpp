@@ -190,7 +190,7 @@ void FormationBarycenter::computeBaricenter()
 
 void FormationBarycenter::validateEquinoctialConfiguration()
 {
-    if (this->orbitalElementType != EQUINOCTIAL && this->orbitalElementType != RETROGRADE_EQUINOCTIAL) {
+    if (this->orbitalElementType != EQUINOCTIAL_PROGRADE && this->orbitalElementType != EQUINOCTIAL_RETROGRADE) {
         this->bskLogger.bskError("FormationBarycenter orbitalElementType is not a supported choice.");
     }
     if (!std::isfinite(this->mu) || this->mu <= 0.0) {
@@ -202,7 +202,7 @@ void FormationBarycenter::validateEquinoctialConfiguration()
 void FormationBarycenter::computeEquinoctialBarycenter(double position_N[3], double velocity_N[3])
 {
     this->validateEquinoctialConfiguration();
-    const double factor = this->orbitalElementType == EQUINOCTIAL ? 1.0 : -1.0;
+    const double factor = this->orbitalElementType == EQUINOCTIAL_PROGRADE ? 1.0 : -1.0;
     const double roundoff = 8.0 * std::numeric_limits<double>::epsilon();
     double totalMass = 0.0; // [kg]
     for (const auto& payload : this->scPayloadBuffer) {
