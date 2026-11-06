@@ -311,6 +311,7 @@ Complex Spacecraft Dynamics Simulations
    Hinged Panel Deployment <scenarioDeployingPanel>
    MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
    Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
+   Three General Rigid Bodies in Mars Orbit <scenarioGeneralSingleBody>
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
    Spacecraft with an multi-link extending component <scenarioExtendingBoom>
    Solar Array Debris Impact <scenarioImpact>
