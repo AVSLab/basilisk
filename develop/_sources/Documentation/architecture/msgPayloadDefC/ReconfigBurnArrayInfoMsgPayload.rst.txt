@@ -1,0 +1,10 @@
+.. _ReconfigBurnArrayInfoMsgPayload:
+
+ReconfigBurnArrayInfoMsgPayload
+===============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ReconfigBurnArrayInfoMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _CSSConfigLogMsgPayload:
+
+CSSConfigLogMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CSSConfigLogMsgPayload.h
+   :project: msgPayloadDefCpp
+

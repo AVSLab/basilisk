@@ -1,0 +1,15 @@
+.. _test_PrescribedMotionStateEffectorBranching:
+
+test_PrescribedMotionStateEffectorBranching
+===========================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_PrescribedMotionStateEffectorBranching
+   :members:
+   :show-inheritance:
+

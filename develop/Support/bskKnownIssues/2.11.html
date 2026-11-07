@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.11 Known Issues &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.10 Known Issues" href="2.10.html" />
+    <link rel="prev" title="Version 2.12 Known Issues" href="2.12.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+      <li class="breadcrumb-item active">Version 2.11 Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskKnownIssues/2.11.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-11-known-issues">
+<h1>Version 2.11 Known Issues<a class="headerlink" href="#version-2-11-known-issues" title="Link to this heading"></a></h1>
+<section id="version-2-11-0-july-7-2026">
+<span id="bsk-known-issues-2-11-0"></span><h2>Version 2.11.0 (July 7, 2026)<a class="headerlink" href="#version-2-11-0-july-7-2026" title="Link to this heading"></a></h2>
+<section id="compatibility-and-migration">
+<h3>Compatibility and migration<a class="headerlink" href="#compatibility-and-migration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>BSK-643: several simulation modules own dynamically-allocated output messages that are freed in their
+destructors but inherited the compiler-generated copy operations, so copying such a module shallow-copied
+the raw message pointers and both instances would free the same messages (double free). <code class="docutils literal notranslate"><span class="pre">SysModel</span></code>-derived
+modules are now non-copyable by default, while message recorders keep explicit copy-construction support.
+This is fixed in the current version.</p></li>
+</ul>
+</section>
+<section id="build-installation-and-ci">
+<h3>Build, installation, and CI<a class="headerlink" href="#build-installation-and-ci" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Additional build-helper command execution, temporary file cleanup, remote example download, and image buffer
+validation hardening is included in the current version.</p></li>
+<li><p>SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
+Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
+for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
+<code class="docutils literal notranslate"><span class="pre">builtin</span> <span class="pre">type</span> <span class="pre">swigvarlink</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">__module__</span> <span class="pre">attribute</span></code> warnings, upgrade to SWIG 4.4.1 or a newer
+supported 4.x release.</p></li>
+<li><p>BSK-1410: user-facing utilities such as <a class="reference internal" href="../../Documentation/utilities/simIncludeGravBody.html#simincludegravbody"><span class="std std-ref">simIncludeGravBody</span></a> and <a class="reference internal" href="../../Documentation/utilities/vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a> imported the
+test-support module <a class="reference internal" href="../../Documentation/utilities/unitTestSupport.html#unittestsupport"><span class="std std-ref">unitTestSupport</span></a>, which imports the test-only <code class="docutils literal notranslate"><span class="pre">pytest</span></code> package at module
+load time. Scripts run against the Basilisk wheels (which do not ship <code class="docutils literal notranslate"><span class="pre">pytest</span></code>) therefore failed to
+import these utilities. The few general-purpose helpers those utilities needed have been moved into a
+new <a class="reference internal" href="../../Documentation/utilities/simHelpers.html#simhelpers"><span class="std std-ref">simHelpers</span></a> module, so user-facing code no longer depends on <code class="docutils literal notranslate"><span class="pre">unitTestSupport</span></code> (or <code class="docutils literal notranslate"><span class="pre">pytest</span></code>)
+at all. This is fixed in the current version.</p></li>
+</ul>
+</section>
+<section id="simulation-framework-and-module-development">
+<h3>Simulation framework and module development<a class="headerlink" href="#simulation-framework-and-module-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
+<code class="docutils literal notranslate"><span class="pre">swig/python</span> <span class="pre">detected</span> <span class="pre">a</span> <span class="pre">memory</span> <span class="pre">leak</span></code> warnings when read from Python because their wrappers lacked
+visible destructors. Internal-only members are now private or hidden from Python, and public value-type
+members now include the required Eigen, STL, enum, and BSpline wrapper support. This is fixed in the
+current version.</p></li>
+<li><p>Extension-generated custom messages using <code class="docutils literal notranslate"><span class="pre">bsk_generate_messages(GENERATE_C_INTERFACE)</span></code> could fail to subscribe
+Python readers to C-interface output messages because generated bindings imported the built-in
+<code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.messaging</span></code> package. Generated bindings now resolve peer message classes from their own
+module. This is fixed in the current version.</p></li>
+<li><p>BSK-1446: Several BSK modules deallocated output message objects created with C++ <code class="docutils literal notranslate"><span class="pre">new</span></code> by calling
+<code class="docutils literal notranslate"><span class="pre">free()</span></code>, and retained image buffers in <a class="reference internal" href="../../Documentation/simulation/sensors/camera/camera.html#camera"><span class="std std-ref">C++ Module: camera</span></a> and <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> were not released during
+module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
+destroyed. These cleanup paths now use C++ <code class="docutils literal notranslate"><span class="pre">delete</span></code> for the message objects and release the retained image
+buffers. This is fixed in the current version.</p></li>
+<li><p>BSK-788: Message recorders stored their recorded-message and time history in <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>, so the
+recorder’s <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> incurred periodic reallocation-and-copy timing spikes at power-of-two record
+counts that grew with recording length, disrupting soft real-time and hardware-in-the-loop simulations.
+Recorders now store this history in <code class="docutils literal notranslate"><span class="pre">std::deque</span></code>. This is fixed in the current version.</p></li>
+<li><p>BSK-2026-001, BSK-2026-002, BSK-2026-003, and related fixed-buffer string handling and format-string
+logging issues are fixed in the current version.</p></li>
+<li><p>Monte Carlo now applies nested dispersion paths and randomized <code class="docutils literal notranslate"><span class="pre">RNGSeed</span></code> modifications to the actual
+simulation objects.</p></li>
+<li><p>BSK-1107: A standalone message created inside a Python setup or helper function (for example a
+reference or vehicle-configuration message) can be garbage collected when that function returns,
+before the simulation runs. Consumers then read zeros or unwritten data. Retain such messages on the
+simulation object or another persistent scope so they survive for the life of the simulation. This
+affected <a class="reference internal" href="../../examples/scenarioRoboticArm.html#scenarioroboticarm"><span class="std std-ref">scenarioRoboticArm</span></a> and <a class="reference internal" href="../../examples/scenarioFlexiblePanel.html#scenarioflexiblepanel"><span class="std std-ref">scenarioFlexiblePanel</span></a> and is fixed in the current version.</p></li>
+<li><p>BSK-548: <a class="reference internal" href="../../Documentation/utilities/simHelpers.html#simhelpers"><span class="std std-ref">simHelpers</span></a> <code class="docutils literal notranslate"><span class="pre">timeStringToGregorianUTCMsg</span></code> leaked the SWIG-allocated <code class="docutils literal notranslate"><span class="pre">doubleArray</span></code>
+scratch buffer used to receive the <code class="docutils literal notranslate"><span class="pre">str2et_c</span></code> result (about 32 bytes per call). The buffer is now
+freed with <code class="docutils literal notranslate"><span class="pre">delete_doubleArray</span></code>. This is fixed in the current version.</p></li>
+</ul>
+</section>
+<section id="spacecraft-dynamics-and-effectors">
+<h3>Spacecraft dynamics and effectors<a class="headerlink" href="#spacecraft-dynamics-and-effectors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>BSK-469: The <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a> constructors
+called <code class="docutils literal notranslate"><span class="pre">Eigen</span></code>’s static <code class="docutils literal notranslate"><span class="pre">Identity()</span></code> factory as a statement and discarded the result, so the default
+<code class="docutils literal notranslate"><span class="pre">dcm_HB</span></code> (and <code class="docutils literal notranslate"><span class="pre">IPntS_S</span></code> for the single hinged effector) held uninitialized memory instead of identity.
+Configurations that set these members explicitly (all shipped examples and tests do) were unaffected.</p></li>
+<li><p>BSK-469: The spacecraft hub properties were not validated, so a zero hub mass or a singular hub
+inertia tensor silently produced <code class="docutils literal notranslate"><span class="pre">NaN</span></code> states, and a negative hub mass silently reversed the
+translational response to applied forces. <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> and <code class="docutils literal notranslate"><span class="pre">spacecraftSystem</span></code> now verify
+on reset that <code class="docutils literal notranslate"><span class="pre">mHub</span></code> is strictly positive and <code class="docutils literal notranslate"><span class="pre">IHubPntBc_B</span></code> is symmetric positive definite.
+This is fixed in the current version.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> getter assertion no longer references the spinning-body-only
+degree-of-freedom counter, fixing source builds where that assertion is compiled. The related
+<a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a> getter assertion now rejects the first out-of-range index.</p></li>
+<li><p>BSK-1395: <a class="reference internal" href="../../examples/scenarioAttitudeConstrainedManeuver.html#scenarioattitudeconstrainedmaneuver"><span class="std std-ref">scenarioAttitudeConstrainedManeuver</span></a> and <a class="reference internal" href="../../examples/scenarioAttitudeConstraintViolation.html#scenarioattitudeconstraintviolation"><span class="std std-ref">scenarioAttitudeConstraintViolation</span></a>
+pre-converted the reaction wheel <code class="docutils literal notranslate"><span class="pre">maxSpeed</span></code> to rad/s before passing it to <code class="docutils literal notranslate"><span class="pre">rwFactory.create()</span></code>,
+which expects <code class="docutils literal notranslate"><span class="pre">Omega_max</span></code> in RPM and applies the RPM-to-rad/s conversion internally. The resulting
+double conversion set the wheel saturation speed about an order of magnitude too low, and since the
+derived wheel inertia is <code class="docutils literal notranslate"><span class="pre">maxMomentum</span> <span class="pre">/</span> <span class="pre">Omega_max</span></code> it came out about an order of magnitude too high.
+This is fixed in the current version.</p></li>
+<li><p>BSK-968: <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> reported <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for <code class="docutils literal notranslate"><span class="pre">nonConservativeAccelpntB_B</span></code> on the first integration
+step because the accumulated velocity change was divided by a zero time step. The value is now set to
+zero when the time step is zero, matching the existing <code class="docutils literal notranslate"><span class="pre">omegaDot_BN_B</span></code> guard. This is fixed in the
+current version.</p></li>
+</ul>
+</section>
+<section id="sensors-and-flight-software">
+<h3>Sensors and flight software<a class="headerlink" href="#sensors-and-flight-software" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The camera module now passes PNG encoding options as OpenCV key-value pairs, fixing OpNav image
+processing failures with OpenCV 4.13.</p></li>
+<li><p>The camera module filename input was only used to test filters and never published to imageOut. This is fixed
+so images loaded from filename now follow the same processing and publishing pipeline as images from imageInMsg.</p></li>
+<li><p>BSK-1387: <a class="reference internal" href="../../Documentation/simulation/communication/linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a> could compute excessive pointing loss for non-identity antenna attitudes
+because the inertial line-of-sight vector was transformed using the antenna-to-inertial DCM. This is
+fixed in the current version.</p></li>
+<li><p>BSK-1416 : <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/jointThrAllocation.html#jointthrallocation"><span class="std std-ref">Python Module: jointThrAllocation</span></a> was using a static value for the vector between the hub center of
+mass (CoM) and system CoM. This caused the resulting thruster mapping to be incorrect for a given
+set of joint angles. This is fixed in the current version.</p></li>
+<li><p>BSK-1353: <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.html#sunlinesekf"><span class="std std-ref">C Module: sunlineSEKF</span></a> and <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.html#okeefeekf"><span class="std std-ref">C Module: okeefeEKF</span></a> computed the post-fit residual <code class="docutils literal notranslate"><span class="pre">measMat</span> <span class="pre">*</span> <span class="pre">x</span></code> using the
+full <code class="docutils literal notranslate"><span class="pre">SKF_N_STATES</span></code> width rather than each filter’s reduced state width, striding the measurement matrix
+across the wrong row width and over-reading the state-error vector. This corrupted the reported post-fit
+residuals during the convergence transient (the state and covariance estimates were unaffected). This is
+fixed in the current version.</p></li>
+</ul>
+</section>
+<section id="mujoco-and-stochastic-integration">
+<h3>MuJoCo and stochastic integration<a class="headerlink" href="#mujoco-and-stochastic-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
+3.7 upgrade.</p></li>
+</ul>
+</section>
+<section id="visualization-and-data-handling">
+<h3>Visualization and data handling<a class="headerlink" href="#visualization-and-data-handling" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>A Vizard <code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> image request regression that caused OpNav scenarios to stop with a
+<code class="docutils literal notranslate"><span class="pre">Vizard</span> <span class="pre">image</span> <span class="pre">request</span> <span class="pre">acknowledgement</span> <span class="pre">was</span> <span class="pre">not</span> <span class="pre">received</span></code> error is fixed in the current version.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.12.html" class="btn btn-neutral float-left" title="Version 2.12 Known Issues" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.10.html" class="btn btn-neutral float-right" title="Version 2.10 Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+.. _bskSemaphore:
+
+bskSemaphore
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: bskSemaphore.h
+   :project: utilities
+

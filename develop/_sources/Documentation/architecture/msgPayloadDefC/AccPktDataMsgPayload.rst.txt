@@ -1,0 +1,10 @@
+.. _AccPktDataMsgPayload:
+
+AccPktDataMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AccPktDataMsgPayload.h
+   :project: msgPayloadDefC
+

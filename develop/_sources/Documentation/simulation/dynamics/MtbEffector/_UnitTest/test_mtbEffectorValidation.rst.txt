@@ -1,0 +1,15 @@
+.. _test_mtbEffectorValidation:
+
+test_mtbEffectorValidation
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_mtbEffectorValidation
+   :members:
+   :show-inheritance:
+

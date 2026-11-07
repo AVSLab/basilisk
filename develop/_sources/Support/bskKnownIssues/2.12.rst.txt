@@ -1,0 +1,324 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.12 Known Issues
+=========================
+
+.. _bsk-known-issues-2-12-0:
+
+Version 2.12.0 (September 21, 2026)
+-----------------------------------
+
+Compatibility and migration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Removed the deprecated ``Basilisk.architecture.cMsgCInterfacePy`` compatibility package.
+  Replace ``from Basilisk.architecture import cMsgCInterfacePy`` with
+  ``from Basilisk.architecture import messaging`` and change ``cMsgCInterfacePy.``
+  references to ``messaging.``. C message wrappers remain available through ``messaging``.
+- The deprecated ``--managePipEnvironment``, ``--autoKey``, ``--allOptPkg``, ``--pyPkgCanary``, and
+  ``--examples`` source-build options have been removed. ``python conanfile.py`` now configures and builds the
+  native project without modifying the Python environment; the updated source-install instructions install the
+  Python requirements explicitly and create the editable Basilisk installation once per virtual environment.
+
+Build, installation, and CI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
+  or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
+  repository root, while relative external-module paths remain relative to the caller's directory.
+- Rust-enabled macOS builds could mix the selected Xcode SDK with a newer Command Line Tools SDK,
+  causing linker errors such as ``unknown architecture`` in system ``.tbd`` files. The Rust integration
+  now removes Corrosion's hard-coded Command Line Tools library directory and uses CMake's selected SDK.
+  Reconfiguring an existing build applies the fix without requiring a clean rebuild.
+- GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning
+  when linking :ref:`simpleAntenna`. The Python build script now builds cfitsio with
+  ``-fno-common`` on non-Windows platforms and includes the flag in its Conan package ID
+  so existing cached binaries are rebuilt. This is fixed in the current version.
+- macOS builds with both ``opNav`` and ``vizInterface`` enabled could load separate static protobuf runtimes through
+  OpenCV and :ref:`vizInterface`, causing an interpreter-shutdown crash after otherwise successful Python tests.
+  On macOS, both modules now use the same shared protobuf runtime. This is fixed in the current version.
+- ``hasBuildFeature("opNav")`` previously reflected only the core wheel's build metadata, so it reported ``False``
+  after the separately distributed ``bsk-opnav`` wheel was installed. The query now aggregates capabilities from
+  the core artifact and compatible installed optional Basilisk distributions. This is fixed in the current version.
+- SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
+  Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
+  for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
+  ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
+  supported 4.x release.
+- Clean Conan builds now remove the configured build folder (``dist3`` by default) and Basilisk Numba cache
+  artifacts, preventing generator conflicts and reuse of stale compiled Numba objects after API changes.
+
+Simulation framework and module development
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- ``simHelpers.timeStringToGregorianUTCMsg()`` retained every returned epoch message
+  for the lifetime of the process, causing memory growth during repeated simulation setup.
+  The obsolete registry has been removed. Messages now remain alive while callers,
+  subscribers, recorders, or payload views need them and can be garbage collected afterward.
+  This resolves the remaining epoch-message retention discussed in GitHub issue 548.
+- Python ``Message.read()`` and C++ message reader calls returned borrowed payloads
+  without retaining their source. Reading a temporary message or ending a subscription
+  could leave a payload pointing into freed memory. Each returned payload now retains
+  its original source through a Python reference until the payload is released.
+  Reference cycles created by caching a payload view on its source message can
+  also be garbage collected.
+- GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
+  ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
+  Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
+  creates and reads the supported module logger directly.
+- BSK-676: A stand-alone message that went out of scope in Python could be garbage collected while a
+  C++ module input message or recorder still pointed into it, causing the reader to silently access
+  freed memory. Subscribing a C++ ``ReadFunctor`` input message, calling ``Message.addSubscriber()``,
+  or calling ``Message.recorder()`` now keeps the source alive for the life of the reader or recorder,
+  so messages created inside Python setup or helper functions no longer need to be manually retained.
+  This is fixed in the current version.
+
+Spacecraft dynamics and effectors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initialization, validation, and lifetime
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- GitHub issue 469: :ref:`constraintDynamicEffector` kept derived gains unchanged after retuning
+  and resetting. It now refreshes those gains from ``alpha`` and ``beta`` while preserving individual
+  gains configured through their setters. Invalid setters and derived-gain overflow preserve the prior gains.
+- GitHub issue 469: Range-only configuration checks accepted non-finite values in spinning-body,
+  translation, hub, and stochastic effectors. The affected validators now reject non-finite scalar,
+  vector, and matrix inputs, including in point-mass spacecraft initialization. Point-mass mode retains
+  support for finite zero or singular inertia and checks its zero center offset component by component.
+  Axis normalization preserves very large finite directions; translation
+  validation runs before state registration. Stochastic setters preserve prior values on rejection,
+  their coefficient calculations avoid intermediate overflow, and non-finite drift or diffusion
+  raises ``BasiliskError`` before being stored.
+- GitHub issue 469: Hinged-body, prescribed-motion, and slosh effectors accepted invalid masses, and
+  hinged-body effectors accepted invalid hinge-frame rotation matrices. These configurations now raise
+  ``BasiliskError`` before state registration and from ``Reset()``, including for attached-only effectors.
+  Prescribed-motion mass setters reject invalid input before replacing the prior value. Supported zero-mass
+  configurations and depleted slosh states are preserved; dual-hinged bodies require a positive finite
+  combined mass, and N-hinged chains require finite positive panel masses. Spherical-pendulum damping
+  validation now also runs from ``Reset()``. See the individual module documentation for the mass bounds.
+- GitHub issue 469: :ref:`extForceTorque` could read uninitialized command buffers when an input was linked
+  and dynamics ran before the effector's scheduled ``Reset()`` or ``UpdateState()``. All three command buffers
+  now start at zero, including for effectors attached to a hub or appendage without task scheduling. Static
+  loads remain available immediately; message commands are sampled by ``UpdateState()``.
+- GitHub issue 469: Invalid effector dimensions could reach native array and vector accesses. Magnetic torque bar
+  counts, thruster initial-state vectors, faceted SRP input vectors, and radiation-pressure lookup table lengths now
+  receive validation before use. Reaction-wheel arrays and linked thruster command arrays also enforce their payload
+  capacity. Invalid configurations raise ``BasiliskError`` from attachment, ``Reset()``, or runtime consumption as
+  appropriate. Thruster sets larger than the command payload remain supported when that input is unlinked.
+  State thrusters and reaction wheels also reject device-count changes after state registration. Reaction wheels
+  preserve each wheel's jitter-angle state allocation. These checks protect dynamics accesses even for effectors
+  that are not scheduled as task modules; ``Reset()`` does not resize their registered states.
+- :ref:`vscmgStateEffector` initialized derived inertias, masses, reference axes, and imbalance parameters only
+  from its scheduled ``Reset()``. An attached-only effector could therefore use uninitialized dynamics parameters.
+  State registration now performs the same configuration initialization and validation. Zero-mass balanced and
+  simple jitter devices retain support and no longer compute undefined mass fractions.
+  Validation also rejects device arrays that exceed message capacity and non-finite motor settings or commands.
+  Coupled dynamics now report invalid divisors through ``BasiliskError`` instead of producing non-finite
+  derivatives. Gimbal friction smoothing now uses the gimbal ratio independently of the wheel ratio.
+  Mixed balanced/jitter arrays now index the compact wheel-angle state correctly when publishing configuration messages.
+- GitHub issue 571: Spinning-body lock and motor torque arrays index degrees of freedom
+  within one module. Separate module instances require separate messages for independent
+  commands; each OneDOF instance reads element ``[0]``. The documentation now explains
+  this mapping and corrects the lock-message examples. For
+  :ref:`spinningBodyNDOFStateEffector`, chains with more than `MAX_EFF_CNT
+  <https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__
+  bodies could read beyond a linked lock or motor torque payload. Initialization,
+  reset, and input processing now reject these configurations with ``BasiliskError``.
+  Larger chains remain supported when neither array input is linked.
+- Configuration checks in several state and dynamic effectors ran only from ``Reset()``, which the scheduler does
+  not invoke unless the effector is separately added to a task.  Attached-only effectors could therefore bypass
+  validation.  The affected effectors now perform the same checks from their guaranteed spacecraft initialization
+  hooks, including the property-linking path used by branch-attached dynamic effectors. See
+  :ref:`effectorInitialization` for the initialization requirements when writing an effector.
+- The :ref:`nHingedRigidBodyStateEffector` equations of motion are derived for a chain of identical
+  panels, but the module accepted a per-panel mass and hinge to center of mass distance and
+  integrated silently wrong dynamics when either varied along the chain. Initialization now rejects
+  such a chain.
+- The :ref:`facetSRPDynamicEffector` walked its facet geometry lists by the count given to
+  ``setNumFacets()`` rather than by the number of facets actually added, so a larger count read past
+  the end of every list and a smaller one silently dropped facets. Initialization now rejects a
+  mismatch.
+- :ref:`simIncludeThruster` defaulted the ``segment`` argument of ``addToSpacecraftSubcomponent()``
+  to 0, but attachment segments are numbered from 1, so every parent effector rejected the call
+  unless a segment was named. The default is now the segment attached to the hub.
+- The :ref:`linearTranslationNDOFStateEffector` and the :ref:`spinningBodyNDOFStateEffector` allocated
+  a state and a configuration log output message for every body added to the chain and freed neither,
+  so each effector leaked both for the life of the process. This is fixed in the current version.
+- The :ref:`linearTranslationNDOFStateEffector` accepted a chain whose joint mass matrix is singular,
+  most simply one whose outermost body was left at its default zero mass, and inverting it filled the
+  spacecraft state with NaN. It also took an invalid rotation matrix or inertia tensor at face value
+  and integrated silently wrong dynamics. Initialization now rejects all of these, and an empty chain.
+- State effectors wound their static ``effectorID`` counter back in the destructor, so destroying
+  one effector made a later one reuse an identifier still held by a live effector. This is fixed
+  in the current version, and the counter now only ever increases.
+
+Forces, torques, and state reporting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- GitHub issue 469: :ref:`ExtPulsedTorque` advanced its pulse on every dynamics evaluation, so
+  intermediate integrator stages changed the pulse duration. It now evaluates the waveform from
+  simulation time using the explicit ``pulseInterval`` in seconds. Set this interval to the desired
+  duration of one pulse count when updating existing configurations. Resets preserve the time-zero phase.
+- The :ref:`facetSRPDynamicEffector` indexed its articulation angles by facet while building the
+  list only from messages that had been written, so an incomplete read applied one facet's angle to
+  another. The facets now articulate only once every articulation message has been written.
+- The :ref:`linearTranslationNDOFStateEffector` built its translating body configuration log from a
+  hub attitude cached at the previous integrator substep, so the logged body attitude lagged the hub
+  attitude even though the body does not rotate relative to the hub. This is fixed in the current version.
+- Every state effector acting as a parent published the inertial state of its attachment frame once
+  per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
+  kinematics a full task step old. These are now refreshed within the integration.
+- The :ref:`linearTranslationOneDOFStateEffector` published two of its inertial properties incorrectly.
+  The translating frame velocity omitted the hub's inertial velocity entirely, and the translating frame
+  angular velocity was rotated by the transpose of ``dcm_FB``. This is fixed in the current version.
+- The :ref:`spinningBodyTwoDOFStateEffector` applied an attached dynamic effector's torque on the upper
+  spinning body to the lower spinning body's equation of motion with the wrong sign. This is fixed in
+  the current version.
+- The :ref:`dualHingedRigidBodyStateEffector` applied the second hinge's motor torque to panel 2 without
+  the equal and opposite reaction on panel 1. This is fixed in the current version.
+- The :ref:`dualHingedRigidBodyStateEffector` computed panel 2's inertial angular velocity with
+  panel 1's attitude and omitted the first hinge rate. This is fixed in the current version.
+- The :ref:`dualHingedRigidBodyStateEffector` wrote its panel center-of-mass velocities into the panel
+  configuration log without rotating the hub-relative terms into inertial components, so the logged panel
+  velocities were wrong for any non-identity hub attitude. This is fixed in the current version.
+- The :ref:`hingedRigidBodyStateEffector` built its published panel velocity and angular velocity
+  from a hub angular velocity cached during Backsubstitution, so the logged values lagged the
+  integrated state by a step. This is fixed in the current version.
+- The :ref:`hingedRigidBodyStateEffector` added body-frame relative velocity terms directly onto the
+  inertial hub velocity when forming both its logged velocities. This is fixed in the current version.
+
+Fuel slosh and mass depletion
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- The :ref:`sphericalPendulum` fuel-slosh effector applied its viscous damping force without the pendulum
+  moment arm, so an isotropic damping matrix ``D`` dissipated no rotational energy and an anisotropic ``D``
+  could add energy to the spacecraft. This is fixed in the current version.
+- A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
+  commanded total outflow as the tank component rate while the slosh
+  effectors reported zero mass rate. The integrated component masses and
+  aggregate outflow were correct, but the reported component derivatives did
+  not match their integrated states. This is fixed in the current version.
+- The :ref:`FuelTank` mass-depletion torque treated the tank-frame fuel COM and inertia derivative
+  as body-frame quantities and dropped the tank offset, so a rotated (``dcm_TB``) or offset
+  (``r_TB_B``) depleting tank applied a wrong or missing torque about the hub. This is fixed in the
+  current version.
+- The :ref:`FuelTank` emptying model computed the fuel COM and transverse inertia derivatives
+  incorrectly except at the half-full condition, producing wrong high-fidelity depletion torques.
+  The derivative equations and their finite-difference coverage are corrected in the current version.
+- :ref:`spacecraft` divided the center-of-mass-rate mass term by total mass
+  twice, in both the reported ``centerOfMassPrimeSC`` property and the
+  coupled-depletion equations of motion. The reported property also dropped
+  the per-effector first moments :math:`\dot m_i\mathbf r_i`. This is fixed in
+  the current version, though the coupled-depletion rate still omits those
+  source moments by convention.
+
+Environment, gravity, and ephemerides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- BSK-1445: The documented Mars spherical-harmonics configuration in :ref:`scenarioBasicOrbit` requested degree
+  100 from a gravity file whose maximum degree/order is 80 and failed before simulation initialization. In addition,
+  :ref:`scenarioDragRendezvous` loaded orientation-dependent tesseral terms when ``useJ2=True`` and ``useWind=False``.
+  Both examples now use zonal-only :math:`J_2` gravity fields and run without requiring planet rotation. This is
+  fixed in the current version.
+
+Sensors and flight software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- BSK-1461: The :ref:`sunlineEKF`, :ref:`okeefeEKF`, and :ref:`sunlineSEKF` state-update unit tests
+  injected measurement noise using ``qObsVal`` as the standard deviation of ``numpy.random.normal``,
+  but ``qObsVal`` is a variance everywhere else in these filters (the measurement covariance is
+  ``R = qObsVal * I``). The injected noise was therefore ``sqrt(qObsVal)`` times too small, so the
+  convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
+  ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate
+  tolerance. This is fixed in the current version.
+- BSK-1460: Setting only ``senNoiseStd`` on :ref:`coarsesunsensor` produced an unbounded random walk
+  because the nominal error propagation matrix defaulted to identity while the negative default
+  ``walkBounds`` disabled hard clipping. The propagation matrix now defaults to zero, so
+  ``senNoiseStd`` produces independent white measurement noise. The Python ``setAMatrix()`` and
+  ``getAMatrix()`` bindings now also accept and return the documented matrix representation without
+  emitting an opaque-object memory-leak warning. This is fixed in the current version.
+- BSK-1460: Setting ``senNoiseStd`` on :ref:`magnetometer` produced a random walk instead of the
+  documented Gaussian measurement noise, and changing ``RNGSeed`` after construction did not change
+  its random sequence. The default propagation matrix is now zero and the configured seed is applied
+  during reset. This is fixed in the current version.
+- BSK-1460: :ref:`tempMeasurement` propagated noise as a random walk and clipped it to
+  :math:`\pm 10^{-15}` degrees Celsius by default, instead of producing noise with the requested
+  standard deviation. The default propagation matrix is now zero and hard clipping is disabled by
+  default. This is fixed in the current version.
+- BSK-1460: :ref:`imuSensor` used white noise for the accelerometer but a random walk for the gyro,
+  and both noise models were initialized with the same random stream. Both propagation matrices now
+  default to zero, and the accelerometer and gyro use distinct repeatable streams for every
+  ``RNGSeed`` value, including zero. This is fixed in the current version.
+- GitHub issue 1560: Normalizing ``GaussMarkov`` secondary seeds to 32 bits could make a secondary
+  stream identical to its primary stream for some 64-bit input seeds on platforms with a 64-bit
+  engine result type. Seed derivation now avoids both the truncated and full-width primary states
+  while preserving existing primary seeding. This is fixed in the current version.
+  Derived seeds and raw engine sequences now match across standard libraries.
+  Replaying earlier simulations on builds with a 64-bit
+  ``std::minstd_rand::result_type`` may change secondary sensor noise and fault outputs.
+  Sensor outputs are still not guaranteed to match across standard libraries because distribution
+  algorithms are implementation-defined.
+- BSK-1460: Configuring :ref:`starTracker` ``PMatrix`` produced an unbounded attitude-error random
+  walk by default. The propagation matrix now defaults to zero so ``PMatrix`` alone produces white
+  Gaussian attitude errors; random-walk behavior remains explicitly configurable. This is fixed in
+  the current version.
+- :ref:`jointThrAllocation` selected a multi-start optimization result by wrench-tracking error
+  and could stop after the first sufficiently accurate result, rather than selecting the result with the
+  lowest complete allocation cost. This is fixed in the current version: all successful optimizer results
+  are evaluated and the minimum-cost result is selected.
+
+MuJoCo and stochastic integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- :ref:`MJSystemCoM` reported mass-weighted material velocity rather than the
+  time derivative of its center-of-mass position when individual MuJoCo body
+  masses changed. This is fixed in the current version.
+
+Visualization and data handling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- :ref:`vizInterface` left its protobuf output stream open after the module was destroyed. On Windows, this could
+  prevent saved Vizard data files from being removed until the Python process exited. The stream is now owned and
+  closed automatically by the module. This is fixed in the current version.
+- :ref:`vizInterface` leaked its protobuffer message on frames that did not reach a successful save-file
+  write, including live-stream-only, broadcast-only, and camera-image early-return paths. It also leaked
+  serialized buffers on broadcast-only frames, during re-serialization after removing the settings block,
+  and while copying synchronization settings, as well as a heap allocation for every Vizard event reply.
+  These leaks are fixed in the current version.
+- :ref:`vizInterface` called ``google::protobuf::ShutdownProtobufLibrary()`` after qualifying successful
+  save-file frames, releasing protobuf's internal state while the module was still running. Other frames
+  skipped the call through guards or early returns. This is fixed in the current version.
+
+Documentation, examples, and validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
+  They now reject non-finite operands and non-finite or negative tolerances. The new
+  ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` assertions
+  apply these checks and provide comparison diagnostics. Relative comparisons use the
+  first operand as the reference; a zero reference requires exact equality. The legacy
+  ``v3IsEqual`` and ``v3IsEqualRel`` utility functions retain their existing behavior.
+- Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
+  configuration overrides, and regenerate a project's XML after an interrupted cache update.
+  Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen
+  configuration bypasses XML cache reuse to prevent stale output. XML caches now follow the
+  selected build directory so cleaning an alternate ``BUILDDIR`` removes its cache as well.
+  Relative Doxygen input settings are resolved from ``docs/source``, not the temporary cache
+  directory, preventing missing includes, tag files, or input filters during generation.
+  Headers found through that working directory and their transitive includes are tracked for
+  cache invalidation, including when those headers are added or removed.
+  Configuration option order is preserved for included settings and overrides. File-inclusion
+  documentation commands bypass reuse, including in aliases and with preprocessing disabled.
+  Projects using ``CITE_BIB_FILES`` also bypass reuse so bibliography edits cannot leave stale citations.
+  Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
+  pages after header edits. Older saved Sphinx environments are reread once to restore those records.
+- GitHub issue 1538: PyPI changed its download logging on August 24, 2026, to exclude
+  metadata requests. The :ref:`usageMetrics` collector filters identifiable
+  non-distribution files, but older source records without filenames cannot be
+  classified reliably. Historical download trends remain only partially comparable
+  across this upstream change.
+- GitHub issue 1538: Interrupted HTTP response reads could stop usage-metrics
+  collection before saving data from the healthy source. The collector now retries
+  these failures and, if retries are exhausted, saves available observations while
+  marking the failed source's retained data as stale.

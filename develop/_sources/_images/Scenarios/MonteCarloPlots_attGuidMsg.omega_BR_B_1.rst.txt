@@ -1,0 +1,8 @@
+
+attGuidMsg.omega_BR_B - Component 1
+===================================
+
+.. raw:: html
+   :file: /Users/runner/work/basilisk/basilisk/docs/source/_images/Scenarios/attGuidMsg.omega_BR_B_1.html
+
+This plot shows component 1 of the attGuidMsg.omega_BR_B variable.

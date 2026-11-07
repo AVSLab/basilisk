@@ -1,0 +1,560 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_lambertSolverConvergence &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_lambertSolverConvergence</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_lambertSolverConvergence</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">"""Check root convergence and invalid-output handling independently of the starters."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">brentq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">hyp2f1</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">lambertSolver</span><span class="p">,</span> <span class="n">lambertValidator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">test_lambertSolverMultiRev</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MU</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="n">lagrange_time</span><span class="p">,</span> <span class="n">problem_geometry</span><span class="p">,</span> <span class="n">propagate</span><span class="p">,</span> <span class="n">solve_problem</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="battin_time">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.battin_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">battin_time</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Evaluate smooth zero-revolution flight time with SciPy's hypergeometric function."""</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">lam</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">y</span><span class="o">-</span><span class="n">lam</span><span class="o">*</span><span class="n">x</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">eta</span><span class="o">**</span><span class="mi">3</span><span class="o">*</span><span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">lam</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">eta</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">4.0</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="n">eta</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span></div>
+
+
+
+<div class="viewcode-block" id="test_safeguards_preserve_fast_convergence">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_safeguards_preserve_fast_convergence">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"r2_xy, transfer_time, reference_x"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="c1"># Endpoint [m], flight time [s], independently bracketed root [-].</span>
+    <span class="p">((</span><span class="mf">10499578.7058981</span><span class="p">,</span> <span class="o">-</span><span class="mf">1008665.595563449</span><span class="p">),</span> <span class="mf">66294.046738751</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9222028885569338</span><span class="p">),</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">8007153.311464242</span><span class="p">,</span> <span class="mf">1134336.721226995</span><span class="p">),</span> <span class="mf">1517.1851310277925</span><span class="p">,</span> <span class="mf">1.003755300013543</span><span class="p">),</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">1373963.0772790438</span><span class="p">,</span> <span class="mf">21169783.315275904</span><span class="p">),</span> <span class="mf">1029.9495735576572</span><span class="p">,</span> <span class="mf">3.9070784702480257</span><span class="p">),</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">1160389.9429338065</span><span class="p">,</span> <span class="mf">9261648.1844296623</span><span class="p">),</span> <span class="mf">1347.9302728188266</span><span class="p">,</span> <span class="mf">0.9692339680381958</span><span class="p">),</span>
+    <span class="p">((</span><span class="mf">17175236.41488691</span><span class="p">,</span> <span class="o">-</span><span class="mf">6712075.4724303577</span><span class="p">),</span> <span class="mf">1589.8316798218957</span><span class="p">,</span> <span class="mf">1.9840057290698279</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"rounded-correction"</span><span class="p">,</span> <span class="s2">"hyperbolic-upper-endpoint"</span><span class="p">,</span> <span class="s2">"first-step"</span><span class="p">,</span> <span class="s2">"bisection-izzo"</span><span class="p">,</span> <span class="s2">"bisection-gooding"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_safeguards_preserve_fast_convergence</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">r2_xy</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="n">reference_x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Keep starters, fallback recovery, and tiny corrections within the validator's iteration budget."""</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">*</span><span class="n">r2_xy</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">chord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r2</span><span class="o">-</span><span class="n">r1</span><span class="p">)</span>
+    <span class="n">semiperimeter</span> <span class="o">=</span> <span class="p">(</span><span class="n">RADIUS</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span><span class="o">+</span><span class="n">chord</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copysign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">chord</span><span class="o">/</span><span class="n">semiperimeter</span><span class="p">),</span> <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">transfer_time</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">MU</span><span class="o">/</span><span class="n">semiperimeter</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">:</span>
+        <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="c1"># lambertValidator rejects six or more refinements and step errors &gt;= 1e-8.</span>
+    <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIter</span> <span class="o">&lt;</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">reference_x</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">reference_time</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">lagrange_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">reference_x</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="n">battin_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">reference_time</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_converged_solution_passes_validator">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_converged_solution_passes_validator">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"r2_xy, transfer_time"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="c1"># Endpoint [m] and flight time [s].</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">8007153.311464242</span><span class="p">,</span> <span class="mf">1134336.721226995</span><span class="p">),</span> <span class="mf">1517.1851310277925</span><span class="p">),</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">1373963.0772790438</span><span class="p">,</span> <span class="mf">21169783.315275904</span><span class="p">),</span> <span class="mf">1029.9495735576572</span><span class="p">),</span>
+    <span class="p">((</span><span class="o">-</span><span class="mf">1160389.9429338065</span><span class="p">,</span> <span class="mf">9261648.1844296623</span><span class="p">),</span> <span class="mf">1347.9302728188266</span><span class="p">),</span>
+    <span class="p">((</span><span class="mf">7823692.80546992</span><span class="p">,</span> <span class="mf">1670278.6850218216</span><span class="p">),</span> <span class="mf">168.1732550120743</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"hyperbolic-upper-endpoint"</span><span class="p">,</span> <span class="s2">"first-step"</span><span class="p">,</span> <span class="s2">"bisection"</span><span class="p">,</span> <span class="s2">"intermediate-izzo-starter"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_converged_solution_passes_validator</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">r2_xy</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Accept converged solutions with the validator's default convergence checks."""</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">*</span><span class="n">r2_xy</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">:</span>
+        <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span>
+    <span class="n">expected_dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">nav</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+    <span class="n">nav</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r1</span>
+    <span class="n">nav</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">)</span><span class="o">-</span><span class="n">expected_dv</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="n">r1</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">r2</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="n">transfer_time</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">transferDirection</span> <span class="o">=</span> <span class="n">direction</span>
+    <span class="c1"># Retain all input messages for both updates; readers do not own their sources.</span>
+    <span class="n">nav_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nav</span><span class="p">)</span>
+    <span class="n">problem_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+    <span class="n">solution_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertSolutionMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+    <span class="n">performance_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertPerformanceMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">performance</span><span class="p">)</span>
+    <span class="n">validator</span> <span class="o">=</span> <span class="n">lambertValidator</span><span class="o">.</span><span class="n">LambertValidator</span><span class="p">()</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">nav_message</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">problem_message</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">lambertSolutionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">solution_message</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">lambertPerformanceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">performance_message</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">setFinalTime</span><span class="p">(</span><span class="n">transfer_time</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">setUncertaintyStates</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)))</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">setUncertaintyDV</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">setMaxDistanceTarget</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Two identical solutions satisfy the default checks on successive commands.</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">validator</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">lambertValidatorOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">failedValidLambert</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">failedNumIterationsLambert</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">failedXToleranceLambert</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">dvBurnCmdOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">dvInrtlCmd</span><span class="p">,</span> <span class="n">expected_dv</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>  <span class="c1"># [m/s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_parabolic_roundoff_and_nearby_times">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_parabolic_roundoff_and_nearby_times">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"angle_degrees"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.01</span><span class="p">,</span> <span class="mf">1.4455193992490614</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">175.0</span><span class="p">])</span>  <span class="c1"># [deg]</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"time_offset"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">5e-10</span><span class="p">,</span> <span class="o">-</span><span class="mf">5e-13</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">5e-13</span><span class="p">,</span> <span class="mf">5e-10</span><span class="p">])</span>  <span class="c1"># [-]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_parabolic_roundoff_and_nearby_times</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">angle_degrees</span><span class="p">,</span> <span class="n">time_offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve exact and nearby parabolic transfers without a flat flight-time interval."""</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angle_degrees</span><span class="p">)</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">RADIUS</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">sign</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="c1"># Barker's equation gives the parabolic flight time from periapsis.</span>
+    <span class="n">tangent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angle</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">parabolic_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">RADIUS</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="n">MU</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">tangent</span><span class="o">+</span><span class="n">tangent</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">transfer_time</span> <span class="o">=</span> <span class="n">parabolic_time</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">time_offset</span><span class="p">)</span>
+    <span class="n">chord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r2</span><span class="o">-</span><span class="n">r1</span><span class="p">)</span>
+    <span class="n">semiperimeter</span> <span class="o">=</span> <span class="p">(</span><span class="n">RADIUS</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span><span class="o">+</span><span class="n">chord</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">chord</span><span class="o">/</span><span class="n">semiperimeter</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">transfer_time</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">MU</span><span class="o">/</span><span class="n">semiperimeter</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">battin_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">),</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">time_offset</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIter</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="n">expected_velocity</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sign</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">MU</span><span class="o">/</span><span class="n">RADIUS</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">expected_velocity</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+        <span class="k">if</span> <span class="n">angle_degrees</span> <span class="o">&lt;</span> <span class="mf">2.0</span><span class="p">:</span>  <span class="c1"># [deg]</span>
+            <span class="n">final_position</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">propagate</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">final_position</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># [m]</span></div>
+
+
+
+<div class="viewcode-block" id="test_short_transfer_convergence">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_short_transfer_convergence">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"lam, fraction"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">0.9473913043478261</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.9615942028985508</span><span class="p">,</span> <span class="mf">0.04379310344827586</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.21275862068965518</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_short_transfer_convergence</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">fraction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate short transfers that previously exhausted Izzo's eight iterations."""</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">problem_geometry</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">:</span>
+        <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">time_at_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span><span class="o">+</span><span class="n">lam</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">lam</span><span class="o">*</span><span class="n">lam</span><span class="p">)</span>
+    <span class="n">parabolic_time</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">lam</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">transfer_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">parabolic_time</span><span class="o">+</span><span class="p">(</span><span class="n">time_at_zero</span><span class="o">-</span><span class="n">parabolic_time</span><span class="p">)</span><span class="o">*</span><span class="n">fraction</span><span class="p">)</span><span class="o">/</span><span class="n">scale</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">errX</span><span class="p">)</span> <span class="ow">and</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">&lt;=</span> <span class="mf">1e-8</span>
+    <span class="n">final_position</span><span class="p">,</span> <span class="n">final_velocity</span> <span class="o">=</span> <span class="n">propagate</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">final_position</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">final_velocity</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># [m/s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_roots_converge_near_minimum">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_roots_converge_near_minimum">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"lam"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"excess_time"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-12</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_roots_converge_near_minimum</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">excess_time</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve both roots just above the minimum using independent branch brackets."""</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">t_min</span> <span class="o">=</span> <span class="n">problem_geometry</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">:</span>
+        <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">t_min</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">excess_time</span><span class="p">)</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">target</span><span class="o">/</span><span class="n">scale</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">performance</span><span class="o">.</span><span class="n">xSol2</span><span class="p">])</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lagrange_time</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">)</span><span class="o">-</span><span class="n">target</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">),</span>
+        <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lagrange_time</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">)</span><span class="o">-</span><span class="n">target</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">roots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x_min</span> <span class="o">&lt;</span> <span class="n">roots</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-8</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">lagrange_time</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">),</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">2e-12</span><span class="p">)</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">performance</span><span class="o">.</span><span class="n">errX</span><span class="p">,</span> <span class="n">performance</span><span class="o">.</span><span class="n">errXSol2</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">errors</span> <span class="o">&lt;=</span> <span class="mf">1e-8</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_alignment_rejection_and_recovery">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_alignment_rejection_and_recovery">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"angle_degrees"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">179.5</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">180.5</span><span class="p">,</span> <span class="mf">359.5</span><span class="p">])</span>  <span class="c1"># [deg]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_alignment_rejection_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">angle_degrees</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject only the aligned update and recover without resetting the module.</span>
+
+<span class="sd">    Start with an aligned input, then alternate aligned and valid geometries</span>
+<span class="sd">    on the same message and module. Rejected updates must clear both solution</span>
+<span class="sd">    and performance slots. Each recovered result must match a fresh module,</span>
+<span class="sd">    including when the valid endpoint and flight time change.</span>
+<span class="sd">    """</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angle_degrees</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">aligned_r2</span> <span class="o">=</span> <span class="n">RADIUS</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">sign</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">angle_degrees</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">):</span>  <span class="c1"># [deg]</span>
+        <span class="n">aligned_r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m] Exercise an exactly zero cross product.</span>
+    <span class="n">r2_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sign</span><span class="o">*</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r2_b</span> <span class="o">=</span> <span class="n">RADIUS</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sign</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.75</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">time_a</span> <span class="o">=</span> <span class="mf">2000.0</span> <span class="k">if</span> <span class="n">revolutions</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">10000.0</span>  <span class="c1"># [s]</span>
+    <span class="n">time_b</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">*</span><span class="n">time_a</span>  <span class="c1"># [s]</span>
+    <span class="n">expected_a</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2_a</span><span class="p">,</span> <span class="n">time_a</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span>
+    <span class="n">expected_b</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2_b</span><span class="p">,</span> <span class="n">time_b</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">solution</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">(</span><span class="n">expected_a</span><span class="p">,</span> <span class="n">expected_b</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">revolutions</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="n">r1</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">numRevolutions</span> <span class="o">=</span> <span class="n">revolutions</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferDirection</span> <span class="o">=</span> <span class="n">direction</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">aligned_r2</span><span class="p">,</span> <span class="n">time_a</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">r2_a</span><span class="p">,</span> <span class="n">time_a</span><span class="p">,</span> <span class="n">expected_a</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">aligned_r2</span><span class="p">,</span> <span class="n">time_a</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">r2_b</span><span class="p">,</span> <span class="n">time_b</span><span class="p">,</span> <span class="n">expected_b</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">aligned_r2</span><span class="p">,</span> <span class="n">time_b</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">r2_a</span><span class="p">,</span> <span class="n">time_a</span><span class="p">,</span> <span class="n">expected_a</span><span class="p">),</span>
+    <span class="p">]:</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">r2</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="n">transfer_time</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Borrowed views remain valid while the module is alive in this loop.</span>
+        <span class="n">solution</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">performance</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertPerformanceOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">expected</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v1Sol2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2Sol2_N</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">xSol2</span> <span class="o">==</span> <span class="mf">0.0</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIter</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIterSol2</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">errXSol2</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"v1_N"</span><span class="p">,</span> <span class="s2">"v2_N"</span><span class="p">,</span> <span class="s2">"valid"</span><span class="p">,</span> <span class="s2">"v1Sol2_N"</span><span class="p">,</span> <span class="s2">"v2Sol2_N"</span><span class="p">,</span> <span class="s2">"validSol2"</span><span class="p">):</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">field</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">field</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"numIter"</span><span class="p">,</span> <span class="s2">"errX"</span><span class="p">,</span> <span class="s2">"xSol2"</span><span class="p">,</span> <span class="s2">"numIterSol2"</span><span class="p">,</span> <span class="s2">"errXSol2"</span><span class="p">):</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">performance</span><span class="p">,</span> <span class="n">field</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">field</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="test_alignment_threshold_recovery">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_alignment_threshold_recovery">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_alignment_threshold_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reevaluate the same input after changing the alignment threshold without a reset."""</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">RADIUS</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">sign</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="mf">2000.0</span>  <span class="c1"># [s]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferDirection</span> <span class="o">=</span> <span class="n">direction</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">expected_valid</span> <span class="ow">in</span> <span class="p">[(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]:</span>  <span class="c1"># [deg], flag</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="n">expected_valid</span></div>
+
+
+
+<div class="viewcode-block" id="test_numerical_failure_and_recovery">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_numerical_failure_and_recovery">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_numerical_failure_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Zero failed solutions, then recover without reusing their roots or validity."""</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sign</span><span class="o">*</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">normal_time</span> <span class="o">=</span> <span class="mf">2000.0</span> <span class="k">if</span> <span class="n">revolutions</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">10000.0</span>  <span class="c1"># [s]</span>
+    <span class="n">unresolved_time</span> <span class="o">=</span> <span class="mf">1e300</span>  <span class="c1"># [s] The required root is closer to |x| = 1 than double precision resolves.</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">transfer_time</span> <span class="ow">in</span> <span class="p">[</span><span class="n">normal_time</span><span class="p">,</span> <span class="n">unresolved_time</span><span class="p">,</span> <span class="mf">1.1</span><span class="o">*</span><span class="n">normal_time</span><span class="p">]:</span>
+        <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+            <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">transfer_time</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">transfer_time</span> <span class="o">==</span> <span class="n">unresolved_time</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v1Sol2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2Sol2_N</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">xSol2</span> <span class="o">==</span> <span class="mf">0.0</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIter</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIterSol2</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">errXSol2</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">revolutions</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">([</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v1Sol2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2Sol2_N</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">transfer_time</span> <span class="o">==</span> <span class="n">normal_time</span><span class="p">:</span>
+                <span class="n">previous_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">)</span><span class="o">-</span><span class="n">previous_velocity</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span>  <span class="c1"># [m/s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_independent_branch_validity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_independent_branch_validity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_independent_branch_validity</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve a resolved branch when the other exceeds the evaluator's resolution.</span>
+
+<span class="sd">    The long-time right root lies close to x = 1, where small root errors produce</span>
+<span class="sd">    large flight-time errors. If resolved, it must meet the independent residual</span>
+<span class="sd">    check. A following normal request must resolve both roots.</span>
+<span class="sd">    """</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">t_min</span> <span class="o">=</span> <span class="n">problem_geometry</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">:</span>
+        <span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">long_time</span> <span class="o">=</span> <span class="n">lagrange_time</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="p">[</span><span class="n">long_time</span><span class="p">,</span> <span class="mf">1.1</span><span class="o">*</span><span class="n">t_min</span><span class="p">]:</span>
+        <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+            <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">target</span><span class="o">/</span><span class="n">scale</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">lagrange_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">2e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">solution</span><span class="o">.</span><span class="n">validSol2</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">lagrange_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">xSol2</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">2e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">target</span> <span class="o">==</span> <span class="n">long_time</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">([</span><span class="n">solution</span><span class="o">.</span><span class="n">v1Sol2_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2Sol2_N</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">xSol2</span> <span class="o">==</span> <span class="n">performance</span><span class="o">.</span><span class="n">errXSol2</span> <span class="o">==</span> <span class="mf">0.0</span>
+            <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">numIterSol2</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="test_small_step_alone_is_not_convergence">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverConvergence.html#test_lambertSolverConvergence.test_small_step_alone_is_not_convergence">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"lam"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"time_offset"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">5e-10</span><span class="p">,</span> <span class="mf">5e-10</span><span class="p">])</span>  <span class="c1"># [-]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_small_step_alone_is_not_convergence</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">time_offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Require an independent flight-time residual even when the final step is small.</span>
+
+<span class="sd">    The former near-parabolic evaluator had a flat interval. The smooth evaluator</span>
+<span class="sd">    must resolve this request rather than treating a small step alone as success.</span>
+<span class="sd">    """</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">problem_geometry</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">lam</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">time_offset</span><span class="p">)</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">performance</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">target</span><span class="o">/</span><span class="n">scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">performance</span><span class="o">.</span><span class="n">errX</span> <span class="o">&lt;=</span> <span class="mf">1e-8</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">battin_time</span><span class="p">(</span><span class="n">performance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">),</span> <span class="n">target</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

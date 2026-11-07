@@ -1,0 +1,15 @@
+.. _test_unitSpiceSpacecraft:
+
+test_unitSpiceSpacecraft
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_unitSpiceSpacecraft
+   :members:
+   :show-inheritance:
+

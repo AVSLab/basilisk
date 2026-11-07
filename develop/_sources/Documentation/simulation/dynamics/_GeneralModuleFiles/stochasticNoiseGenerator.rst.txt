@@ -1,0 +1,10 @@
+.. _stochasticNoiseGenerator:
+
+stochasticNoiseGenerator
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: stochasticNoiseGenerator.h
+   :project: _GeneralModuleFiles4
+

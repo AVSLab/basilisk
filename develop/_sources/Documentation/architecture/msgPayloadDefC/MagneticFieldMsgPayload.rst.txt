@@ -1,0 +1,10 @@
+.. _MagneticFieldMsgPayload:
+
+MagneticFieldMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MagneticFieldMsgPayload.h
+   :project: msgPayloadDefC
+

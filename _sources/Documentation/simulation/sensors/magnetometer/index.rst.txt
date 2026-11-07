@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_magnetometer:
+
+magnetometer
+============
+
+:doc:`Module documentation <magnetometer>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,10 @@
+.. _THRSimConfig:
+
+THRSimConfig
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRSimConfig.h
+   :project: _GeneralModuleFiles4
+

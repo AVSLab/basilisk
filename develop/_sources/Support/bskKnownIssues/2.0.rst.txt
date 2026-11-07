@@ -1,0 +1,64 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.0 Known Issues
+========================
+
+.. _bsk-known-issues-2-0-7:
+
+Version 2.0.7
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- Over the summer of 2020 the ``conan`` repo wasn't able to install ``opencv`` anymore.  The current build
+  fixes this issue and lets Basilisk be compiled with the ``opNav`` flag again.
+
+.. _bsk-known-issues-2-0-6:
+
+Version 2.0.6
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+.. _bsk-known-issues-2-0-5:
+
+Version 2.0.5
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+.. _bsk-known-issues-2-0-4:
+
+Version 2.0.4
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+.. _bsk-known-issues-2-0-3:
+
+Version 2.0.3
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+.. _bsk-known-issues-2-0-2:
+
+Version 2.0.2
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- On Windows, using Python 3.8 or higher resulted in Basilisk paths not being recognized due to a chance with how
+  Python resolves paths on Windows.  This is fixed in the next release.
+
+.. _bsk-known-issues-2-0-1:
+
+Version 2.0.1
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+
+.. _bsk-known-issues-2-0-0:
+
+Version 2.0.0
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.

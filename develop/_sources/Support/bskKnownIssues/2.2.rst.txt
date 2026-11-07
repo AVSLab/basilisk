@@ -1,0 +1,26 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.2 Known Issues
+========================
+
+.. _bsk-known-issues-2-2-1:
+
+Version 2.2.1
+-------------
+- There was an issue with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+  This is corrected in the current release.
+- Doing a clean Basilisk build with `opNav` flag on fails building openCV.  The conan
+  install script is updated this is corrected in the current release.
+- We found a slow memory leak if messages with arrays or vectors were accessed from python.  The ``swig``
+  issue has now been fixed in the current release.
+- The :ref:`facetSRPDynamicEffector` module was double counting a cosine term in the SRP force calculation. This is
+  corrected in the current release.
+- The :ref:`facetDragDynamicEffector` module was missing a negative sign in the drag torque calculation. This is
+  corrected in the current release.
+
+.. _bsk-known-issues-2-2-0:
+
+Version 2.2.0
+-------------
+- VizInterface has been updated to use 4.5.0 version of ZMQ library.  Be sure to use Vizard 2.1.5 or newer.

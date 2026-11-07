@@ -1,0 +1,10 @@
+.. _PowerNodeUsageMsgPayload:
+
+PowerNodeUsageMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PowerNodeUsageMsgPayload.h
+   :project: msgPayloadDefC
+

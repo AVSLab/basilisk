@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_spinningBodiesNDOF:
+
+spinningBodiesNDOF
+==================
+
+:doc:`Module documentation <spinningBodyNDOFStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

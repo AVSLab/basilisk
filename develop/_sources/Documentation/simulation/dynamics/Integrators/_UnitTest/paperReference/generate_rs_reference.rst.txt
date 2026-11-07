@@ -1,0 +1,15 @@
+.. _generate_rs_reference:
+
+generate_rs_reference
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: generate_rs_reference
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _CmdTorqueBodyMsgPayload:
+
+CmdTorqueBodyMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CmdTorqueBodyMsgPayload.h
+   :project: msgPayloadDefC
+

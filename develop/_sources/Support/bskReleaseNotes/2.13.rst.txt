@@ -1,0 +1,11 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.13 Release Notes
+==========================
+
+.. _bsk-release-current:
+
+Version |release|
+-----------------
+
+.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst

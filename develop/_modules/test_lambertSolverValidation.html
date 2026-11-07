@@ -1,0 +1,375 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_lambertSolverValidation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_lambertSolverValidation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_lambertSolverValidation</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">"""Validate Lambert numeric inputs and alignment configuration before solving."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">lambertSolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">test_lambertSolverMultiRev</span><span class="w"> </span><span class="kn">import</span> <span class="n">MU</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="n">solve_problem</span>
+
+
+<div class="viewcode-block" id="invalid_input_and_recovery">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.invalid_input_and_recovery">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject a malformed update, then solve a corrected request without a reset."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="mf">2000.0</span> <span class="k">if</span> <span class="n">revolutions</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">10000.0</span>  <span class="c1"># [s]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">numRevolutions</span> <span class="o">=</span> <span class="n">revolutions</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">original</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">field</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">original</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">*=</span> <span class="mf">1.1</span>
+    <span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">r1_N</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">r2_N</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertPerformanceOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">fields</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">reference</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="p">[(</span><span class="s2">"v1_N"</span><span class="p">,</span> <span class="s2">"v2_N"</span><span class="p">,</span> <span class="s2">"valid"</span><span class="p">,</span> <span class="s2">"v1Sol2_N"</span><span class="p">,</span> <span class="s2">"v2Sol2_N"</span><span class="p">,</span> <span class="s2">"validSol2"</span><span class="p">),</span>
+         <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"numIter"</span><span class="p">,</span> <span class="s2">"errX"</span><span class="p">,</span> <span class="s2">"xSol2"</span><span class="p">,</span> <span class="s2">"numIterSol2"</span><span class="p">,</span> <span class="s2">"errXSol2"</span><span class="p">)],</span> <span class="n">actual</span><span class="p">,</span> <span class="n">expected</span>
+    <span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_scalar_input">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_invalid_scalar_input">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"mu"</span><span class="p">,</span> <span class="s2">"transferTime"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>  <span class="c1"># [m^3/s^2] or [s], by field</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_scalar_input</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Require finite, positive gravity and flight time on every update."""</span>
+    <span class="n">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_nonfinite_position_input">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_nonfinite_position_input">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"r1_N"</span><span class="p">,</span> <span class="s2">"r2_N"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"component"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>  <span class="c1"># [m]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonfinite_position_input</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject a nonfinite component in either endpoint before geometry calculations."""</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">RADIUS</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">position</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_unusable_position_norm">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_unusable_position_norm">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"r1_N"</span><span class="p">,</span> <span class="s2">"r2_N"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"magnitude"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">,</span> <span class="mf">1e300</span><span class="p">])</span>  <span class="c1"># [m]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unusable_position_norm</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject zero, underflowed, or overflowed norms before dividing by them."""</span>
+    <span class="n">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[</span><span class="n">magnitude</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_negative_revolution_count">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_negative_revolution_count">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intc</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_negative_revolution_count</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Retain the existing rejection of negative revolution counts."""</span>
+    <span class="n">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"numRevolutions"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_solver_method">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_invalid_solver_method">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intc</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intc</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_solver_method</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject unknown method integers, then recover with either supported algorithm."""</span>
+    <span class="n">invalid_input_and_recovery</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="s2">"solverMethod"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_alignment_threshold">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_invalid_alignment_threshold">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">91.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">])</span>  <span class="c1"># [deg]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_alignment_threshold</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject invalid thresholds without changing the previous valid configuration."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [deg]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"alignmentThreshold"</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">getlignmentThreshold</span><span class="p">()</span> <span class="o">==</span> <span class="mf">2.0</span>  <span class="c1"># [deg]</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>  <span class="c1"># Flight time [s].</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_valid_alignment_threshold_boundaries">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_valid_alignment_threshold_boundaries">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>  <span class="c1"># [deg]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_valid_alignment_threshold_boundaries</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Accept finite thresholds strictly between zero and ninety degrees."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">getlignmentThreshold</span><span class="p">()</span> <span class="o">==</span> <span class="n">value</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">module</span>  <span class="c1"># Positions [m], time [s].</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_non_axis_aligned_collinearity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_non_axis_aligned_collinearity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"revolutions"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"threshold"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="mf">1e-15</span><span class="p">])</span>  <span class="c1"># [deg]</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"radial"</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">13</span><span class="p">]])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"radius_ratio"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_non_axis_aligned_collinearity</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">radial</span><span class="p">,</span> <span class="n">radius_ratio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject parallel and antiparallel endpoints despite normalization roundoff.</span>
+
+<span class="sd">    A rejected update must clear both previously populated solution slots, then</span>
+<span class="sd">    allow a corrected request to recover on the same module without a reset.</span>
+<span class="sd">    """</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="mf">1e6</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">radial</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">radius_ratio</span><span class="o">*</span><span class="n">r1</span>  <span class="c1"># [m]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferDirection</span> <span class="o">=</span> <span class="n">direction</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">numRevolutions</span> <span class="o">=</span> <span class="n">revolutions</span>
+    <span class="c1"># Keep even the largest antiparallel case above the one-revolution minimum</span>
+    <span class="c1"># so an infeasible flight time cannot mask a missing collinearity check.</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="mf">10000.0</span> <span class="k">if</span> <span class="n">revolutions</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">100000.0</span>  <span class="c1"># [s]</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">payload</span><span class="o">.</span><span class="n">transferTime</span><span class="p">,</span> <span class="n">revolutions</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>  <span class="c1"># Positions [m].</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">revolutions</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">aligned</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="n">r1</span> <span class="k">if</span> <span class="n">aligned</span> <span class="k">else</span> <span class="p">[</span><span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">r2</span> <span class="k">if</span> <span class="n">aligned</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">RADIUS</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertPerformanceOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">fields</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">reference</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[(</span><span class="s2">"v1_N"</span><span class="p">,</span> <span class="s2">"v2_N"</span><span class="p">,</span> <span class="s2">"valid"</span><span class="p">,</span> <span class="s2">"v1Sol2_N"</span><span class="p">,</span> <span class="s2">"v2Sol2_N"</span><span class="p">,</span> <span class="s2">"validSol2"</span><span class="p">),</span>
+             <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"numIter"</span><span class="p">,</span> <span class="s2">"errX"</span><span class="p">,</span> <span class="s2">"xSol2"</span><span class="p">,</span> <span class="s2">"numIterSol2"</span><span class="p">,</span> <span class="s2">"errXSol2"</span><span class="p">)],</span> <span class="n">actual</span><span class="p">,</span> <span class="n">expected</span>
+        <span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span> <span class="k">if</span> <span class="n">aligned</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">target</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_resolvable_near_collinear_plane">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.html#test_lambertSolverValidation.test_resolvable_near_collinear_plane">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">GOODING</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">PROGRADE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"radial"</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"radius_ratio"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resolvable_near_collinear_plane</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">radial</span><span class="p">,</span> <span class="n">radius_ratio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve small cross products that are resolvable above cancellation roundoff."""</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="mf">1e6</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">radial</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">transverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">radial</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">radial</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">radius_ratio</span><span class="o">*</span><span class="n">r1</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="o">*</span><span class="n">transverse</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAlignmentThreshold</span><span class="p">(</span><span class="mf">1e-15</span><span class="p">)</span>  <span class="c1"># [deg]</span>
+    <span class="n">solution</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solve_problem</span><span class="p">(</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="mf">10000.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">transfer_direction</span><span class="o">=</span><span class="n">direction</span>  <span class="c1"># Flight time [s].</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">solution</span><span class="o">.</span><span class="n">valid</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">([</span><span class="n">solution</span><span class="o">.</span><span class="n">v1_N</span><span class="p">,</span> <span class="n">solution</span><span class="o">.</span><span class="n">v2_N</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

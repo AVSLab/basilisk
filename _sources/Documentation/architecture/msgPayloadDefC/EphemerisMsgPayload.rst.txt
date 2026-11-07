@@ -1,0 +1,10 @@
+.. _EphemerisMsgPayload:
+
+EphemerisMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: EphemerisMsgPayload.h
+   :project: msgPayloadDefC
+

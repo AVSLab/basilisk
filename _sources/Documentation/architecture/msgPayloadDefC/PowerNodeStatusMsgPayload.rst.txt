@@ -1,0 +1,10 @@
+.. _PowerNodeStatusMsgPayload:
+
+PowerNodeStatusMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PowerNodeStatusMsgPayload.h
+   :project: msgPayloadDefC
+

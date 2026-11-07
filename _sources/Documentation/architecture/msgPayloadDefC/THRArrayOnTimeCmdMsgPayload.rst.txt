@@ -1,0 +1,10 @@
+.. _THRArrayOnTimeCmdMsgPayload:
+
+THRArrayOnTimeCmdMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRArrayOnTimeCmdMsgPayload.h
+   :project: msgPayloadDefC
+

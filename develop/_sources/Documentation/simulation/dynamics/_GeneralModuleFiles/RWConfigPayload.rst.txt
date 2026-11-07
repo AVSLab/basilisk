@@ -1,0 +1,10 @@
+.. _RWConfigPayload:
+
+RWConfigPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWConfigPayload.h
+   :project: _GeneralModuleFiles4
+

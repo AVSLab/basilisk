@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_etSphericalControl:
+
+etSphericalControl
+==================
+
+:doc:`Module documentation <etSphericalControl>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

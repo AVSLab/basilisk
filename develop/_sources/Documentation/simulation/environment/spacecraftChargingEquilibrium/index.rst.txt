@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_spacecraftChargingEquilibrium:
+
+spacecraftChargingEquilibrium
+=============================
+
+:doc:`Module documentation <spacecraftChargingEquilibrium>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

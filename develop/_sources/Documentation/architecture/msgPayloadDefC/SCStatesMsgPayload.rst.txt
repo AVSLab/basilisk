@@ -1,0 +1,10 @@
+.. _SCStatesMsgPayload:
+
+SCStatesMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SCStatesMsgPayload.h
+   :project: msgPayloadDefC
+

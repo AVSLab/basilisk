@@ -1,0 +1,323 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_messageVectorRegistrations &mdash; Basilisk 2.12.2
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=17b890f7"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_messageVectorRegistrations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_messageVectorRegistrations</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1"># Distributed under the ISC license; see LICENSE.</span>
+
+<span class="sd">"""Verify ordinary message wiring and pointer-vector ownership across imports."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">Basilisk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+
+<div class="viewcode-block" id="test_shared_message_vectors_preserve_wiring">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_messageVectorRegistrations.html#test_messageVectorRegistrations.test_shared_message_vectors_preserve_wiring">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">Basilisk</span><span class="o">.</span><span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"vizInterface"</span><span class="p">),</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"Requires vizInterface"</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"vizard_first"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"message_type, field"</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"THROutputMsg"</span><span class="p">,</span> <span class="s2">"thrInMsgs"</span><span class="p">),</span>
+                                                <span class="p">(</span><span class="s2">"RWConfigLogMsg"</span><span class="p">,</span> <span class="s2">"rwInMsgs"</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_shared_message_vectors_preserve_wiring</span><span class="p">(</span><span class="n">vizard_first</span><span class="p">,</span> <span class="n">message_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Temporary nested views accept wiring and raw pointer copies remain unowned."""</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'''</span>
+<span class="s1">import gc</span>
+<span class="s1">import sys</span>
+<span class="s1">import weakref</span>
+
+<span class="s1">if sys.argv[1] == "True":</span>
+<span class="s1">    from Basilisk.simulation import dataFileToViz, vizInterface</span>
+<span class="s1">from Basilisk.architecture import messaging</span>
+<span class="s1">if sys.argv[1] == "False":</span>
+<span class="s1">    from Basilisk.simulation import vizInterface, dataFileToViz</span>
+
+<span class="s1">message_type, field = sys.argv[2:]</span>
+<span class="s1">message_class = getattr(messaging, message_type)</span>
+
+<span class="s1">def check_nested_wiring():</span>
+<span class="s1">    consumer = vizInterface.VizInterface()</span>
+<span class="s1">    source = message_class()</span>
+<span class="s1">    state = messaging.SCStatesMsg()</span>
+<span class="s1">    entry = vizInterface.VizSpacecraftData()</span>
+<span class="s1">    consumer.scData.push_back(entry)</span>
+<span class="s1">    # Both intermediate spacecraft-data proxies disappear before the calls.</span>
+<span class="s1">    # The live enclosing module still owns the readers' native storage.</span>
+<span class="s1">    consumer.scData[0].scStateInMsg.subscribeTo(state)</span>
+<span class="s1">    getattr(consumer.scData[0], field).append(source.addSubscriber())</span>
+<span class="s1">    assert consumer.scData[0].scStateInMsg.isSubscribedTo(state)</span>
+<span class="s1">    assert getattr(consumer.scData[0], field)[0].isSubscribedTo(source)</span>
+<span class="s1">    # Copying a configured spacecraft entry also retains its input sources.</span>
+<span class="s1">    entry.scStateInMsg.subscribeTo(state)</span>
+<span class="s1">    getattr(entry, field).append(source.addSubscriber())</span>
+<span class="s1">    consumer.scData = vizInterface.VizSCVector([entry])</span>
+<span class="s1">    assert consumer.scData[0].scStateInMsg.isSubscribedTo(state)</span>
+<span class="s1">    assert getattr(consumer.scData[0], field)[0].isSubscribedTo(source)</span>
+<span class="s1">    return [weakref.ref(consumer), weakref.ref(source), weakref.ref(state)]</span>
+
+<span class="s1">references = check_nested_wiring()</span>
+<span class="s1">gc.collect()</span>
+<span class="s1">assert all(reference() is None for reference in references)</span>
+
+<span class="s1"># Exercise both classes, including whichever is no longer the active SWIG</span>
+<span class="s1"># registration after the final import.</span>
+<span class="s1">for module in (messaging, dataFileToViz):</span>
+<span class="s1">    source = message_class()</span>
+<span class="s1">    reader_vector = getattr(module, message_type + "InMsgsVector")()</span>
+<span class="s1">    reader_vector.append(source.addSubscriber())</span>
+<span class="s1">    assert reader_vector[0].isSubscribedTo(source)</span>
+<span class="s1">    reader_vector.clear()</span>
+
+<span class="s1">    pointers = getattr(module, message_type + "OutMsgsPtrVector")([source])</span>
+<span class="s1">    for output in (pointers[0], next(iter(pointers))):</span>
+<span class="s1">        try:</span>
+<span class="s1">            output._redirection_owner()</span>
+<span class="s1">        except ReferenceError as error:</span>
+<span class="s1">            assert "storage owner is unknown" in str(error)</span>
+<span class="s1">        else:</span>
+<span class="s1">            raise AssertionError("A raw pointer-vector copy claimed to own its pointee")</span>
+<span class="s1">print("Shared-vector checks passed")</span>
+<span class="s1">'''</span>
+    <span class="n">environment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">package_parent</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">Basilisk</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+    <span class="n">environment</span><span class="p">[</span><span class="s2">"PYTHONPATH"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">package_parent</span><span class="p">,</span> <span class="n">environment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PYTHONPATH"</span><span class="p">)]))</span>
+    <span class="n">environment</span><span class="p">[</span><span class="s2">"PYTHONMALLOC"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"debug"</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-X"</span><span class="p">,</span> <span class="s2">"faulthandler"</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vizard_first</span><span class="p">),</span> <span class="n">message_type</span><span class="p">,</span> <span class="n">field</span><span class="p">],</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">environment</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>  <span class="c1"># [s]</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="k">assert</span> <span class="s2">"Shared-vector checks passed"</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span></div>
+
+
+
+<div class="viewcode-block" id="test_message_iterator_owner_survives_late_import">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_messageVectorRegistrations.html#test_messageVectorRegistrations.test_message_iterator_owner_survives_late_import">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"late_module"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">"simpleInstrument"</span><span class="p">,</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">"dataFileToViz"</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+        <span class="ow">not</span> <span class="n">Basilisk</span><span class="o">.</span><span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"vizInterface"</span><span class="p">),</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"Requires vizInterface"</span><span class="p">)),</span>
+<span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"operation"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"copy"</span><span class="p">,</span> <span class="s2">"incr"</span><span class="p">,</span> <span class="s2">"decr"</span><span class="p">,</span> <span class="s2">"advance"</span><span class="p">,</span>
+                                       <span class="s2">"add"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"iadd"</span><span class="p">,</span> <span class="s2">"isub"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_message_iterator_owner_survives_late_import</span><span class="p">(</span><span class="n">late_module</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Late imports preserve iterator ownership, redirection, and deletion checks."""</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'''</span>
+<span class="s1">import gc</span>
+<span class="s1">import importlib</span>
+<span class="s1">import sys</span>
+<span class="s1">import weakref</span>
+
+<span class="s1">import pytest</span>
+<span class="s1">from Basilisk.architecture import messaging</span>
+<span class="s1">from Basilisk.simulation import dualHingedRigidBodyStateEffector, spacecraft</span>
+
+<span class="s1">source = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()</span>
+<span class="s1">reference = weakref.ref(source)</span>
+<span class="s1">vector = source.dualHingedRigidBodyConfigLogOutMsgs</span>
+<span class="s1">operation = sys.argv[2]</span>
+<span class="s1">iterator = vector.end() if operation in ("decr", "isub") else vector.begin()</span>
+
+<span class="s1"># Import after constructing the iterator so SWIG replaces its shared wrapper</span>
+<span class="s1"># registration while a live instance of the previous class still exists.</span>
+<span class="s1">importlib.import_module("Basilisk.simulation." + sys.argv[1])</span>
+<span class="s1">operations = {</span>
+<span class="s1">    "copy": lambda: iterator.copy(),</span>
+<span class="s1">    "incr": lambda: iterator.incr(),</span>
+<span class="s1">    "decr": lambda: iterator.decr(),</span>
+<span class="s1">    "advance": lambda: iterator.advance(1),</span>
+<span class="s1">    "add": lambda: iterator + 1,</span>
+<span class="s1">    "subtract": lambda: iterator - (-1),</span>
+<span class="s1">    "iadd": lambda: iterator.__iadd__(1),</span>
+<span class="s1">    "isub": lambda: iterator.__isub__(1),</span>
+<span class="s1">}</span>
+<span class="s1">result = operations[operation]()</span>
+<span class="s1">output = result.value()</span>
+<span class="s1">index = 0 if operation == "copy" else 1</span>
+<span class="s1">address = vector[index].getPayloadAddress()</span>
+<span class="s1">assert output.getPayloadAddress() == address</span>
+<span class="s1"># Returned wrappers must themselves propagate ownership to further results.</span>
+<span class="s1">assert result.copy().copy().value()._redirection_owner() is source</span>
+<span class="s1"># Subtraction of iterators returns a distance, not an iterator to tag.</span>
+<span class="s1">assert result - vector.begin() == index</span>
+
+<span class="s1">destination = spacecraft.Spacecraft()</span>
+<span class="s1">destination.scStateOutMsg = output</span>
+<span class="s1">del source, vector</span>
+<span class="s1">gc.collect()</span>
+<span class="s1">assert reference() is not None</span>
+<span class="s1">payload = messaging.SCStatesMsgPayload()</span>
+<span class="s1">payload.r_BN_N = [1.0, 2.0, 3.0]  # [m]</span>
+<span class="s1">destination.scStateOutMsg.write(payload)</span>
+<span class="s1">assert list(reference().dualHingedRigidBodyConfigLogOutMsgs[index].read().r_BN_N) == [1.0, 2.0, 3.0]</span>
+
+<span class="s1"># Patching the newly registered class must leave other vector results alone.</span>
+<span class="s1">numbers = messaging.DoubleVector([1.0, 2.0])  # [-]</span>
+<span class="s1">assert (numbers.begin().copy() + 1).value() == 2.0</span>
+<span class="s1">assert numbers.end() - numbers.begin() == 2</span>
+<span class="s1">message = messaging.NavTransMsg()</span>
+<span class="s1">readers = messaging.NavTransMsgInMsgsVector([message.addSubscriber()])</span>
+<span class="s1">reader = readers.begin().copy().value()</span>
+<span class="s1">assert reader.thisown</span>
+<span class="s1">reader.unsubscribe()</span>
+<span class="s1">assert readers[0].isSubscribedTo(message)</span>
+
+<span class="s1">del destination</span>
+<span class="s1">gc.collect()</span>
+<span class="s1">assert reference() is None</span>
+<span class="s1">for access in (result.value, result.copy, output._redirection_owner):</span>
+<span class="s1">    with pytest.raises(ReferenceError, match="module owning this message has been deleted"):</span>
+<span class="s1">        access()</span>
+<span class="s1">print("Late-import iterator checks passed")</span>
+<span class="s1">'''</span>
+    <span class="n">environment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">package_parent</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">Basilisk</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+    <span class="n">environment</span><span class="p">[</span><span class="s2">"PYTHONPATH"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">package_parent</span><span class="p">,</span> <span class="n">environment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PYTHONPATH"</span><span class="p">)]))</span>
+    <span class="n">environment</span><span class="p">[</span><span class="s2">"PYTHONMALLOC"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"debug"</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-X"</span><span class="p">,</span> <span class="s2">"faulthandler"</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">late_module</span><span class="p">,</span> <span class="n">operation</span><span class="p">],</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">environment</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>  <span class="c1"># [s]</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="k">assert</span> <span class="s2">"Late-import iterator checks passed"</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

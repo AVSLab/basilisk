@@ -1,0 +1,40 @@
+.. _dvAttEffect:
+
+:module-type:`C` Module: dvAttEffect
+====================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+Executive Summary
+-----------------
+
+This module implements a DV attitude effector management algorithm.
+This algorithm is used to control both the RCS and DV thrusters when executing a trajectory adjustment.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: dvAttEffect
+    :caption: Module I/O Messages
+
+    input cmdTorqueBodyInMsg CmdTorqueBodyMsgPayload
+        Commanded body torque input message
+    output thrOnTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        Thruster on-time output message for each thruster group
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: dvAttEffect.h
+   :project: errorConversion
+

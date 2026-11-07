@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_prescribedRotation1DOF:
+
+prescribedRotation1DOF
+======================
+
+:doc:`Module documentation <prescribedRotation1DOF>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

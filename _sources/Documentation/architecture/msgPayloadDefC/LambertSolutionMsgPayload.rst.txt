@@ -1,0 +1,10 @@
+.. _LambertSolutionMsgPayload:
+
+LambertSolutionMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: LambertSolutionMsgPayload.h
+   :project: msgPayloadDefC
+

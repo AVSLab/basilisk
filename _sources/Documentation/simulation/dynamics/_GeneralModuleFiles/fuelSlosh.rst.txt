@@ -1,0 +1,10 @@
+.. _fuelSlosh:
+
+fuelSlosh
+=========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: fuelSlosh.h
+   :project: _GeneralModuleFiles4
+

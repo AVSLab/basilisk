@@ -1,0 +1,15 @@
+.. _test_sphericalPendulum:
+
+test_sphericalPendulum
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_sphericalPendulum
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,952 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_formationBarycenter_equinoctial &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_formationBarycenter_equinoctial</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_formationBarycenter_equinoctial</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Validate opt-in equinoctial averaging without changing the legacy modes.</span>
+
+<span class="sd">The reference recovers classical elements and solves Kepler's equation by</span>
+<span class="sd">bisection, independently of the module's direct equinoctial reconstruction.</span>
+<span class="sd">The compact formation construction follows carlo98's example in issue 1656.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">formationBarycenter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span>
+
+
+<span class="n">MU</span> <span class="o">=</span> <span class="mf">3.986004418e14</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="n">CLASSICAL</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">EQUINOCTIAL_PROGRADE</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">EQUINOCTIAL_RETROGRADE</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<div class="viewcode-block" id="classical_state">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.classical_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">classical_state</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Construct an independent Cartesian state from an elliptic orbit.</span>
+
+<span class="sd">    Distances are in meters, angles in radians and eccentricity dimensionless.</span>
+<span class="sd">    The returned position and velocity have units of meters and meters/second.</span>
+<span class="sd">    """</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">mean_anomaly</span><span class="o">-</span><span class="n">eccentricity</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">mean_anomaly</span><span class="o">+</span><span class="n">eccentricity</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">eccentric_anomaly</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower</span><span class="o">+</span><span class="n">upper</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">eccentric_anomaly</span> <span class="o">==</span> <span class="n">lower</span> <span class="ow">or</span> <span class="n">eccentric_anomaly</span> <span class="o">==</span> <span class="n">upper</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">eccentric_anomaly</span><span class="o">-</span><span class="n">eccentricity</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eccentric_anomaly</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">mean_anomaly</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">eccentric_anomaly</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">eccentric_anomaly</span>
+    <span class="n">cosine</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eccentric_anomaly</span><span class="p">)</span>
+    <span class="n">sine</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eccentric_anomaly</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">eccentricity</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">axis</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">eccentricity</span><span class="o">*</span><span class="n">cosine</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">axis</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cosine</span><span class="o">-</span><span class="n">eccentricity</span><span class="p">,</span> <span class="n">beta</span><span class="o">*</span><span class="n">sine</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MU</span><span class="o">*</span><span class="n">axis</span><span class="p">)</span><span class="o">/</span><span class="n">radius</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">sine</span><span class="p">,</span> <span class="n">beta</span><span class="o">*</span><span class="n">cosine</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">co</span><span class="p">,</span> <span class="n">so</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">cw</span><span class="p">,</span> <span class="n">sw</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">periapsis</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">periapsis</span><span class="p">)</span>
+    <span class="n">ci</span><span class="p">,</span> <span class="n">si</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">inclination</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
+    <span class="n">rotation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">co</span><span class="o">*</span><span class="n">cw</span><span class="o">-</span><span class="n">so</span><span class="o">*</span><span class="n">sw</span><span class="o">*</span><span class="n">ci</span><span class="p">,</span> <span class="o">-</span><span class="n">co</span><span class="o">*</span><span class="n">sw</span><span class="o">-</span><span class="n">so</span><span class="o">*</span><span class="n">cw</span><span class="o">*</span><span class="n">ci</span><span class="p">,</span> <span class="n">so</span><span class="o">*</span><span class="n">si</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">so</span><span class="o">*</span><span class="n">cw</span><span class="o">+</span><span class="n">co</span><span class="o">*</span><span class="n">sw</span><span class="o">*</span><span class="n">ci</span><span class="p">,</span> <span class="o">-</span><span class="n">so</span><span class="o">*</span><span class="n">sw</span><span class="o">+</span><span class="n">co</span><span class="o">*</span><span class="n">cw</span><span class="o">*</span><span class="n">ci</span><span class="p">,</span> <span class="o">-</span><span class="n">co</span><span class="o">*</span><span class="n">si</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">sw</span><span class="o">*</span><span class="n">si</span><span class="p">,</span> <span class="n">cw</span><span class="o">*</span><span class="n">si</span><span class="p">,</span> <span class="n">ci</span><span class="p">],</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">rotation</span> <span class="o">@</span> <span class="n">position</span><span class="p">,</span> <span class="n">rotation</span> <span class="o">@</span> <span class="n">velocity</span></div>
+
+
+
+<div class="viewcode-block" id="make_simulation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.make_simulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_simulation</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_orbital</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">MU</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Initialize one module and retain writable inputs and both output recorders."""</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span>
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># [s]</span>
+    <span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">formationBarycenter</span><span class="o">.</span><span class="n">FormationBarycenter</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">useOrbitalElements</span> <span class="o">=</span> <span class="n">use_orbital</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="k">if</span> <span class="n">element_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">orbitalElementType</span> <span class="o">=</span> <span class="n">element_type</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">),</span> <span class="n">mass</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">):</span>
+        <span class="n">navigation</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+        <span class="n">navigation</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">navigation</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">vehicle</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">vehicle</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="n">mass</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">navigation</span><span class="p">),</span>
+            <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicle</span><span class="p">),</span>
+        <span class="p">])</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">messages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">recorder</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">recorder_c</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">transOutMsgC</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span></div>
+
+
+
+<div class="viewcode-block" id="recorded_state">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.recorded_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">recorded_state</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read the latest finite state and require identical C/C++ output payloads."""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">recorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">recorder</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">result_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">recorder_c</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">recorder_c</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">result_c</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="run_module">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.run_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_orbital</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">MU</span><span class="p">,</span> <span class="n">after_reset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Execute the compiled module once, optionally changing settings after Reset."""</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span> <span class="o">=</span> <span class="n">make_simulation</span><span class="p">(</span>
+        <span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">use_orbital</span><span class="p">,</span> <span class="n">mu</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">after_reset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">after_reset</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">recorded_state</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="assert_state">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.assert_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">2e-11</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Use position and velocity tolerances with their respective physical units."""</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">expected</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-6</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span> <span class="n">expected</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-8</span><span class="p">)</span>  <span class="c1"># [m/s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_default_and_named_choices">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_default_and_named_choices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_default_and_named_choices</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Existing scripts retain Cartesian/default-classical selection semantics."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">formationBarycenter</span><span class="o">.</span><span class="n">FormationBarycenter</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">useOrbitalElements</span> <span class="ow">is</span> <span class="kc">False</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">orbitalElementType</span> <span class="o">==</span> <span class="n">CLASSICAL</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">CLASSICAL</span> <span class="o">==</span> <span class="n">CLASSICAL</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">EQUINOCTIAL_PROGRADE</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">EQUINOCTIAL_RETROGRADE</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_RETROGRADE</span></div>
+
+
+
+<div class="viewcode-block" id="test_cartesian_ignores_element_selector">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_cartesian_ignores_element_selector">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">CLASSICAL</span><span class="p">,</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cartesian_ignores_element_selector</span><span class="p">(</span><span class="n">element_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Keep Cartesian selection exact while allowing reference roundoff.</span>
+
+<span class="sd">    The C++ weighted sum can use fused multiply-add, whereas NumPy may round</span>
+<span class="sd">    multiplication and addition separately.</span>
+<span class="sd">    """</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="p">]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">])</span>  <span class="c1"># [kg]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">masses</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">baseline</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">use_orbital</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">use_orbital</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">baseline</span><span class="p">)</span>
+    <span class="n">relative_tolerance</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>  <span class="c1"># [-]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">relative_tolerance</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_classical_compatibility">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_classical_compatibility">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"configuration"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"default"</span><span class="p">,</span> <span class="s2">"explicit-classical"</span><span class="p">,</span> <span class="s2">"legacy-runtime"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"orbits,masses,expected"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">8e6</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">9e6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">],</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">],</span>  <span class="c1"># [kg]</span>
+        <span class="p">[</span>
+            <span class="o">-</span><span class="mf">3805024.012545443</span><span class="p">,</span> <span class="mf">3691119.6983278044</span><span class="p">,</span> <span class="mf">5336085.789998154</span><span class="p">,</span>  <span class="c1"># [m]</span>
+            <span class="o">-</span><span class="mf">7017.942535029498</span><span class="p">,</span> <span class="o">-</span><span class="mf">3023.7993314431715</span><span class="p">,</span> <span class="o">-</span><span class="mf">547.6782626053625</span><span class="p">,</span>  <span class="c1"># [m/s]</span>
+        <span class="p">],</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"weighted-inclined"</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">6.20</span><span class="p">,</span> <span class="mf">6.15</span><span class="p">,</span> <span class="mf">6.24</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7.2e6</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">6.8e6</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">),</span>
+        <span class="p">],</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">],</span>  <span class="c1"># [kg]</span>
+        <span class="p">[</span>
+            <span class="mf">6194409.791060193</span><span class="p">,</span> <span class="mf">1002729.1491828125</span><span class="p">,</span> <span class="mf">824797.744204107</span><span class="p">,</span>  <span class="c1"># [m]</span>
+            <span class="o">-</span><span class="mf">1614.2214430779236</span><span class="p">,</span> <span class="mf">4893.206053782084</span><span class="p">,</span> <span class="mf">6495.775280548105</span><span class="p">,</span>  <span class="c1"># [m/s]</span>
+        <span class="p">],</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"angle-wrap"</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="mf">2e7</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">2.1e7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">1.9e7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+        <span class="p">],</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="p">[</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">],</span>  <span class="c1"># [kg]</span>
+        <span class="p">[</span>
+            <span class="mf">10068721.357163044</span><span class="p">,</span> <span class="mf">5134873.813868816</span><span class="p">,</span> <span class="mf">4896469.296928595</span><span class="p">,</span>  <span class="c1"># [m]</span>
+            <span class="mf">6254.6602691876315</span><span class="p">,</span> <span class="o">-</span><span class="mf">2322.4582653040334</span><span class="p">,</span> <span class="o">-</span><span class="mf">364.5000674161748</span><span class="p">,</span>  <span class="c1"># [m/s]</span>
+        <span class="p">],</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"eccentric-retrograde"</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">6.07</span><span class="p">,</span> <span class="mf">1.48</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.0105</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">6.07</span><span class="p">,</span> <span class="mf">1.56</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.0095</span><span class="p">,</span> <span class="mf">0.70</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">6.07</span><span class="p">,</span> <span class="mf">1.63</span><span class="p">),</span>
+        <span class="p">],</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">],</span>  <span class="c1"># [kg]</span>
+        <span class="p">[</span>
+            <span class="o">-</span><span class="mf">2881895.08515755</span><span class="p">,</span> <span class="mf">4314497.779819102</span><span class="p">,</span> <span class="mf">4700781.108437926</span><span class="p">,</span>  <span class="c1"># [m]</span>
+            <span class="o">-</span><span class="mf">5735.687341594877</span><span class="p">,</span> <span class="o">-</span><span class="mf">4798.5621701086875</span><span class="p">,</span> <span class="mf">999.1089719904237</span><span class="p">,</span>  <span class="c1"># [m/s]</span>
+        <span class="p">],</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"low-eccentricity"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_classical_compatibility</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">configuration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve pre-PR classical position and velocity on both output interfaces.</span>
+
+<span class="sd">    Fixed reference states were captured using the unmodified C++ module and</span>
+<span class="sd">    header from PR 1668's base commit ``d0f9832f3b0a40923329c23c2f9255c6c2f1b08b``.</span>
+<span class="sd">    Input tuples specify semimajor axis, eccentricity, inclination, ascending</span>
+<span class="sd">    node, argument of periapsis and mean anomaly. The cases cover unequal</span>
+<span class="sd">    weights, angular wrapping, eccentric retrograde motion and low eccentricity.</span>
+<span class="sd">    They avoid classical singularities so tight absolute tolerances remain</span>
+<span class="sd">    portable: 2 micrometers in position and 2e-8 meters/second in velocity.</span>
+
+<span class="sd">    Check the omitted selector, explicit ``CLASSICAL``, and the legacy pattern</span>
+<span class="sd">    of enabling orbital averaging after a Cartesian update using only</span>
+<span class="sd">    ``useOrbitalElements`` and ``mu``. Expected outputs are never recomputed</span>
+<span class="sd">    with the current module during the test.</span>
+<span class="sd">    """</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">configuration</span> <span class="o">==</span> <span class="s2">"legacy-runtime"</span><span class="p">:</span>
+        <span class="n">simulation</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span> <span class="o">=</span> <span class="n">make_simulation</span><span class="p">(</span>
+            <span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">use_orbital</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">useOrbitalElements</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">recorded_state</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">element_type</span> <span class="o">=</span> <span class="n">CLASSICAL</span> <span class="k">if</span> <span class="n">configuration</span> <span class="o">==</span> <span class="s2">"explicit-classical"</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_single_spacecraft_identity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_single_spacecraft_identity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"eccentricity"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>  <span class="c1"># [-]</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"tilt_index"</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"mean_anomaly"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">,</span> <span class="mf">6.1</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_single_spacecraft_identity</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">tilt_index</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Each representation recovers a single input, including its nonsingular pole."""</span>
+    <span class="n">inclinations</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">]</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span>
+        <span class="k">else</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span>
+        <span class="mf">2e7</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclinations</span><span class="p">[</span><span class="n">tilt_index</span><span class="p">],</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">mean_anomaly</span>
+    <span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_reported_compact_formation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_reported_compact_formation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"phases"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">120.1</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">270</span><span class="p">),</span>
+<span class="p">])</span>  <span class="c1"># [deg]</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reported_compact_formation</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">element_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Require an independent state reference and a 1 cm locality budget.</span>
+
+<span class="sd">    Each member has nonzero eccentricity and non-equatorial inclination, so</span>
+<span class="sd">    its classical elements can be recovered without a singular-angle choice.</span>
+<span class="sd">    The reference then averages known elements and reconstructs through the</span>
+<span class="sd">    separate bisection/rotation path, not the module's plane equations.</span>
+<span class="sd">    The centimetre budget applies only to these reported 100 m formations;</span>
+<span class="sd">    it is not an equality requirement for arbitrary orbital and Cartesian means.</span>
+<span class="sd">    """</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="mf">7e6</span>  <span class="c1"># [m]</span>
+    <span class="n">spread</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [m]</span>
+    <span class="n">chief</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">chief</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">chief</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">chief</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.9</span>  <span class="c1"># [m, -, rad]</span>
+    <span class="n">chief</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">chief</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">chief</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>  <span class="c1"># [rad]</span>
+    <span class="n">rc</span><span class="p">,</span> <span class="n">vc</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">MU</span><span class="p">,</span> <span class="n">chief</span><span class="p">)</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MU</span><span class="o">/</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phases</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">spread</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">)])</span>  <span class="c1"># [m]</span>
+        <span class="n">offset_rate</span> <span class="o">=</span> <span class="n">spread</span><span class="o">*</span><span class="n">rate</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">)])</span>  <span class="c1"># [m/s]</span>
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">hill2rv</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">vc</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">offset_rate</span><span class="p">))</span>
+    <span class="n">cartesian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">MU</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="mf">1e-7</span> <span class="ow">and</span> <span class="mf">0.1</span> <span class="o">&lt;</span> <span class="n">elements</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="mf">0.1</span>  <span class="c1"># [-, rad]</span>
+        <span class="n">mean_anomaly</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">elements</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">orbits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elements</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">))</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">locality_budget</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [m]; geometry-specific regression budget for these compact geometries</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expected</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">cartesian</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">locality_budget</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">actual</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">cartesian</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">locality_budget</span></div>
+
+
+
+<div class="viewcode-block" id="test_equal_axis_preserves_orbital_clock">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_equal_axis_preserves_orbital_clock">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"elapsed"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">])</span>  <span class="c1"># [s]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_equal_axis_preserves_orbital_clock</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""On one ellipse, equal-mass symmetric phases retain their time midpoint."""</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="mf">2e7</span>  <span class="c1"># [m]</span>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad]</span>
+    <span class="n">mean_midpoint</span> <span class="o">=</span> <span class="mf">1.1</span><span class="o">+</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MU</span><span class="o">/</span><span class="n">axis</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">elapsed</span>  <span class="c1"># [rad]</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">mean_midpoint</span><span class="o">+</span><span class="n">delta</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+        <span class="k">for</span> <span class="n">delta</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">mean_midpoint</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">([</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">expected</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="weighted_reference">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.weighted_reference">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Average known elements, then invert through a separate classical rotation."""</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span>
+    <span class="n">averaged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">sine_sum</span> <span class="o">=</span> <span class="n">cosine_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">orbits</span><span class="p">):</span>
+        <span class="n">longitude_periapsis</span> <span class="o">=</span> <span class="n">periapsis</span><span class="o">+</span><span class="n">factor</span><span class="o">*</span><span class="n">node</span>  <span class="c1"># [rad]</span>
+        <span class="n">tilt</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">inclination</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">inclination</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">averaged</span> <span class="o">+=</span> <span class="n">weight</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude_periapsis</span><span class="p">),</span> <span class="n">eccentricity</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude_periapsis</span><span class="p">),</span>
+            <span class="n">tilt</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">tilt</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">node</span><span class="p">),</span>
+        <span class="p">])</span>  <span class="c1"># [m, -, -, -, -]</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="n">mean_anomaly</span><span class="o">+</span><span class="n">longitude_periapsis</span>  <span class="c1"># [rad]</span>
+        <span class="n">sine_sum</span> <span class="o">+=</span> <span class="n">weight</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+        <span class="n">cosine_sum</span> <span class="o">+=</span> <span class="n">weight</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+    <span class="n">axis</span><span class="p">,</span> <span class="n">shape_sine</span><span class="p">,</span> <span class="n">shape_cosine</span><span class="p">,</span> <span class="n">tilt_sine</span><span class="p">,</span> <span class="n">tilt_cosine</span> <span class="o">=</span> <span class="n">averaged</span>
+    <span class="n">eccentricity</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">shape_sine</span><span class="p">,</span> <span class="n">shape_cosine</span><span class="p">)</span>
+    <span class="n">tilt</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">tilt_sine</span><span class="p">,</span> <span class="n">tilt_cosine</span><span class="p">)</span>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">tilt</span><span class="p">)</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tilt</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">tilt_sine</span><span class="p">,</span> <span class="n">tilt_cosine</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">longitude_periapsis</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">shape_sine</span><span class="p">,</span> <span class="n">shape_cosine</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">periapsis</span> <span class="o">=</span> <span class="n">longitude_periapsis</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="n">node</span>  <span class="c1"># [rad]</span>
+    <span class="n">mean_anomaly</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sine_sum</span><span class="p">,</span> <span class="n">cosine_sum</span><span class="p">)</span><span class="o">-</span><span class="n">longitude_periapsis</span>  <span class="c1"># [rad]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">classical_state</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="test_equatorial_formation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_equatorial_formation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type,factor"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"prograde"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"retrograde"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"equator_offset"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"equatorial"</span><span class="p">,</span> <span class="s2">"near-equatorial"</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"eccentricity"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"near-circular"</span><span class="p">,</span> <span class="s2">"eccentric"</span><span class="p">])</span>  <span class="c1"># [-]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_equatorial_formation</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">equator_offset</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Average unequal members at or near the selected representation's equator.</span>
+
+<span class="sd">    Widely separated ascending nodes accompany nearby periapsis longitudes.</span>
+<span class="sd">    Each member has a different axis, phase and mass; eccentric members also</span>
+<span class="sd">    have different eccentricities. The reference uses the prescribed classical</span>
+<span class="sd">    elements, avoiding recovery of undefined angles from Cartesian states.</span>
+<span class="sd">    Both output interfaces must match the reference in position and velocity.</span>
+<span class="sd">    """</span>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="n">equator_offset</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="n">equator_offset</span>  <span class="c1"># [rad]</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">7.1e6</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="mf">2.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">6.9e6</span><span class="p">,</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="mf">4.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span>
+    <span class="p">]</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_equinoctial_component_cancellation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_equinoctial_component_cancellation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type,factor"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"prograde"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"retrograde"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"cancelled_components"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"eccentricity"</span><span class="p">,</span> <span class="s2">"inclination"</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_equinoctial_component_cancellation</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">cancelled_components</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Recover a circular or equatorial mean from nonsingular member orbits.</span>
+
+<span class="sd">    The masses have ratio 1:3. For each cancelled component pair, the first</span>
+<span class="sd">    member has three times the magnitude and the opposite direction to the</span>
+<span class="sd">    second. Uncancelled components are identical, and both mean longitudes</span>
+<span class="sd">    are equal. Thus the expected averaged orbit is known analytically without</span>
+<span class="sd">    using ``weighted_reference`` or recovering singular classical angles.</span>
+<span class="sd">    Test eccentricity and inclination cancellation separately and together,</span>
+<span class="sd">    including both position and velocity on both output interfaces.</span>
+<span class="sd">    """</span>
+    <span class="n">cancel_eccentricity</span> <span class="o">=</span> <span class="n">cancelled_components</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"eccentricity"</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">)</span>
+    <span class="n">cancel_inclination</span> <span class="o">=</span> <span class="n">cancelled_components</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"inclination"</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">)</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">9e6</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">eccentricities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span> <span class="k">if</span> <span class="n">cancel_eccentricity</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">periapsis_longitudes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="o">+</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span> <span class="k">if</span> <span class="n">cancel_eccentricity</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">tilts</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span> <span class="k">if</span> <span class="n">cancel_inclination</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">+</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span> <span class="k">if</span> <span class="n">cancel_inclination</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">mean_longitude</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># [rad]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">tilt</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis_longitude</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">axes</span><span class="p">,</span> <span class="n">eccentricities</span><span class="p">,</span> <span class="n">tilts</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">periapsis_longitudes</span>
+    <span class="p">):</span>
+        <span class="n">inclination</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">tilt</span><span class="p">)</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tilt</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classical_state</span><span class="p">(</span>
+            <span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis_longitude</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="n">node</span><span class="p">,</span>
+            <span class="n">mean_longitude</span><span class="o">-</span><span class="n">periapsis_longitude</span><span class="p">,</span>
+        <span class="p">))</span>
+
+    <span class="n">mean_axis</span> <span class="o">=</span> <span class="mf">8.5e6</span>  <span class="c1"># [m]</span>
+    <span class="n">mean_eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">cancel_eccentricity</span> <span class="k">else</span> <span class="mf">0.2</span>  <span class="c1"># [-]</span>
+    <span class="n">mean_tilt</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">cancel_inclination</span> <span class="k">else</span> <span class="mf">0.1</span>  <span class="c1"># [-]</span>
+    <span class="n">mean_inclination</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">mean_tilt</span><span class="p">)</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mean_tilt</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">mean_node</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">cancel_inclination</span> <span class="k">else</span> <span class="mf">0.4</span>  <span class="c1"># [rad]</span>
+    <span class="n">mean_periapsis_longitude</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">cancel_eccentricity</span> <span class="k">else</span> <span class="mf">0.7</span>  <span class="c1"># [rad]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span>
+        <span class="n">mean_axis</span><span class="p">,</span> <span class="n">mean_eccentricity</span><span class="p">,</span> <span class="n">mean_inclination</span><span class="p">,</span> <span class="n">mean_node</span><span class="p">,</span>
+        <span class="n">mean_periapsis_longitude</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="n">mean_node</span><span class="p">,</span> <span class="n">mean_longitude</span><span class="o">-</span><span class="n">mean_periapsis_longitude</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_weighting_wrap_and_reordering">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_weighting_wrap_and_reordering">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type,factor"</span><span class="p">,</span> <span class="p">[(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_weighting_wrap_and_reordering</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check unequal shapes/tilts/masses, wraparound and mass/permutation invariance."""</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mf">2e7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">2.1e7</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">1.9e7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
+    <span class="p">]</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">orbits</span> <span class="o">=</span> <span class="p">[(</span><span class="n">axis</span><span class="p">,</span> <span class="n">ecc</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="n">inc</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">peri</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span> <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">ecc</span><span class="p">,</span> <span class="n">inc</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">peri</span><span class="p">,</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">masses</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">element_type</span><span class="p">),</span> <span class="n">actual</span><span class="p">)</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span><span class="o">*</span><span class="mi">7</span><span class="p">,</span> <span class="n">element_type</span><span class="p">),</span> <span class="n">actual</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_multiple_updates_refresh_navigation_and_mass">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_multiple_updates_refresh_navigation_and_mass">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_multiple_updates_refresh_navigation_and_mass</span><span class="p">(</span><span class="n">element_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check six scheduler updates with changing navigation and mass messages.</span>
+
+<span class="sd">    Three unequal ellipses share one semimajor axis and advance analytically</span>
+<span class="sd">    at the common two-body mean motion. Both output forms and sample times</span>
+<span class="sd">    must match a fresh independent reference at every step. The masses change</span>
+<span class="sd">    halfway through to expose stale inputs or uncleared averaging sums.</span>
+<span class="sd">    This tests scheduled message integration, not a numerical dynamics integrator.</span>
+<span class="sd">    """</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="mf">2e7</span>  <span class="c1"># [m]</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MU</span><span class="o">/</span><span class="n">axis</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+    <span class="p">]</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">orbits</span> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">ecc</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="n">inc</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">peri</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">ecc</span><span class="p">,</span> <span class="n">inc</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">peri</span><span class="p">,</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span> <span class="o">=</span> <span class="n">make_simulation</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">],</span> <span class="n">masses</span><span class="p">,</span> <span class="n">element_type</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">orbitalElementType</span> <span class="o">==</span> <span class="n">element_type</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>  <span class="c1"># [s]; the task period is one second</span>
+        <span class="n">current_orbits</span> <span class="o">=</span> <span class="p">[(</span><span class="o">*</span><span class="n">orbit</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">orbit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">rate</span><span class="o">*</span><span class="n">elapsed</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">orbit</span><span class="p">,</span> <span class="n">mass</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">current_orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">)):</span>
+            <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span>
+            <span class="n">navigation</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+            <span class="n">navigation</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">navigation</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">vehicle</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+            <span class="n">vehicle</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="n">mass</span>
+            <span class="n">messages</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">navigation</span><span class="p">)</span>
+            <span class="n">messages</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicle</span><span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+        <span class="n">assert_state</span><span class="p">(</span><span class="n">recorded_state</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">),</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">current_orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factor</span><span class="p">))</span>
+    <span class="n">expected_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder_c</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_binding_energy_cutoff">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_binding_energy_cutoff">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"binding_eps,accepted"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_binding_energy_cutoff</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">binding_eps</span><span class="p">,</span> <span class="n">accepted</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bracket the resolvable elliptic-energy cutoff without an accuracy claim.</span>
+
+<span class="sd">    With unit radius and gravity, binding is ``2-speed**2`` and the cutoff</span>
+<span class="sd">    is ``16*epsilon``. The separated samples allow for square-root rounding.</span>
+<span class="sd">    Passing the guard at this extreme ellipse only promises finite output.</span>
+<span class="sd">    """</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">-</span><span class="n">binding_eps</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">factor</span><span class="o">*</span><span class="n">speed</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m, m/s]</span>
+    <span class="n">binding</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">-</span><span class="n">speed</span><span class="o">*</span><span class="n">speed</span>
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="n">epsilon</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">speed</span><span class="o">*</span><span class="n">speed</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">binding</span> <span class="o">&gt;</span> <span class="n">cutoff</span><span class="p">)</span> <span class="o">==</span> <span class="n">accepted</span>
+    <span class="k">if</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"resolvable nonradial"</span><span class="p">):</span>
+            <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_near_radial_cutoff">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_near_radial_cutoff">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"transverse_eps,first_guard"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="kc">False</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_near_radial_cutoff</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">transverse_eps</span><span class="p">,</span> <span class="n">first_guard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Above the radial guard, an unrepresentable ellipse must still be rejected.</span>
+
+<span class="sd">    These almost-radial unit states have eccentricity rounding to one even</span>
+<span class="sd">    just above the angular-momentum cutoff. The first guard rejects values</span>
+<span class="sd">    at/below its cutoff; the later elliptic-elements guard rejects the rest.</span>
+<span class="sd">    Crossing this guard alone must not turn an unresolved ellipse into a valid one.</span>
+<span class="sd">    """</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">transverse_speed</span> <span class="o">=</span> <span class="n">transverse_eps</span><span class="o">*</span><span class="n">epsilon</span>  <span class="c1"># [m/s]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">factor</span><span class="o">*</span><span class="n">transverse_speed</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m, m/s]</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">transverse_speed</span> <span class="o">&lt;=</span> <span class="mi">8</span><span class="o">*</span><span class="n">epsilon</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">transverse_speed</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">==</span> <span class="n">first_guard</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">"resolvable nonradial"</span> <span class="k">if</span> <span class="n">first_guard</span> <span class="k">else</span> <span class="s2">"representable elliptic elements"</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">message</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_excluded_pole_cutoff">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_excluded_pole_cutoff">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"tilt_eps,accepted"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_excluded_pole_cutoff</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">tilt_eps</span><span class="p">,</span> <span class="n">accepted</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject at/below the pole cutoff and recover a state just outside it.</span>
+
+<span class="sd">    Cartesian construction avoids subtracting a tiny tilt from pi. Its unit</span>
+<span class="sd">    angular momentum has transverse magnitude ``tilt_eps*epsilon`` to floating</span>
+<span class="sd">    precision and points toward the selected representation's excluded pole.</span>
+<span class="sd">    """</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">transverse_speed</span> <span class="o">=</span> <span class="n">tilt_eps</span><span class="o">*</span><span class="n">epsilon</span>  <span class="c1"># [m/s]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">factor</span><span class="p">,</span> <span class="n">transverse_speed</span><span class="p">]))</span>  <span class="c1"># [m, m/s]</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">transverse_speed</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">==</span> <span class="n">accepted</span>
+    <span class="k">if</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">64</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span>  <span class="c1"># [m, m/s]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"pole"</span><span class="p">):</span>
+            <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_longitude_cancellation_cutoff">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_longitude_cancellation_cutoff">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"offset_eps,accepted"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">64</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_longitude_cancellation_cutoff</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">offset_eps</span><span class="p">,</span> <span class="n">accepted</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bracket the 64-epsilon circular-resultant cutoff with equal near-opposites.</span>
+
+<span class="sd">    The resultant is approximately half the phase offset. Samples at 32 and</span>
+<span class="sd">    128 epsilons avoid depending on libm's exact rounding at the boundary.</span>
+<span class="sd">    The accepted symmetric configuration has its reference along positive y.</span>
+<span class="sd">    """</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">offset_eps</span><span class="o">*</span><span class="n">epsilon</span>  <span class="c1"># [rad]</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">element_type</span> <span class="o">==</span> <span class="n">EQUINOCTIAL_PROGRADE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">factor</span><span class="o">*</span><span class="n">offset</span><span class="p">,</span> <span class="o">-</span><span class="n">factor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])),</span>
+    <span class="p">]</span>  <span class="c1"># [m, m/s]</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">offset</span><span class="o">/</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">64</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">==</span> <span class="n">accepted</span>
+    <span class="k">if</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">factor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m, m/s]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">64</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span>  <span class="c1"># [m, m/s]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"longitude"</span><span class="p">):</span>
+            <span class="n">run_module</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_selector">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_invalid_selector">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_selector</span><span class="p">(</span><span class="n">element_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Unknown orbital choices fail explicitly instead of selecting another method."""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"orbitalElementType"</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_gravity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_invalid_gravity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"mu"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_gravity</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""New orbital modes require a finite positive gravitational parameter."""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"gravitational parameter"</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_mass">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_invalid_mass">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"masses"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">]])</span>  <span class="c1"># [kg]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_mass</span><span class="p">(</span><span class="n">masses</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Undefined weights cannot produce a fabricated formation reference."""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"mass"</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="n">masses</span><span class="p">,</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_nonelliptic_input_is_rejected">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_nonelliptic_input_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m/s]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonelliptic_input_is_rejected</span><span class="p">(</span><span class="n">velocity</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Exact unit-scale parabolic and hyperbolic inputs are outside the new modes."""</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"elliptic"</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">velocity</span><span class="p">))</span>  <span class="c1"># [m, m/s]</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg, m^3/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_opposite_chart_pole_is_rejected">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_opposite_chart_pole_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"element_type,inclination"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+<span class="p">])</span>  <span class="c1"># [rad]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_opposite_chart_pole_is_rejected</span><span class="p">(</span><span class="n">element_type</span><span class="p">,</span> <span class="n">inclination</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A representation's excluded pole is an explicit error, not silent fallback."""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"pole"</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">element_type</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_undefined_longitude_is_rejected">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_undefined_longitude_is_rejected">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_undefined_longitude_is_rejected</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Equal opposite phases have no unique circular average longitude."""</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MU</span><span class="o">/</span><span class="mf">7e6</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m, m/s]</span>
+    <span class="n">opposite</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"longitude"</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">,</span> <span class="n">opposite</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_navigation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_invalid_navigation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"bad_state"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7500.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+    <span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7500.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+<span class="p">])</span>  <span class="c1"># [m, m/s]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_navigation</span><span class="p">(</span><span class="n">bad_state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""New modes stop on invalid navigation instead of writing nonfinite output."""</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">bad_state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<div class="viewcode-block" id="test_zero_mass_member_does_not_contribute">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_zero_mass_member_does_not_contribute">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_zero_mass_member_does_not_contribute</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A zero-weight spacecraft cannot move an otherwise defined reference."""</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">8e6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_module</span><span class="p">([</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="n">assert_state</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">first</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="test_runtime_selection">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_runtime_selection">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"initial_type,selected_type"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">CLASSICAL</span><span class="p">,</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"classical-to-prograde"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">CLASSICAL</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"classical-to-retrograde"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">CLASSICAL</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"prograde-to-classical"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"prograde-to-retrograde"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="n">CLASSICAL</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"retrograde-to-classical"</span><span class="p">),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">,</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"retrograde-to-prograde"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_runtime_selection</span><span class="p">(</span><span class="n">initial_type</span><span class="p">,</span> <span class="n">selected_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Observe every orbital-selector transition before and after an update.</span>
+
+<span class="sd">    Two equal-mass members share axis, eccentricity, inclination and mean</span>
+<span class="sd">    anomaly, with symmetric offsets in ascending node and periapsis. Thus</span>
+<span class="sd">    the classical reference uses the midpoint angles exactly. Equinoctial</span>
+<span class="sd">    references use the independent element-average and classical-rotation</span>
+<span class="sd">    helper. All three references differ in both position and velocity.</span>
+
+<span class="sd">    Initialize with one choice, select another before the first update, then</span>
+<span class="sd">    switch back after that update. Each C and C++ output must match its own</span>
+<span class="sd">    reference without another Reset, detecting a choice cached at either</span>
+<span class="sd">    initialization or the first update.</span>
+<span class="sd">    """</span>
+    <span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span> <span class="o">=</span> <span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.9</span>  <span class="c1"># [m, -, rad]</span>
+    <span class="n">node</span><span class="p">,</span> <span class="n">periapsis</span><span class="p">,</span> <span class="n">mean_anomaly</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span>  <span class="c1"># [rad]</span>
+    <span class="n">orbits</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">periapsis</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="p">]</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">classical_state</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">CLASSICAL</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">classical_state</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">periapsis</span><span class="p">,</span> <span class="n">mean_anomaly</span><span class="p">)),</span>
+        <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">:</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">EQUINOCTIAL_RETROGRADE</span><span class="p">:</span> <span class="n">weighted_reference</span><span class="p">(</span><span class="n">orbits</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="c1"># Keep each transition observable even if the fixture is changed later.</span>
+    <span class="n">difference</span> <span class="o">=</span> <span class="n">expected</span><span class="p">[</span><span class="n">selected_type</span><span class="p">]</span><span class="o">-</span><span class="n">expected</span><span class="p">[</span><span class="n">initial_type</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">difference</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">difference</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="mf">1e-3</span>  <span class="c1"># [m/s]</span>
+
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span> <span class="o">=</span> <span class="n">make_simulation</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">initial_type</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">element_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">selected_type</span><span class="p">,</span> <span class="n">initial_type</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">orbitalElementType</span> <span class="o">=</span> <span class="n">element_type</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+        <span class="n">assert_state</span><span class="p">(</span><span class="n">recorded_state</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">recorder_c</span><span class="p">),</span> <span class="n">expected</span><span class="p">[</span><span class="n">element_type</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">expected_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>  <span class="c1"># [ns]; one-second task period</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder_c</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_runtime_validation">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.html#test_formationBarycenter_equinoctial.test_runtime_validation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"changes"</span><span class="p">,</span> <span class="p">[{</span><span class="s2">"orbitalElementType"</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="p">{</span><span class="s2">"mu"</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">}])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_runtime_validation</span><span class="p">(</span><span class="n">changes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Invalid changes after Reset are rejected again before new-mode computation."""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">classical_state</span><span class="p">(</span><span class="mf">7e6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>  <span class="c1"># [m, -, rad, rad, rad, rad]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">run_module</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">],</span> <span class="n">EQUINOCTIAL_PROGRADE</span><span class="p">,</span> <span class="n">after_reset</span><span class="o">=</span><span class="n">changes</span><span class="p">)</span>  <span class="c1"># [kg]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+.. _OpNavLimbMsgPayload:
+
+OpNavLimbMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: OpNavLimbMsgPayload.h
+   :project: msgPayloadDefC
+

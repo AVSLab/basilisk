@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_forceTorqueThrForceMapping:
+
+forceTorqueThrForceMapping
+==========================
+
+:doc:`Module documentation <forceTorqueThrForceMapping>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

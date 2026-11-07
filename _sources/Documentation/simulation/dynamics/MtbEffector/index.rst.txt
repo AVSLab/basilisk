@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_MtbEffector:
+
+MtbEffector
+===========
+
+:doc:`Module documentation <MtbEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

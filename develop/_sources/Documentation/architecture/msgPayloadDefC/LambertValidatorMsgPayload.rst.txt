@@ -1,0 +1,10 @@
+.. _LambertValidatorMsgPayload:
+
+LambertValidatorMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: LambertValidatorMsgPayload.h
+   :project: msgPayloadDefC
+

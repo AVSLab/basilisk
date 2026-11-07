@@ -1,0 +1,10 @@
+.. _DownlinkHandlingMsgPayload:
+
+DownlinkHandlingMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DownlinkHandlingMsgPayload.h
+   :project: msgPayloadDefC
+

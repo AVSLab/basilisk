@@ -1,0 +1,10 @@
+.. _MJSysMassMatrixMsgPayload:
+
+MJSysMassMatrixMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJSysMassMatrixMsgPayload.h
+   :project: msgPayloadDefCpp
+

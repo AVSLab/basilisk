@@ -1,0 +1,7 @@
+.. _test_dynamicObject:
+
+test_dynamicObject
+==================
+
+.. bsk-module-guide-end::
+
