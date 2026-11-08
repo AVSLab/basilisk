@@ -270,7 +270,7 @@ def _parseOmmXml(text: str) -> list:
     root = ET.fromstring(text)
     records = []
     for segment in root.iter():
-        if segment.tag not in ("segment", f"{_CCSDS_XML_NAMESPACE}segment"):
+        if segment is root or segment.tag not in ("segment", f"{_CCSDS_XML_NAMESPACE}segment"):
             continue
         namespace = _CCSDS_XML_NAMESPACE if segment.tag.startswith("{") else ""
         metadata = segment.find(f"{namespace}metadata")

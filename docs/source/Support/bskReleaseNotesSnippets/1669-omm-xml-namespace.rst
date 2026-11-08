@@ -1,0 +1,1 @@
+- Fixed :ref:`ommHandling` XML reading to accept CCSDS namespace-qualified OMM records while preserving existing unqualified XML support and validation.

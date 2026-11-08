@@ -145,6 +145,8 @@ def test_omm_xml_qualified_namespace_matches_unqualified_orbit(tmp_path):
     assert qualified[0].ommEpoch == original[0].ommEpoch
     assert abs(qualified[0].oe.a - original[0].oe.a) <= A_TOL_DIST
     assert abs(qualified[0].oe.e - original[0].oe.e) <= A_TOL
+    for angle in ("i", "Omega", "omega", "f"):
+        assert abs(getattr(qualified[0].oe, angle) - getattr(original[0].oe, angle)) <= A_TOL
 
 
 @pytest.mark.parametrize("units,expected_count", [("rev/day", 1), ("km", 0)])
@@ -169,6 +171,13 @@ def test_omm_xml_other_namespace_not_accepted(tmp_path):
     assert ommHandling._parseOmmXml(path.read_text(encoding="utf-8")) == []
 
 
+def test_omm_xml_bare_segment_root_not_accepted():
+    """A bare segment is not a complete OMM document."""
+    xml = "<segment><metadata><OBJECT_NAME>TEST</OBJECT_NAME></metadata></segment>"
+
+    assert ommHandling._parseOmmXml(xml) == []
+
+
 def test_omm_xml_qualified_and_unqualified_segments_keep_order():
     """Record order must be preserved if both accepted tag forms appear."""
     ns = "urn:ccsds:schema:ndmxml"
@@ -181,6 +190,22 @@ def test_omm_xml_qualified_and_unqualified_segments_keep_order():
     records = ommHandling._parseOmmXml(ET.tostring(root, encoding="unicode"))
 
     assert [record["OBJECT_NAME"] for record in records] == ["FIRST", "SECOND"]
+
+
+def test_omm_xml_qualified_incomplete_record_keeps_number(tmp_path, capsys):
+    """Missing fields in a qualified record still report the correct index."""
+    path = _writeXml(tmp_path / "incomplete.xml", [_OMM_FIELDS] * 3)
+    tree = ET.parse(path)
+    second = tree.findall(".//segment")[1]
+    mean_elements = second.find(".//meanElements")
+    mean_elements.remove(mean_elements.find("EPOCH"))
+    tree.write(path, encoding="utf-8")
+    _qualifyOmmXml(path)
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 2
+    assert "skipped OMM record 2" in capsys.readouterr().out
 
 
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
