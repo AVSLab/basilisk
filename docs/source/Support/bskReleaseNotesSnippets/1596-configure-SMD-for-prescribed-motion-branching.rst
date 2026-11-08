@@ -1,0 +1,1 @@
+- Enabled :ref:`linearSpringMassDamper` to be attached to a prescribed motion state effector.
