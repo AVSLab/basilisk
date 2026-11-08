@@ -253,31 +253,41 @@ def _parseOmmJson(text: str) -> list:
     return payload
 
 
+_CCSDS_XML_NAMESPACE = "{urn:ccsds:schema:ndmxml}"  # CCSDS 505.0-B-2 qualified XML tag prefix
+
+
 def _parseOmmXml(text: str) -> list:
     """
     Parse the XML (CCSDS NDM) encoding.
 
     Retain the available fields of every segment, including those missing metadata
     or data, so per-record validation reports their original positions in the file.
+    Accept both unqualified tags and the CCSDS NDM namespace-qualified tag form.
 
     :param text: full text of the XML file
     :return: list of raw field dictionaries retaining numeric unit declarations
     """
     root = ET.fromstring(text)
     records = []
-    for segment in root.findall(".//segment"):
-        metadata = segment.find("metadata")
-        data = segment.find("data")
+    for segment in root.iter():
+        if segment.tag not in ("segment", f"{_CCSDS_XML_NAMESPACE}segment"):
+            continue
+        namespace = _CCSDS_XML_NAMESPACE if segment.tag.startswith("{") else ""
+        metadata = segment.find(f"{namespace}metadata")
+        data = segment.find(f"{namespace}data")
 
         fields = {}
         blocks = [metadata]
         if data is not None:
-            blocks.extend([data.find("meanElements"), data.find("tleParameters")])
+            blocks.extend([data.find(f"{namespace}meanElements"),
+                           data.find(f"{namespace}tleParameters")])
         for block in blocks:
             if block is None:
                 continue
             for element in block:
-                key = element.tag.upper()
+                if namespace and not element.tag.startswith(namespace):
+                    continue
+                key = element.tag[len(namespace):].upper()
                 value = (element.text or "").strip()
                 if key in _OMM_FIELD_UNITS and "units" in element.attrib:
                     value = _OmmFieldWithUnits(value, element.attrib["units"])

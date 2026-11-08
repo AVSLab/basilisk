@@ -113,6 +113,76 @@ def _writeXml(path, fieldSets):
     return path
 
 
+def _qualifyOmmXml(path, namespace="urn:ccsds:schema:ndmxml"):
+    """Rewrite the existing XML fixture with namespace-qualified CCSDS tags."""
+    tree = ET.parse(path)
+    for element in tree.iter():
+        element.tag = f"{{{namespace}}}{element.tag}"
+    tree.write(path, encoding="utf-8", xml_declaration=True)
+    return path
+
+
+def test_omm_xml_qualified_namespace_extracts_all_fields(tmp_path):
+    """A CCSDS-qualified record must not vanish before field validation."""
+    path = _qualifyOmmXml(_writeXml(tmp_path / "qualified.xml", [_OMM_FIELDS]))
+
+    records = ommHandling._parseOmmXml(path.read_text(encoding="utf-8"))
+
+    assert len(records) == 1
+    assert records[0] == _OMM_FIELDS
+
+
+def test_omm_xml_qualified_namespace_matches_unqualified_orbit(tmp_path):
+    """Equivalent supported OMM XML encodings must initialize one orbit."""
+    path = _writeXml(tmp_path / "orbit.xml", [_OMM_FIELDS])
+    original = ommHandling.satOmm2elem(str(path))
+    _qualifyOmmXml(path)
+
+    qualified = ommHandling.satOmm2elem(str(path))
+
+    assert len(qualified) == len(original) == 1
+    assert qualified[0].noradID == "25544"
+    assert qualified[0].ommEpoch == original[0].ommEpoch
+    assert abs(qualified[0].oe.a - original[0].oe.a) <= A_TOL_DIST
+    assert abs(qualified[0].oe.e - original[0].oe.e) <= A_TOL
+
+
+@pytest.mark.parametrize("units,expected_count", [("rev/day", 1), ("km", 0)])
+def test_omm_xml_qualified_numeric_units_are_validated(tmp_path, units, expected_count):
+    """Qualified XML keeps the same numeric-unit acceptance boundary."""
+    path = _writeXml(tmp_path / "units.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    tree.find(".//MEAN_MOTION").set("units", units)
+    tree.write(path, encoding="utf-8")
+    _qualifyOmmXml(path)
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == expected_count
+
+
+def test_omm_xml_other_namespace_not_accepted(tmp_path):
+    """An unrelated XML namespace is not interpreted as CCSDS OMM."""
+    path = _qualifyOmmXml(_writeXml(tmp_path / "other.xml", [_OMM_FIELDS]),
+                          namespace="urn:example:not-ccsds")
+
+    assert ommHandling._parseOmmXml(path.read_text(encoding="utf-8")) == []
+
+
+def test_omm_xml_qualified_and_unqualified_segments_keep_order():
+    """Record order must be preserved if both accepted tag forms appear."""
+    ns = "urn:ccsds:schema:ndmxml"
+    root = ET.Element("ndm")
+    for tag, name in (("segment", "FIRST"), (f"{{{ns}}}segment", "SECOND")):
+        segment = ET.SubElement(root, tag)
+        metadata = ET.SubElement(segment, tag.replace("segment", "metadata"))
+        ET.SubElement(metadata, tag.replace("segment", "OBJECT_NAME")).text = name
+
+    records = ommHandling._parseOmmXml(ET.tostring(root, encoding="unicode"))
+
+    assert [record["OBJECT_NAME"] for record in records] == ["FIRST", "SECOND"]
+
+
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
 
 
