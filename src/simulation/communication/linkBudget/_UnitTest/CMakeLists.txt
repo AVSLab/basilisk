@@ -19,3 +19,26 @@ if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xc
 else()
   gtest_discover_tests(test_linkBudgetAtmosphere)
 endif()
+
+add_executable(test_antennaProducerChain
+               test_antennaProducerChain.cpp
+               ../linkBudget.cpp
+               ../../simpleAntenna/simpleAntenna.cpp
+               ../../../environment/groundLocation/groundLocation.cpp)
+target_link_libraries(test_antennaProducerChain PRIVATE GTest::gtest_main architectureLib ArchitectureUtilities)
+
+if(WIN32)
+  add_custom_command(
+    TARGET test_antennaProducerChain
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:test_antennaProducerChain>
+            $<TARGET_FILE_DIR:test_antennaProducerChain>
+    COMMAND_EXPAND_LISTS)
+endif()
+
+if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
+  gtest_discover_tests(test_antennaProducerChain DISCOVERY_MODE PRE_TEST)
+else()
+  gtest_discover_tests(test_antennaProducerChain)
+endif()

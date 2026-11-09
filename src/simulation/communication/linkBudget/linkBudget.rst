@@ -11,6 +11,26 @@ The module computes the end-to-end link budget accounting for free space path lo
 
 This module requires two connected antenna output messages (e.g. from :ref:`simpleAntenna` modules). The link budget calculation automatically determines the link configuration (space-to-space or space-to-ground) based on the antenna environment types.
 
+Initialization and Execution Order
+----------------------------------
+
+Schedule the spacecraft and ground-state producers before the antenna modules,
+and schedule both antenna modules before ``linkBudget``. ``Reset`` checks that
+both antenna inputs are connected and clears the previous link results. Link
+placement and atmospheric lookup tables are initialized on the first update
+after both antenna inputs have been written. When atmospheric attenuation is
+enabled, initialization also waits for a nonzero ground antenna position. Until
+then, the output contains zero carrier-to-noise ratios and no usable link
+bandwidth, and the module logs one warning per reset.
+
+This order allows :ref:`groundLocation` to publish its position before the
+atmosphere is initialized, including the altitude of an elevated station. No
+manual warmup or second reset is required. Each subsequent reset also defers
+initialization until execution resumes, so a changed station altitude is read
+after the ground and antenna producers have updated their outputs. A later
+reset cannot distinguish a previous run's written antenna position from a new
+one, so the required model order still applies after the first run.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.
@@ -125,7 +145,11 @@ error near gas absorption lines. Each cell's slant elevation is calculated from
 the ground ray invariant before its attenuation is accumulated.
 
 .. note::
-   Atmospheric attenuation lookup tables are precomputed at initialization, using the ground antenna position and frequency and re-used during simulation. Changes in frequency during simulation will not update the atmospheric attenuation profile.
+   Atmospheric attenuation lookup tables are precomputed on the first update
+   with written antenna inputs, using the ground antenna position and frequency,
+   and reused during simulation. Changes in frequency during simulation will
+   not update the atmospheric attenuation profile. Reset the module and update
+   its producers before the next link-budget update to rebuild the profile.
 
 For more information the reader is referred to the following ITU-R recommendations:
 
@@ -473,7 +497,11 @@ Atmospheric attenuation is disabled by default. To enable it for space-to-ground
 
 .. warning::
 
-   The atmospheric attenuation lookup table is precomputed during module initialization using the ground antenna's initial position and frequency. Changes to the antenna frequency during simulation will **not** update the atmospheric attenuation profile. If frequency changes are required, the simulation must be re-initialized.
+   The atmospheric attenuation lookup table uses the ground position and
+   frequency available on the first update with written antenna inputs. Changes
+   to altitude or frequency during execution do not rebuild this table. After
+   changing these quantities, reset the module and run the producers before its
+   next update.
 
 Accessing Link Budget Results
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
