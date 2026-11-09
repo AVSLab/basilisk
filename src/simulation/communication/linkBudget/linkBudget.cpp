@@ -31,6 +31,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <initializer_list>
 #include <iostream>
 #include <limits>
 
@@ -72,9 +73,10 @@ LinkBudget::LinkBudget()
                              // correct states, etc.)
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
+/*! @brief Check input connections and clear link results before deferred initialization.
+ *  @param CurrentSimNanos Current simulation time in nanoseconds.
  */
-void LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void LinkBudget::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->antennaInPayload_1.isLinked()) {
@@ -83,7 +85,26 @@ void LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!this->antennaInPayload_2.isLinked()) {
         bskLogger.bskError("LinkBudget.antennaInPayload_2 was not linked.");
     }
-    this->initialization();
+    // Upstream models need not publish during Reset. Even written inputs can
+    // still contain the previous run's geometry until the producers update.
+    this->initialized = false;
+    this->waitingWarningIssued = false;
+    this->gndAntPnt = nullptr;
+    this->scAntPnt = nullptr;
+    this->linkValid = false;
+    this->L_FSPL = 0.0;     // [dB]
+    this->L_atm = 0.0;      // [dB]
+    this->L_freq = 0.0;     // [dB]
+    this->L_point = 0.0;    // [dB]
+    this->P_Rx1 = 0.0;      // [W]
+    this->P_Rx2 = 0.0;      // [W]
+    this->CNR1 = 0.0;       // [-]
+    this->CNR2 = 0.0;       // [-]
+    this->distance = 0.0;   // [m]
+    this->B_overlap = 0.0;  // [Hz]
+    this->centerfreq = 0.0; // [Hz]
+    this->linkBudgetOutPayloadBuffer = this->linkBudgetOutPayload.zeroMsgPayload;
+    this->linkBudgetOutPayload.write(&this->linkBudgetOutPayloadBuffer, this->moduleID, CurrentSimNanos);
 }
 
 void LinkBudget::initialization()
@@ -156,12 +177,32 @@ void LinkBudget::initialization()
     }
 }
 
-/*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
+/*! @brief Initialize from written antenna inputs, then calculate and publish the current link budget.
+ *  @param CurrentSimNanos Current simulation time in nanoseconds.
  */
 void LinkBudget::UpdateState(uint64_t CurrentSimNanos)
 {
-    // read in the input messages
-    this->readMessages();
+    const bool inputsWritten = this->antennaInPayload_1.isWritten() && this->antennaInPayload_2.isWritten();
+    if (inputsWritten) {
+        // read in the input messages
+        this->readMessages();
+    }
+    if (!inputsWritten || (!this->initialized && !this->atmosphereInputsReady())) {
+        if (!this->waitingWarningIssued) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "LinkBudget: Waiting for written antenna inputs and a ground position. Check the order "
+                             "of the ground, antenna, and link-budget models if this link never starts.");
+            this->waitingWarningIssued = true;
+        }
+        this->linkBudgetOutPayloadBuffer = this->linkBudgetOutPayload.zeroMsgPayload;
+        this->linkBudgetOutPayload.write(&this->linkBudgetOutPayloadBuffer, this->moduleID, CurrentSimNanos);
+        return;
+    }
+
+    if (!this->initialized) {
+        this->initialization();
+        this->initialized = true;
+    }
 
     // FUTURE IMPROVEMENT: calculate doppler shift here
 
@@ -169,6 +210,23 @@ void LinkBudget::UpdateState(uint64_t CurrentSimNanos)
     this->calculateLinkBudget();
     this->calculateCNR();
     this->writeOutputMessages(CurrentSimNanos);
+}
+
+/*! @brief Check that every ground antenna has published the position used to cache atmospheric conditions.
+ *  @return True when atmosphere is disabled or all ground antennas have a nonzero position.
+ */
+bool LinkBudget::atmosphereInputsReady() const
+{
+    if (!this->atmosAtt) {
+        return true;
+    }
+    for (const AntennaLogMsgPayload* antenna : { &this->antennaIn_1, &this->antennaIn_2 }) {
+        if (antenna->environment == static_cast<uint32_t>(AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH) &&
+            antenna->r_AP_N[0] == 0.0 && antenna->r_AP_N[1] == 0.0 && antenna->r_AP_N[2] == 0.0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void LinkBudget::readMessages()

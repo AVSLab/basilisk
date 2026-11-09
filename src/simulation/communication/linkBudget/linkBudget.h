@@ -28,8 +28,10 @@
 #include "architecture/msgPayloadDefC/LinkBudgetMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include <Eigen/Core>
 #include <cstdint>
 #include <fstream>
 #include <string>
@@ -153,6 +155,8 @@ class LinkBudget : public SysModel
     std::string getWaterVaporLookupFilePath() const { return this->waterVaporLookupFilePath; }
 
   private:
+    bool initialized = false;          //!< Whether link placement and atmospheric tables are initialized.
+    bool waitingWarningIssued = false; //!< Whether the wait for producer data has been reported since the last reset.
     LinkBudgetTypes::AntennaPlacement antennaPlacement; //!< [-]   Antenna placement type
     AntennaTypes::EnvironmentType env1;                 //!< [-]   Antenna environment of antenna 1: space, 2: ground
     AntennaTypes::EnvironmentType env2;                 //!< [-]   Antenna environment of antenna 2: space, 2: ground
@@ -190,6 +194,7 @@ class LinkBudget : public SysModel
 
   private:
     void readMessages();
+    bool atmosphereInputsReady() const;
     void initialization();
     void calculateLinkBudget();
     void calculateFSPL();
