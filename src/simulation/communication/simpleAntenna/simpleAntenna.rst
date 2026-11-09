@@ -483,6 +483,13 @@ The spacecraft state message is of type :ref:`SCStatesMsgPayload`.
 
 The ground state message is of type :ref:`GroundStateMsgPayload`.
 
+Schedule the ground-state producer before the antenna. Each antenna update
+copies the ground position and the inertial surface normal
+``GroundStateMsgPayload.rHat_LP_N`` to its output. The surface normal is published
+as ``AntennaLogMsgPayload.nHat_LP_N`` for the atmospheric slant-path calculation
+in :ref:`linkBudget`. It describes the local surface normal, independently of
+the antenna boresight.
+
 Setting Required Antenna Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

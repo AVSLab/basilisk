@@ -518,6 +518,7 @@ void SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload* output)
         output->r_AP_N[0] = this->r_AP_N[0];
         output->r_AP_N[1] = this->r_AP_N[1];
         output->r_AP_N[2] = this->r_AP_N[2];
+        eigenVector3d2CArray(cArray2EigenVector3d(this->groundState.rHat_LP_N), output->nHat_LP_N);
     } else {
         // Raise error (should not happen due to checks in Reset)
         bskLogger.bskError("SimpleAntenna: Unable to populate output message due to unknown environment.");
