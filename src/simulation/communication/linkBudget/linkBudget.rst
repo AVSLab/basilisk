@@ -11,6 +11,8 @@ The module computes the end-to-end link budget accounting for free space path lo
 
 This module requires two connected antenna output messages (e.g. from :ref:`simpleAntenna` modules). The link budget calculation automatically determines the link configuration (space-to-space or space-to-ground) based on the antenna environment types.
 
+.. _linkbudget-initialization:
+
 Initialization and Execution Order
 ----------------------------------
 
@@ -30,6 +32,26 @@ initialization until execution resumes, so a changed station altitude is read
 after the ground and antenna producers have updated their outputs. A later
 reset cannot distinguish a previous run's written antenna position from a new
 one, so the required model order still applies after the first run.
+
+.. note::
+
+   Deferred initialization changes two aspects of the module lifecycle:
+
+   - ``Reset`` publishes a zero-filled ``linkBudgetOutPayload`` at the reset
+     time. After ``InitializeSimulation()``, a subscriber's ``isWritten()``
+     therefore returns ``True`` even before the first update. The reset output
+     has zero ``CNR1``, ``CNR2`` and ``bandwidth``. Consumers must check the
+     receiving antenna's CNR and the link bandwidth when determining whether
+     service is available. :ref:`downlinkHandling` treats reset and waiting
+     outputs as no service.
+
+   - Antenna placement is validated on the first ``UpdateState`` call with
+     ready inputs. Errors such as an unsupported ground-to-ground link or an
+     unrecognized antenna environment are raised during that update. Atmospheric
+     lookup-table loading and its errors also occur at this point. Applications
+     that handle these errors must include ``ExecuteSimulation()`` or direct
+     ``UpdateState`` calls in their error-handling path. Unlinked antenna inputs
+     are still reported by ``Reset`` during ``InitializeSimulation()``.
 
 Message Connection Descriptions
 -------------------------------
