@@ -1,0 +1,1 @@
+- Python tests now reuse a writable checkout-local Matplotlib cache to avoid repeated font-cache construction when the home directory is not writable, while preserving an explicit ``MPLCONFIGDIR`` setting.
