@@ -54,7 +54,7 @@ from Basilisk.utilities import orbitalMotion as om
 # same frame through identical precession, nutation and frame-bias terms.
 from Basilisk.utilities.tleHandling import _teme2j2000
 
-#: Fields that :py:func:`sgp4.omm.initialize` dereferences unconditionally.
+#: Fields required in normalized records before conversion.
 _REQUIRED_OMM_FIELDS = (
     "EPOCH",
     "MEAN_MOTION",
@@ -65,7 +65,6 @@ _REQUIRED_OMM_FIELDS = (
     "MEAN_ANOMALY",
     "NORAD_CAT_ID",
     "CLASSIFICATION_TYPE",
-    "OBJECT_ID",
     "EPHEMERIS_TYPE",
     "ELEMENT_SET_NO",
     "REV_AT_EPOCH",
@@ -77,7 +76,6 @@ _REQUIRED_OMM_FIELDS = (
 #: Defaults for fields that CelesTrak sometimes omits but SGP4 still requires.
 _OPTIONAL_OMM_DEFAULTS = {
     "CLASSIFICATION_TYPE": "U",
-    "OBJECT_ID": "0000-000A",
     "EPHEMERIS_TYPE": "0",
     "ELEMENT_SET_NO": "999",
     "REV_AT_EPOCH": "0",
@@ -111,9 +109,7 @@ _OMM_XML_BLOCK_FIELDS = {
 _OMM_XML_BLOCKS = frozenset(("ndm", "omm", "body", "segment", "data", *_OMM_XML_BLOCK_FIELDS))
 
 #: Fields consumed by this reader; comments and unknown extension fields may repeat.
-_OMM_FIELDS = frozenset(
-    (*_REQUIRED_OMM_FIELDS, *_SUPPORTED_OMM_METADATA, "OBJECT_NAME")
-)
+_OMM_FIELDS = frozenset().union(*_OMM_XML_BLOCK_FIELDS.values())
 
 #: Preserve duplicate fields or XML blocks until validation can reject the record.
 _DUPLICATE_OMM_FIELD = object()
@@ -174,7 +170,7 @@ class OmmData:
     # Optional metadata
     satName: str = field(default="BSK-Sat-00")  # OBJECT_NAME
     noradID: str = field(default="00000")  # NORAD_CAT_ID; unlike a TLE this may be >= 100000
-    objectID: str = field(default="0000-000A")  # international designator, e.g. "1998-067A"
+    objectID: str = field(default="")  # international designator; empty when unavailable
     classification: str = field(default="Unknown")  # "Unclassified", "Classified", "Secret"
     revAtEpoch: int = field(default=0)  # revolution number at epoch [-]
     propagator: str = field(default="0")  # EPHEMERIS_TYPE: 0 (CelesTrak default) or 2 (SGP4)
@@ -614,9 +610,8 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     epoch = _parseOmmEpoch(normalized["EPOCH"])
     normalized["EPOCH"] = epoch.strftime("%Y-%m-%dT%H:%M:%S.%f")
 
-    # The OBJECT_ID slice taken by sgp4 assumes the "YYYY-NNNP" international designator.
-    if len(normalized["OBJECT_ID"]) < 3:
-        normalized["OBJECT_ID"] = _OPTIONAL_OMM_DEFAULTS["OBJECT_ID"]
+    # Preserve missing or unknown designators in public metadata without inventing an ID.
+    normalized["OBJECT_ID"] = normalized.get("OBJECT_ID", "").strip()
 
     return normalized
 
@@ -636,7 +631,7 @@ def _ommFields2Data(fields: dict, epoch: dt.datetime) -> OmmData:
         ommEpoch=epoch,
         satName=fields.get("OBJECT_NAME", "BSK-Sat-00").strip() or "BSK-Sat-00",
         noradID=str(fields["NORAD_CAT_ID"]).strip(),
-        objectID=fields.get("OBJECT_ID", "0000-000A").strip(),
+        objectID=fields.get("OBJECT_ID", "").strip(),
         classification=_CLASSIFICATION_NAMES[fields["CLASSIFICATION_TYPE"]],
         revAtEpoch=int(fields["REV_AT_EPOCH"]),
         propagator=str(fields.get("EPHEMERIS_TYPE", "0")).strip(),
@@ -674,6 +669,10 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
     # SGP4 limits its internal Alpha-5 ID to 339999, but the ID does not affect
     # propagation. Preserve the real catalog number in fields and ommData.
     sgp4_fields = dict(fields, NORAD_CAT_ID="0")
+    # Older SGP4 initializers slice every OBJECT_ID as a YYYY-NNNP designator.
+    # Use an empty internal identifier for unavailable or non-designator text.
+    object_id = fields["OBJECT_ID"]
+    sgp4_fields["OBJECT_ID"] = object_id if object_id[4:5] == "-" else ""
     satellite = Satrec()
 
     # Propagate to epoch to get the True Equator, Mean Equinox (TEME) state vector.
@@ -721,6 +720,9 @@ def satOmm2elem(omm_path: str) -> list:
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
     SGP4's internal identifier storage. Values must be in ``[0, 999999999]``;
     optional leading ``+`` signs and leading zeros are accepted and preserved.
+    Missing, null or blank international designators yield ``objectID=""``.
+    Supplied designators, including the literal ``UNKNOWN``, are preserved after
+    trimming whitespace; backend identifier accommodations do not change this metadata.
 
     XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
     using either prefixes or a default namespace. Records are read from
