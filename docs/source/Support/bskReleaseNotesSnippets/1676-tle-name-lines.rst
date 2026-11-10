@@ -1,0 +1,1 @@
+- :ref:`tleHandling` ``satTle2elem()`` now reads 3LE files whose name lines start with ``1`` or ``2`` (such as ``1KUNS-PF`` or ``2026-195B``); such files were previously refused as a whole.

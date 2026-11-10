@@ -310,6 +310,26 @@ def test_read_tle_accepts_sgp4_ephemeris_types(tmp_path, ephemeris_type):
         assert getattr(oe, name) == getattr(reference, name)
 
 
+@pytest.mark.parametrize("names", [["1KUNS-PF"], ["HYPSO-1", "2026-195B"], ["2026-195B", "1KUNS-PF"]])
+def test_read_tle_name_lines_starting_with_a_digit(tmp_path, names):
+    """3LE name lines that start with 1 or 2 are read as names, not counted as element lines."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    lines = []
+    for name in names:
+        lines.extend([name, line1, line2])
+    tle_path = tmp_path / "digit-names.tle"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert [record.satName for record in records] == names
+    for record in records:
+        for name in ("a", "e", "i", "Omega", "omega", "f"):
+            assert getattr(record.oe, name) == getattr(reference.oe, name)
+
+
 def test_write_tle_6digit_norad_raises():
     """generateTle() must raise ValueError for catalog numbers >= 100000 (6-digit NORAD IDs assigned after ~July 2026 cannot be represented in TLE format)."""
     tleData = tleHandling.TleData(oe=oeHypso1, tleEpoch=hypso1tleEpoch)

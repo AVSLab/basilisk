@@ -433,6 +433,20 @@ def _norad_id_to_tle_str(norad_id) -> str:
         )
     return f"{norad_id_int:05d}"
 
+def _isTleElementLine(line: str, lineNumber: int) -> bool:
+    """
+    Tell whether a line is a TLE element line with the given line number.
+
+    An element line starts with its line number in column 1 and a blank in column 2. Checking the blank as
+    well keeps name lines that start with a digit, such as ``1KUNS-PF`` or ``2026-195B``, from being counted
+    as element lines.
+
+    :param line: one line of a TLE file
+    :param lineNumber: 1 or 2
+    :return: True if the line is element line ``lineNumber``
+    """
+    return line.startswith(f"{lineNumber} ")
+
 def _calcTleChecksum(stringArray: str) -> int:
     """
     Calculate TLE checksum per line.
@@ -804,8 +818,8 @@ def satTle2elem(tle_path: str):
     noLines = len(tle_lines)
     if noLines < 2:
         raise ValueError(f"constTLE2Elem() received a TLE with {noLines} lines. A valid TLE must have at least two lines.")
-    noOfLinesStartingWith1 = sum(1 for line in tle_lines if line.startswith('1'))
-    noOfLinesStartingWith2 = sum(1 for line in tle_lines if line.startswith('2'))
+    noOfLinesStartingWith1 = sum(1 for line in tle_lines if _isTleElementLine(line, 1))
+    noOfLinesStartingWith2 = sum(1 for line in tle_lines if _isTleElementLine(line, 2))
     noOfLinesStartingWithOther = len(tle_lines) - noOfLinesStartingWith1 - noOfLinesStartingWith2
 
     # Initialize variables
@@ -825,7 +839,7 @@ def satTle2elem(tle_path: str):
     elif noOfLinesStartingWithOther == 1 and noLines > 2:
         # TLE has one title line and more than two lines => 2LE (first line likely title for 2LE-file)
         tleType = 2 # 2LE
-        if tle_lines[0].startswith('1') or tle_lines[0].startswith('2'):
+        if _isTleElementLine(tle_lines[0], 1) or _isTleElementLine(tle_lines[0], 2):
             raise ValueError("constTLE2Elem() received a TLE with one title line but the first line starts with '1' or '2'. --- TLE not valid ---.")
 
     # Define the reading order based on the TLE tleType
@@ -845,7 +859,7 @@ def satTle2elem(tle_path: str):
     # Read through all lines and extract TLEs
     for lineNo, line in enumerate(tle_lines):
         expected = readingOrder[readingOrderIndex] if readingOrderIndex < len(readingOrder) else None
-        if line.startswith('1') and expected == 'line1':
+        if _isTleElementLine(line, 1) and expected == 'line1':
             if satTleReady[1]:
                 print(f"WARNING: constTLE2Elem() found a new TLE line1 before completing the previous TLE (line number {lineNo}). The previous TLE will be discarded.")
                 # Reset for next TLE
@@ -855,7 +869,7 @@ def satTle2elem(tle_path: str):
             satTleReady[tleType-2] = True
             readingOrderIndex += 1
             line1 = line
-        elif line.startswith('2') and expected == 'line2':
+        elif _isTleElementLine(line, 2) and expected == 'line2':
             if satTleReady[tleType-1]:
                 print(f"WARNING: constTLE2Elem() found a new TLE line2 before completing the previous TLE (line number {lineNo}). The previous TLE will be discarded.")
                 # Reset for next TLE
