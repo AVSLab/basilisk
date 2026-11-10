@@ -1528,6 +1528,54 @@ def test_omm_empty_file_raises(tmp_path):
         ommHandling.satOmm2elem(str(path))
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
+@pytest.mark.parametrize("ndot,nddot,tle_ndot,tle_nddot", [
+    ("-0.00003657", "1.15630e-5", "-.00003657", " 11563-4"),
+    ("0.00002182", "-1.2345e-7", " .00002182", "-12345-6"),
+])  # Coefficients [rev/day^2], [rev/day^3] in both OMM and TLE representations.
+def test_omm_derivative_coefficients_match_tle(
+    tmp_path, monkeypatch, capsys, encoding, satrec, ndot, nddot, tle_ndot, tle_nddot,
+):
+    """Nonzero signed coefficients retain the TLE convention in metadata and SGP4."""
+    from Basilisk.utilities import tleHandling
+
+    line1 = f"1 25544U 98067A   26253.50000000 {tle_ndot} {tle_nddot}  16717-3 0  999"
+    checksum = sum(int(char) if char.isdigit() else int(char == "-") for char in line1) % 10
+    line1 += str(checksum)
+    line2 = "2 25544  51.6416 247.4627 0004364 130.5360 325.0288 15.50103472478591"
+    tle_path = tmp_path / "coefficients.2le"
+    tle_path.write_text(f"{line1}\n{line2}\n", encoding="utf-8")
+    tle_record = tleHandling.satTle2elem(tle_path)[0]
+    reference = satrec.twoline2rv(line1, line2)
+    fields = dict(_OMM_FIELDS, MEAN_MOTION_DOT=ndot, MEAN_MOTION_DDOT=nddot)
+    path = _WRITERS[encoding](tmp_path / f"coefficients.{encoding}", [fields])
+    monkeypatch.setattr(ommHandling, "Satrec", satrec)
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_unscaled_coefficients(satellite, backend_fields):
+        """Compare backend coefficients against an independently parsed TLE."""
+        assert backend_fields["MEAN_MOTION_DOT"] == ndot
+        assert backend_fields["MEAN_MOTION_DDOT"] == nddot
+        result = initialize(satellite, backend_fields)
+        np.testing.assert_allclose(
+            [satellite.ndot, satellite.nddot], [reference.ndot, reference.nddot],
+            rtol=1e-14, atol=0.0,
+        )
+        initialized.append(satellite)
+        return result
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_unscaled_coefficients)
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == len(initialized) == 1
+    assert records[0].nDot == float(ndot)
+    assert records[0].nDotDot == float(nddot)
+    assert records[0].nDot == pytest.approx(tle_record.nDot, rel=1e-14)
+    assert records[0].nDotDot == pytest.approx(tle_record.nDotDot, rel=1e-14)
+    assert capsys.readouterr().out == ""
+
+
 def test_omm_matches_tle_for_same_elements(tmp_path):
     """
     The OMM path reproduces the TLE path.
