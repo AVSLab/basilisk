@@ -1166,6 +1166,56 @@ def test_omm_propagates_at_initialized_epoch(tmp_path, capsys, encoding, epoch_s
     assert capsys.readouterr().out == ""
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
+@pytest.mark.parametrize("mean_motion,eccentricity,inclination,method", [
+    pytest.param("15.5", "0.001", "51.6", "n", id="leo"),
+    pytest.param("2.0", "0.01", "55.0", "d", id="meo"),
+    pytest.param("1.0027", "0.0001", "0.01", "d", id="geo"),
+    pytest.param("2.006", "0.72", "63.4", "d", id="molniya"),
+    pytest.param("1.0027", "0", "0", "d", id="circular-equatorial"),
+    pytest.param("1.0027", "0", "180", "d", id="circular-retrograde"),
+    pytest.param("14.0", "0.001", "90.0", "n", id="polar"),
+])  # Mean motion [rev/day], eccentricity [-], inclination [deg]; SGP4 branch n/d.
+def test_omm_representative_orbit_states(
+    tmp_path, monkeypatch, capsys, encoding, satrec, mean_motion, eccentricity, inclination, method,
+):
+    """Representative orbits reconstruct independently parsed TLE states at epoch."""
+    fields = dict(_OMM_FIELDS, MEAN_MOTION=mean_motion, ECCENTRICITY=eccentricity, INCLINATION=inclination)
+    path = _WRITERS[encoding](tmp_path / f"orbit.{encoding}", [fields])
+    monkeypatch.setattr(ommHandling, "Satrec", satrec)
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == 1
+    record = records[0]
+    epoch = dt.datetime(2026, 9, 10, 12)  # UTC
+    assert record.ommEpoch == epoch
+    assert record.oe.a > 0.0  # [m]
+    assert 0.0 <= record.oe.e < 1.0  # [-]
+    assert all(np.isfinite(getattr(record.oe, name)) for name in ("a", "e", "i", "Omega", "omega", "f"))
+
+    # All selected mean elements are exactly representable at the TLE field precision.
+    # Initializing through the TLE parser also checks OMM's independent initialization path.
+    line1 = "1 25544U 98067A   26253.50000000  .00002182  00000-0  16717-3 0  9991"
+    eccentricity_digits = round(float(eccentricity) * 1e7)
+    line2 = (f"2 25544 {float(inclination):8.4f} 247.4627 {eccentricity_digits:07d} "
+             f"130.5360 325.0288 {float(mean_motion):11.8f}47859")
+    checksum = sum(int(char) if char.isdigit() else int(char == "-") for char in line2) % 10
+    line2 += str(checksum)
+    reference = satrec.twoline2rv(line1, line2)
+    assert reference.method == method
+    error, position, velocity = reference.sgp4_tsince(0.0)  # [min] since epoch
+    assert error == 0
+    expected_position, expected_velocity = ommHandling._teme2j2000(
+        np.array(position) * 1e3, np.array(velocity) * 1e3, epoch,  # [m], [m/s]
+    )
+    actual_position, actual_velocity = ommHandling.om.elem2rv(
+        ommHandling.om.MU_EARTH * 1e9, record.oe,  # [m^3/s^2]
+    )
+    np.testing.assert_allclose(actual_position, expected_position, rtol=0.0, atol=1e-5)  # [m]
+    np.testing.assert_allclose(actual_velocity, expected_velocity, rtol=0.0, atol=1e-8)  # [m/s]
+    assert capsys.readouterr().out == ""
+
+
 def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     """A record missing a required element is skipped while good records still return."""
     broken = dict(_OMM_FIELDS)
