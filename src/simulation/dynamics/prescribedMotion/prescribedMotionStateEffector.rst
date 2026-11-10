@@ -87,9 +87,11 @@ capability is provided in the following conference paper
     L. Kiner, and H. Schaub, `“Backsubstitution Method For Prescribed Motion Actuators With Attached Dynamic Sub-Components”  <https://www.researchgate.net/publication/394150919_Backsubstitution_Method_for_Prescribed_Motion_Actuators_with_Attached_Dynamic_Sub-Components>`_,
     AAS Astrodynamics Specialist Conference, Boston, Massachusetts, August 10–14, 2025
 
-Currently, this branching capability has only been configured for the spinningBodyOneDOF, spinningBodyTwoDOF, and
-linearTranslationOneDOF state effectors. See the User Guide section for how to connect these effectors to the
-prescribed motion effector. The scenario scripts :ref:`scenarioPrescribedMotionWithRotationBranching`
+This branching capability supports :ref:`spinningBodyOneDOFStateEffector`,
+:ref:`spinningBodyTwoDOFStateEffector`, :ref:`linearTranslationOneDOFStateEffector`, and
+:ref:`linearSpringMassDamper`. See the User Guide section for attachment instructions and
+:ref:`linearSpringMassDamperPrescribed` for a spring-particle example and its frame conventions.
+The scenario scripts :ref:`scenarioPrescribedMotionWithRotationBranching`
 and :ref:`scenarioPrescribedMotionWithTranslationBranching` are more complex examples demonstrating how to connect
 multiple state effectors to the prescribed motion effector. Nested
 variable-mass state effectors are not supported and must instead be attached
@@ -112,12 +114,21 @@ are conserved for the duration of the simulation to verify the module dynamics.
 
 Branching Test
 ^^^^^^^^^^^^^^
-The branching test script for this module has three separate test functions. All tests configure an identical spacecraft
-hub an actuating prescribed motion component. The first test connects a free :ref:`spinningBodyOneDOFStateEffector`
-to the prescribed component. The second test connects a free :ref:`spinningBodyTwoDOFStateEffector` to the
-prescribed component. The third test connects a free :ref:`linearTranslationOneDOFStateEffector` to the prescribed
-component. All tests check that the quantities of spacecraft orbital energy, orbital angular momentum, rotational
-angular momentum are conserved for the duration of the simulation.
+The branching test script has four test functions, one for each supported attached effector.
+The first three attach a free :ref:`spinningBodyOneDOFStateEffector`,
+:ref:`spinningBodyTwoDOFStateEffector`, or :ref:`linearTranslationOneDOFStateEffector` to an
+actuating prescribed component and compare initial and final orbital energy, orbital angular
+momentum, and rotational angular momentum.
+
+The fourth attaches a :ref:`linearSpringMassDamper` with an offset equilibrium point,
+a nonzero mount attitude, and a spring axis transverse to the prescribed rotation axis.
+It requires the particle states to be registered, tests default and renamed hub angular-velocity
+states, and checks conservation throughout the simulation. Relative orbital energy and angular
+momentum errors must remain below ``1e-8``. The relative rotational angular-momentum error must
+remain below ``1e-4`` and decrease by at least 40 percent when the timestep is halved from
+1 ms to 0.5 ms, accounting for sampled profiler commands. Rotational energy may change because
+the prescribed actuators do work. Independent analytical particle-motion and Newton/Euler
+balance tests are provided in :ref:`test_linearSpringMassDamperPrescribed`.
 
 
 User Guide
