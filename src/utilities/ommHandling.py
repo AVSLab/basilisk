@@ -92,13 +92,13 @@ _SUPPORTED_OMM_METADATA = {
     "MEAN_ELEMENT_THEORY": "SGP4",
 }
 
-#: XML fields consumed by this reader; comments and unknown extension fields may repeat.
-_OMM_XML_FIELDS = frozenset(
+#: Fields consumed by this reader; comments and unknown extension fields may repeat.
+_OMM_FIELDS = frozenset(
     (*_REQUIRED_OMM_FIELDS, *_SUPPORTED_OMM_METADATA, "OBJECT_NAME")
 )
 
-#: Preserve duplicate XML elements until validation can reject the individual record.
-_DUPLICATE_OMM_XML_ELEMENT = object()
+#: Preserve duplicate fields or XML blocks until validation can reject the record.
+_DUPLICATE_OMM_FIELD = object()
 
 #: Human-readable names for the supported classification codes.
 _CLASSIFICATION_NAMES = {"U": "Unclassified", "C": "Classified", "S": "Secret"}
@@ -205,6 +205,21 @@ def _detectOmmFormat(text: str) -> str:
 # ---------------------------------------------------------------------------------------------------------- #
 #                                          OMM parsers                                                        #
 # ---------------------------------------------------------------------------------------------------------- #
+def _collect_omm_fields(pairs) -> dict:
+    """Normalize field names while retaining duplicate consumed fields for rejection.
+
+    :param pairs: iterable of field name/value pairs, including possible duplicates
+    :return: field dictionary with duplicate markers that survive later occurrences
+    """
+    fields = {}
+    for key, value in pairs:
+        key = str(key).upper()
+        if key in _OMM_FIELDS and key in fields:
+            value = _DUPLICATE_OMM_FIELD
+        fields[key] = value
+    return fields
+
+
 def _parseOmmKvn(text: str) -> list:
     """
     Parse the CCSDS keyword-value notation (KVN) encoding.
@@ -235,7 +250,7 @@ def _parseOmmKvn(text: str) -> list:
         if key == "CCSDS_OMM_VERS" and current:
             records.append(current)
             current = {}
-        current[key] = value
+        current[key] = _DUPLICATE_OMM_FIELD if key in _OMM_FIELDS and key in current else value
 
     if current:
         records.append(current)
@@ -253,7 +268,7 @@ def _parseOmmJson(text: str) -> list:
     :return: list of raw JSON records, to be validated and normalized individually
     :raises ValueError: if the JSON document is invalid or is not an object or array
     """
-    payload = json.loads(text)
+    payload = json.loads(text, object_pairs_hook=_collect_omm_fields)
     if isinstance(payload, dict):
         return [payload]
     if not isinstance(payload, list):
@@ -289,7 +304,7 @@ def _parseOmmXml(text: str) -> list:
             blocks["meanElements"] = data.findall("meanElements")
             blocks["tleParameters"] = data.findall("tleParameters")
         duplicates = {
-            name: _DUPLICATE_OMM_XML_ELEMENT for name, matches in blocks.items() if len(matches) > 1
+            name: _DUPLICATE_OMM_FIELD for name, matches in blocks.items() if len(matches) > 1
         }
         if duplicates:
             records.append(duplicates)
@@ -300,8 +315,8 @@ def _parseOmmXml(text: str) -> list:
             for block in blocks.get(name, []):
                 for element in block:
                     key = element.tag.upper()
-                    if key in _OMM_XML_FIELDS and key in fields:
-                        fields[key] = _DUPLICATE_OMM_XML_ELEMENT
+                    if key in _OMM_FIELDS and key in fields:
+                        fields[key] = _DUPLICATE_OMM_FIELD
                         continue
                     value = (element.text or "").strip()
                     if key in _OMM_FIELD_UNITS and "units" in element.attrib:
@@ -320,10 +335,14 @@ def _parseOmmCsv(text: str) -> list:
     """
     import io
 
+    reader = sgp4omm.parse_csv(io.StringIO(text))
+    headers = _collect_omm_fields((name, "") for name in reader.fieldnames or [])
+    duplicates = [name for name, value in headers.items() if value is _DUPLICATE_OMM_FIELD]
+    if duplicates:
+        raise ValueError(f"Duplicate OMM CSV field(s) in header: {', '.join(duplicates)}.")
     records = []
-    for row in sgp4omm.parse_csv(io.StringIO(text)):
-        records.append({str(key).upper(): ("" if value is None else str(value))
-                        for key, value in row.items()})
+    for row in reader:
+        records.append(_collect_omm_fields(row.items()))
     return records
 
 
@@ -470,10 +489,10 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     # Check declared units before discarding them or supplying optional defaults.
     # Validation stays inside the per-record error handler for XML and KVN alike.
     normalized = {}
-    for key, value in fields.items():
-        key = str(key).upper()
-        if value is _DUPLICATE_OMM_XML_ELEMENT:
-            raise ValueError(f"Duplicate OMM XML element: {key}.")
+    for key, value in _collect_omm_fields(fields.items()).items():
+        if value is _DUPLICATE_OMM_FIELD:
+            kind = "element" if omm_format == "xml" else "field"
+            raise ValueError(f"Duplicate OMM {omm_format.upper()} {kind}: {key}.")
         if isinstance(value, _OmmFieldWithUnits):
             supported_units = _OMM_FIELD_UNITS[key]
             if value.units not in supported_units:
@@ -629,6 +648,9 @@ def satOmm2elem(omm_path: str) -> list:
     XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
     using either prefixes or a default namespace. XML records containing duplicate
     OMM fields or blocks are skipped with a warning before SGP4 is invoked.
+    KVN and JSON records with duplicate consumed fields are also skipped, including
+    names that collide after case normalization. Duplicate consumed CSV headers
+    make the whole file ambiguous and raise ``ValueError`` before conversion.
 
     Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.
     Digits beyond microsecond precision are truncated consistently for ``ommEpoch``,

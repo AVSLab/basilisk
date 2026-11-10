@@ -23,7 +23,9 @@
 #
 
 import copy
+import csv
 import datetime as dt
+import io
 import json
 import xml.etree.ElementTree as ET
 
@@ -129,6 +131,86 @@ def _set_xml_namespace(path, prefix, namespace="urn:ccsds:schema:ndmxml"):
 
 
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv"])
+@pytest.mark.parametrize("field_name,bad_value", [
+    ("CENTER_NAME", "MARS"), ("MEAN_MOTION", "nan"), ("OBJECT_NAME", "AMBIGUOUS"),
+])
+@pytest.mark.parametrize("bad_first", [False, True])
+@pytest.mark.parametrize("mixed_case", [False, True])
+@pytest.mark.parametrize("third_occurrence", [False, True])
+def test_omm_duplicate_fields(
+    tmp_path, monkeypatch, capsys, encoding, field_name, bad_value,
+    bad_first, mixed_case, third_occurrence,
+):
+    """Duplicates cannot overwrite invalid values, even after a third occurrence."""
+    fields = dict(_OMM_FIELDS, ELEMENT_SET_NO="888")
+    pairs = [(name, value) for name, value in fields.items() if name != field_name]
+    values = [bad_value, fields[field_name]] if bad_first else [fields[field_name], bad_value]
+    pairs.extend(zip([field_name, field_name.lower() if mixed_case else field_name], values))
+    if third_occurrence:
+        pairs.append((field_name, fields[field_name]))
+    path = tmp_path / f"duplicates.{encoding}"
+    if encoding == "json":
+        record = "{" + ",".join(f"{json.dumps(key)}:{json.dumps(value)}" for key, value in pairs) + "}"
+        text = f"[{record},{json.dumps(_OMM_FIELDS)}]"
+    elif encoding == "kvn":
+        text = ""
+        for record_pairs in (pairs, list(_OMM_FIELDS.items())):
+            text += "CCSDS_OMM_VERS = 2.0\n"
+            text += "".join(f"{key} = {value}\n" for key, value in record_pairs)
+    else:
+        stream = io.StringIO()
+        writer = csv.writer(stream)
+        writer.writerow([key for key, value in pairs])
+        writer.writerow([value for key, value in pairs])
+        text = stream.getvalue()
+    path.write_text(text, encoding="utf-8")
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, fields):
+        """Only the unambiguous trailing record may reach SGP4."""
+        assert encoding != "csv"
+        assert fields["ELEMENT_SET_NO"] == _OMM_FIELDS["ELEMENT_SET_NO"]
+        initialized.append(fields["OBJECT_NAME"])
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    if encoding == "csv":
+        with pytest.raises(ValueError, match=f"Duplicate OMM CSV.*{field_name}"):
+            ommHandling.satOmm2elem(path)
+        assert initialized == []
+    else:
+        records = ommHandling.satOmm2elem(path)
+        assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+        assert initialized == [_OMM_FIELDS["OBJECT_NAME"]]
+        warning = capsys.readouterr().out
+        assert "skipped OMM record 1" in warning
+        assert f"Duplicate OMM {encoding.upper()} field: {field_name}" in warning
+
+
+@pytest.mark.parametrize("bad_first", [False, True])
+def test_omm_kvn_duplicate_units(tmp_path, capsys, bad_first):
+    """A duplicate numeric field cannot discard an unsupported unit declaration."""
+    path = _writeKvn(tmp_path / "duplicate-units.kvn", [_OMM_FIELDS, _OMM_FIELDS])
+    values = ["1.0 [rad]", "51.6416 [deg]"]  # [rad], [deg]
+    if not bad_first:
+        values.reverse()
+    line = f"INCLINATION = {_OMM_FIELDS['INCLINATION']}"
+    path.write_text(path.read_text().replace(line, "\n".join(f"INCLINATION = {v}" for v in values), 1))
+    assert len(ommHandling.satOmm2elem(path)) == 1
+    assert "Duplicate OMM KVN field: INCLINATION" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv"])
+def test_omm_repeated_unknown_fields(tmp_path, capsys, encoding):
+    """Repeated extension fields remain harmless in each flat encoding."""
+    fields = dict(_OMM_FIELDS, USER_DEFINED_NOTE="first", user_defined_note="second")
+    path = _WRITERS[encoding](tmp_path / f"extensions.{encoding}", [fields])
+    assert len(ommHandling.satOmm2elem(path)) == 1
+    assert capsys.readouterr().out == ""
 
 
 @pytest.mark.parametrize("namespace_prefix", ["ndm", "orbit", ""])
