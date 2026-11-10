@@ -966,6 +966,55 @@ def test_omm_optional_fields_defaulted(tmp_path):
     assert ommDataList[0].revAtEpoch == 0
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("designator", [None, "", " \t ", "UNKNOWN", "unknown", "X", "1998-067A"])
+@pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
+def test_omm_designator_metadata(tmp_path, monkeypatch, capsys, encoding, designator, satrec):
+    """Public designators remain faithful while private backend identifiers stay safe."""
+    fields = dict(_OMM_FIELDS)
+    if designator is None:
+        del fields["OBJECT_ID"]
+    else:
+        fields["OBJECT_ID"] = designator
+    original_fields = dict(fields)
+    path = _WRITERS[encoding](tmp_path / f"designator.{encoding}", [fields])
+    reference_path = _WRITERS[encoding](tmp_path / f"reference.{encoding}", [_OMM_FIELDS])
+    monkeypatch.setattr(ommHandling, "Satrec", satrec)
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_designators = []
+
+    def initialize_with_private_identifier(satellite, backend_fields):
+        """Capture the backend's input and resulting internal designator."""
+        initialized_designators.append(backend_fields["OBJECT_ID"])
+        result = initialize(satellite, backend_fields)
+        expected = "98067A" if backend_fields["OBJECT_ID"] else ""
+        assert satellite.intldesg == expected
+        return result
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_with_private_identifier)
+    expected = "" if designator is None else designator.strip()
+    normalized = ommHandling._normalizeOmmFields(fields, encoding)
+    assert fields == original_fields
+    assert normalized["OBJECT_ID"] == expected
+    records = ommHandling.satOmm2elem(path)
+    reference = ommHandling.satOmm2elem(reference_path)[0]
+    assert len(records) == 1
+    assert records[0].objectID == expected
+    assert initialized_designators == [expected if expected == "1998-067A" else "", "1998-067A"]
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(records[0].oe, name) == getattr(reference.oe, name)
+    assert capsys.readouterr().out == ""
+
+
+def test_omm_json_null_designator(tmp_path, capsys):
+    """JSON null designators return empty metadata without fabricating an identifier."""
+    path = _writeJson(tmp_path / "null-designator.json", [dict(_OMM_FIELDS, OBJECT_ID=None)])
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == 1
+    assert records[0].objectID == ""
+    assert capsys.readouterr().out == ""
+
+
 @pytest.mark.parametrize("epochStr,expectedSecond", [
     ("2026-09-10T12:00:00.000000", 0),
     ("2026-09-10T12:00:30", 30),
