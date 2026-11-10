@@ -92,6 +92,14 @@ _SUPPORTED_OMM_METADATA = {
     "MEAN_ELEMENT_THEORY": "SGP4",
 }
 
+#: XML fields consumed by this reader; comments and unknown extension fields may repeat.
+_OMM_XML_FIELDS = frozenset(
+    (*_REQUIRED_OMM_FIELDS, *_SUPPORTED_OMM_METADATA, "OBJECT_NAME")
+)
+
+#: Preserve duplicate XML elements until validation can reject the individual record.
+_DUPLICATE_OMM_XML_ELEMENT = object()
+
 #: Human-readable names for the supported classification codes.
 _CLASSIFICATION_NAMES = {"U": "Unclassified", "C": "Classified", "S": "Secret"}
 
@@ -257,31 +265,48 @@ def _parseOmmXml(text: str) -> list:
     """
     Parse the XML (CCSDS NDM) encoding.
 
+    Accept unqualified elements and elements in the ``urn:ccsds:schema:ndmxml``
+    namespace, independently of their prefix or use of a default namespace.
     Retain the available fields of every segment, including those missing metadata
     or data, so per-record validation reports their original positions in the file.
+    Mark duplicate OMM fields and blocks for rejection during per-record validation.
 
     :param text: full text of the XML file
-    :return: list of raw field dictionaries retaining numeric unit declarations
+    :return: list of raw field dictionaries retaining numeric unit declarations and duplicate markers
     """
     root = ET.fromstring(text)
+    # Normalize only CCSDS tags so foreign namespaces cannot override OMM fields.
+    for element in root.iter():
+        element.tag = element.tag.removeprefix("{urn:ccsds:schema:ndmxml}")
     records = []
     for segment in root.findall(".//segment"):
-        metadata = segment.find("metadata")
-        data = segment.find("data")
+        blocks = {
+            "metadata": segment.findall("metadata"),
+            "data": segment.findall("data"),
+        }
+        if len(blocks["data"]) == 1:
+            data = blocks["data"][0]
+            blocks["meanElements"] = data.findall("meanElements")
+            blocks["tleParameters"] = data.findall("tleParameters")
+        duplicates = {
+            name: _DUPLICATE_OMM_XML_ELEMENT for name, matches in blocks.items() if len(matches) > 1
+        }
+        if duplicates:
+            records.append(duplicates)
+            continue
 
         fields = {}
-        blocks = [metadata]
-        if data is not None:
-            blocks.extend([data.find("meanElements"), data.find("tleParameters")])
-        for block in blocks:
-            if block is None:
-                continue
-            for element in block:
-                key = element.tag.upper()
-                value = (element.text or "").strip()
-                if key in _OMM_FIELD_UNITS and "units" in element.attrib:
-                    value = _OmmFieldWithUnits(value, element.attrib["units"])
-                fields[key] = value
+        for name in ("metadata", "meanElements", "tleParameters"):
+            for block in blocks.get(name, []):
+                for element in block:
+                    key = element.tag.upper()
+                    if key in _OMM_XML_FIELDS and key in fields:
+                        fields[key] = _DUPLICATE_OMM_XML_ELEMENT
+                        continue
+                    value = (element.text or "").strip()
+                    if key in _OMM_FIELD_UNITS and "units" in element.attrib:
+                        value = _OmmFieldWithUnits(value, element.attrib["units"])
+                    fields[key] = value
         records.append(fields)
     return records
 
@@ -444,6 +469,8 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     normalized = {}
     for key, value in fields.items():
         key = str(key).upper()
+        if value is _DUPLICATE_OMM_XML_ELEMENT:
+            raise ValueError(f"Duplicate OMM XML element: {key}.")
         if isinstance(value, _OmmFieldWithUnits):
             supported_units = _OMM_FIELD_UNITS[key]
             if value.units not in supported_units:
@@ -595,6 +622,10 @@ def satOmm2elem(omm_path: str) -> list:
     The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
     SGP4's internal identifier storage.
+
+    XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
+    using either prefixes or a default namespace. XML records containing duplicate
+    OMM fields or blocks are skipped with a warning before SGP4 is invoked.
 
     Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.
     Digits beyond microsecond precision are truncated consistently for ``ommEpoch``,

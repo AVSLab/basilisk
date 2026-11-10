@@ -22,6 +22,7 @@
 #   Creation Date: September 16, 2026
 #
 
+import copy
 import datetime as dt
 import json
 import xml.etree.ElementTree as ET
@@ -109,11 +110,159 @@ def _writeXml(path, fieldSets):
             + "<data>" + block("meanElements", meanKeys) + block("tleParameters", tleKeys) + "</data>"
             + "</segment>"
         )
-    path.write_text(f"<ndm><omm>{''.join(segments)}</omm></ndm>", encoding="utf-8")
+    path.write_text(f"<ndm><omm><body>{''.join(segments)}</body></omm></ndm>", encoding="utf-8")
+    return path
+
+
+def _set_xml_namespace(path, prefix, namespace="urn:ccsds:schema:ndmxml"):
+    """Qualify fixture elements without changing foreign tags or global prefix registrations."""
+    if prefix is None:
+        return path
+    tree = ET.parse(path)
+    if prefix:
+        for element in tree.iter():
+            if not element.tag.startswith("{"):
+                element.tag = f"{prefix}:{element.tag}"
+    tree.getroot().set(f"xmlns:{prefix}" if prefix else "xmlns", namespace)
+    tree.write(path, encoding="utf-8")
     return path
 
 
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
+
+
+@pytest.mark.parametrize("namespace_prefix", ["ndm", "orbit", ""])
+def test_omm_xml_namespace_preserves_fields_and_orbit(tmp_path, capsys, namespace_prefix):
+    """CCSDS namespaces preserve all 21 fields, output metadata, and osculating elements."""
+    reference_path = _writeXml(tmp_path / "reference.xml", [_OMM_FIELDS])
+    path = _set_xml_namespace(
+        _writeXml(tmp_path / "qualified.xml", [_OMM_FIELDS]), namespace_prefix
+    )
+
+    assert ommHandling._parseOmmXml(path.read_text(encoding="utf-8")) == [_OMM_FIELDS]
+    records = ommHandling.satOmm2elem(str(path))
+    reference = ommHandling.satOmm2elem(str(reference_path))[0]
+
+    assert len(records) == 1
+    for name in reference.__dataclass_fields__:
+        if name != "oe":
+            assert getattr(records[0], name) == getattr(reference, name)
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(records[0].oe, name) == getattr(reference.oe, name)
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("qualified_first", [False, True])
+@pytest.mark.parametrize("element_path", [
+    "metadata/OBJECT_NAME", "metadata/CENTER_NAME", "data/meanElements/INCLINATION",
+    "data/tleParameters/CLASSIFICATION_TYPE", "metadata", "data", "data/meanElements",
+    "data/tleParameters",
+])
+def test_omm_xml_namespace_collisions_preserve_record_numbers(
+    tmp_path, monkeypatch, capsys, qualified_first, element_path
+):
+    """Namespace aliases cannot hide ambiguous fields or blocks in either element order."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    incomplete = {name: value for name, value in broken.items() if name != "MEAN_MOTION"}
+    second = dict(_OMM_FIELDS, OBJECT_NAME="SECOND-SAT", NORAD_CAT_ID="25545")
+    path = _writeXml(tmp_path / "collisions.xml", [broken, _OMM_FIELDS, incomplete, second])
+    tree = ET.parse(path)
+    segment = tree.find(".//segment")
+    original = segment.find(element_path)
+    qualified = copy.deepcopy(original)
+    for element in qualified.iter():
+        element.tag = f"{{urn:ccsds:schema:ndmxml}}{element.tag}"
+    if element_path.endswith("/INCLINATION"):
+        original.set("units", "rad")
+        qualified.set("units", "deg")
+    parent_path, _, name = element_path.rpartition("/")
+    parent = segment.find(parent_path) if parent_path else segment
+    position = list(parent).index(original)
+    parent.insert(position if qualified_first else position + 1, qualified)
+    tree.write(path, encoding="utf-8")
+
+    expected_names = [_OMM_FIELDS["OBJECT_NAME"], second["OBJECT_NAME"]]
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_names = []
+
+    def initialize_valid_record(satellite, fields):
+        """Fail if an ambiguous XML record reaches SGP4."""
+        assert fields["OBJECT_NAME"] in expected_names
+        initialized_names.append(fields["OBJECT_NAME"])
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == expected_names
+    assert initialized_names == expected_names
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 2
+    assert f"skipped OMM record 1 in {path}" in warnings[0]
+    assert "Duplicate OMM XML element" in warnings[0]
+    assert name.upper() in warnings[0]
+    assert f"skipped OMM record 3 in {path}" in warnings[1]
+    assert "MEAN_MOTION" in warnings[1]
+
+
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+def test_omm_xml_repeated_comments_and_extensions_are_allowed(tmp_path, capsys, namespace_prefix):
+    """Repeated comments and foreign fields do not make an OMM record ambiguous."""
+    path = _writeXml(tmp_path / "comments.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    for block_name in ("metadata", "meanElements", "tleParameters"):
+        block = tree.find(f".//{block_name}")
+        for text in ("FIRST", "SECOND"):
+            ET.SubElement(block, "COMMENT").text = text
+            ET.SubElement(block, "{urn:example:foreign}INCLINATION", {"units": "rad"}).text = text
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+@pytest.mark.parametrize("tag", [
+    "segment", "metadata", "data", "meanElements", "tleParameters", "OBJECT_NAME", "MEAN_MOTION",
+])
+def test_omm_xml_foreign_namespace_cannot_override_records(tmp_path, capsys, namespace_prefix, tag):
+    """Foreign elements with matching local names cannot replace OMM blocks or values."""
+    path = _writeXml(tmp_path / "foreign-elements.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    original = tree.find(f".//{tag}")
+    foreign = copy.deepcopy(original)
+    for element in foreign.iter():
+        element.tag = f"{{urn:example:foreign}}{element.tag}"
+        if len(element) == 0:
+            element.text = "FOREIGN"
+    parent = tree.find(f".//{tag}/..")
+    # Structural collisions precede valid blocks; field collisions follow valid values.
+    parent.insert(0 if len(original) else len(parent), foreign)
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+
+    raw_records = ommHandling._parseOmmXml(path.read_text(encoding="utf-8"))
+    assert len(raw_records) == 1
+    assert {name: raw_records[0][name] for name in _OMM_FIELDS} == _OMM_FIELDS
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("namespace", ["urn:example:foreign", "urn:ccsds:schema:ndmxml:extension"])
+def test_omm_xml_foreign_namespace_has_no_records(tmp_path, namespace):
+    """The ndm prefix cannot make a foreign namespace into CCSDS OMM data."""
+    path = _set_xml_namespace(
+        _writeXml(tmp_path / "foreign.xml", [_OMM_FIELDS]), "ndm", namespace
+    )
+
+    assert ommHandling._parseOmmXml(path.read_text(encoding="utf-8")) == []
+    with pytest.raises(ValueError, match="found no OMM records"):
+        ommHandling.satOmm2elem(str(path))
 
 
 def _write_omm_with_units(path, encoding, field_sets, unit_sets):
@@ -134,9 +283,11 @@ def _write_omm_with_units(path, encoding, field_sets, unit_sets):
     return path
 
 
-@pytest.mark.parametrize("encoding", ["kvn", "xml"])
+@pytest.mark.parametrize("encoding,namespace_prefix", [
+    ("kvn", None), ("xml", None), ("xml", "ndm"), ("xml", ""),
+])
 @pytest.mark.parametrize("bstar_unit", ["1/ER", "1/[Earth radii]"])
-def test_omm_supported_units(tmp_path, capsys, encoding, bstar_unit):
+def test_omm_supported_units(tmp_path, capsys, encoding, namespace_prefix, bstar_unit):
     """CCSDS unit declarations preserve the orbit and retained mean elements."""
     units = {
         "MEAN_MOTION": "rev/day",
@@ -149,6 +300,7 @@ def test_omm_supported_units(tmp_path, capsys, encoding, bstar_unit):
         "MEAN_MOTION_DDOT": "rev/day**3",
     }
     path = _write_omm_with_units(tmp_path / f"units.{encoding}", encoding, [_OMM_FIELDS], [units])
+    _set_xml_namespace(path, namespace_prefix)
     reference_path = _WRITERS[encoding](tmp_path / f"reference.{encoding}", [_OMM_FIELDS])
 
     records = ommHandling.satOmm2elem(str(path))
@@ -160,6 +312,23 @@ def test_omm_supported_units(tmp_path, capsys, encoding, bstar_unit):
     for name in ("meanMotion", "nDot", "nDotDot", "bStar"):
         assert getattr(records[0], name) == getattr(reference, name)
     assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("namespace_prefix", ["ndm", ""])
+@pytest.mark.parametrize("field_name,value,units", [
+    ("INCLINATION", _OMM_FIELDS["INCLINATION"], "rad"),
+    ("CENTER_NAME", "MARS", None),
+    ("MEAN_MOTION", "nan", None),
+    ("MEAN_MOTION", "0", None),  # [rev/day]
+])
+def test_omm_xml_namespace_invalid_record_is_skipped(
+    tmp_path, monkeypatch, capsys, namespace_prefix, field_name, value, units
+):
+    """Qualified invalid values, metadata, and units are rejected before SGP4."""
+    _check_invalid_record(
+        tmp_path, monkeypatch, capsys, "xml", field_name, value,
+        units=units, namespace_prefix=namespace_prefix,
+    )
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "xml"])
@@ -650,13 +819,14 @@ def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     assert [d.satName for d in ommDataList] == ["ISS (ZARYA)"]
 
 
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
 @pytest.mark.parametrize("omitted_blocks,missing_field", [
     (("metadata",), "CENTER_NAME"),
     (("data",), "EPOCH"),
     (("metadata", "data"), "EPOCH"),
 ])
 def test_omm_xml_incomplete_segments_preserve_record_numbers(
-    tmp_path, monkeypatch, capsys, omitted_blocks, missing_field
+    tmp_path, monkeypatch, capsys, namespace_prefix, omitted_blocks, missing_field
 ):
     """Incomplete XML segments are reported without shifting later diagnostics."""
     broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
@@ -668,6 +838,7 @@ def test_omm_xml_incomplete_segments_preserve_record_numbers(
     for block in omitted_blocks:
         first_segment.remove(first_segment.find(block))
     tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
     initialize = ommHandling.sgp4omm.initialize
     initialized_names = []
     expected_names = [_OMM_FIELDS["OBJECT_NAME"], second["OBJECT_NAME"]]
@@ -691,7 +862,8 @@ def test_omm_xml_incomplete_segments_preserve_record_numbers(
     assert "MEAN_MOTION" in warnings[1]
 
 
-def test_omm_xml_all_incomplete_segments_are_reported(tmp_path, capsys):
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+def test_omm_xml_all_incomplete_segments_are_reported(tmp_path, capsys, namespace_prefix):
     """A file of incomplete segments returns no records and warns for each segment."""
     path = _writeXml(tmp_path / "incomplete.xml", [_OMM_FIELDS] * 3)
     tree = ET.parse(path)
@@ -700,6 +872,7 @@ def test_omm_xml_all_incomplete_segments_are_reported(tmp_path, capsys):
         for block in blocks:
             segment.remove(segment.find(block))
     tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
 
     assert ommHandling.satOmm2elem(str(path)) == []
 
@@ -710,9 +883,11 @@ def test_omm_xml_all_incomplete_segments_are_reported(tmp_path, capsys):
         assert "required" in warning
 
 
-def test_omm_xml_without_segments_raises(tmp_path):
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+def test_omm_xml_without_segments_raises(tmp_path, namespace_prefix):
     """An XML document containing no segments remains a file-level failure."""
     path = _writeXml(tmp_path / "empty.xml", [])
+    _set_xml_namespace(path, namespace_prefix)
 
     with pytest.raises(ValueError, match="found no OMM records"):
         ommHandling.satOmm2elem(str(path))
@@ -843,7 +1018,9 @@ def test_omm_out_of_range_record_is_skipped(
     _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
 
 
-def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value, units=None):
+def _check_invalid_record(
+    tmp_path, monkeypatch, capsys, encoding, field_name, value, units=None, namespace_prefix=None
+):
     """Check record recovery and verify that SGP4 only receives the valid record."""
     broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
     broken[field_name] = value
@@ -852,6 +1029,7 @@ def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, v
         _WRITERS[encoding](path, [broken, _OMM_FIELDS])
     else:
         _write_omm_with_units(path, encoding, [broken, _OMM_FIELDS], [{field_name: units}, {}])
+    _set_xml_namespace(path, namespace_prefix)
     initialize = ommHandling.sgp4omm.initialize
     initialized_names = []
 
