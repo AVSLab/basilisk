@@ -382,6 +382,7 @@ _PHYSICAL_METADATA_FIELDS = ("CENTER_NAME", "REF_FRAME", "TIME_SYSTEM", "MEAN_EL
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("mean_element_theory", ["SGP4", "SGP/SGP4"])
 @pytest.mark.parametrize("field_name,value", [
     ("CENTER_NAME", "MARS"),
     ("REF_FRAME", "GCRF"),
@@ -391,6 +392,9 @@ _PHYSICAL_METADATA_FIELDS = ("CENTER_NAME", "REF_FRAME", "TIME_SYSTEM", "MEAN_EL
     ("MEAN_ELEMENT_THEORY", "DSST"),
     ("MEAN_ELEMENT_THEORY", "SGP4-XP"),
     ("MEAN_ELEMENT_THEORY", "SGP"),
+    ("MEAN_ELEMENT_THEORY", "SGP/SGP4-XP"),
+    ("MEAN_ELEMENT_THEORY", "SGP4/SGP"),
+    ("MEAN_ELEMENT_THEORY", "SGP / SGP4"),
     ("EPHEMERIS_TYPE", "1"),
     ("EPHEMERIS_TYPE", "3"),
     ("EPHEMERIS_TYPE", "4"),
@@ -399,10 +403,13 @@ _PHYSICAL_METADATA_FIELDS = ("CENTER_NAME", "REF_FRAME", "TIME_SYSTEM", "MEAN_EL
     ("EPHEMERIS_TYPE", "99"),
 ])
 def test_omm_unsupported_physical_metadata_is_skipped(
-    tmp_path, monkeypatch, capsys, encoding, field_name, value
+    tmp_path, monkeypatch, capsys, encoding, mean_element_theory, field_name, value
 ):
-    """Unsupported physical declarations never reach SGP4; valid records still return."""
-    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+    """Neither accepted theory label relaxes validation; subsequent valid records survive."""
+    _check_invalid_record(
+        tmp_path, monkeypatch, capsys, encoding, field_name, value,
+        mean_element_theory=mean_element_theory,
+    )
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
@@ -462,18 +469,25 @@ def test_omm_missing_required_physical_metadata_is_skipped(
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("ephemeris_type", [None, "0", "2"])
-def test_omm_supported_physical_metadata(tmp_path, capsys, encoding, ephemeris_type):
-    """Supported metadata accepts case/whitespace variations and compatible ephemeris types."""
+@pytest.mark.parametrize("mean_element_theory", ["SGP4", " sgp4 ", "SGP/SGP4", " sgp/sgp4 "])
+def test_omm_supported_physical_metadata(
+    tmp_path, capsys, encoding, ephemeris_type, mean_element_theory
+):
+    """CelesTrak theory aliases and case/whitespace variations preserve SGP4 orbital results."""
     fields = dict(_OMM_FIELDS)
     for name in _PHYSICAL_METADATA_FIELDS:
         fields[name] = f" {_OMM_FIELDS[name].lower()} "
+    fields["MEAN_ELEMENT_THEORY"] = mean_element_theory
     if ephemeris_type is None:
         del fields["EPHEMERIS_TYPE"]
     else:
         fields["EPHEMERIS_TYPE"] = ephemeris_type
     path = _WRITERS[encoding](tmp_path / f"supported-metadata.{encoding}", [fields])
+    reference_fields = dict(_OMM_FIELDS, EPHEMERIS_TYPE=ephemeris_type or "0")
+    reference_path = _WRITERS[encoding](tmp_path / f"reference.{encoding}", [reference_fields])
 
     records = ommHandling.satOmm2elem(str(path))
+    reference = ommHandling.satOmm2elem(str(reference_path))[0]
 
     assert len(records) == 1
     record = records[0]
@@ -481,7 +495,9 @@ def test_omm_supported_physical_metadata(tmp_path, capsys, encoding, ephemeris_t
         "EARTH", "TEME", "UTC", "SGP4",
     )
     assert record.propagator == (ephemeris_type or "0")
-    assert all(np.isfinite(getattr(record.oe, name)) for name in ("a", "e", "i", "Omega", "omega", "f"))
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert np.isfinite(getattr(record.oe, name))
+        assert getattr(record.oe, name) == getattr(reference.oe, name)
     assert capsys.readouterr().out == ""
 
 
@@ -1019,16 +1035,18 @@ def test_omm_out_of_range_record_is_skipped(
 
 
 def _check_invalid_record(
-    tmp_path, monkeypatch, capsys, encoding, field_name, value, units=None, namespace_prefix=None
+    tmp_path, monkeypatch, capsys, encoding, field_name, value, units=None, namespace_prefix=None,
+    mean_element_theory="SGP4",
 ):
     """Check record recovery and verify that SGP4 only receives the valid record."""
-    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    valid = dict(_OMM_FIELDS, MEAN_ELEMENT_THEORY=mean_element_theory)
+    broken = dict(valid, OBJECT_NAME="BROKEN-SAT")
     broken[field_name] = value
     path = tmp_path / f"invalid-record.{encoding}"
     if units is None:
-        _WRITERS[encoding](path, [broken, _OMM_FIELDS])
+        _WRITERS[encoding](path, [broken, valid])
     else:
-        _write_omm_with_units(path, encoding, [broken, _OMM_FIELDS], [{field_name: units}, {}])
+        _write_omm_with_units(path, encoding, [broken, valid], [{field_name: units}, {}])
     _set_xml_namespace(path, namespace_prefix)
     initialize = ommHandling.sgp4omm.initialize
     initialized_names = []

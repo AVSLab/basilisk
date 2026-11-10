@@ -429,7 +429,8 @@ def _normalize_omm_physical_metadata(fields: dict, omm_format: str) -> None:
     CelesTrak JSON and CSV may omit the four fixed metadata fields. XML and KVN
     must declare them. Explicitly empty or incompatible declarations are rejected
     in every encoding. Ephemeris type 0 is accepted for CelesTrak compatibility;
-    type 2 explicitly identifies SGP4.
+    type 2 explicitly identifies SGP4. CelesTrak's ``SGP/SGP4`` mean-element theory
+    label is normalized to ``SGP4`` in every encoding.
 
     :param fields: normalized field strings with numeric fields already validated
     :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)
@@ -441,6 +442,8 @@ def _normalize_omm_physical_metadata(fields: dict, omm_format: str) -> None:
                 raise ValueError(f"OMM {name} is required for {omm_format.upper()} records.")
             fields[name] = expected
         value = fields[name].strip().upper()
+        if name == "MEAN_ELEMENT_THEORY" and value == "SGP/SGP4":
+            value = "SGP4"
         if value != expected:
             raise ValueError(f"Unsupported OMM {name}: {fields[name]!r}; expected {expected}.")
         fields[name] = value
@@ -637,6 +640,10 @@ def satOmm2elem(omm_path: str) -> list:
     CelesTrak's EARTH/TEME/UTC/SGP4 defaults then apply. XML and KVN require these
     fields explicitly. Empty or incompatible declarations cause the record to
     be skipped with a warning before SGP4 is invoked.
+
+    CelesTrak's ``MEAN_ELEMENT_THEORY = SGP/SGP4`` is accepted as an alias for
+    ``SGP4`` in every encoding, after trimming whitespace and normalizing case.
+    ``OmmData.meanElementTheory`` stores the canonical value ``SGP4``.
 
     Numeric XML/KVN unit declarations must match the CCSDS units used by SGP4:
     ``deg``, ``rev/day``, ``rev/day**2``, ``rev/day**3``, and inverse Earth radii
