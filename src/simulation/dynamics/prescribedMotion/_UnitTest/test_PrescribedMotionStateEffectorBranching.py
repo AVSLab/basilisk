@@ -646,7 +646,7 @@ def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
     task_name = "unitTask"
     process_name = "testProcess"
     sim = SimulationBaseClass.SimBaseClass()
-    process_rate = macros.sec2nano(time_step)
+    process_rate = macros.sec2nano(time_step)  # [ns]
     process = sim.CreateNewProcess(process_name)
     process.addTask(sim.CreateNewTask(task_name, process_rate))
 
@@ -667,13 +667,13 @@ def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
     one_dof_rotation_profiler.setRotHat_M(prescribed_rot_axis_M)
     one_dof_rotation_profiler.setThetaDDotMax(prescribed_ang_accel_max)
     one_dof_rotation_profiler.setThetaInit(prescribed_theta_init)
-    one_dof_rotation_profiler.setCoastOptionBangDuration(1.0)
-    one_dof_rotation_profiler.setSmoothingDuration(1.0)
+    one_dof_rotation_profiler.setCoastOptionBangDuration(1.0)  # [s]
+    one_dof_rotation_profiler.setSmoothingDuration(1.0)  # [s]
     sim.AddModelToTask(task_name, one_dof_rotation_profiler)
 
     prescribed_rotation_msg_data = messaging.HingedRigidBodyMsgPayload()
     prescribed_rotation_msg_data.theta = prescribed_theta_ref
-    prescribed_rotation_msg_data.thetaDot = 0.0
+    prescribed_rotation_msg_data.thetaDot = 0.0  # [rad/s]
     prescribed_rotation_msg = messaging.HingedRigidBodyMsg().write(prescribed_rotation_msg_data)
     one_dof_rotation_profiler.spinningBodyInMsg.subscribeTo(prescribed_rotation_msg)
     prescribed_platform.prescribedRotationInMsg.subscribeTo(one_dof_rotation_profiler.prescribedRotationOutMsg)
@@ -684,13 +684,13 @@ def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
     one_dof_translation_profiler.setTransHat_M(prescribed_trans_axis_M)
     one_dof_translation_profiler.setTransAccelMax(prescribed_trans_accel_max)
     one_dof_translation_profiler.setTransPosInit(prescribed_pos_init)
-    one_dof_translation_profiler.setCoastOptionBangDuration(1.0)
-    one_dof_translation_profiler.setSmoothingDuration(1.0)
+    one_dof_translation_profiler.setCoastOptionBangDuration(1.0)  # [s]
+    one_dof_translation_profiler.setSmoothingDuration(1.0)  # [s]
     sim.AddModelToTask(task_name, one_dof_translation_profiler)
 
     prescribed_translation_msg_data = messaging.LinearTranslationRigidBodyMsgPayload()
     prescribed_translation_msg_data.rho = prescribed_pos_ref
-    prescribed_translation_msg_data.rhoDot = 0.0
+    prescribed_translation_msg_data.rhoDot = 0.0  # [m/s]
     prescribed_translation_msg = messaging.LinearTranslationRigidBodyMsg().write(prescribed_translation_msg_data)
     one_dof_translation_profiler.linearTranslationRigidBodyInMsg.subscribeTo(prescribed_translation_msg)
     prescribed_platform.prescribedTranslationInMsg.subscribeTo(one_dof_translation_profiler.prescribedTranslationOutMsg)
@@ -713,7 +713,7 @@ def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
     # Add Earth gravity to the simulation
     earth_gravity = gravityEffector.GravBodyData()
     earth_gravity.planetName = "earth_planet_data"
-    earth_gravity.mu = 0.3986004415E+15  # meters
+    earth_gravity.mu = 0.3986004415E+15  # [m^3/s^2]
     earth_gravity.isCentralBody = True
     sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_gravity])
 
