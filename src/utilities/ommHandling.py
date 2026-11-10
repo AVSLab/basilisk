@@ -590,10 +590,14 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
 
     # Validate the external ID before replacing it in the private SGP4 input.
     catalog_id = normalized["NORAD_CAT_ID"].strip()
-    if not catalog_id.isascii() or not catalog_id.isdecimal():
+    catalog_digits = catalog_id.removeprefix("+")
+    if not catalog_digits.isascii() or not catalog_digits.isdecimal():
         raise ValueError(
             f"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: {catalog_id!r}"
         )
+    # Check the value's range without converting arbitrarily long digit strings to int.
+    if len(catalog_digits.lstrip("0")) > 9:
+        raise ValueError(f"OMM NORAD_CAT_ID must be between 0 and 999999999: {catalog_id!r}")
 
     _validate_omm_numeric_fields(normalized)
     _normalize_omm_physical_metadata(normalized, omm_format)
@@ -715,7 +719,8 @@ def satOmm2elem(omm_path: str) -> list:
 
     The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
-    SGP4's internal identifier storage.
+    SGP4's internal identifier storage. Values must be in ``[0, 999999999]``;
+    optional leading ``+`` signs and leading zeros are accepted and preserved.
 
     XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
     using either prefixes or a default namespace. Records are read from
