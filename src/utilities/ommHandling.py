@@ -161,6 +161,15 @@ class OmmData:
 
     Mirrors :py:class:`Basilisk.utilities.tleHandling.TleData`, with the OMM-only metadata
     added and the TLE-only line-format fields dropped.
+
+    ``nDot`` and ``nDotDot`` retain the supplied ``MEAN_MOTION_DOT`` and
+    ``MEAN_MOTION_DDOT`` values without rescaling, in ``rev/day**2`` and ``rev/day**3``.
+    CelesTrak GP data uses the TLE coefficient convention: one-half of the first
+    physical derivative and one-sixth of the second physical derivative.
+    Other producers' conventions must be interpreted using their documentation.
+    These coefficients are passed unchanged to the SGP4 initializer, which converts
+    their units; SGP4 itself does not use them for propagation. See
+    `CelesTrak's TLE field explanation <https://celestrak.org/columns/v04n03/>`__.
     """
 
     # Required (orbit elements and the time at which they are valid)
@@ -176,8 +185,8 @@ class OmmData:
     propagator: str = field(default="0")  # EPHEMERIS_TYPE: 0 (CelesTrak default) or 2 (SGP4)
     elemSetNo: int = field(default=999)  # element set number [-]
     meanMotion: float = field(default=0.0)  # mean motion at epoch [rev/day]
-    nDot: float = field(default=0.0)  # first derivative of mean motion [rev/day^2]
-    nDotDot: float = field(default=0.0)  # second derivative of mean motion [rev/day^3]
+    nDot: float = field(default=0.0)  # supplied MEAN_MOTION_DOT [rev/day^2]; see class convention
+    nDotDot: float = field(default=0.0)  # supplied MEAN_MOTION_DDOT [rev/day^3]; see class convention
     bStar: float = field(default=0.0)  # B* drag term [1/Earth radii]
     centerName: str = field(default="EARTH")  # CENTER_NAME
     refFrame: str = field(default="TEME")  # REF_FRAME
@@ -723,6 +732,8 @@ def satOmm2elem(omm_path: str) -> list:
     Missing, null or blank international designators yield ``objectID=""``.
     Supplied designators, including the literal ``UNKNOWN``, are preserved after
     trimming whitespace; backend identifier accommodations do not change this metadata.
+    Mean-motion derivative fields retain the supplied coefficients without rescaling;
+    see :py:class:`OmmData` for CelesTrak's TLE coefficient convention.
 
     XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
     using either prefixes or a default namespace. Records are read from
