@@ -105,8 +105,22 @@ _OMM_XML_BLOCK_FIELDS = {
     )),
 }
 
-#: Recognized structural tags, used to reject blocks in the wrong location.
-_OMM_XML_BLOCKS = frozenset(("ndm", "omm", "body", "segment", "data", *_OMM_XML_BLOCK_FIELDS))
+#: Recognized containers to validate recursively; unrelated extension subtrees are ignored.
+_OMM_XML_BLOCK_CHILDREN = {
+    "header": frozenset(),
+    "body": frozenset(("segment",)),
+    "data": frozenset((
+        "meanElements", "tleParameters", "spacecraftParameters", "covarianceMatrix",
+        "userDefinedParameters",
+    )),
+    **_OMM_XML_BLOCK_FIELDS,
+    "spacecraftParameters": frozenset(),
+    "covarianceMatrix": frozenset(),
+    "userDefinedParameters": frozenset(),
+}
+
+#: Segments are checked separately so a malformed segment does not reject its siblings.
+_OMM_XML_BLOCKS = frozenset(("ndm", "omm", "segment", *_OMM_XML_BLOCK_CHILDREN))
 
 #: Fields consumed by this reader; comments and unknown extension fields may repeat.
 _OMM_FIELDS = frozenset().union(*_OMM_XML_BLOCK_FIELDS.values())
@@ -307,7 +321,10 @@ def _parseOmmJson(text: str) -> list:
 
 
 def _validate_omm_xml_children(block, allowed) -> None:
-    """Check consumed fields and recognized blocks without interpreting extensions.
+    """Check recognized containers recursively without interpreting extensions.
+
+    Segments are validated separately to retain per-record error handling. Standard
+    containers whose fields are not consumed still reject misplaced consumed fields.
 
     :param block: XML element whose direct children are being validated
     :param allowed: field or block names permitted at this location
@@ -320,6 +337,8 @@ def _validate_omm_xml_children(block, allowed) -> None:
                 raise ValueError(f"Misplaced OMM XML element {name} in {block.tag}.")
             if name in _OMM_FIELDS and len(child):
                 raise ValueError(f"OMM XML field {name} must contain text without child elements.")
+            if name in _OMM_XML_BLOCK_CHILDREN:
+                _validate_omm_xml_children(child, _OMM_XML_BLOCK_CHILDREN[name])
 
 
 def _parse_omm_xml_segment(segment) -> dict:
@@ -344,12 +363,9 @@ def _parse_omm_xml_segment(segment) -> dict:
         return duplicates
 
     _validate_omm_xml_children(segment, {"metadata", "data"})
-    for data in blocks["data"]:
-        _validate_omm_xml_children(data, {"meanElements", "tleParameters"})
     fields = {}
-    for name, allowed in _OMM_XML_BLOCK_FIELDS.items():
+    for name in _OMM_XML_BLOCK_FIELDS:
         for block in blocks.get(name, []):
-            _validate_omm_xml_children(block, allowed)
             for element in block:
                 key = element.tag.upper()
                 if key in _OMM_FIELDS and key in fields:
@@ -379,13 +395,23 @@ def _parseOmmXml(text: str) -> list:
     # Normalize only CCSDS tags so foreign namespaces cannot override OMM fields.
     for element in root.iter():
         element.tag = element.tag.removeprefix("{urn:ccsds:schema:ndmxml}")
+    if root.tag == "ndm":
+        _validate_omm_xml_children(root, {"omm"})
     messages = [root] if root.tag == "omm" else root.findall("omm") if root.tag == "ndm" else []
     records = []
     for message in messages:
+        message_error = None
+        try:
+            if len(message.findall("body")) > 1:
+                raise ValueError("Duplicate OMM XML element: BODY.")
+            _validate_omm_xml_children(message, {"header", "body"})
+        except ValueError as error:
+            message_error = _OmmInvalidRecord(str(error))
         for segment in message.findall("body/segment"):
+            if message_error is not None:
+                records.append(message_error)
+                continue
             try:
-                if len(message.findall("body")) != 1:
-                    raise ValueError("Duplicate OMM XML element: BODY.")
                 records.append(_parse_omm_xml_segment(segment))
             except ValueError as error:
                 records.append(_OmmInvalidRecord(str(error)))
@@ -740,6 +766,10 @@ def satOmm2elem(omm_path: str) -> list:
     ``omm/body/segment`` in a standalone OMM or a direct OMM child of an NDM container.
     Segments inside extensions or other message types are ignored. Consumed fields
     must appear in their owning metadata, mean-elements or TLE-parameters blocks.
+    This placement check includes headers, bodies and recognized optional containers.
+    Errors outside a segment invalidate all segments in that OMM message; errors
+    within a segment invalidate only that record. Other OMM messages remain available.
+    Misplaced fields or blocks directly under NDM are file-level errors.
     XML records containing misplaced or duplicate OMM fields or blocks are skipped
     with a warning before SGP4 is invoked.
     KVN and JSON records with duplicate consumed fields are also skipped, including
