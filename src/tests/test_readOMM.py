@@ -541,6 +541,105 @@ def test_omm_xml_malformed_structure(tmp_path, capsys, case):
     assert "XML" in warnings[0]
 
 
+@pytest.mark.parametrize("destination,namespace_prefix", [
+    ("omm", None), ("header", None), ("body", None),
+    ("spacecraftParameters", None), ("covarianceMatrix", None), ("userDefinedParameters", None),
+    ("body", "ndm"), ("body", ""), ("spacecraftParameters", "ndm"), ("spacecraftParameters", ""),
+])
+def test_omm_xml_outer_field_placement(tmp_path, monkeypatch, capsys, destination, namespace_prefix):
+    """A misplaced drag field cannot disappear into defaults or hide later records."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    peer = dict(_OMM_FIELDS, OBJECT_NAME="PEER-SAT")
+    valid = dict(_OMM_FIELDS, OBJECT_NAME="VALID-SAT")
+    incomplete = {key: value for key, value in broken.items() if key != "MEAN_MOTION"}
+    path = _writeXml(tmp_path / "outer-field.xml", [broken, peer, valid, incomplete])
+    tree = ET.parse(path)
+    message = tree.find("omm")
+    body = message.find("body")
+    other_body = ET.SubElement(ET.SubElement(tree.getroot(), "omm"), "body")
+    for segment in list(body)[2:]:
+        body.remove(segment)
+        other_body.append(segment)
+    segment = body.find("segment")
+    parent = segment.find("data/tleParameters")
+    field = parent.find("BSTAR")
+    parent.remove(field)
+    if destination == "omm":
+        target = message
+    elif destination == "header":
+        target = ET.SubElement(message, "header")
+    elif destination == "body":
+        target = body
+    else:
+        target = ET.SubElement(segment.find("data"), destination)
+    target.append(field)
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+    shared_error = destination in ("omm", "header", "body")
+    expected_names = ["VALID-SAT"] if shared_error else ["PEER-SAT", "VALID-SAT"]
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, fields):
+        """Ambiguous messages and malformed segments must not reach SGP4."""
+        assert fields["OBJECT_NAME"] in expected_names
+        initialized.append(fields["OBJECT_NAME"])
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert [record.satName for record in records] == expected_names
+    assert initialized == expected_names
+    assert all(record.bStar == float(_OMM_FIELDS["BSTAR"]) for record in records)
+    warnings = capsys.readouterr().out.splitlines()
+    indices = [1, 2, 4] if shared_error else [1, 4]
+    assert len(warnings) == len(indices)
+    for index, warning in zip(indices, warnings):
+        assert f"skipped OMM record {index}" in warning
+        assert ("MEAN_MOTION" if index == 4 else f"Misplaced OMM XML element BSTAR in {destination}") in warning
+
+
+def test_omm_xml_ndm_field_placement(tmp_path, monkeypatch):
+    """A field outside all OMM messages is a document error, not an optional default."""
+    path = _writeXml(tmp_path / "ndm-field.xml", [_OMM_FIELDS, _OMM_FIELDS])
+    tree = ET.parse(path)
+    parameters = tree.find("omm/body/segment/data/tleParameters")
+    field = parameters.find("BSTAR")
+    parameters.remove(field)
+    tree.getroot().append(field)
+    tree.write(path, encoding="utf-8")
+
+    def unexpected_initialize(*args):
+        pytest.fail("An invalid NDM document must not reach SGP4")
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", unexpected_initialize)
+    with pytest.raises(ValueError, match="Misplaced OMM XML element BSTAR in ndm"):
+        ommHandling.satOmm2elem(path)
+
+
+def test_omm_xml_optional_containers_and_foreign_extensions(tmp_path, capsys):
+    """Standard optional data and foreign subtrees do not supply consumed OMM fields."""
+    path = _writeXml(tmp_path / "optional-containers.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    message = tree.find("omm")
+    header = ET.SubElement(message, "header")
+    ET.SubElement(header, "ORIGINATOR").text = "TEST"
+    data = message.find("body/segment/data")
+    spacecraft = ET.SubElement(data, "spacecraftParameters")
+    ET.SubElement(spacecraft, "MASS", units="kg").text = "100"  # [kg]
+    covariance = ET.SubElement(data, "covarianceMatrix")
+    ET.SubElement(covariance, "COV_REF_FRAME").text = "TEME"
+    user_defined = ET.SubElement(data, "userDefinedParameters")
+    ET.SubElement(user_defined, "USER_DEFINED", parameter="BSTAR").text = "unrelated"
+    for parent, name in ((message, "header"), (data, "spacecraftParameters")):
+        foreign = ET.SubElement(parent, f"{{urn:foreign}}{name}")
+        ET.SubElement(foreign, "BSTAR", units="wrong").text = "unrelated"
+    tree.write(path, encoding="utf-8")
+    record = ommHandling.satOmm2elem(path)[0]
+    assert record.bStar == float(_OMM_FIELDS["BSTAR"])
+    assert capsys.readouterr().out == ""
+
+
 def _write_omm_with_units(path, encoding, field_sets, unit_sets):
     """Add KVN annotations or XML attributes to selected numeric fields."""
     if encoding == "kvn":
