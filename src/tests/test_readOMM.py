@@ -1065,6 +1065,63 @@ def test_omm_empty_catalog_numbers(tmp_path, capsys, encoding):
     assert capsys.readouterr().out == ""
 
 
+@pytest.mark.parametrize("catalog_id,expected_id", [(0, "0"), (False, None), (0.0, None)],
+                         ids=["integer-zero", "boolean-false", "float-zero"])
+def test_omm_json_zero_catalog_number_types(tmp_path, monkeypatch, capsys, catalog_id, expected_id):
+    """JSON integer zero is a catalog ID; booleans and floats must fail before SGP4."""
+    fields = dict(_OMM_FIELDS, OBJECT_NAME="ZERO-ID-SAT", NORAD_CAT_ID=catalog_id)
+    path = _writeJson(tmp_path / "zero-catalog.json", [fields, _OMM_FIELDS])
+    expected = [(_OMM_FIELDS["OBJECT_NAME"], _OMM_FIELDS["NORAD_CAT_ID"])]
+    if expected_id is not None:
+        expected.insert(0, (fields["OBJECT_NAME"], expected_id))
+    expected_names = [name for name, _ in expected]
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_names = []
+
+    def initialize_valid_record(satellite, backend_fields):
+        """Reject any attempt to initialize a record with an invalid catalog ID."""
+        assert backend_fields["OBJECT_NAME"] in expected_names
+        initialized_names.append(backend_fields["OBJECT_NAME"])
+        return initialize(satellite, backend_fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert [(record.satName, record.noradID) for record in records] == expected
+    assert initialized_names == expected_names
+    warnings = capsys.readouterr().out.splitlines()
+    if expected_id is None:
+        assert len(warnings) == 1
+        assert "skipped OMM record 1" in warnings[0]
+        assert "NORAD_CAT_ID" in warnings[0]
+    else:
+        assert warnings == []
+
+
+def test_omm_missing_catalog_number_with_invalid_orbit(tmp_path, monkeypatch, capsys):
+    """Missing IDs do not bypass orbital validation or prevent later records loading."""
+    valid = {key: value for key, value in _OMM_FIELDS.items() if key != "NORAD_CAT_ID"}
+    broken = dict(valid, OBJECT_NAME="BROKEN-SAT")
+    broken["ECCENTRICITY"] = "1.0"  # [-] outside the supported elliptic-orbit range
+    path = _writeKvn(tmp_path / "unidentified-invalid-orbit.kvn", [broken, valid])
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_names = []
+
+    def initialize_valid_record(satellite, backend_fields):
+        """The invalid unidentified record must be rejected before reaching SGP4."""
+        assert backend_fields["OBJECT_NAME"] == valid["OBJECT_NAME"]
+        initialized_names.append(backend_fields["OBJECT_NAME"])
+        return initialize(satellite, backend_fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert [(record.satName, record.noradID) for record in records] == [(valid["OBJECT_NAME"], "")]
+    assert initialized_names == [valid["OBJECT_NAME"]]
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 1
+    assert "skipped OMM record 1" in warnings[0]
+    assert "ECCENTRICITY" in warnings[0]
+
+
 def test_omm_data_without_catalog_number():
     """Direct construction also represents an unavailable catalog number as empty."""
     record = ommHandling.OmmData(oe=ommHandling.om.ClassicElements(), ommEpoch=dt.datetime(2026, 9, 10))
