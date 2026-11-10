@@ -85,9 +85,10 @@ def _writeJson(path, fieldSets):
 
 def _writeCsv(path, fieldSets):
     fieldSets = list(fieldSets)
-    header = ",".join(fieldSets[0].keys())
-    rows = [",".join(str(v) for v in fields.values()) for fields in fieldSets]
-    path.write_text("\n".join([header] + rows) + "\n", encoding="utf-8")
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(fieldSets[0]))
+        writer.writeheader()
+        writer.writerows(fieldSets)
     return path
 
 
@@ -211,6 +212,74 @@ def test_omm_repeated_unknown_fields(tmp_path, capsys, encoding):
     path = _WRITERS[encoding](tmp_path / f"extensions.{encoding}", [fields])
     assert len(ommHandling.satOmm2elem(path)) == 1
     assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("cell_delta", [-3, -1, 1, 3])
+def test_omm_csv_row_width(tmp_path, monkeypatch, capsys, cell_delta):
+    """Damaged rows cannot turn missing cells into defaults or lose extra cells."""
+    fields = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    row = list(fields.values())
+    row = row[:cell_delta] if cell_delta < 0 else row + ["extra"] * cell_delta
+    incomplete = dict(_OMM_FIELDS, MEAN_MOTION="")
+    stream = io.StringIO()
+    writer = csv.writer(stream)
+    writer.writerow(list(fields))
+    writer.writerows([row, list(_OMM_FIELDS.values()), list(incomplete.values()), list(_OMM_FIELDS.values())])
+    path = tmp_path / "row-width.csv"
+    path.write_text(stream.getvalue(), encoding="utf-8")
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, fields):
+        """Only complete records may reach the backend."""
+        assert fields["OBJECT_NAME"] == _OMM_FIELDS["OBJECT_NAME"]
+        assert fields["MEAN_MOTION"] == _OMM_FIELDS["MEAN_MOTION"]
+        initialized.append(fields)
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == len(initialized) == 2
+    assert all(record.bStar == float(_OMM_FIELDS["BSTAR"]) for record in records)
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 2
+    assert "skipped OMM record 1" in warnings[0]
+    assert f"{len(row)} cells; expected {len(fields)}" in warnings[0]
+    assert "skipped OMM record 3" in warnings[1]
+    assert "MEAN_MOTION" in warnings[1]
+
+
+@pytest.mark.parametrize("prefix", ["", "\n", "\r\n\r\n", " \t\r\n\n"])
+def test_omm_csv_blank_lines_and_quoted_fields(tmp_path, capsys, prefix):
+    """Leading blank lines do not affect quoted Unicode and multiline field values."""
+    name = 'Satellite, "quoted"\nsecond line — café'
+    fields = dict(_OMM_FIELDS, OBJECT_NAME=name)
+    path = _writeCsv(tmp_path / "quoted.csv", [fields, _OMM_FIELDS])
+    path.write_text(prefix + path.read_text(encoding="utf-8"), encoding="utf-8")
+    records = ommHandling.satOmm2elem(path)
+    assert [record.satName for record in records] == [name, _OMM_FIELDS["OBJECT_NAME"]]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("omit_column", [False, True])
+def test_omm_csv_optional_empty_or_absent_column(tmp_path, capsys, omit_column):
+    """An absent optional column or explicit empty cell still receives its default."""
+    fields = dict(_OMM_FIELDS, BSTAR="")
+    if omit_column:
+        del fields["BSTAR"]
+    path = _writeCsv(tmp_path / "optional.csv", [fields])
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == 1
+    assert records[0].bStar == 0.0  # [1/Earth radii]
+    assert capsys.readouterr().out == ""
+
+
+def test_omm_csv_unterminated_quote(tmp_path):
+    """Unrecoverable CSV quoting errors remain file-level failures."""
+    path = _writeCsv(tmp_path / "truncated.csv", [_OMM_FIELDS])
+    path.write_text(path.read_text() + '"unterminated\n', encoding="utf-8")
+    with pytest.raises(csv.Error):
+        ommHandling.satOmm2elem(path)
 
 
 @pytest.mark.parametrize("namespace_prefix", ["ndm", "orbit", ""])
