@@ -610,7 +610,8 @@ def test_prescribed_branching_linear_translation_one_dof(show_plots):
     unit_test_check_verification(orb_ang_mom_n, orb_energy, rot_ang_mom_n)
 
 
-def test_prescribed_branching_linear_spring_mass_damper(show_plots):
+@pytest.mark.parametrize("hub_omega_name", ["hubOmega", "customHubOmega"])
+def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_name):
     r"""
     **Verification Test Description**
 
@@ -619,6 +620,10 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots):
     :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation` modules are configured so that
     the prescribed body simultaneously translates and rotates relative to the spacecraft hub. The particle
     is set up to have free (undamped) spring motion along its direction of translation.
+
+    **Test Parameter Discussion**
+
+    ``hub_omega_name`` exercises both the default and a custom hub angular-velocity state name.
 
     **Description of Variables Being Tested**
 
@@ -635,6 +640,7 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots):
 
     # Create the spacecraft
     sc_object = create_spacecraft_hub()
+    sc_object.hub.nameOfHubOmega = hub_omega_name
     sim.AddModelToTask(task_name, sc_object)
 
     # Create prescribed motion object
@@ -906,4 +912,4 @@ if __name__ == "__main__":
     test_prescribed_branching_spinning_body_one_dof(True)
     test_prescribed_branching_spinning_body_two_dof(True)
     test_prescribed_branching_linear_translation_one_dof(True)
-    test_prescribed_branching_linear_spring_mass_damper(True)
+    test_prescribed_branching_linear_spring_mass_damper(True, "customHubOmega")

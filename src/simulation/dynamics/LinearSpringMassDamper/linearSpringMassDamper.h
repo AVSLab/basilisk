@@ -63,6 +63,7 @@ class LinearSpringMassDamper final
     Eigen::Matrix3d rPrimeTilde_PcB_B;   //!< [m/s] Tilde matrix of rPrime_PcB_B
     Eigen::Vector3d aRho;                //!< Term needed for back-sub method
     Eigen::Vector3d bRho;                //!< Term needed for back-sub method
+    Eigen::Vector3d omega_PN_P{};        //!< [rad/s] Parent inertial angular velocity in parent components
     StateData* rhoState;                 //!< state data for spring mass damper displacement from equilibrium
     Eigen::MatrixXd* c_B = nullptr;      //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd* cPrime_B = nullptr; //!< [m/s] Body time derivative of vector c_B in B frame components
@@ -96,9 +97,6 @@ class LinearSpringMassDamper final
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
         override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
-
-    // Properties required for prescribed motion branching/attachment
-    StateData* hubOmega; //!< [rad/s] hub inertial angular velocity vector
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */

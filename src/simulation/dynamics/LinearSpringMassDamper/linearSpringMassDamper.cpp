@@ -72,15 +72,12 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
     return;
 }
 
-/*! Method for spring mass damper particle to access the states that it needs. It needs the hub states
+/*! @brief Link the spacecraft center-of-mass properties when attached directly to the hub.
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
 void LinearSpringMassDamper::linkInStates(DynParamManager& states)
 {
-
-    // Get access to the hub's states needed for dynamic coupling
-    this->hubOmega = states.getStateObject("hubOmega");
 
     if (!this->propName_centerOfMassSC.empty()) {
         this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
@@ -208,6 +205,9 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
                                                  Eigen::Vector3d omega_BN_B,
                                                  Eigen::Vector3d g_N)
 {
+    // The callback supplies the attached parent's inertial rate, in that parent's frame.
+    this->omega_PN_P = omega_BN_B;
+
     if (this->massSMD <= 0.0) {
         this->aRho.setZero();
         this->bRho.setZero();
@@ -307,9 +307,8 @@ void LinearSpringMassDamper::addPrescribedMotionCouplingContributions(BackSubMat
     Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d) * this->prescribedAngAccelerationProperty;
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
-    // Collect hub states
-    Eigen::Vector3d omega_BN_B = this->hubOmega->stateView();
-    Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
+    // Recover the hub rate from the parent rate supplied to updateContributions().
+    Eigen::Vector3d omega_BN_P = this->omega_PN_P - omega_PB_P;
 
     // Prescribed motion coupling contributions
     Eigen::Vector3d tHat_P = this->pHat_B;
