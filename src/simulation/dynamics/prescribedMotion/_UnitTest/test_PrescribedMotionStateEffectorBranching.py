@@ -615,26 +615,38 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_na
     r"""
     **Verification Test Description**
 
-    This unit test checks the branching capability of the prescribed motion module by connecting a
-    :ref:`linearSpringMassDamper` to the prescribed motion state effector. Both the
-    :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation` modules are configured so that
-    the prescribed body simultaneously translates and rotates relative to the spacecraft hub. The particle
-    is set up to have free (undamped) spring motion along its direction of translation.
+    Connect a :ref:`linearSpringMassDamper` to a prescribed body undergoing simultaneous
+    translation and rotation. The spring axis is transverse to the rotation axis, its equilibrium
+    point is offset from that axis, and the mount attitude is nonzero, exercising rotational
+    coupling. Require both particle states to be registered and check conservation at every sample.
 
     **Test Parameter Discussion**
 
     ``hub_omega_name`` exercises both the default and a custom hub angular-velocity state name.
+    Run at 1 ms and 0.5 ms. Sampled profiler commands introduce first-order momentum errors at
+    the task boundaries: bound the relative rotational angular-momentum error by ``1e-4`` and
+    require it to decrease by at least 40 percent when halving the step. Orbital energy and
+    angular momentum must remain within ``1e-8`` throughout both runs.
 
     **Description of Variables Being Tested**
 
-    The test checks that the conservation quantities of the spacecraft orbital energy, orbital angular momentum,
-    and rotational angular momentum remain constant over the duration of the simulation.
+    Check orbital energy, orbital angular momentum, and rotational angular momentum. Rotational
+    energy need not be constant because the prescribed actuators do work. Independent spring
+    displacement/velocity and Newton/Euler checks are in
+    :ref:`test_linearSpringMassDamperPrescribed`.
     """
+    coarse_step = 0.001  # [s]
+    coarse_error = run_prescribed_spring_branch(show_plots, hub_omega_name, coarse_step)
+    fine_error = run_prescribed_spring_branch(False, hub_omega_name, coarse_step / 2)
+    assert fine_error < 0.6 * coarse_error + 1e-10
 
+
+def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
+    """Run the profiler-driven branching case and return its maximum relative momentum error."""
     task_name = "unitTask"
     process_name = "testProcess"
     sim = SimulationBaseClass.SimBaseClass()
-    process_rate = macros.sec2nano(0.001)
+    process_rate = macros.sec2nano(time_step)
     process = sim.CreateNewProcess(process_name)
     process.addTask(sim.CreateNewTask(task_name, process_rate))
 
@@ -645,6 +657,7 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_na
 
     # Create prescribed motion object
     prescribed_platform = create_prescribed_body(r_P0M_M, sigma_P0M)
+    prescribed_platform.setSigma_MB([0.1, -0.2, 0.15])  # [-] MRPs
     sim.AddModelToTask(task_name, prescribed_platform)
     sc_object.addStateEffector(prescribed_platform)
 
@@ -690,8 +703,8 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_na
     smd.c = 0.0                               # [N s/m] undamped
     smd.rhoInit = 0.5                         # [m]
     smd.rhoDotInit = 0.0                      # [m/s]
-    smd.pHat_B = [[1.0], [0.0], [0.0]]        # Translation axis (x)
-    smd.r_PB_B = [[1.0], [0.0], [0.0]]        # [m]
+    smd.pHat_B = [[0.0], [1.0], [0.0]]        # [-] Axis transverse to prescribed rotation
+    smd.r_PB_B = [[0.4], [-0.2], [0.6]]        # [m]
     sim.AddModelToTask(task_name, smd)
 
     # Attach the particle to the prescribed motion platform
@@ -712,6 +725,8 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_na
 
     # Run the simulation
     sim.InitializeSimulation()
+    assert sc_object.dynManager.getStateObject(smd.nameOfRhoState) is not None
+    assert sc_object.dynManager.getStateObject(smd.nameOfRhoDotState) is not None
     sim.ConfigureStopTime(macros.sec2nano(sim_time))
     sim.ExecuteSimulation()
 
@@ -729,8 +744,15 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_na
         plt.show()
     plt.close("all")
 
-    # Test check
-    unit_test_check_verification(orb_ang_mom_n, orb_energy, rot_ang_mom_n)
+    # Check conservation at every sample.
+    max_errors = []
+    for history in (orb_ang_mom_n, orb_energy, rot_ang_mom_n):
+        relative_error = (history - history[0]) / np.linalg.norm(history[0])
+        max_errors.append(np.max(np.abs(relative_error)))
+    assert np.all(np.isfinite(max_errors))
+    np.testing.assert_array_less(max_errors[:2], 1e-8)
+    assert max_errors[2] < 1e-4
+    return max_errors[2]
 
 
 def create_spacecraft_hub():
