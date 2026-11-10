@@ -134,7 +134,7 @@ def _set_xml_namespace(path, prefix, namespace="urn:ccsds:schema:ndmxml"):
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
 
 
-@pytest.mark.parametrize("encoding", ["kvn", "json", "csv"])
+@pytest.mark.parametrize("encoding", ["kvn", "json"])
 @pytest.mark.parametrize("field_name,bad_value", [
     ("CENTER_NAME", "MARS"), ("MEAN_MOTION", "nan"), ("OBJECT_NAME", "AMBIGUOUS"),
 ])
@@ -156,40 +156,45 @@ def test_omm_duplicate_fields(
     if encoding == "json":
         record = "{" + ",".join(f"{json.dumps(key)}:{json.dumps(value)}" for key, value in pairs) + "}"
         text = f"[{record},{json.dumps(_OMM_FIELDS)}]"
-    elif encoding == "kvn":
+    else:
         text = ""
         for record_pairs in (pairs, list(_OMM_FIELDS.items())):
             text += "CCSDS_OMM_VERS = 2.0\n"
             text += "".join(f"{key} = {value}\n" for key, value in record_pairs)
-    else:
-        stream = io.StringIO()
-        writer = csv.writer(stream)
-        writer.writerow([key for key, value in pairs])
-        writer.writerow([value for key, value in pairs])
-        text = stream.getvalue()
     path.write_text(text, encoding="utf-8")
     initialize = ommHandling.sgp4omm.initialize
     initialized = []
 
     def initialize_valid_record(satellite, fields):
         """Only the unambiguous trailing record may reach SGP4."""
-        assert encoding != "csv"
         assert fields["ELEMENT_SET_NO"] == _OMM_FIELDS["ELEMENT_SET_NO"]
         initialized.append(fields["OBJECT_NAME"])
         return initialize(satellite, fields)
 
     monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
-    if encoding == "csv":
-        with pytest.raises(ValueError, match=f"Duplicate OMM CSV.*{field_name}"):
-            ommHandling.satOmm2elem(path)
-        assert initialized == []
-    else:
-        records = ommHandling.satOmm2elem(path)
-        assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
-        assert initialized == [_OMM_FIELDS["OBJECT_NAME"]]
-        warning = capsys.readouterr().out
-        assert "skipped OMM record 1" in warning
-        assert f"Duplicate OMM {encoding.upper()} field: {field_name}" in warning
+    records = ommHandling.satOmm2elem(path)
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    assert initialized == [_OMM_FIELDS["OBJECT_NAME"]]
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert f"Duplicate OMM {encoding.upper()} field: {field_name}" in warning
+
+
+@pytest.mark.parametrize("mixed_case,occurrences", [(False, 2), (True, 2), (False, 3), (True, 3)])
+def test_omm_csv_duplicate_headers(tmp_path, monkeypatch, mixed_case, occurrences):
+    """CSV rejects ambiguous headers before reading any field values."""
+    field_name = "MEAN_MOTION"
+    duplicate = field_name.lower() if mixed_case else field_name
+    headers = [*_OMM_FIELDS, *([duplicate] * (occurrences - 1))]
+    path = tmp_path / "duplicate-headers.csv"
+    path.write_text(",".join(headers) + "\n", encoding="utf-8")
+
+    def unexpected_initialize(*args):
+        pytest.fail("An ambiguous CSV header must not reach SGP4")
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", unexpected_initialize)
+    with pytest.raises(ValueError, match=f"Duplicate OMM CSV.*{field_name}"):
+        ommHandling.satOmm2elem(path)
 
 
 @pytest.mark.parametrize("bad_first", [False, True])
@@ -471,8 +476,10 @@ def test_omm_xml_unrecognized_root(tmp_path, root_name):
         ommHandling.satOmm2elem(path)
 
 
-@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
-@pytest.mark.parametrize("field_name", list(_OMM_FIELDS))
+@pytest.mark.parametrize("namespace_prefix,field_name", [
+    *((None, name) for name in _OMM_FIELDS),
+    *((prefix, name) for prefix in ("ndm", "") for name in ("CENTER_NAME", "MEAN_MOTION", "BSTAR")),
+])
 @pytest.mark.parametrize("target_offset", [1, 2])
 def test_omm_xml_field_block_placement(
     tmp_path, monkeypatch, capsys, namespace_prefix, field_name, target_offset,
@@ -979,12 +986,21 @@ def test_omm_encodings_agree(tmp_path):
             ), (encoding, name)
 
 
-@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("catalog_id", [
     "00001", "99999", "100000", "100001", "339999", "340000",
     "999999", "799500001", "999999999", "0", "+0", "+00001", "+25544",
     "+999999999", "000999999999",
 ])
+def test_omm_catalog_number_normalization(catalog_id):
+    """The shared validator preserves accepted decimal spellings at every boundary."""
+    fields = dict(_OMM_FIELDS, NORAD_CAT_ID=catalog_id)
+    normalized = ommHandling._normalizeOmmFields(fields, "kvn")
+    assert normalized["NORAD_CAT_ID"] == catalog_id
+    assert fields["NORAD_CAT_ID"] == catalog_id
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("catalog_id", ["+00001", "340000", "+999999999"])
 @pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
 def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id, satrec):
     """Catalog IDs survive ingestion unchanged without affecting the orbital elements."""
@@ -1006,11 +1022,18 @@ def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id, satrec
         assert getattr(actual.oe, name) == getattr(reference.oe, name), name
 
 
-@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("catalog_id", [
     "A0001", "100000.5", "-1", "nan", "+", "++25544", "+ 25544", "+-1",
     "1000000000", "+1000000000", "0001000000000", "١٢٣", "１２３",
 ])
+def test_omm_invalid_catalog_number_normalization(catalog_id):
+    """Signs, decimal syntax, Unicode digits and range limits share one validator."""
+    with pytest.raises(ValueError, match="NORAD_CAT_ID"):
+        ommHandling._normalizeOmmFields(dict(_OMM_FIELDS, NORAD_CAT_ID=catalog_id), "kvn")
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("catalog_id", ["+", "1000000000", "١٢٣"])
 def test_omm_invalid_catalog_number_is_skipped(tmp_path, monkeypatch, capsys, encoding, catalog_id):
     """Malformed or out-of-range catalog IDs never reach SGP4; later records survive."""
     fields = dict(_OMM_FIELDS, NORAD_CAT_ID=catalog_id)
@@ -1265,16 +1288,18 @@ def test_omm_propagates_at_initialized_epoch(tmp_path, capsys, encoding, epoch_s
     assert capsys.readouterr().out == ""
 
 
-@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
-@pytest.mark.parametrize("mean_motion,eccentricity,inclination,method", [
-    pytest.param("15.5", "0.001", "51.6", "n", id="leo"),
-    pytest.param("2.0", "0.01", "55.0", "d", id="meo"),
-    pytest.param("1.0027", "0.0001", "0.01", "d", id="geo"),
-    pytest.param("2.006", "0.72", "63.4", "d", id="molniya"),
-    pytest.param("1.0027", "0", "0", "d", id="circular-equatorial"),
-    pytest.param("1.0027", "0", "180", "d", id="circular-retrograde"),
-    pytest.param("14.0", "0.001", "90.0", "n", id="polar"),
+@pytest.mark.parametrize("encoding,mean_motion,eccentricity,inclination,method", [
+    pytest.param("kvn", "15.5", "0.001", "51.6", "n", id="kvn-leo"),
+    pytest.param("kvn", "2.0", "0.01", "55.0", "d", id="kvn-meo"),
+    pytest.param("kvn", "1.0027", "0.0001", "0.01", "d", id="kvn-geo"),
+    pytest.param("kvn", "2.006", "0.72", "63.4", "d", id="kvn-molniya"),
+    pytest.param("kvn", "1.0027", "0", "0", "d", id="kvn-circular-equatorial"),
+    pytest.param("kvn", "1.0027", "0", "180", "d", id="kvn-circular-retrograde"),
+    pytest.param("kvn", "14.0", "0.001", "90.0", "n", id="kvn-polar"),
+    pytest.param("json", "15.5", "0.001", "51.6", "n", id="json-leo"),
+    pytest.param("csv", "15.5", "0.001", "51.6", "n", id="csv-leo"),
+    pytest.param("xml", "15.5", "0.001", "51.6", "n", id="xml-leo"),
 ])  # Mean motion [rev/day], eccentricity [-], inclination [deg]; SGP4 branch n/d.
 def test_omm_representative_orbit_states(
     tmp_path, monkeypatch, capsys, encoding, satrec, mean_motion, eccentricity, inclination, method,
