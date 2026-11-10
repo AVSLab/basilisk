@@ -76,8 +76,14 @@ class LinearSpringMassDamper final
     void Reset(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& states) override; //!< Method for SMD to register its states
     void linkInStates(DynParamManager& states) override;   //!< Method for SMD to get access of other states
-    void linkInPrescribedMotionProperties(
-        DynParamManager& states) override; //!< Method for SMD to get access to prescribed motion properties
+    /*! @brief Link the prescribed parent's motion relative to the spacecraft hub.
+     * @param[in] states Dynamics manager owning the prescribed position, velocity, acceleration,
+     * attitude, angular velocity, and angular acceleration properties.
+     * @note The prescribed parent assigns the property names during attachment and registers the
+     * properties before calling this method. The retained references provide the current integration-stage
+     * values. This callback is only used for prescribed-motion attachments.
+     */
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void retrieveMassValue(double integTime) override;
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
         override; //!< Force and torque on s/c due to linear spring mass damper
@@ -95,8 +101,16 @@ class LinearSpringMassDamper final
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
-    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
-        override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+    /*! @brief Add the coupling terms for a particle attached to a prescribed body.
+     * @param[in,out] backSubContr Particle backsubstitution contributions from updateContributions(),
+     * expressed in prescribed-parent frame P components. Adds the terms required to couple the particle
+     * to the spacecraft hub at point B.
+     * @note Call linkInPrescribedMotionProperties() during initialization, then updateEffectorMassProps()
+     * and updateContributions() for the current integration stage before this callback. The latter supplies
+     * the prescribed parent's inertial angular velocity in P components. The prescribed parent transforms
+     * the resulting contributions into hub-frame components after this callback returns.
+     */
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
