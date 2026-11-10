@@ -38,7 +38,9 @@ produce osculating elements through the same propagation and frame conversion. O
 Earth-centered, TEME, UTC, SGP4 profile is supported.
 """
 
+import csv
 import datetime as dt
+import io
 import json
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -128,6 +130,13 @@ class _OmmFieldWithUnits:
 
     value: str
     units: str
+
+
+@dataclass(frozen=True)
+class _OmmInvalidRecord:
+    """Retain a parser diagnostic at the original record position."""
+
+    reason: str
 
 
 # ---------------------------------------------------------------------------------------------------------- #
@@ -328,21 +337,30 @@ def _parseOmmXml(text: str) -> list:
 
 def _parseOmmCsv(text: str) -> list:
     """
-    Parse the CSV encoding via the ``sgp4`` reader so the field naming matches upstream.
+    Parse CSV records with explicit header and row-width validation.
 
     :param text: full text of the CSV file
-    :return: list of dictionaries of raw OMM field strings
+    :return: field dictionaries or invalid-record markers, in original record order
+    :raises ValueError: if consumed header names are duplicated
+    :raises csv.Error: if CSV quoting is malformed
     """
-    import io
-
-    reader = sgp4omm.parse_csv(io.StringIO(text))
-    headers = _collect_omm_fields((name, "") for name in reader.fieldnames or [])
-    duplicates = [name for name, value in headers.items() if value is _DUPLICATE_OMM_FIELD]
+    # Match format detection's leading-whitespace handling without changing quoted cells.
+    reader = csv.reader(io.StringIO(text.lstrip(), newline=""), strict=True)
+    headers = next(reader, [])
+    fields = _collect_omm_fields((name, "") for name in headers)
+    duplicates = [name for name, value in fields.items() if value is _DUPLICATE_OMM_FIELD]
     if duplicates:
         raise ValueError(f"Duplicate OMM CSV field(s) in header: {', '.join(duplicates)}.")
     records = []
     for row in reader:
-        records.append(_collect_omm_fields(row.items()))
+        if not row:
+            continue
+        if len(row) != len(headers):
+            records.append(_OmmInvalidRecord(
+                f"OMM CSV row has {len(row)} cells; expected {len(headers)} from the header."
+            ))
+            continue
+        records.append(_collect_omm_fields(zip(headers, row)))
     return records
 
 
@@ -483,6 +501,8 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     :return: a normalized copy safe to hand to SGP4
     :raises ValueError: if the record is not a field dictionary or its fields are invalid
     """
+    if isinstance(fields, _OmmInvalidRecord):
+        raise ValueError(fields.reason)
     if not isinstance(fields, dict):
         raise ValueError(f"OMM record must be a field object, got {type(fields).__name__}.")
 
@@ -651,6 +671,9 @@ def satOmm2elem(omm_path: str) -> list:
     KVN and JSON records with duplicate consumed fields are also skipped, including
     names that collide after case normalization. Duplicate consumed CSV headers
     make the whole file ambiguous and raise ``ValueError`` before conversion.
+    CSV accepts leading blank lines and quoted cells, including embedded newlines.
+    Rows with missing or extra cells are skipped before optional defaults are applied;
+    optional columns omitted from the header still receive their normal defaults.
 
     Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.
     Digits beyond microsecond precision are truncated consistently for ``ommEpoch``,
