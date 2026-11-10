@@ -94,6 +94,22 @@ _SUPPORTED_OMM_METADATA = {
     "MEAN_ELEMENT_THEORY": "SGP4",
 }
 
+#: Consumed XML fields must appear in their CCSDS owning blocks.
+_OMM_XML_BLOCK_FIELDS = {
+    "metadata": frozenset(("OBJECT_NAME", "OBJECT_ID", *_SUPPORTED_OMM_METADATA)),
+    "meanElements": frozenset((
+        "EPOCH", "MEAN_MOTION", "ECCENTRICITY", "INCLINATION",
+        "RA_OF_ASC_NODE", "ARG_OF_PERICENTER", "MEAN_ANOMALY",
+    )),
+    "tleParameters": frozenset((
+        "EPHEMERIS_TYPE", "CLASSIFICATION_TYPE", "NORAD_CAT_ID", "ELEMENT_SET_NO",
+        "REV_AT_EPOCH", "BSTAR", "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT",
+    )),
+}
+
+#: Recognized structural tags, used to reject blocks in the wrong location.
+_OMM_XML_BLOCKS = frozenset(("ndm", "omm", "body", "segment", "data", *_OMM_XML_BLOCK_FIELDS))
+
 #: Fields consumed by this reader; comments and unknown extension fields may repeat.
 _OMM_FIELDS = frozenset(
     (*_REQUIRED_OMM_FIELDS, *_SUPPORTED_OMM_METADATA, "OBJECT_NAME")
@@ -285,6 +301,62 @@ def _parseOmmJson(text: str) -> list:
     return payload
 
 
+def _validate_omm_xml_children(block, allowed) -> None:
+    """Check consumed fields and recognized blocks without interpreting extensions.
+
+    :param block: XML element whose direct children are being validated
+    :param allowed: field or block names permitted at this location
+    :raises ValueError: if a consumed field or recognized block is misplaced
+    """
+    for child in block:
+        name = child.tag.upper() if child.tag.upper() in _OMM_FIELDS else child.tag
+        if name in _OMM_FIELDS or name in _OMM_XML_BLOCKS:
+            if name not in allowed:
+                raise ValueError(f"Misplaced OMM XML element {name} in {block.tag}.")
+            if name in _OMM_FIELDS and len(child):
+                raise ValueError(f"OMM XML field {name} must contain text without child elements.")
+
+
+def _parse_omm_xml_segment(segment) -> dict:
+    """Extract one segment while checking block placement and duplicate elements.
+
+    :param segment: OMM segment with normalized CCSDS tag names
+    :return: raw fields, retaining units and duplicate markers
+    :raises ValueError: if a field or block is misplaced
+    """
+    blocks = {
+        "metadata": segment.findall("metadata"),
+        "data": segment.findall("data"),
+    }
+    if len(blocks["data"]) == 1:
+        data = blocks["data"][0]
+        blocks["meanElements"] = data.findall("meanElements")
+        blocks["tleParameters"] = data.findall("tleParameters")
+    duplicates = {
+        name: _DUPLICATE_OMM_FIELD for name, matches in blocks.items() if len(matches) > 1
+    }
+    if duplicates:
+        return duplicates
+
+    _validate_omm_xml_children(segment, {"metadata", "data"})
+    for data in blocks["data"]:
+        _validate_omm_xml_children(data, {"meanElements", "tleParameters"})
+    fields = {}
+    for name, allowed in _OMM_XML_BLOCK_FIELDS.items():
+        for block in blocks.get(name, []):
+            _validate_omm_xml_children(block, allowed)
+            for element in block:
+                key = element.tag.upper()
+                if key in _OMM_FIELDS and key in fields:
+                    fields[key] = _DUPLICATE_OMM_FIELD
+                    continue
+                value = (element.text or "").strip()
+                if key in _OMM_FIELD_UNITS and "units" in element.attrib:
+                    value = _OmmFieldWithUnits(value, element.attrib["units"])
+                fields[key] = value
+    return fields
+
+
 def _parseOmmXml(text: str) -> list:
     """
     Parse the XML (CCSDS NDM) encoding.
@@ -296,42 +368,22 @@ def _parseOmmXml(text: str) -> list:
     Mark duplicate OMM fields and blocks for rejection during per-record validation.
 
     :param text: full text of the XML file
-    :return: list of raw field dictionaries retaining numeric unit declarations and duplicate markers
+    :return: raw fields or invalid-record markers, retaining segment positions
     """
     root = ET.fromstring(text)
     # Normalize only CCSDS tags so foreign namespaces cannot override OMM fields.
     for element in root.iter():
         element.tag = element.tag.removeprefix("{urn:ccsds:schema:ndmxml}")
+    messages = [root] if root.tag == "omm" else root.findall("omm") if root.tag == "ndm" else []
     records = []
-    for segment in root.findall(".//segment"):
-        blocks = {
-            "metadata": segment.findall("metadata"),
-            "data": segment.findall("data"),
-        }
-        if len(blocks["data"]) == 1:
-            data = blocks["data"][0]
-            blocks["meanElements"] = data.findall("meanElements")
-            blocks["tleParameters"] = data.findall("tleParameters")
-        duplicates = {
-            name: _DUPLICATE_OMM_FIELD for name, matches in blocks.items() if len(matches) > 1
-        }
-        if duplicates:
-            records.append(duplicates)
-            continue
-
-        fields = {}
-        for name in ("metadata", "meanElements", "tleParameters"):
-            for block in blocks.get(name, []):
-                for element in block:
-                    key = element.tag.upper()
-                    if key in _OMM_FIELDS and key in fields:
-                        fields[key] = _DUPLICATE_OMM_FIELD
-                        continue
-                    value = (element.text or "").strip()
-                    if key in _OMM_FIELD_UNITS and "units" in element.attrib:
-                        value = _OmmFieldWithUnits(value, element.attrib["units"])
-                    fields[key] = value
-        records.append(fields)
+    for message in messages:
+        for segment in message.findall("body/segment"):
+            try:
+                if len(message.findall("body")) != 1:
+                    raise ValueError("Duplicate OMM XML element: BODY.")
+                records.append(_parse_omm_xml_segment(segment))
+            except ValueError as error:
+                records.append(_OmmInvalidRecord(str(error)))
     return records
 
 
@@ -666,8 +718,12 @@ def satOmm2elem(omm_path: str) -> list:
     SGP4's internal identifier storage.
 
     XML accepts unqualified elements and the ``urn:ccsds:schema:ndmxml`` namespace,
-    using either prefixes or a default namespace. XML records containing duplicate
-    OMM fields or blocks are skipped with a warning before SGP4 is invoked.
+    using either prefixes or a default namespace. Records are read from
+    ``omm/body/segment`` in a standalone OMM or a direct OMM child of an NDM container.
+    Segments inside extensions or other message types are ignored. Consumed fields
+    must appear in their owning metadata, mean-elements or TLE-parameters blocks.
+    XML records containing misplaced or duplicate OMM fields or blocks are skipped
+    with a warning before SGP4 is invoked.
     KVN and JSON records with duplicate consumed fields are also skipped, including
     names that collide after case normalization. Duplicate consumed CSV headers
     make the whole file ambiguous and raise ``ValueError`` before conversion.

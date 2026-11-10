@@ -416,6 +416,131 @@ def test_omm_xml_foreign_namespace_has_no_records(tmp_path, namespace):
         ommHandling.satOmm2elem(str(path))
 
 
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+@pytest.mark.parametrize("standalone", [False, True])
+def test_omm_xml_message_containers(tmp_path, capsys, namespace_prefix, standalone):
+    """Standalone OMMs and direct OMM siblings in NDM containers retain record order."""
+    second = dict(_OMM_FIELDS, OBJECT_NAME="SECOND-SAT", NORAD_CAT_ID="25545")
+    path = _writeXml(tmp_path / "containers.xml", [_OMM_FIELDS, second])
+    tree = ET.parse(path)
+    if standalone:
+        tree._setroot(tree.find("omm"))
+    else:
+        message = tree.find("omm")
+        other = copy.deepcopy(message)
+        body = message.find("body")
+        body.remove(body.findall("segment")[1])
+        other.find("body").remove(other.find("body/segment"))
+        tree.getroot().append(other)
+        # A different message family must not produce OMM records or warnings.
+        foreign_message = copy.deepcopy(message)
+        foreign_message.tag = "oem"
+        tree.getroot().insert(0, foreign_message)
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+    records = ommHandling.satOmm2elem(path)
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"], "SECOND-SAT"]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+@pytest.mark.parametrize("parent_path", [".", "omm", "omm/body", "omm/body/segment/data"])
+def test_omm_xml_extensions_cannot_inject_segments(tmp_path, capsys, namespace_prefix, parent_path):
+    """Recognized descendants inside foreign extensions never become extra records."""
+    path = _writeXml(tmp_path / "cached.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    cached_message = copy.deepcopy(tree.find("omm"))
+    cached_segment = copy.deepcopy(tree.find(".//segment"))
+    extension = ET.SubElement(tree.find(parent_path), "{urn:foreign}cache")
+    extension.extend([cached_message, cached_segment])
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+    records = ommHandling.satOmm2elem(path)
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("root_name", ["opm", "wrapper", "{urn:foreign}omm"])
+def test_omm_xml_unrecognized_root(tmp_path, root_name):
+    """An arbitrary wrapper cannot turn its descendants into an OMM document."""
+    path = _writeXml(tmp_path / "wrong-root.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    tree.getroot().tag = root_name
+    tree.write(path, encoding="utf-8")
+    with pytest.raises(ValueError, match="found no OMM records"):
+        ommHandling.satOmm2elem(path)
+
+
+@pytest.mark.parametrize("namespace_prefix", [None, "ndm", ""])
+@pytest.mark.parametrize("field_name", list(_OMM_FIELDS))
+@pytest.mark.parametrize("target_offset", [1, 2])
+def test_omm_xml_field_block_placement(
+    tmp_path, monkeypatch, capsys, namespace_prefix, field_name, target_offset,
+):
+    """Every consumed field is rejected in either of the other two field blocks."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    incomplete = {name: value for name, value in broken.items() if name != "MEAN_MOTION"}
+    path = _writeXml(tmp_path / "misplaced.xml", [broken, _OMM_FIELDS, incomplete])
+    tree = ET.parse(path)
+    segment = tree.find(".//segment")
+    parent = segment.find(f".//{field_name}/..")
+    element = parent.find(field_name)
+    block_names = ["metadata", "meanElements", "tleParameters"]
+    target = block_names[(block_names.index(parent.tag) + target_offset) % len(block_names)]
+    parent.remove(element)
+    segment.find(f".//{target}").append(element)
+    tree.write(path, encoding="utf-8")
+    _set_xml_namespace(path, namespace_prefix)
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, fields):
+        """Malformed XML must be rejected before propagation."""
+        assert fields["OBJECT_NAME"] == _OMM_FIELDS["OBJECT_NAME"]
+        initialized.append(fields)
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == len(initialized) == 1
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 2
+    assert "skipped OMM record 1" in warnings[0]
+    assert f"Misplaced OMM XML element {field_name} in {target}" in warnings[0]
+    assert "skipped OMM record 3" in warnings[1]
+
+
+@pytest.mark.parametrize("case", ["metadata-fields", "misplaced-block", "direct-field", "nested-field", "body"])
+def test_omm_xml_malformed_structure(tmp_path, capsys, case):
+    """Block relocation, scalar children, and duplicate bodies remain record errors."""
+    path = _writeXml(tmp_path / "structure.xml", [_OMM_FIELDS])
+    tree = ET.parse(path)
+    message = tree.find("omm")
+    valid_message = copy.deepcopy(message)
+    segment = message.find("body/segment")
+    if case == "metadata-fields":
+        metadata = segment.find("metadata")
+        segment.find("data/meanElements").extend(list(metadata))
+        segment.remove(metadata)
+    elif case == "misplaced-block":
+        mean = segment.find("data/meanElements")
+        segment.find("data").remove(mean)
+        segment.append(mean)
+    elif case == "direct-field":
+        ET.SubElement(segment.find("data"), "BSTAR").text = "0.0"  # [1/Earth radii]
+    elif case == "nested-field":
+        ET.SubElement(segment.find(".//INCLINATION"), "extra").text = "invalid"
+    else:
+        ET.SubElement(message, "body")
+    tree.getroot().append(valid_message)
+    tree.write(path, encoding="utf-8")
+    assert len(ommHandling.satOmm2elem(path)) == 1
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 1
+    assert "skipped OMM record 1" in warnings[0]
+    assert "XML" in warnings[0]
+
+
 def _write_omm_with_units(path, encoding, field_sets, unit_sets):
     """Add KVN annotations or XML attributes to selected numeric fields."""
     if encoding == "kvn":
