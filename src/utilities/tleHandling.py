@@ -590,9 +590,12 @@ def _parseTle(tle: str) -> TleData:
     tleData.nDot = nDot
     tleData.nDotDot = nDotDot
     tleData.bStar = bStar
-    tleData.launchDate = dt.datetime(_parseTleYear(launchYear_str), 1, 1)
-    tleData.launchNo = int(launchNo_str)
-    tleData.pol = pol_str
+    # Analyst objects and some unidentified objects have a blank international designator
+    # (columns 10-17). Leave the launch fields at their defaults instead of failing the set.
+    if (launchYear_str + launchNo_str + pol_str).strip():
+        tleData.launchDate = dt.datetime(_parseTleYear(launchYear_str), 1, 1)
+        tleData.launchNo = int(launchNo_str)
+        tleData.pol = pol_str
 
     return tleData
 

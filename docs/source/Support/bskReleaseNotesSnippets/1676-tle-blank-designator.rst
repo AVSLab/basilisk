@@ -1,0 +1,1 @@
+- :ref:`tleHandling` ``satTle2elem()`` now reads element sets with a blank international designator, such as CelesTrak's analyst objects, leaving ``launchDate`` as ``None``.

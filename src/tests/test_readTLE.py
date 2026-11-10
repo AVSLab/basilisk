@@ -259,6 +259,29 @@ def test_read_tle_rejects_catalog_overflow(tmp_path):
         tleHandling.satTle2elem(tle_path)
 
 
+def _with_checksum(line):
+    """Return a TLE line with its checksum column recomputed (digits, and 1 for each minus sign)."""
+    total = sum(int(c) if c.isdigit() else (1 if c == "-" else 0) for c in line[:68])
+    return line[:68] + str(total % 10)
+
+
+def test_read_tle_blank_international_designator(tmp_path):
+    """A set with a blank international designator (as for analyst objects) loads with default launch fields."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1 = _with_checksum(lines[1][:9] + " " * 8 + lines[1][17:])
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1)
+    reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert len(records) == 1
+    assert records[0].launchDate is None
+    assert records[0].noradID == reference.noradID
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(records[0].oe, name) == getattr(reference.oe, name)
+
+
 def test_write_tle_6digit_norad_raises():
     """generateTle() must raise ValueError for catalog numbers >= 100000 (6-digit NORAD IDs assigned after ~July 2026 cannot be represented in TLE format)."""
     tleData = tleHandling.TleData(oe=oeHypso1, tleEpoch=hypso1tleEpoch)
