@@ -282,6 +282,34 @@ def test_read_tle_blank_international_designator(tmp_path):
         assert getattr(records[0].oe, name) == getattr(reference.oe, name)
 
 
+@pytest.mark.parametrize("ephemeris_type", ["4", "1", "3"])
+def test_read_tle_rejects_non_sgp4_ephemeris_type(tmp_path, ephemeris_type):
+    """satTle2elem() refuses element sets that are not SGP4 (type 4 is SGP4-XP) instead of running SGP4 on them."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1 = _with_checksum(lines[1][:62] + ephemeris_type + lines[1][63:])
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1)
+
+    with pytest.raises(ValueError, match="unsupported ephemeris type"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("ephemeris_type", ["0", "2", " "])
+def test_read_tle_accepts_sgp4_ephemeris_types(tmp_path, ephemeris_type):
+    """Types 0 and 2, and a blank column, give the same elements as the unmodified set."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1 = _with_checksum(lines[1][:62] + ephemeris_type + lines[1][63:])
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1)
+    reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0].oe
+    oe = tleHandling.satTle2elem(tle_path)[0].oe
+
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(oe, name) == getattr(reference, name)
+
+
 def test_write_tle_6digit_norad_raises():
     """generateTle() must raise ValueError for catalog numbers >= 100000 (6-digit NORAD IDs assigned after ~July 2026 cannot be represented in TLE format)."""
     tleData = tleHandling.TleData(oe=oeHypso1, tleEpoch=hypso1tleEpoch)
