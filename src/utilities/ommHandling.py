@@ -63,7 +63,6 @@ _REQUIRED_OMM_FIELDS = (
     "RA_OF_ASC_NODE",
     "ARG_OF_PERICENTER",
     "MEAN_ANOMALY",
-    "NORAD_CAT_ID",
     "CLASSIFICATION_TYPE",
     "EPHEMERIS_TYPE",
     "ELEMENT_SET_NO",
@@ -176,6 +175,8 @@ class OmmData:
     Mirrors :py:class:`Basilisk.utilities.tleHandling.TleData`, with the OMM-only metadata
     added and the TLE-only line-format fields dropped.
 
+    ``noradID`` is empty when no catalog number is available.
+
     ``nDot`` and ``nDotDot`` retain the supplied ``MEAN_MOTION_DOT`` and
     ``MEAN_MOTION_DDOT`` values without rescaling, in ``rev/day**2`` and ``rev/day**3``.
     CelesTrak GP data uses the TLE coefficient convention: one-half of the first
@@ -192,7 +193,7 @@ class OmmData:
 
     # Optional metadata
     satName: str = field(default="BSK-Sat-00")  # OBJECT_NAME
-    noradID: str = field(default="00000")  # NORAD_CAT_ID; unlike a TLE this may be >= 100000
+    noradID: str = field(default="")  # NORAD_CAT_ID; empty when unavailable
     objectID: str = field(default="")  # international designator; empty when unavailable
     classification: str = field(default="Unknown")  # "Unclassified", "Classified", "Secret"
     revAtEpoch: int = field(default=0)  # revolution number at epoch [-]
@@ -577,11 +578,11 @@ def _normalize_omm_physical_metadata(fields: dict, omm_format: str) -> None:
 
 def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     """
-    Validate one OMM record and normalize its fields for ``sgp4.omm.initialize``.
+    Validate one OMM record and normalize its public fields before SGP4 conversion.
 
     :param fields: raw OMM field dictionary
     :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)
-    :return: a normalized copy safe to hand to SGP4
+    :return: a normalized copy, with unavailable catalog numbers represented by empty strings
     :raises ValueError: if the record is not a field dictionary or its fields are invalid
     """
     if isinstance(fields, _OmmInvalidRecord):
@@ -619,16 +620,19 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
             f"satOmm2elem() found an OMM record missing required field(s): {', '.join(sorted(missing))}"
         )
 
-    # Validate the external ID before replacing it in the private SGP4 input.
-    catalog_id = normalized["NORAD_CAT_ID"].strip()
-    catalog_digits = catalog_id.removeprefix("+")
-    if not catalog_digits.isascii() or not catalog_digits.isdecimal():
-        raise ValueError(
-            f"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: {catalog_id!r}"
-        )
-    # Check the value's range without converting arbitrarily long digit strings to int.
-    if len(catalog_digits.lstrip("0")) > 9:
-        raise ValueError(f"OMM NORAD_CAT_ID must be between 0 and 999999999: {catalog_id!r}")
+    # Catalog numbers identify records but do not affect propagation. Validate supplied
+    # IDs and preserve missing metadata; the private SGP4 input uses its own identifier.
+    catalog_id = normalized.get("NORAD_CAT_ID", "").strip()
+    if catalog_id:
+        catalog_digits = catalog_id.removeprefix("+")
+        if not catalog_digits.isascii() or not catalog_digits.isdecimal():
+            raise ValueError(
+                f"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: {catalog_id!r}"
+            )
+        # Check the value's range without converting arbitrarily long digit strings to int.
+        if len(catalog_digits.lstrip("0")) > 9:
+            raise ValueError(f"OMM NORAD_CAT_ID must be between 0 and 999999999: {catalog_id!r}")
+    normalized["NORAD_CAT_ID"] = catalog_id
 
     _validate_omm_numeric_fields(normalized)
     _normalize_omm_physical_metadata(normalized, omm_format)
@@ -753,8 +757,11 @@ def satOmm2elem(omm_path: str) -> list:
 
     The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
-    SGP4's internal identifier storage. Values must be in ``[0, 999999999]``;
+    SGP4's internal identifier storage. Supplied values must be in ``[0, 999999999]``;
     optional leading ``+`` signs and leading zeros are accepted and preserved.
+    Missing, null or blank catalog numbers yield ``noradID=""`` without affecting
+    orbital conversion. Each valid input record remains a separate result even when
+    multiple records have no catalog number.
     Missing, null or blank international designators yield ``objectID=""``.
     Supplied designators, including the literal ``UNKNOWN``, are preserved after
     trimming whitespace; backend identifier accommodations do not change this metadata.

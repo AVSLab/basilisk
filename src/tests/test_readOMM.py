@@ -180,10 +180,13 @@ def test_omm_duplicate_fields(
     assert f"Duplicate OMM {encoding.upper()} field: {field_name}" in warning
 
 
-@pytest.mark.parametrize("mixed_case,occurrences", [(False, 2), (True, 2), (False, 3), (True, 3)])
-def test_omm_csv_duplicate_headers(tmp_path, monkeypatch, mixed_case, occurrences):
+@pytest.mark.parametrize("field_name,mixed_case,occurrences", [
+    ("MEAN_MOTION", False, 2), ("MEAN_MOTION", True, 2),
+    ("MEAN_MOTION", False, 3), ("MEAN_MOTION", True, 3),
+    ("NORAD_CAT_ID", True, 2),
+])
+def test_omm_csv_duplicate_headers(tmp_path, monkeypatch, field_name, mixed_case, occurrences):
     """CSV rejects ambiguous headers before reading any field values."""
-    field_name = "MEAN_MOTION"
     duplicate = field_name.lower() if mixed_case else field_name
     headers = [*_OMM_FIELDS, *([duplicate] * (occurrences - 1))]
     path = tmp_path / "duplicate-headers.csv"
@@ -1020,6 +1023,102 @@ def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id, satrec
     assert actual.satName == "NEW-CATALOG-OBJECT"
     for name in ("a", "e", "i", "Omega", "omega", "f"):
         assert getattr(actual.oe, name) == getattr(reference.oe, name), name
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
+def test_omm_missing_catalog_numbers(tmp_path, monkeypatch, capsys, encoding, satrec):
+    """Unidentified records retain their metadata, order and distinct orbital states."""
+    second = dict(_OMM_FIELDS, OBJECT_NAME="SECOND-SAT", NORAD_CAT_ID="25545", OBJECT_ID="")
+    second["MEAN_ANOMALY"] = "180.0"  # [deg]
+    identified = [_OMM_FIELDS, second]
+    unidentified = [{key: value for key, value in fields.items() if key != "NORAD_CAT_ID"}
+                    for fields in identified]
+    path = _WRITERS[encoding](tmp_path / f"unidentified.{encoding}", unidentified)
+    reference_path = _WRITERS[encoding](tmp_path / f"identified.{encoding}", identified)
+    monkeypatch.setattr(ommHandling, "Satrec", satrec)
+
+    records = ommHandling.satOmm2elem(path)
+    references = ommHandling.satOmm2elem(reference_path)
+
+    assert len(records) == len(references) == 2
+    assert [record.noradID for record in records] == ["", ""]
+    assert [record.satName for record in records] == [fields["OBJECT_NAME"] for fields in identified]
+    assert [record.objectID for record in records] == [fields["OBJECT_ID"] for fields in identified]
+    assert records[0].oe.f != records[1].oe.f
+    for record, reference in zip(records, references):
+        assert record.ommEpoch == reference.ommEpoch
+        for name in ("a", "e", "i", "Omega", "omega", "f"):
+            assert getattr(record.oe, name) == getattr(reference.oe, name), name
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+def test_omm_empty_catalog_numbers(tmp_path, capsys, encoding):
+    """Blank fields and JSON null preserve missing metadata without inventing an ID."""
+    values = ["", " \t "] + ([None] if encoding == "json" else [])
+    fields = [dict(_OMM_FIELDS, NORAD_CAT_ID=value) for value in values]
+    path = _WRITERS[encoding](tmp_path / f"empty-catalog.{encoding}", fields)
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == len(values)
+    assert all(record.noradID == "" for record in records)
+    assert capsys.readouterr().out == ""
+
+
+def test_omm_data_without_catalog_number():
+    """Direct construction also represents an unavailable catalog number as empty."""
+    record = ommHandling.OmmData(oe=ommHandling.om.ClassicElements(), ommEpoch=dt.datetime(2026, 9, 10))
+    assert record.noradID == ""
+
+
+def test_omm_30_without_catalog_metadata(tmp_path, capsys):
+    """OMM 3.0 KVN can omit catalog metadata while retaining SGP4 orbital inputs."""
+    omitted = {"NORAD_CAT_ID", "EPHEMERIS_TYPE", "CLASSIFICATION_TYPE", "ELEMENT_SET_NO", "REV_AT_EPOCH"}
+    fields = {key: value for key, value in _OMM_FIELDS.items() if key not in omitted}
+    path = _writeKvn(tmp_path / "omm-3.0.kvn", [fields, _OMM_FIELDS])
+    path.write_text(path.read_text(encoding="utf-8").replace("= 2.0", "= 3.0"), encoding="utf-8")
+    records = ommHandling.satOmm2elem(path)
+    assert len(records) == 2
+    actual, reference = records
+    assert actual.noradID == ""
+    assert actual.classification == "Unclassified"
+    assert actual.propagator == "0"
+    assert actual.elemSetNo == 999
+    assert actual.revAtEpoch == 0
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(actual.oe, name) == getattr(reference.oe, name), name
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "xml"])
+@pytest.mark.parametrize("blank_first", [False, True])
+def test_omm_duplicate_empty_catalog_number(tmp_path, monkeypatch, capsys, encoding, blank_first):
+    """An empty catalog field cannot hide a duplicate in either field order."""
+    fields = dict(_OMM_FIELDS, NORAD_CAT_ID="")
+    path = _WRITERS[encoding](tmp_path / f"duplicate-catalog.{encoding}", [fields, _OMM_FIELDS])
+    entries = {
+        "kvn": ("NORAD_CAT_ID = \n", "NORAD_CAT_ID = 25544\n", ""),
+        "json": ('"NORAD_CAT_ID": ""', '"NORAD_CAT_ID": "25544"', ", "),
+        "xml": ("<NORAD_CAT_ID></NORAD_CAT_ID>", "<NORAD_CAT_ID>25544</NORAD_CAT_ID>", ""),
+    }
+    blank, supplied, separator = entries[encoding]
+    duplicate = separator.join([blank, supplied] if blank_first else [supplied, blank])
+    path.write_text(path.read_text(encoding="utf-8").replace(blank, duplicate, 1), encoding="utf-8")
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, backend_fields):
+        """Count conversions so an invalid record cannot reach SGP4 unnoticed."""
+        initialized.append(backend_fields)
+        return initialize(satellite, backend_fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(path)
+    assert [record.noradID for record in records] == ["25544"]
+    assert len(initialized) == 1
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert "Duplicate OMM" in warning and "NORAD_CAT_ID" in warning
 
 
 @pytest.mark.parametrize("catalog_id", [
