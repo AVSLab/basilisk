@@ -22,7 +22,31 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import date
+from pathlib import Path
+
+
+def _configure_matplotlib_cache(cache_directory):
+    """Select a reusable, writable test cache unless the caller configured one.
+
+    :param cache_directory: checkout-local directory for Matplotlib configuration and caches
+    """
+    if "MPLCONFIGDIR" in os.environ:
+        return
+    try:
+        cache_directory.mkdir(parents=True, exist_ok=True)
+        # Check actual writes, including on read-only mounts and Windows.
+        with tempfile.TemporaryFile(dir=cache_directory):
+            pass
+    except OSError:
+        # A read-only checkout must not prevent Matplotlib's normal fallback.
+        return
+    os.environ["MPLCONFIGDIR"] = str(cache_directory)
+
+
+# Configure the cache before importing Matplotlib or pyplot. Workers inherit it.
+_configure_matplotlib_cache(Path(__file__).resolve().parents[1] / ".pytest_cache" / "matplotlib")
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt

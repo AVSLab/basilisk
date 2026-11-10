@@ -306,6 +306,14 @@ The default packages include ``pytest`` which is a program that can run a series
 python scripts that begin with ``test_``.  The package ``pytest-xdist`` is also installed by default
 and allows these tests to be run in a multi-threaded manner using the argument ``-n auto``.
 
+The ``src`` pytest configuration sets ``MPLCONFIGDIR`` to the checkout's
+``.pytest_cache/matplotlib`` directory before importing Matplotlib. This ignored,
+reusable cache avoids rebuilding the font cache on repeated runs when the home
+directory is not writable, and is shared with local parallel test workers and CI
+workers. An explicitly supplied ``MPLCONFIGDIR`` is preserved. If the checkout
+cache cannot be written, Matplotlib uses its normal cache selection. The first
+run after creating or clearing the cache still builds it.
+
 Further, Basilisk uses the Google ``gtest`` suite to run unit tests on C or C++ support libraries.
 To run all the unit and integrated test open a terminal window and change your working directory
 to the root ``basilisk`` directory.  Activate the python virtual environment if needed.
