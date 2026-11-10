@@ -883,11 +883,13 @@ def test_omm_encodings_agree(tmp_path):
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("catalog_id", [
     "00001", "99999", "100000", "100001", "339999", "340000",
-    "999999", "799500001", "999999999",
+    "999999", "799500001", "999999999", "0", "+0", "+00001", "+25544",
+    "+999999999", "000999999999",
 ])
-def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id):
+@pytest.mark.parametrize("satrec", [ommHandling.Satrec, PythonSatrec], ids=["default", "python"])
+def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id, satrec):
     """Catalog IDs survive ingestion unchanged without affecting the orbital elements."""
-    monkeypatch.setattr(ommHandling, "Satrec", PythonSatrec)
+    monkeypatch.setattr(ommHandling, "Satrec", satrec)
 
     fields = dict(_OMM_FIELDS)
     fields["NORAD_CAT_ID"] = catalog_id
@@ -905,15 +907,31 @@ def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id):
         assert getattr(actual.oe, name) == getattr(reference.oe, name), name
 
 
-@pytest.mark.parametrize("catalog_id", ["A0001", "100000.5", "-1", "nan"])
-def test_omm_invalid_catalog_number_is_skipped(tmp_path, capsys, catalog_id):
-    """Substituting an internal SGP4 ID must not admit malformed catalog numbers."""
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("catalog_id", [
+    "A0001", "100000.5", "-1", "nan", "+", "++25544", "+ 25544", "+-1",
+    "1000000000", "+1000000000", "0001000000000", "١٢٣", "１２３",
+])
+def test_omm_invalid_catalog_number_is_skipped(tmp_path, monkeypatch, capsys, encoding, catalog_id):
+    """Malformed or out-of-range catalog IDs never reach SGP4; later records survive."""
     fields = dict(_OMM_FIELDS, NORAD_CAT_ID=catalog_id)
-    path = _writeJson(tmp_path / "invalid-catalog.json", [fields, _OMM_FIELDS])
+    fields["OBJECT_NAME"] = "BROKEN-SAT"
+    path = _WRITERS[encoding](tmp_path / f"invalid-catalog.{encoding}", [fields, _OMM_FIELDS])
+    initialize = ommHandling.sgp4omm.initialize
+    initialized = []
+
+    def initialize_valid_record(satellite, fields):
+        """Only the valid catalog entry may reach SGP4."""
+        assert fields["OBJECT_NAME"] == _OMM_FIELDS["OBJECT_NAME"]
+        initialized.append(fields)
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
 
     records = ommHandling.satOmm2elem(str(path))
 
     assert [record.noradID for record in records] == [_OMM_FIELDS["NORAD_CAT_ID"]]
+    assert len(initialized) == 1
     warning = capsys.readouterr().out
     assert "skipped OMM record 1" in warning
     assert "NORAD_CAT_ID" in warning
