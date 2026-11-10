@@ -1,0 +1,1 @@
+- :ref:`tleHandling` ``satTle2elem()`` now skips an unreadable set with a warning and returns the other sets in the file, as :ref:`ommHandling` does for OMM records; it raises only when no set can be read.

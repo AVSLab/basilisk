@@ -793,6 +793,11 @@ def satTle2elem(tle_path: str):
     """
     Convert the TLEs of a constellation to classical orbital elements for each satellite.
 
+    A set that cannot be read (bad checksum, malformed field, unsupported catalog number, SGP4 error) is
+    skipped with a printed warning and the remaining sets are still returned, as
+    :py:func:`Basilisk.utilities.ommHandling.satOmm2elem` does for OMM records. If no set in the file
+    can be read, the first set's error is raised.
+
     :param tle_path: path to a TLE with one or multiple satellites in either 2LE or 3LE format
     :return: elementsList: list of classical orbital elements for each satellite
              metadataList: list of dictionaries containing TLE metadata for each satellite
@@ -856,6 +861,8 @@ def satTle2elem(tle_path: str):
         raise ValueError(f"constTLE2Elem() received an invalid TLE type '{tleType}'. The type must be '2LE' or '3LE'.")
 
     resetTleStr()
+    setNo = 0  # number of complete sets met so far, for warnings
+    skipped = []  # errors of the sets that were skipped
     # Read through all lines and extract TLEs
     for lineNo, line in enumerate(tle_lines):
         expected = readingOrder[readingOrderIndex] if readingOrderIndex < len(readingOrder) else None
@@ -893,12 +900,20 @@ def satTle2elem(tle_path: str):
             continue
 
         if all(satTleReady):
-            tleDataClass = _parseTle(satTLE)
-            oscOE = _convertMean2osculating(line1, line2, tleDataClass)
-            tleDataClass.oe = oscOE
-            tleDataList.append(tleDataClass)
+            setNo += 1
+            try:
+                tleDataClass = _parseTle(satTLE)
+                oscOE = _convertMean2osculating(line1, line2, tleDataClass)
+            except ValueError as error:
+                print(f"WARNING: satTle2elem() skipped TLE set {setNo} (ending on line {lineNo}) in {tle_path}: {error}")
+                skipped.append(error)
+            else:
+                tleDataClass.oe = oscOE
+                tleDataList.append(tleDataClass)
             # Reset for next TLE
             resetTleStr()
+    if not tleDataList and skipped:
+        raise skipped[0]
     return tleDataList
 
 def _str2tleFormat(value: float) -> str:

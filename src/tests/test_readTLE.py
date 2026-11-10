@@ -330,6 +330,47 @@ def test_read_tle_name_lines_starting_with_a_digit(tmp_path, names):
             assert getattr(record.oe, name) == getattr(reference.oe, name)
 
 
+@pytest.mark.parametrize("bad_set", [0, 1, 2])
+@pytest.mark.parametrize("corruption", ["checksum", "epoch", "alpha5"])
+def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corruption):
+    """One unreadable set is skipped with a warning; the readable sets around it are still returned."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        name, line1, line2 = file.read().splitlines()[:3]
+    sets = []
+    for setNo in range(3):
+        number = f"{90001 + setNo:05d}"
+        l1 = _with_checksum(line1[:2] + number + line1[7:])
+        l2 = _with_checksum(line2[:2] + number + line2[7:])
+        if setNo == bad_set:
+            if corruption == "checksum":
+                l1 = l1[:68] + str((int(l1[68]) + 1) % 10)
+            elif corruption == "epoch":
+                l1 = _with_checksum(l1[:25] + "O" + l1[26:])
+            else:
+                l1 = l1[:2] + "A0001" + l1[7:]
+                l2 = l2[:2] + "A0001" + l2[7:]
+        sets.extend([f"SAT-{setNo}", l1, l2])
+    tle_path = tmp_path / "three-sets.tle"
+    tle_path.write_text("\n".join(sets) + "\n", encoding="utf-8")
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert [record.noradID for record in records] == [f"{90001 + n:05d}" for n in range(3) if n != bad_set]
+    warning = capsys.readouterr().out
+    assert f"skipped TLE set {bad_set + 1}" in warning
+
+
+def test_read_tle_all_sets_bad_raises(tmp_path):
+    """A file in which no set can be read still raises the first set's error."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+    line1 = lines[1][:68] + str((int(lines[1][68]) + 1) % 10)
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1)
+
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        tleHandling.satTle2elem(tle_path)
+
+
 def test_write_tle_6digit_norad_raises():
     """generateTle() must raise ValueError for catalog numbers >= 100000 (6-digit NORAD IDs assigned after ~July 2026 cannot be represented in TLE format)."""
     tleData = tleHandling.TleData(oe=oeHypso1, tleEpoch=hypso1tleEpoch)
