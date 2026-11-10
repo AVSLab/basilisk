@@ -565,6 +565,14 @@ def _parseTle(tle: str) -> TleData:
     nDot = _firstDeriv2ballistCoef(nDot_str) # dn/dt in [rev/day^2]
     nDotDot = _tleStr2physVal(nDotDot_str) # d^2n/dt^2 in [rev/day^3]
     bStar = _tleStr2physVal(bStar_str)
+    # Only SGP4 element sets can be converted here. Distributed TLEs carry type 0; CCSDS 502.0-B-3
+    # section 4.2.4.7 codes 2 = SGP4 and 4 = SGP4-XP, whose drag and second-derivative fields hold BTERM
+    # and AGOM, so SGP4 would return a plausible but wrong state. This matches satOmm2elem().
+    if ephemType_str.strip() not in ('', '0', '2'):
+        raise ValueError(
+            f"_parseTle() received an unsupported ephemeris type '{ephemType_str}' for NORAD ID "
+            f"{sat_id_1_clean}; expected 0 (default) or 2 (SGP4). Type 4 element sets need SGP4-XP."
+        )
     propagator = {'1': 'SGP4', '2': 'SDP4', '3': 'SGP8', '4': 'SDP8', '0': 'Unknown'}.get(ephemType_str, 'Unknown')
     elemSetNo = int(elemSetNo_str)
 
