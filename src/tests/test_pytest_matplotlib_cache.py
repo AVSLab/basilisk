@@ -18,6 +18,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -68,8 +69,9 @@ def test_matplotlib_cache_unwritable_checkout(tmp_path, monkeypatch, failure):
     assert "MPLCONFIGDIR" not in os.environ
 
 
-def test_matplotlib_font_cache_survives_new_processes(tmp_path):
-    """Fresh Python processes reuse the actual font cache independently of their cwd."""
+@pytest.mark.parametrize("symlink_cache", [False, True], ids=["directory", "symlink"])
+def test_matplotlib_font_cache_survives_new_processes(tmp_path, symlink_cache):
+    """Fresh processes reuse a direct or symlinked font cache independently of their cwd."""
     configuration = Path(conftest.__file__).resolve()
     cache = configuration.parents[1] / ".pytest_cache" / "matplotlib"
     try:
@@ -78,6 +80,22 @@ def test_matplotlib_font_cache_survives_new_processes(tmp_path):
             pass
     except OSError:
         pytest.skip("Font-cache integration requires a writable checkout")
+
+    if symlink_cache:
+        # Copy the configuration so __file__ identifies an isolated checkout, while
+        # its cache link shares the persistent cache instead of building a new one.
+        checkout = tmp_path / "checkout"
+        source = checkout / "src"
+        source.mkdir(parents=True)
+        for name in ("conftest.py", "reportconf.py"):
+            shutil.copy2(configuration.with_name(name), source / name)
+        linked_cache = checkout / ".pytest_cache"
+        try:
+            linked_cache.symlink_to(cache.parent, target_is_directory=True)
+        except OSError as error:
+            pytest.skip(f"Symbolic links are unavailable: {error}")
+        configuration = source / "conftest.py"
+        cache = linked_cache / "matplotlib"
 
     script = """
 import json
@@ -104,6 +122,6 @@ print(json.dumps({"directory": str(cache), "files": {
             env=environment, check=True, capture_output=True, text=True,
         )
         results.append(json.loads(completed.stdout.splitlines()[-1]))
-    assert results[0]["directory"] == str(cache)
+    assert Path(results[0]["directory"]).samefile(cache)
     assert results[0]["files"]
     assert results[1] == results[0]
