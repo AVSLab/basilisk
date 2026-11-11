@@ -310,14 +310,32 @@ def test_read_tle_accepts_sgp4_ephemeris_types(tmp_path, ephemeris_type):
         assert getattr(oe, name) == getattr(reference, name)
 
 
-@pytest.mark.parametrize("names", [["1KUNS-PF"], ["HYPSO-1", "2026-195B"], ["2026-195B", "1KUNS-PF"]])
-def test_read_tle_name_lines_starting_with_a_digit(tmp_path, names):
-    """3LE name lines that start with 1 or 2 are read as names, not counted as element lines."""
+@pytest.mark.parametrize("names", [
+    ["1KUNS-PF"],
+    ["HYPSO-1", "2026-195B"],
+    ["2026-195B", "1KUNS-PF"],
+    ["1 TEST"],
+    ["2 TEST"],
+    ["1 TEST", "2 TEST"],
+    ["HYPSO-1", "1 TEST", "2 TEST"],
+    ["1 12345U", "2 67890"],
+    ["1 OBJECT 12345", "2 PANEL 123.0000"],
+    ["1 OBJECT 12345678 PAYLOAD", "2 PANEL 123.0000 SIDE A"],
+    ["1 a0001", "2 12-53"],
+    ["1 5153U MODEL", "2 5153 CATALOG"],
+])
+def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names):
+    """Preserve every 3LE record's name and catalog ID, including names with element-line prefixes."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
     lines = []
-    for name in names:
-        lines.extend([name, line1, line2])
+    catalog_ids = [f"{90001 + index:05d}" for index in range(len(names))]
+    for name, catalog_id in zip(names, catalog_ids):
+        lines.extend([
+            name,
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
     tle_path = tmp_path / "digit-names.tle"
     tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
@@ -325,18 +343,259 @@ def test_read_tle_name_lines_starting_with_a_digit(tmp_path, names):
     records = tleHandling.satTle2elem(tle_path)
 
     assert [record.satName for record in records] == names
+    assert [record.noradID for record in records] == catalog_ids
+    assert capsys.readouterr().out == ""
     for record in records:
         for name in ("a", "e", "i", "Omega", "omega", "f"):
             assert getattr(record.oe, name) == getattr(reference.oe, name)
 
 
+@pytest.mark.parametrize("title", [
+    None,
+    "CATALOG",
+    "1 TEST",
+    "2 TEST",
+    "1 SATELLITE GROUP RECENT CATALOG 2026",
+    "2 SATELLITE LIST CATALOGS 2026",
+])
+def test_read_tle_2le_optional_title(tmp_path, capsys, title):
+    """Preserve both unnamed 2LE records when an optional file title resembles an element line."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    lines = [] if title is None else [title]
+    catalog_ids = ["90001", "90002"]
+    for catalog_id in catalog_ids:
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "optional-title.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert [record.noradID for record in records] == catalog_ids
+    assert [record.satName for record in records] == ["", ""]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("missing_line", range(4))
+def test_read_tle_incomplete_2le_is_not_a_named_record(tmp_path, missing_line):
+    """Reject incomplete 2LE files instead of treating an orphaned element line as a satellite name."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    lines = [line1, line2, line1, line2]
+    del lines[missing_line]
+    tle_path = tmp_path / "incomplete.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="orphan|must be equal"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("line_number, width", [
+    (1, 14),
+    (1, 20),
+    (1, 32),
+    (1, 68),
+    (2, 12),
+    (2, 25),
+    (2, 52),
+    (2, 68),
+])
+@pytest.mark.parametrize("good_sets", [1, 2])
+@pytest.mark.parametrize("catalog_field", ["51053", "a0001"])
+def test_read_tle_truncated_orphan_is_not_a_title(tmp_path, line_number, width, good_sets, catalog_field):
+    """Reject a truncated orphan before valid sets instead of using it as a name or file title."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    element_line = line1 if line_number == 1 else line2
+    lines = [element_line[:2] + catalog_field + element_line[7:width]]
+    for index in range(good_sets):
+        catalog_id = f"{90001 + index:05d}"
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "truncated-orphan.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="orphan|must be equal"):
+        tleHandling.satTle2elem(tle_path)
+
+
+def test_read_tle_orphan_with_blank_designator_is_not_a_title(tmp_path):
+    """A truncated analyst-object header remains an element line when its designator is blank."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    orphan = line1[:9] + " " * 8 + line1[17:20]
+    tle_path = tmp_path / "analyst-orphan.2le"
+    tle_path.write_text("\n".join([orphan, line1, line2]) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="orphan"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("line_number, field_start, field_end", [(1, 9, 17), (2, 8, 16)])
+def test_read_tle_orphan_with_malformed_field_is_not_a_title(tmp_path, line_number, field_start, field_end):
+    """A malformed numeric field does not turn a truncated element header into a title."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    orphan = (line1 if line_number == 1 else line2)[:68]
+    orphan = orphan[:field_start] + "X" * (field_end - field_start) + orphan[field_end:]
+    tle_path = tmp_path / "malformed-orphan.2le"
+    tle_path.write_text("\n".join([orphan, line1, line2]) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="orphan"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("line_number, width", [(1, 35), (1, 68), (2, 27), (2, 68)])
+@pytest.mark.parametrize("catalog_field, field_end", [
+    ("510531", 8),
+    ("5105312", 9),
+    ("510531", 7),
+    ("5105312", 7),
+    ("a0001", 7),
+    ("12-53", 7),
+])
+@pytest.mark.parametrize("good_sets", [1, 2])
+def test_read_tle_orphan_with_malformed_catalog_is_not_a_title(
+    tmp_path, line_number, width, catalog_field, field_end, good_sets
+):
+    """Reject truncated orphans with invalid catalogs in both satellite-name and file-title positions."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    element_line = line1 if line_number == 1 else line2
+    # Overlong catalogs can overwrite the next column or shift subsequent fields.
+    orphan = (element_line[:2] + catalog_field + element_line[field_end:])[:width]
+    lines = [orphan]
+    for index in range(good_sets):
+        catalog_id = f"{90001 + index:05d}"
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "malformed-catalog-orphan.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    title_position = "satellite-name" if good_sets == 1 else "file-title"
+
+    with pytest.raises(ValueError, match=f"orphaned TLE element line in a {title_position} position"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("line_number, missing_start, missing_end", [
+    *[(1, index, index + 1) for index in range(2, 18)],
+    *[(2, index, index + 1) for index in range(2, 17)],
+    (1, 2, 4),
+    (2, 2, 4),
+    (1, 2, 7),
+    (2, 2, 7),
+])
+@pytest.mark.parametrize("good_sets", [1, 2])
+def test_read_tle_orphan_with_shortened_header_is_not_a_title(
+    tmp_path, line_number, missing_start, missing_end, good_sets
+):
+    """Reject orphans with deleted header characters in satellite-name and file-title positions."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    element_line = line1 if line_number == 1 else line2
+    orphan = element_line[:missing_start] + element_line[missing_end:]
+    lines = [orphan]
+    for index in range(good_sets):
+        catalog_id = f"{90001 + index:05d}"
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "shortened-header-orphan.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    title_position = "satellite-name" if good_sets == 1 else "file-title"
+
+    with pytest.raises(ValueError, match=f"orphaned TLE element line in a {title_position} position"):
+        tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("prefix", ["", "0 "])
+def test_read_tle_element_like_titles_are_explicit(tmp_path, capsys, prefix):
+    """Reject balanced element-like names unless a zero prefix explicitly marks them as titles."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    names = [prefix + line1[:20], prefix + line2[:25]]
+    catalog_ids = ["90001", "90002"]
+    lines = []
+    for name, catalog_id in zip(names, catalog_ids):
+        lines.extend([
+            name,
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "element-like-titles.tle"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    if prefix:
+        records = tleHandling.satTle2elem(tle_path)
+        assert [record.satName for record in records] == names
+        assert [record.noradID for record in records] == catalog_ids
+        assert capsys.readouterr().out == ""
+    else:
+        with pytest.raises(ValueError, match="orphan"):
+            tleHandling.satTle2elem(tle_path)
+
+
+@pytest.mark.parametrize("layout", ["3le", "2le", "titled-2le"])
+@pytest.mark.parametrize("newline, trailing", [
+    ("\n", "\n"),
+    ("\r\n", " \t\r\n\r\n"),
+])
+def test_read_tle_trailing_blank_lines(tmp_path, capsys, layout, newline, trailing):
+    """Trailing blank lines preserve all names, catalog IDs and orbital elements across layouts."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    names = ["1 TEST", "2 TEST"]
+    catalog_ids = ["90001", "90002"]
+    lines = ["1 CATALOG"] if layout == "titled-2le" else []
+    for name, catalog_id in zip(names, catalog_ids):
+        if layout == "3le":
+            lines.append(name)
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "trailing-blanks.tle"
+    text = newline.join(lines) + newline
+    tle_path.write_bytes(text.encode("utf-8"))
+    reference = tleHandling.satTle2elem(tle_path)
+    tle_path.write_bytes((text + trailing).encode("utf-8"))
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert [record.noradID for record in records] == catalog_ids
+    assert [record.satName for record in records] == (names if layout == "3le" else ["", ""])
+    assert capsys.readouterr().out == ""
+    for record, expected in zip(records, reference):
+        for element in ("a", "e", "i", "Omega", "omega", "f"):
+            assert getattr(record.oe, element) == getattr(expected.oe, element)
+
+
+@pytest.mark.parametrize("text", ["", "\n\n", " \t\r\n\r\n"])
+def test_read_tle_blank_file_raises(tmp_path, text):
+    """Blank-file normalization raises the normal input error instead of returning an empty result."""
+    tle_path = tmp_path / "blank.tle"
+    tle_path.write_bytes(text.encode("utf-8"))
+
+    with pytest.raises(ValueError, match="at least two lines"):
+        tleHandling.satTle2elem(tle_path)
+
+
 @pytest.mark.parametrize("bad_set", [0, 1, 2])
-@pytest.mark.parametrize("corruption", ["checksum", "epoch", "alpha5"])
+@pytest.mark.parametrize("corruption", ["checksum", "epoch", "alpha5", "truncated"])
 def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corruption):
-    """One unreadable set is skipped with a warning; the readable sets around it are still returned."""
+    """Keep valid records and their numeric names around one unreadable element set."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         name, line1, line2 = file.read().splitlines()[:3]
     sets = []
+    names = ["1 SAT-0", "2 SAT-1", "SAT-2"]
     for setNo in range(3):
         number = f"{90001 + setNo:05d}"
         l1 = _with_checksum(line1[:2] + number + line1[7:])
@@ -346,16 +605,19 @@ def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corrup
                 l1 = l1[:68] + str((int(l1[68]) + 1) % 10)
             elif corruption == "epoch":
                 l1 = _with_checksum(l1[:25] + "O" + l1[26:])
-            else:
+            elif corruption == "alpha5":
                 l1 = l1[:2] + "A0001" + l1[7:]
                 l2 = l2[:2] + "A0001" + l2[7:]
-        sets.extend([f"SAT-{setNo}", l1, l2])
+            else:
+                l1 = l1[:20]
+        sets.extend([names[setNo], l1, l2])
     tle_path = tmp_path / "three-sets.tle"
     tle_path.write_text("\n".join(sets) + "\n", encoding="utf-8")
 
     records = tleHandling.satTle2elem(tle_path)
 
     assert [record.noradID for record in records] == [f"{90001 + n:05d}" for n in range(3) if n != bad_set]
+    assert [record.satName for record in records] == [name for index, name in enumerate(names) if index != bad_set]
     warning = capsys.readouterr().out
     assert f"skipped TLE set {bad_set + 1}" in warning
 

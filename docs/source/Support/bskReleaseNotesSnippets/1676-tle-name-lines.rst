@@ -1,1 +1,2 @@
-- :ref:`tleHandling` ``satTle2elem()`` now reads 3LE files whose name lines start with ``1`` or ``2`` (such as ``1KUNS-PF`` or ``2026-195B``); such files were previously refused as a whole.
+- :ref:`tleHandling` ``satTle2elem()`` now preserves satellite names and records in 3LE files whose names start with ``1`` or ``2``, including ``1 TEST`` and ``2 TEST``, accepts these prefixes in optional 2LE file titles, and ignores trailing blank lines.
+- :ref:`tleHandling` rejects recognizable orphaned element lines, including truncated lines, shortened headers with missing characters, and longer fragments with malformed catalog fields, instead of consuming them as names or file titles. Prefix an intentional element-like title with ``0`` followed by a space to disambiguate it.
