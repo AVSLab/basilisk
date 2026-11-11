@@ -837,7 +837,16 @@ def _generateTleFromMean(oe_mean: om.ClassicElements, tleData: TleData) -> str:
 
 def satTle2elem(tle_path: str):
     """
-    Convert the TLEs of a constellation to classical orbital elements for each satellite.
+    Convert SGP4 TLE records to osculating orbital elements and satellite metadata.
+
+    The ephemeris-type field (column 63 of line 1) may be blank, ``0`` or ``2``.
+    Other types, including ``4`` (SGP4-XP), are unsupported and follow the per-set
+    error handling below.
+
+    A blank international designator (columns 10-17 of line 1) is accepted.
+    In that case, ``launchDate`` is ``None``, while ``launchNo`` and ``pol`` retain
+    their :class:`TleData` defaults of ``1`` and ``"A"``. These defaults do not
+    represent known launch metadata for the object.
 
     A complete set that raises ``ValueError`` or ``ArithmeticError`` during parsing
     or orbital conversion is skipped with a printed warning. This includes bad
@@ -857,8 +866,9 @@ def satTle2elem(tle_path: str):
     is retained in ``satName``.
 
     :param tle_path: path to a TLE with one or multiple satellites in either 2LE or 3LE format
-    :return: list of :class:`TleData` objects carrying osculating orbital elements
-             in ``oe`` and the corresponding satellite metadata
+    :return: list of :class:`TleData` objects for successfully converted records,
+             with osculating orbital elements in ``oe`` and satellite metadata
+             in the other attributes
     """
     def resetTleStr() -> None:
         """
