@@ -310,6 +310,7 @@ def test_read_tle_accepts_sgp4_ephemeris_types(tmp_path, ephemeris_type):
         assert getattr(oe, name) == getattr(reference, name)
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("names", [
     ["1KUNS-PF"],
     ["HYPSO-1", "2026-195B"],
@@ -324,7 +325,7 @@ def test_read_tle_accepts_sgp4_ephemeris_types(tmp_path, ephemeris_type):
     ["1 a0001", "2 12-53"],
     ["1 5153U MODEL", "2 5153 CATALOG"],
 ])
-def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names):
+def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names, on_error):
     """Preserve every 3LE record's name and catalog ID, including names with element-line prefixes."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
@@ -340,7 +341,8 @@ def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names):
     tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
 
-    records = tleHandling.satTle2elem(tle_path)
+    options = {} if on_error is None else {"on_error": on_error}
+    records = tleHandling.satTle2elem(tle_path, **options)
 
     assert [record.satName for record in records] == names
     assert [record.noradID for record in records] == catalog_ids
@@ -350,6 +352,7 @@ def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names):
             assert getattr(record.oe, name) == getattr(reference.oe, name)
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("title", [
     None,
     "CATALOG",
@@ -358,7 +361,7 @@ def test_read_tle_name_lines_starting_with_a_digit(tmp_path, capsys, names):
     "1 SATELLITE GROUP RECENT CATALOG 2026",
     "2 SATELLITE LIST CATALOGS 2026",
 ])
-def test_read_tle_2le_optional_title(tmp_path, capsys, title):
+def test_read_tle_2le_optional_title(tmp_path, capsys, title, on_error):
     """Preserve both unnamed 2LE records when an optional file title resembles an element line."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
@@ -372,15 +375,17 @@ def test_read_tle_2le_optional_title(tmp_path, capsys, title):
     tle_path = tmp_path / "optional-title.2le"
     tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    records = tleHandling.satTle2elem(tle_path)
+    options = {} if on_error is None else {"on_error": on_error}
+    records = tleHandling.satTle2elem(tle_path, **options)
 
     assert [record.noradID for record in records] == catalog_ids
     assert [record.satName for record in records] == ["", ""]
     assert capsys.readouterr().out == ""
 
 
+@pytest.mark.parametrize("on_error", ["raise", "skip"])
 @pytest.mark.parametrize("missing_line", range(4))
-def test_read_tle_incomplete_2le_is_not_a_named_record(tmp_path, missing_line):
+def test_read_tle_incomplete_2le_is_not_a_named_record(tmp_path, missing_line, on_error):
     """Reject incomplete 2LE files instead of treating an orphaned element line as a satellite name."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
@@ -390,7 +395,7 @@ def test_read_tle_incomplete_2le_is_not_a_named_record(tmp_path, missing_line):
     tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     with pytest.raises(ValueError, match="orphan|must be equal"):
-        tleHandling.satTle2elem(tle_path)
+        tleHandling.satTle2elem(tle_path, on_error=on_error)
 
 
 @pytest.mark.parametrize("line_number, width", [
@@ -588,10 +593,11 @@ def test_read_tle_blank_file_raises(tmp_path, text):
         tleHandling.satTle2elem(tle_path)
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("bad_set", [0, 1, 2])
-@pytest.mark.parametrize("corruption", ["checksum", "epoch", "alpha5", "truncated"])
-def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corruption):
-    """Keep valid records and their numeric names around one unreadable element set."""
+@pytest.mark.parametrize("corruption", ["checksum", "epoch", "alpha5", "truncated", "ephemeris"])
+def test_read_tle_validation_error_policy(tmp_path, capsys, bad_set, corruption, on_error):
+    """Raise by default; only skip mode returns valid records around a validation failure."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         name, line1, line2 = file.read().splitlines()[:3]
     sets = []
@@ -608,13 +614,22 @@ def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corrup
             elif corruption == "alpha5":
                 l1 = l1[:2] + "A0001" + l1[7:]
                 l2 = l2[:2] + "A0001" + l2[7:]
+            elif corruption == "ephemeris":
+                l1 = _with_checksum(l1[:62] + "4" + l1[63:])
             else:
                 l1 = l1[:20]
         sets.extend([names[setNo], l1, l2])
     tle_path = tmp_path / "three-sets.tle"
     tle_path.write_text("\n".join(sets) + "\n", encoding="utf-8")
 
-    records = tleHandling.satTle2elem(tle_path)
+    options = {} if on_error is None else {"on_error": on_error}
+    if on_error != "skip":
+        with pytest.raises(ValueError):
+            tleHandling.satTle2elem(tle_path, **options)
+        assert capsys.readouterr().out == ""
+        return
+
+    records = tleHandling.satTle2elem(tle_path, **options)
 
     assert [record.noradID for record in records] == [f"{90001 + n:05d}" for n in range(3) if n != bad_set]
     assert [record.satName for record in records] == [name for index, name in enumerate(names) if index != bad_set]
@@ -622,21 +637,23 @@ def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corrup
     assert f"skipped TLE set {bad_set + 1}" in warning
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("layout", ["2le", "titled-2le", "3le"])
 @pytest.mark.parametrize("bad_set", [0, 1, 2])
-@pytest.mark.parametrize("line_number, field_start, field_end, value", [
+@pytest.mark.parametrize("line_number, field_start, field_end, value, expected_error", [
     # Epoch day fields use [day]; mean-motion fields use [rev/day].
-    pytest.param(1, 20, 32, "9999999.0000", id="epoch-date-overflow"),
-    pytest.param(1, 20, 32, "999999999999", id="epoch-timedelta-overflow"),
-    pytest.param(1, 20, 32, "         inf", id="epoch-infinite"),
-    pytest.param(2, 52, 63, " 0.00000000", id="mean-motion-zero"),
-    pytest.param(2, 52, 63, "     1e-300", id="mean-motion-underflow"),
-    pytest.param(2, 52, 63, "      1e300", id="mean-motion-overflow"),
+    pytest.param(1, 20, 32, "9999999.0000", OverflowError, id="epoch-date-overflow"),
+    pytest.param(1, 20, 32, "999999999999", OverflowError, id="epoch-timedelta-overflow"),
+    pytest.param(1, 20, 32, "         inf", OverflowError, id="epoch-infinite"),
+    pytest.param(2, 52, 63, " 0.00000000", ZeroDivisionError, id="mean-motion-zero"),
+    pytest.param(2, 52, 63, "     1e-300", ZeroDivisionError, id="mean-motion-underflow"),
+    pytest.param(2, 52, 63, "      1e300", OverflowError, id="mean-motion-overflow"),
 ])
-def test_read_tle_arithmetic_failure_is_skipped(
-    tmp_path, capsys, layout, bad_set, line_number, field_start, field_end, value
+def test_read_tle_arithmetic_error_policy(
+    tmp_path, monkeypatch, capsys, layout, bad_set, line_number, field_start, field_end,
+    value, expected_error, on_error
 ):
-    """Preserve valid records around numerical failures in every supported file layout."""
+    """Stop at the first numerical error by default and preserve valid records when skipping is requested."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
     names = ["1 SAT-0", "2 SAT-1", "SAT-2"]
@@ -658,9 +675,25 @@ def test_read_tle_arithmetic_failure_is_skipped(
     tle_path = tmp_path / "arithmetic-failure.tle"
     tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
+    parse = tleHandling._parseTle
+    attempted = []
 
-    records = tleHandling.satTle2elem(tle_path)
+    def track_parse(record):
+        attempted.append(record[-2][2:7])
+        return parse(record)
 
+    monkeypatch.setattr(tleHandling, "_parseTle", track_parse)
+    options = {} if on_error is None else {"on_error": on_error}
+    if on_error != "skip":
+        with pytest.raises(expected_error):
+            tleHandling.satTle2elem(tle_path, **options)
+        assert attempted == catalog_ids[:bad_set + 1]
+        assert capsys.readouterr().out == ""
+        return
+
+    records = tleHandling.satTle2elem(tle_path, **options)
+
+    assert attempted == catalog_ids
     assert [record.noradID for record in records] == [
         catalog_id for index, catalog_id in enumerate(catalog_ids) if index != bad_set
     ]
@@ -674,13 +707,14 @@ def test_read_tle_arithmetic_failure_is_skipped(
     assert f"skipped TLE set {bad_set + 1}" in warning
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("first_record, expected_error", [
     (0, OverflowError),
     (1, ZeroDivisionError),
     (2, ValueError),
 ])
-def test_read_tle_all_numeric_failures_raise_first_error(tmp_path, capsys, first_record, expected_error):
-    """Attempt every record, then raise the first error when numerical and validation failures leave no data."""
+def test_read_tle_all_numeric_failures_raise_first_error(tmp_path, capsys, first_record, expected_error, on_error):
+    """Every policy raises the first original error when all records are invalid."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
     overflow_line = _with_checksum(line1[:20] + "9999999.0000" + line1[32:])  # Epoch [day]
@@ -690,19 +724,24 @@ def test_read_tle_all_numeric_failures_raise_first_error(tmp_path, capsys, first
     ordered_records = bad_records[first_record:] + bad_records[:first_record]
     tle_path = tmp_path / "all-numeric-failures.2le"
     tle_path.write_text("\n".join(line for record in ordered_records for line in record) + "\n", encoding="utf-8")
+    options = {} if on_error is None else {"on_error": on_error}
 
     with pytest.raises(expected_error):
-        tleHandling.satTle2elem(tle_path)
+        tleHandling.satTle2elem(tle_path, **options)
 
     warning = capsys.readouterr().out
-    assert warning.count("skipped TLE set") == 3
-    for set_number in range(1, 4):
-        assert f"skipped TLE set {set_number}" in warning
+    if on_error == "skip":
+        assert warning.count("skipped TLE set") == 3
+        for set_number in range(1, 4):
+            assert f"skipped TLE set {set_number}" in warning
+    else:
+        assert warning == ""
 
 
+@pytest.mark.parametrize("on_error", ["raise", "skip"])
 @pytest.mark.parametrize("stage", ["_parseTle", "_convertMean2osculating"])
 @pytest.mark.parametrize("error_type", [TypeError, RuntimeError])
-def test_read_tle_unexpected_failure_propagates(monkeypatch, capsys, stage, error_type):
+def test_read_tle_unexpected_failure_propagates(monkeypatch, capsys, stage, error_type, on_error):
     """Unexpected implementation failures must not be reported as bad input and silently skipped."""
     error = error_type("unexpected internal failure")
 
@@ -712,15 +751,16 @@ def test_read_tle_unexpected_failure_propagates(monkeypatch, capsys, stage, erro
     monkeypatch.setattr(tleHandling, stage, fail)
 
     with pytest.raises(error_type) as caught:
-        tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")
+        tleHandling.satTle2elem(DATA_DIR / "hypso1.tle", on_error=on_error)
 
     assert caught.value is error
     assert capsys.readouterr().out == ""
 
 
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
 @pytest.mark.parametrize("error_type", [OverflowError, ZeroDivisionError, FloatingPointError])
-def test_read_tle_conversion_arithmetic_failure_is_skipped(tmp_path, monkeypatch, capsys, error_type):
-    """A numerical failure in orbital conversion skips that record and attempts the following records."""
+def test_read_tle_conversion_arithmetic_error_policy(tmp_path, monkeypatch, capsys, error_type, on_error):
+    """The policy also controls whether conversion errors stop the file or skip the failed record."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         _, line1, line2 = file.read().splitlines()[:3]
     catalog_ids = ["90001", "90002", "90003"]
@@ -742,8 +782,15 @@ def test_read_tle_conversion_arithmetic_failure_is_skipped(tmp_path, monkeypatch
         return convert(line1, line2, tle_data)
 
     monkeypatch.setattr(tleHandling, "_convertMean2osculating", convert_with_failure)
+    options = {} if on_error is None else {"on_error": on_error}
+    if on_error != "skip":
+        with pytest.raises(error_type, match="numerical conversion failure"):
+            tleHandling.satTle2elem(tle_path, **options)
+        assert attempted == catalog_ids[:2]
+        assert capsys.readouterr().out == ""
+        return
 
-    records = tleHandling.satTle2elem(tle_path)
+    records = tleHandling.satTle2elem(tle_path, **options)
 
     assert attempted == catalog_ids
     assert [record.noradID for record in records] == ["90001", "90003"]
@@ -753,15 +800,38 @@ def test_read_tle_conversion_arithmetic_failure_is_skipped(tmp_path, monkeypatch
     assert "numerical conversion failure" in warning
 
 
-def test_read_tle_all_sets_bad_raises(tmp_path):
-    """A file in which no set can be read still raises the first set's error."""
+@pytest.mark.parametrize("on_error", [None, "raise", "skip"])
+def test_read_tle_all_sets_bad_raises(tmp_path, capsys, on_error):
+    """A single invalid set raises its error with either policy, including the default."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
         lines = file.read().splitlines()
     line1 = lines[1][:68] + str((int(lines[1][68]) + 1) % 10)
     tle_path = _write_modified_hypso_tle(tmp_path, line1=line1)
+    options = {} if on_error is None else {"on_error": on_error}
 
     with pytest.raises(ValueError, match="checksum mismatch"):
-        tleHandling.satTle2elem(tle_path)
+        tleHandling.satTle2elem(tle_path, **options)
+
+    warning = capsys.readouterr().out
+    if on_error == "skip":
+        assert warning.count("skipped TLE set") == 1
+    else:
+        assert warning == ""
+
+
+@pytest.mark.parametrize("on_error", ["", "ignore", "SKIP", None, True, False, 0, [], {}])
+def test_read_tle_invalid_error_policy(tmp_path, on_error):
+    """Reject unsupported error policies before accessing the file."""
+    with pytest.raises(ValueError, match="on_error must be 'raise' or 'skip'"):
+        tleHandling.satTle2elem(tmp_path / "missing.tle", on_error=on_error)
+
+
+@pytest.mark.parametrize("on_error", ["raise", "skip"])
+def test_read_tle_file_error_propagates(tmp_path, capsys, on_error):
+    """Skipping individual records never suppresses file access failures."""
+    with pytest.raises(FileNotFoundError):
+        tleHandling.satTle2elem(tmp_path / "missing.tle", on_error=on_error)
+    assert capsys.readouterr().out == ""
 
 
 def test_write_tle_6digit_norad_raises():

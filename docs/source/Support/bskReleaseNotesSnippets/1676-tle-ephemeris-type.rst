@@ -1,1 +1,1 @@
-- :ref:`tleHandling` ``satTle2elem()`` accepts a blank ephemeris-type field, ``0`` or ``2`` for SGP4 conversion. Other types, including ``4`` (SGP4-XP), are skipped with a printed warning; if every attempted set fails, the first error is raised.
+- :ref:`tleHandling` ``satTle2elem()`` accepts a blank ephemeris-type field, ``0`` or ``2`` for SGP4 conversion. Other types, including ``4`` (SGP4-XP), raise ``ValueError`` by default. With ``on_error="skip"``, unsupported sets are skipped with a printed warning; if every attempted set fails, the first error is raised.
