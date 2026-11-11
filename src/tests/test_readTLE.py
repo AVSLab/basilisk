@@ -622,6 +622,137 @@ def test_read_tle_bad_set_is_skipped_not_fatal(tmp_path, capsys, bad_set, corrup
     assert f"skipped TLE set {bad_set + 1}" in warning
 
 
+@pytest.mark.parametrize("layout", ["2le", "titled-2le", "3le"])
+@pytest.mark.parametrize("bad_set", [0, 1, 2])
+@pytest.mark.parametrize("line_number, field_start, field_end, value", [
+    # Epoch day fields use [day]; mean-motion fields use [rev/day].
+    pytest.param(1, 20, 32, "9999999.0000", id="epoch-date-overflow"),
+    pytest.param(1, 20, 32, "999999999999", id="epoch-timedelta-overflow"),
+    pytest.param(1, 20, 32, "         inf", id="epoch-infinite"),
+    pytest.param(2, 52, 63, " 0.00000000", id="mean-motion-zero"),
+    pytest.param(2, 52, 63, "     1e-300", id="mean-motion-underflow"),
+    pytest.param(2, 52, 63, "      1e300", id="mean-motion-overflow"),
+])
+def test_read_tle_arithmetic_failure_is_skipped(
+    tmp_path, capsys, layout, bad_set, line_number, field_start, field_end, value
+):
+    """Preserve valid records around numerical failures in every supported file layout."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    names = ["1 SAT-0", "2 SAT-1", "SAT-2"]
+    catalog_ids = ["90001", "90002", "90003"]
+    lines = ["1 CATALOG"] if layout == "titled-2le" else []
+    for index, catalog_id in enumerate(catalog_ids):
+        record = [
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ]
+        if index == bad_set:
+            element_line = record[line_number - 1]
+            record[line_number - 1] = _with_checksum(
+                element_line[:field_start] + value + element_line[field_end:]
+            )
+        if layout == "3le":
+            lines.append(names[index])
+        lines.extend(record)
+    tle_path = tmp_path / "arithmetic-failure.tle"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    reference = tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")[0]
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert [record.noradID for record in records] == [
+        catalog_id for index, catalog_id in enumerate(catalog_ids) if index != bad_set
+    ]
+    expected_names = [name for index, name in enumerate(names) if index != bad_set]
+    assert [record.satName for record in records] == (expected_names if layout == "3le" else ["", ""])
+    for record in records:
+        for element in ("a", "e", "i", "Omega", "omega", "f"):
+            assert getattr(record.oe, element) == getattr(reference.oe, element)
+    warning = capsys.readouterr().out
+    assert warning.count("skipped TLE set") == 1
+    assert f"skipped TLE set {bad_set + 1}" in warning
+
+
+@pytest.mark.parametrize("first_record, expected_error", [
+    (0, OverflowError),
+    (1, ZeroDivisionError),
+    (2, ValueError),
+])
+def test_read_tle_all_numeric_failures_raise_first_error(tmp_path, capsys, first_record, expected_error):
+    """Attempt every record, then raise the first error when numerical and validation failures leave no data."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    overflow_line = _with_checksum(line1[:20] + "9999999.0000" + line1[32:])  # Epoch [day]
+    zero_motion_line = _with_checksum(line2[:52] + " 0.00000000" + line2[63:])  # Mean motion [rev/day]
+    checksum_line = line1[:68] + str((int(line1[68]) + 1) % 10)
+    bad_records = [[overflow_line, line2], [line1, zero_motion_line], [checksum_line, line2]]
+    ordered_records = bad_records[first_record:] + bad_records[:first_record]
+    tle_path = tmp_path / "all-numeric-failures.2le"
+    tle_path.write_text("\n".join(line for record in ordered_records for line in record) + "\n", encoding="utf-8")
+
+    with pytest.raises(expected_error):
+        tleHandling.satTle2elem(tle_path)
+
+    warning = capsys.readouterr().out
+    assert warning.count("skipped TLE set") == 3
+    for set_number in range(1, 4):
+        assert f"skipped TLE set {set_number}" in warning
+
+
+@pytest.mark.parametrize("stage", ["_parseTle", "_convertMean2osculating"])
+@pytest.mark.parametrize("error_type", [TypeError, RuntimeError])
+def test_read_tle_unexpected_failure_propagates(monkeypatch, capsys, stage, error_type):
+    """Unexpected implementation failures must not be reported as bad input and silently skipped."""
+    error = error_type("unexpected internal failure")
+
+    def fail(*args):
+        raise error
+
+    monkeypatch.setattr(tleHandling, stage, fail)
+
+    with pytest.raises(error_type) as caught:
+        tleHandling.satTle2elem(DATA_DIR / "hypso1.tle")
+
+    assert caught.value is error
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("error_type", [OverflowError, ZeroDivisionError, FloatingPointError])
+def test_read_tle_conversion_arithmetic_failure_is_skipped(tmp_path, monkeypatch, capsys, error_type):
+    """A numerical failure in orbital conversion skips that record and attempts the following records."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        _, line1, line2 = file.read().splitlines()[:3]
+    catalog_ids = ["90001", "90002", "90003"]
+    lines = []
+    for catalog_id in catalog_ids:
+        lines.extend([
+            _with_checksum(line1[:2] + catalog_id + line1[7:]),
+            _with_checksum(line2[:2] + catalog_id + line2[7:]),
+        ])
+    tle_path = tmp_path / "conversion-failure.2le"
+    tle_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    convert = tleHandling._convertMean2osculating
+    attempted = []
+
+    def convert_with_failure(line1, line2, tle_data):
+        attempted.append(tle_data.noradID)
+        if tle_data.noradID == "90002":
+            raise error_type("numerical conversion failure")
+        return convert(line1, line2, tle_data)
+
+    monkeypatch.setattr(tleHandling, "_convertMean2osculating", convert_with_failure)
+
+    records = tleHandling.satTle2elem(tle_path)
+
+    assert attempted == catalog_ids
+    assert [record.noradID for record in records] == ["90001", "90003"]
+    warning = capsys.readouterr().out
+    assert warning.count("skipped TLE set") == 1
+    assert "skipped TLE set 2" in warning
+    assert "numerical conversion failure" in warning
+
+
 def test_read_tle_all_sets_bad_raises(tmp_path):
     """A file in which no set can be read still raises the first set's error."""
     with open(DATA_DIR / "hypso1.tle", 'r') as file:
