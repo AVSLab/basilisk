@@ -1,1 +1,1 @@
-- :ref:`tleHandling` ``satTle2elem()`` now refuses element sets whose ephemeris type is not 0 or 2 (SGP4), such as type 4 (SGP4-XP), matching :ref:`ommHandling`.
+- :ref:`tleHandling` ``satTle2elem()`` accepts a blank ephemeris-type field, ``0`` or ``2`` for SGP4 conversion. Other types, including ``4`` (SGP4-XP), are skipped with a printed warning; if every attempted set fails, the first error is raised.
