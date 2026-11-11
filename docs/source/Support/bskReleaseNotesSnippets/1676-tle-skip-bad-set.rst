@@ -1,1 +1,1 @@
-- :ref:`tleHandling` ``satTle2elem()`` now skips an unreadable set with a warning and returns the other sets in the file, as :ref:`ommHandling` does for OMM records; it raises only when no set can be read.
+- :ref:`tleHandling` ``satTle2elem()`` now skips complete sets that fail validation or numerical conversion, including epoch overflow and division by zero, with a warning and returns the readable sets. If every attempted set fails, the first error is raised; file-level format checks can still reject the entire file.

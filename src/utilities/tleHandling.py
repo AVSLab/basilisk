@@ -839,10 +839,12 @@ def satTle2elem(tle_path: str):
     """
     Convert the TLEs of a constellation to classical orbital elements for each satellite.
 
-    A complete set that cannot be read (bad checksum, malformed field, unsupported catalog number, SGP4 error) is
-    skipped with a printed warning and the remaining sets are still returned, as
-    :py:func:`Basilisk.utilities.ommHandling.satOmm2elem` does for OMM records. If every attempted
-    set fails, the first set's error is raised. File-level format checks can reject the entire file.
+    A complete set that raises ``ValueError`` or ``ArithmeticError`` during parsing
+    or orbital conversion is skipped with a printed warning. This includes bad
+    checksums, malformed fields, unsupported catalog numbers, SGP4 errors, overflow
+    and division by zero. As with :py:func:`Basilisk.utilities.ommHandling.satOmm2elem`,
+    readable sets are still returned. If every attempted set fails, the first set's
+    original error is raised. File-level format checks can reject the entire file.
 
     Trailing blank lines are ignored. Lines with a 69-column element-line prefix or
     a recognizable truncated element header are rejected in title positions as
@@ -989,7 +991,7 @@ def satTle2elem(tle_path: str):
             try:
                 tleDataClass = _parseTle(satTLE)
                 oscOE = _convertMean2osculating(line1, line2, tleDataClass)
-            except ValueError as error:
+            except (ValueError, ArithmeticError) as error:
                 print(f"WARNING: satTle2elem() skipped TLE set {setNo} (ending on line {lineNo}) in {tle_path}: {error}")
                 skipped.append(error)
             else:
