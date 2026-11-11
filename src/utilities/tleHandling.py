@@ -835,7 +835,7 @@ def _generateTleFromMean(oe_mean: om.ClassicElements, tleData: TleData) -> str:
 
     return f"{tleData.satName}\n{line1}\n{line2}"
 
-def satTle2elem(tle_path: str):
+def satTle2elem(tle_path: str, *, on_error: str = "raise"):
     """
     Convert SGP4 TLE records to osculating orbital elements and satellite metadata.
 
@@ -848,12 +848,14 @@ def satTle2elem(tle_path: str):
     their :class:`TleData` defaults of ``1`` and ``"A"``. These defaults do not
     represent known launch metadata for the object.
 
-    A complete set that raises ``ValueError`` or ``ArithmeticError`` during parsing
-    or orbital conversion is skipped with a printed warning. This includes bad
-    checksums, malformed fields, unsupported catalog numbers, SGP4 errors, overflow
-    and division by zero. As with :py:func:`Basilisk.utilities.ommHandling.satOmm2elem`,
-    readable sets are still returned. If every attempted set fails, the first set's
-    original error is raised. File-level format checks can reject the entire file.
+    By default, the first error during parsing or orbital conversion is raised
+    immediately, and no partial result is returned. Set ``on_error="skip"`` to
+    skip complete sets that raise ``ValueError`` or ``ArithmeticError`` and return
+    the readable sets. Each skipped set produces a printed warning. These errors
+    include bad checksums, malformed fields, unsupported catalog numbers, SGP4
+    errors, overflow and division by zero. If every attempted set fails in skip
+    mode, the first set's original error is raised. File access errors, file-level
+    format errors and exceptions outside these two classes propagate in both modes.
 
     Trailing blank lines are ignored. Lines with a 69-column element-line prefix or
     a recognizable truncated element header are rejected in title positions as
@@ -866,10 +868,17 @@ def satTle2elem(tle_path: str):
     is retained in ``satName``.
 
     :param tle_path: path to a TLE with one or multiple satellites in either 2LE or 3LE format
+    :param on_error: keyword-only error policy: ``"raise"`` (default) stops at the
+                     first record error; ``"skip"`` warns and skips complete sets
+                     with validation or arithmetic errors. Other values raise
+                     ``ValueError`` before the file is opened.
     :return: list of :class:`TleData` objects for successfully converted records,
              with osculating orbital elements in ``oe`` and satellite metadata
              in the other attributes
     """
+    if not isinstance(on_error, str) or on_error not in ("raise", "skip"):
+        raise ValueError("satTle2elem() on_error must be 'raise' or 'skip'.")
+
     def resetTleStr() -> None:
         """
         Reset the TLE strings and flags for reading a new satellite.
@@ -1002,6 +1011,8 @@ def satTle2elem(tle_path: str):
                 tleDataClass = _parseTle(satTLE)
                 oscOE = _convertMean2osculating(line1, line2, tleDataClass)
             except (ValueError, ArithmeticError) as error:
+                if on_error == "raise":
+                    raise
                 print(f"WARNING: satTle2elem() skipped TLE set {setNo} (ending on line {lineNo}) in {tle_path}: {error}")
                 skipped.append(error)
             else:
