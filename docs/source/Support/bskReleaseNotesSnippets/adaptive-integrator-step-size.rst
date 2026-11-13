@@ -1,0 +1,1 @@
+- Documented in the RKF45 and RKF78 integrator pages that the task period is the largest step the adaptive integrators take, and that the default ``relTol`` of 1e-4 can give large, unreported errors on highly eccentric orbits, with measured examples for RKF78.
