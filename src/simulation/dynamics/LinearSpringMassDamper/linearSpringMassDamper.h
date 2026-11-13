@@ -52,23 +52,23 @@ class LinearSpringMassDamper final
     BSKLogger bskLogger;            //!< BSK Logging
 
   private:
-    void validateConfiguration();      //!< Validate the initial particle mass without changing its current state
-    double cRho;                       //!< Term needed for back-sub method
-    double rho;                        //!< [m] spring mass damper displacement from equilibrium
-    double rhoDot;                     //!< [m/s] time derivative of displacement from equilibrium
-    double massSMD;                    //!< [kg] mass of spring mass damper particle
-    Eigen::Vector3d r_PcB_B;           //!< [m] position vector form B to center of mass location of particle
-    Eigen::Matrix3d rTilde_PcB_B;      //!< [m] tilde matrix of r_Pc_B
-    Eigen::Vector3d rPrime_PcB_B;      //!< [m/s] Body time derivative of r_Pc_B
-    Eigen::Matrix3d rPrimeTilde_PcB_B; //!< [m/s] Tilde matrix of rPrime_PcB_B
-    Eigen::Vector3d aRho;              //!< Term needed for back-sub method
-    Eigen::Vector3d bRho;              //!< Term needed for back-sub method
-    Eigen::MatrixXd* g_N;              //!< [m/s^2] Gravitational acceleration in N frame components
-    StateData* rhoState;               //!< state data for spring mass damper displacement from equilibrium
-    Eigen::MatrixXd* c_B;              //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd* cPrime_B;         //!< [m/s] Body time derivative of vector c_B in B frame components
-    StateData* rhoDotState;            //!< state data for time derivative of rho;
-    static uint64_t effectorID;        //!< [] ID number of this panel
+    void validateConfiguration();        //!< Validate the initial particle mass without changing its current state
+    double cRho;                         //!< Term needed for back-sub method
+    double rho;                          //!< [m] spring mass damper displacement from equilibrium
+    double rhoDot;                       //!< [m/s] time derivative of displacement from equilibrium
+    double massSMD;                      //!< [kg] mass of spring mass damper particle
+    Eigen::Vector3d r_PcB_B;             //!< [m] position vector form B to center of mass location of particle
+    Eigen::Matrix3d rTilde_PcB_B;        //!< [m] tilde matrix of r_Pc_B
+    Eigen::Vector3d rPrime_PcB_B;        //!< [m/s] Body time derivative of r_Pc_B
+    Eigen::Matrix3d rPrimeTilde_PcB_B;   //!< [m/s] Tilde matrix of rPrime_PcB_B
+    Eigen::Vector3d aRho;                //!< Term needed for back-sub method
+    Eigen::Vector3d bRho;                //!< Term needed for back-sub method
+    Eigen::Vector3d omega_PN_P{};        //!< [rad/s] Parent inertial angular velocity in parent components
+    StateData* rhoState;                 //!< state data for spring mass damper displacement from equilibrium
+    Eigen::MatrixXd* c_B = nullptr;      //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd* cPrime_B = nullptr; //!< [m/s] Body time derivative of vector c_B in B frame components
+    StateData* rhoDotState;              //!< state data for time derivative of rho;
+    static uint64_t effectorID;          //!< [] ID number of this panel
 
   public:
     LinearSpringMassDamper();  //!< Constructor
@@ -76,6 +76,14 @@ class LinearSpringMassDamper final
     void Reset(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& states) override; //!< Method for SMD to register its states
     void linkInStates(DynParamManager& states) override;   //!< Method for SMD to get access of other states
+    /*! @brief Link the prescribed parent's motion relative to the spacecraft hub.
+     * @param[in] states Dynamics manager owning the prescribed position, velocity, acceleration,
+     * attitude, angular velocity, and angular acceleration properties.
+     * @note The prescribed parent assigns the property names during attachment and registers the
+     * properties before calling this method. The retained references provide the current integration-stage
+     * values. This callback is only used for prescribed-motion attachments.
+     */
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void retrieveMassValue(double integTime) override;
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
         override; //!< Force and torque on s/c due to linear spring mass damper
@@ -93,6 +101,16 @@ class LinearSpringMassDamper final
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
+    /*! @brief Add the coupling terms for a particle attached to a prescribed body.
+     * @param[in,out] backSubContr Particle backsubstitution contributions from updateContributions(),
+     * expressed in prescribed-parent frame P components. Adds the terms required to couple the particle
+     * to the spacecraft hub at point B.
+     * @note Call linkInPrescribedMotionProperties() during initialization, then updateEffectorMassProps()
+     * and updateContributions() for the current integration stage before this callback. The latter supplies
+     * the prescribed parent's inertial angular velocity in P components. The prescribed parent transforms
+     * the resulting contributions into hub-frame components after this callback returns.
+     */
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
