@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_inertial3D:
+
+inertial3D
+==========
+
+:doc:`Module documentation <inertial3D>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

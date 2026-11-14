@@ -1,0 +1,279 @@
+.. _spacecraftLocation:
+
+:module-type:`C++` Module: spacecraftLocation
+=============================================
+
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+This module determines if one satellite has a line of sight vector to another satellite.  An oblate planet is modeled through the equatorial and the polar radius. If the line of sight vector between two satellites is above this surface, then the output access message is set to true.  The module has a primary spacecraft which determines access to `N` other spacecraft orbiting the same planet.
+
+Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and a center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
+
+Lighting conditions are also considered. If a Sun message is connected and ``theta_solar`` is set, the module checks that the normal :math:`\hat{\bf a}` is illuminated by the Sun with at most that incidence angle. The optional ``theta_view`` limit rejects observations made too obliquely to the normal. When a Sun message is connected, the module also reports how closely the tracked spacecraft aligns with the ideal specular reflection from the body-fixed location. This geometric glare metric can optionally prevent access so that observations with risky geometry can be scheduled for re-imaging.
+
+Finally, if the other spacecraft is accessible, the range to the other satellite is stored in the output message.
+
+
+Module Assumptions and Limitations
+----------------------------------
+This module assumes all spacecraft are orbiting the same planet.  The planet shape is assumed to be an ellipsoid specified through the equatorial and polar radius.  To account for a planet's atmosphere, increase these radii to account for the atmospheric height.
+
+The glare output is a geometric specular-alignment metric. It does not model a bidirectional reflectance distribution
+function, surface roughness, wavelength-dependent material properties, absolute irradiance, camera exposure, or
+sensor saturation. Consequently, ``hasGlare`` indicates a user-configured risk geometry rather than proving that an
+image is overexposed. Planetary eclipse geometry remains the responsibility of a separate :ref:`eclipse` module;
+``spacecraftLocation`` can consume that module's illumination factor but does not calculate eclipse or spacecraft
+self-shadowing.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: spacecraftLocation
+    :caption: Module I/O Messages
+
+    input planetInMsg SpicePlanetStateMsgPayload
+        (optional) planet state input message. Default is a zero state for the planet.
+    input primaryScStateInMsg SCStatesMsgPayload
+        primary spacecraft state message relative to which to evaluate access to other spacecraft in ``scStateInMsgs``.
+    input scStateInMsgs SCStatesMsgPayload
+        vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``.
+    input sunInMsg SpicePlanetStateMsgPayload
+        (optional) Sun state input message. Used for illumination and glare checking when connected.
+    input eclipseInMsg EclipseMsgPayload
+        (optional) eclipse input message. Used for illumination checking if the message is connected and ``min_illumination_factor`` is set.
+    output accessOutMsgs AccessMsgPayload
+        output vector of ground location access messages.
+
+
+Detailed Module Description
+---------------------------
+The ``spacecraftLocation`` module handles the following behavior:
+
+#. Spacecraft body-fixed location representation: a single ``spacecraftLocation`` instance represents one body-fixed location on a
+   spacecraft
+#. The planet-centered planet-fixed frame is either a zero state (default), or read in through an optional planet ephemeris message
+#. An optional sensor axis can be specified to ensure the primary spacecraft is pointing this axis
+#. Computation of spacecraft visibility (i.e. access) considering range and relative field-of-view constraints
+#. Computation of Sun incidence, tracked-spacecraft view angle, and geometric specular-glare alignment at the body-fixed location
+#. Optional access limits on Sun incidence, spacecraft viewing angle, and specular-glare alignment
+#. Support for multiple other spacecraft given one ``spacecraftLocation`` instance
+
+
+Determining Line of Sight to another spacecraft
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let `P` be the planet-centered planet-fixed frame.  The inertial planet origin is given by :math:`{}^{N} {\bf r}_{P/N}`.  The inertial position vector of the primary spacecraft `B` is :math:`{}^{N}{\bf r}_{B/N}`, while the inertial position vector to the other satellite is :math:`{}^{\cal N}{\bf r}_{S/N}`.  The first step is to determine the spacecraft positions, expressed in the `P` frame.
+
+.. math::
+    {}^{P} {\bf r}_{B/P} = [PN] ( {}^{N} {\bf r}_{B/N} - {}^{N} {\bf r}_{P/N})
+
+.. math::
+    {}^{P} {\bf r}_{S/P} = [PN] ( {}^{N} {\bf r}_{S/N} - {}^{N} {\bf r}_{P/N})
+
+.. math::
+    {}^{P} {\bf r}_{S/B} = {}^{P} {\bf r}_{S/P} - {}^{P} {\bf r}_{B/P}
+
+The line of sight vector is defined through the point `B` and the direction :math:`{\bf r}_{S/B}`.  Let :math:`\kappa` be a scaling factor, the line is then defined as:
+
+.. math::
+    {\bf l} =  {\bf r}_{B/P} + \kappa * {\bf r}_{S/B}
+
+The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follows.  The planet is assumed to have rotational symmetry about the 3\ :sup:`rd` axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3\ :sup:`rd` coordinates must be scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.
+
+To determine the minimum distance of the line :math:`\bf l` to the planet origin, consider the cost function :math:`J`:
+
+.. math::
+    J = {\bf l} \cdot {\bf l} = {\bf r}_{B/P} \cdot {\bf r}_{B/P} + 2 \kappa {\bf r}_{B/P} \cdot {\bf r}_{S/B} + \kappa^2 {\bf r}_{S/B} \cdot {\bf r}_{S/B}
+
+Setting the first variation of :math:`J` with respect to :math:`\kappa` to zero and solving for optimal :math:`\kappa^\ast` yields
+
+.. math::
+    \kappa^\ast = - \frac{{\bf r}_{B/P} \cdot {\bf r}_{S/B}}{{\bf r}_{S/B} \cdot {\bf r}_{S/B}}
+
+Note that if :math:`\kappa<0` or :math:`\kappa>1`, then the point of closed approach is outside of the
+line-of-sight interval between the two spacecraft and the planet cannot be blocking access
+of one spacecraft from another.
+
+Thus, the point of closed approach is determined through:
+
+.. math::
+    {\bf r}^\ast = {\bf r}_{B/P} + \kappa^\ast * {\bf r}_{S/B}
+
+If :math:`|{\bf r}^\ast| > r_{\text{eq}}` then the other spacecraft is visible relative to the primary spacecraft.
+
+
+Determining Sensor Cone Inclusion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If the line of sight property is established, then the module can also take into consideration a sensor or communication boresight axis :math:`\hat {\bf a}` which is fixed relative to the primary spacecraft body frame.  The angle :math:`\phi` between the relative position vector and this body fixed unit direction vector is found through:
+
+.. math::
+    \phi = \arccos \left( \frac{ {\bf r}_{S/B} \cdot \hat{\bf a}}{|{\bf r}_{S/B} |} \right)
+
+The module sets the sensor cone half-angle :math:`\theta`.  If :math:`\phi > \theta` then the sensor or communication axis does not have access to the other spacecraft.
+
+If this :math:`\hat{\bf a}` is considered, then the access output message sets the message elevation angle as
+
+.. math::
+
+    \text{elevation} = \frac{\pi}{2} - \phi
+
+Determining Solar Illumination
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, the illumination of the surface is considered, treating :math:`\hat{\bf a}` as the surface normal. Let :math:`L` be the body-fixed location, :math:`H` the Sun, and :math:`S` the tracked spacecraft. The unit location-to-Sun and location-to-spacecraft vectors are
+
+.. math::
+    \hat{\bf l} = \frac{{}^{N}{\bf r}_{H/N} - {}^{N}{\bf r}_{L/N}}
+    {\left|{}^{N}{\bf r}_{H/N} - {}^{N}{\bf r}_{L/N}\right|},
+    \qquad
+    \hat{\bf v} = \frac{{}^{N}{\bf r}_{S/N} - {}^{N}{\bf r}_{L/N}}
+    {\left|{}^{N}{\bf r}_{S/N} - {}^{N}{\bf r}_{L/N}\right|}.
+
+The illumination incidence condition is met if
+
+.. math::
+    \arccos \left( \hat{\bf a} \cdot \hat{\bf l} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}.
+
+If an eclipse message is connected and ``min_illumination_factor`` is set, the module will also check that the
+illumination factor is above this threshold. The eclipse factor is supplied by a separate :ref:`eclipse` model so
+eclipse geometry is not duplicated here. Spacecraft self-shadowing is not modeled.
+
+Determining the Viewing Angle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The surface-normal-to-observer angle is
+
+.. math::
+    \theta_{\text{view}} = \arccos\left(\hat{\bf a}\cdot\hat{\bf v}\right).
+
+It is reported as ``scViewAngle`` whenever ``aHat_B`` is configured and a tracked spacecraft is connected; no Sun
+message is needed. Setting ``theta_view`` to a nonnegative maximum rejects access when
+:math:`\theta_{\text{view}} > \theta_{\text{view,max}}`. The default negative value disables this requirement.
+This is an observation-obliquity check, distinct from the sensor cone angle ``theta`` and from the angle
+:math:`\delta` between the ideal reflected ray and the viewing direction.
+
+Determining Specular Glare
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _spacecraftLocationGlareGeometry:
+
+.. figure:: /../../src/simulation/environment/spacecraftLocation/_Documentation/Images/specularGlareGeometry.svg
+    :align: center
+    :width: 95%
+    :alt: Specular glare geometry showing the Sun, surface normal, ideal reflection, and imaging-spacecraft view vectors.
+
+    Specular-glare geometry at the body-fixed surface point :math:`L`. The two-dimensional drawing shows the ideal
+    coplanar case; the vector calculation is performed in three dimensions. The ideal reflection has equal incidence
+    and reflection angles, while the offset :math:`\delta` between :math:`\hat{\bf r}` and :math:`\hat{\bf v}` controls
+    the reported glare factor.
+
+For an illuminated, front-facing surface, the ideal outgoing reflection of incoming sunlight is
+
+.. math::
+    \hat{\bf r} = 2\left(\hat{\bf a}\cdot\hat{\bf l}\right)\hat{\bf a} - \hat{\bf l}.
+
+The reflected-ray viewing offset shown in the figure is
+
+.. math::
+    \delta = \arccos\left(\operatorname{clip}\left(\hat{\bf r}\cdot\hat{\bf v},-1,1\right)\right).
+
+The module defines the dimensionless geometric glare factor as
+
+.. math::
+    g = \max\left(0,\hat{\bf r}\cdot\hat{\bf v}\right),
+
+with :math:`g=0` when either the Sun or tracked spacecraft is behind the surface. Back-facing geometry is never
+classified as glare, even when ``glareThreshold`` is zero. The value is clamped to :math:`[0,1]`, and :math:`g=1` is
+exact alignment with the specular reflection. This single alignment test captures both equal incidence/view angles
+and coplanarity, including the normal-incidence case where cross-product-based plane normals are undefined.
+
+The peak of this geometric alignment coincides with the specular peak of the `Blinn--Phong model used by van Wijk et al. <https://arxiv.org/abs/2308.02743>`__. The module does not evaluate that model's intensity profile: material coefficients, a shininess exponent, light intensity, and sensor-dependent thresholds would be needed for radiometric overexposure predictions.
+
+The output ``hasGlare`` uses an inclusive comparison against ``glareThreshold``, with an absolute tolerance of
+16 times double-precision machine epsilon to accommodate numerical roundoff. This includes exact reflections
+when ``glareThreshold`` is 1. The reported ``glareFactor`` retains the computed, clamped alignment.
+The default ``glareThreshold`` is 0.95. It must be finite and in ``[0, 1]``; invalid values raise an error during
+initialization. Glare is evaluated separately for every spacecraft connected through
+``addSpacecraftToModel()`` and only when ``sunInMsg``
+is connected. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare
+is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared
+observations, allowing an inspection planner to leave those points available for re-imaging.
+
+User Guide
+----------
+A new instance of ``spacecraftLocation``, alongside necessary user-supplied parameters, can be created by calling:
+
+.. code-block:: python
+
+    location = spacecraftLocation.SpacecraftLocation()
+    location.ModelTag = "scLocation"
+    location.rEquator = orbitalMotion.REQ_EARTH * 1000.
+    location.rPolar = orbitalMotion.RP_EARTH * 1000.  # optional, include to account for oblateness
+    location.maximumRange = 100e3 # optional, sets maximum range for visibility in meters
+    scSim.AddModelToTask(simTaskName, location)
+
+The variable ``maximumRange`` is optional and set to -1 by default.  If it is set to a positive value, then the ``hasAccess`` variable is only set to 1 if the relative spacecraft distance is less than this maximum range.
+
+An optional planet ephemeris is connected via the ``planetInMsg`` input message:
+
+.. code-block:: python
+
+    location.planetInMsg.subscribeTo(planetMsg)
+
+If this message is not connected, then zero planet position and attitude orientation are set.
+
+
+To set a primary spacecraft body fixed sensor or communication axis :math:`\hat{\bf a}` and half-cone angle :math:`\theta`, use::
+
+    module.aHat_B = [xxx, xxx, xxx]
+    module.theta = xxx * macros.D2R
+
+For a surface inspection point, configure the body-fixed point location and outward normal, connect the Sun, and optionally reject glared views::
+
+    location.r_LB_B = [xPoint, yPoint, zPoint]  # [m]
+    location.aHat_B = [cHatX, cHatY, cHatZ]  # [-]
+    location.theta = 90.0 * macros.D2R  # [rad]
+    location.theta_solar = 90.0 * macros.D2R  # [rad]
+    location.theta_view = 75.0 * macros.D2R  # [rad], optional viewing-obliquity limit
+    location.glareThreshold = 0.95  # [-]
+    location.useGlareConstraint = True
+    location.sunInMsg.subscribeTo(sunMsg)
+
+The output ``glareFactor`` can be retained as an observation-quality feature even when ``useGlareConstraint`` is ``False``. For a point-cloud RSO model, create one module instance per body-fixed point and connect each instance to the same Sun and imaging-spacecraft state messages.
+
+
+Spacecraft can be added to the model by calling::
+
+    location.addSpacecraftToModel(sc1.scStateOutMsg)
+    location.addSpacecraftToModel(sc2.scStateOutMsg)
+
+The access output messages can be logged through::
+
+    dataRec0 = location.accessOutMsgs[0].recorder()
+    dataRec1 = location.accessOutMsgs[1].recorder()
+
+.. warning::
+
+   ``min_shadow_factor`` is **deprecated** in favor of ``min_illumination_factor``.
+   In C/C++ both names work until **Dec 31, 2026**. After that date, code must
+   use ``min_illumination_factor`` exclusively.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: spacecraftLocation.h
+   :project: spacecraftLocation
+

@@ -1,0 +1,15 @@
+.. _test_houghCirlces:
+
+test_houghCirlces
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_houghCirlces
+   :members:
+   :show-inheritance:
+

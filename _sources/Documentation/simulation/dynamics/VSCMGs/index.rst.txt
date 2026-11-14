@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_VSCMGs:
+
+VSCMGs
+======
+
+:doc:`Module documentation <vscmgStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,10 @@
+.. _sphericalHarmonicsGravityModel:
+
+:module-type:`C++` Module: sphericalHarmonicsGravityModel
+=========================================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: sphericalHarmonicsGravityModel.h
+   :project: gravityEffector
+

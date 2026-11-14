@@ -1,0 +1,16 @@
+.. _sys_model:
+
+sys_model
+=========
+
+
+Basilisk base system model class.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: sys_model.h
+   :project: _GeneralModuleFiles0
+

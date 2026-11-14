@@ -1,0 +1,19 @@
+.. _Folder_paperReference:
+
+paperReference
+==============
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+   generate_dri1_reference
+   generate_rs_reference
+   generate_w2ito_reference
+   paperCommon
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+

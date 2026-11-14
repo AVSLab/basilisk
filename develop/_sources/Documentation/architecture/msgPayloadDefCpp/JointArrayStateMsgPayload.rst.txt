@@ -1,0 +1,10 @@
+.. _JointArrayStateMsgPayload:
+
+JointArrayStateMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: JointArrayStateMsgPayload.h
+   :project: msgPayloadDefCpp
+

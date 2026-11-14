@@ -1,0 +1,10 @@
+.. _vizStructures:
+
+vizStructures
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: vizStructures.h
+   :project: _GeneralModuleFiles9
+

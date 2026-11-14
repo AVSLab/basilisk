@@ -1,0 +1,15 @@
+.. _test_opNavPoint:
+
+test_opNavPoint
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_opNavPoint
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _msgHeader:
+
+msgHeader
+=========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: msgHeader.h
+   :project: messaging
+

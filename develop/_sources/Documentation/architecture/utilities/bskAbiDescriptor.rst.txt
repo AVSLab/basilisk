@@ -1,0 +1,10 @@
+.. _bskAbiDescriptor:
+
+bskAbiDescriptor
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: bskAbiDescriptor.h
+   :project: utilities
+

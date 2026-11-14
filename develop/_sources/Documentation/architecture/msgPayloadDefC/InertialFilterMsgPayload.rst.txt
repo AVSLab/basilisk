@@ -1,0 +1,10 @@
+.. _InertialFilterMsgPayload:
+
+InertialFilterMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: InertialFilterMsgPayload.h
+   :project: msgPayloadDefC
+

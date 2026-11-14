@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_dragEffector:
+
+dragEffector
+============
+
+:doc:`Module documentation <dragDynamicEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

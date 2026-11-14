@@ -1,0 +1,10 @@
+.. _svIntegratorWeakSIESME:
+
+svIntegratorWeakSIESME
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svIntegratorWeakSIESME.h
+   :project: _GeneralModuleFiles4
+

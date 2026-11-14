@@ -1,0 +1,15 @@
+.. _test_simpleVoltEstimator:
+
+test_simpleVoltEstimator
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_simpleVoltEstimator
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,15 @@
+.. _scenarioMtbMomentumManagementSimple:
+
+scenarioMtbMomentumManagementSimple
+===================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioMtbMomentumManagementSimple
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _HingedRigidBodyMsgPayload:
+
+HingedRigidBodyMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: HingedRigidBodyMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,612 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 1.x and Earlier Known Issues &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="User Information" href="../User.html" />
+    <link rel="prev" title="Version 2.0 Known Issues" href="2.0.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+      <li class="breadcrumb-item active">Version 1.x and Earlier Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskKnownIssues/1.x-and-earlier.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-1-x-and-earlier-known-issues">
+<h1>Version 1.x and Earlier Known Issues<a class="headerlink" href="#version-1-x-and-earlier-known-issues" title="Link to this heading"></a></h1>
+<section id="version-1-8-10">
+<span id="bsk-known-issues-1-8-10"></span><h2>Version 1.8.10<a class="headerlink" href="#version-1-8-10" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.9</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.8</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.7</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.6</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.5</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found when opNav is included.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p>Version 1.8.4</p>
+<ul class="simple">
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p><strong>Version 1.8.3</strong></p>
+<ul class="simple">
+<li><p>On Windows the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and all <code class="docutils literal notranslate"><span class="pre">opNav</span></code> related modules is not properly linking.
+Thus, all associated modules, including saving to Vizard binaries, is not working in this version.</p></li>
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p><strong>Version 1.8.2</strong></p>
+<ul class="simple">
+<li><p>On Linux and Windows the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and all <code class="docutils literal notranslate"><span class="pre">opNav</span></code> related modules is not properly linking.
+Thus, all associated modules, including saving to Vizard binaries, is not working in this version.</p></li>
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+</ul>
+<p><strong>Version 1.8.1</strong></p>
+<ul class="simple">
+<li><p>When deleting <code class="docutils literal notranslate"><span class="pre">.conan</span></code> and doing a build with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> set to true, the required dependencies can’t be found
+on the repo on the first install run.  Running it again makes it work.  This is fixed in the next release to run
+properly on the first try.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">openCV</span></code> is conan installed for Release only the Xcode would give false error messages that it can’t
+find the library.  This is now fixed in the current release.</p></li>
+<li><p>In Xcode, when editing <code class="docutils literal notranslate"><span class="pre">vizInterface.c/h</span></code> files, the protobuffer library is not properly found.
+The code compiles, but auto-completion etc. doesn’t work in that module.</p></li>
+<li><p>On Linux and Windows the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and all <code class="docutils literal notranslate"><span class="pre">opNav</span></code> related modules is not properly linking.
+Thus, all associated modules, including saving to Vizard binaries, is not working in this version.</p></li>
+</ul>
+<p><strong>Version 1.8.0</strong></p>
+<ul>
+<li><p>The new conan based built system might need the conan cache folder <code class="docutils literal notranslate"><span class="pre">.conan</span></code> to be deleted and reset.  This is
+typically in the user’s home folder.  After this you need to re-run the conan setup commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+$ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+</pre></div>
+</div>
+</li>
+<li><p>If running Windows the path to the Basilisk library destination folder must be set, see <a class="reference internal" href="../../Build/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.</p></li>
+<li><p>On Linux and Windows the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and all <code class="docutils literal notranslate"><span class="pre">opNav</span></code> related modules is not properly linking.
+Thus, all associated modules, including saving to Vizard binaries, is not working in this version.</p></li>
+<li><p>If running Windows, be sure to use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">conan</span></code> to get conan, and don’t download the binary installer,
+see <a class="reference internal" href="../../Build/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.   The binary installer causes several issues with this new build system in that
+it contains its own copy of Python, and thus checking for required python packages does work.</p></li>
+<li><p>The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
+required to update BSK python simulation scripts to be compatible with the new build system.
+These changes include:</p>
+<ul>
+<li><p>In BSK python simulation scripts, BSK modules should be included using the indirect method.  Thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms.cModuleTemplate</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>
+</pre></div>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">pyswice</span></code> package is now imported from <code class="docutils literal notranslate"><span class="pre">topLevelModule</span></code>.  Thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+</pre></div>
+</div>
+</li>
+<li><p>The support file <code class="docutils literal notranslate"><span class="pre">pyswice_ck_utilities.py</span></code> has become a regular suppoort file in <code class="docutils literal notranslate"><span class="pre">src/utiliites</span></code>.  Thus,
+it is imported using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">Basilisk.pyswice.pyswice_ck_utilities</span>
+</pre></div>
+</div>
+</li>
+<li><p>Similarly, <code class="docutils literal notranslate"><span class="pre">pyswice_spk_utilities.py</span></code> has moved to the utilities folder. To include <code class="docutils literal notranslate"><span class="pre">spkRead</span></code> function replace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.pyswice.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+</pre></div>
+</div>
+<p>with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+</pre></div>
+</div>
+</li>
+<li><p>To include <code class="docutils literal notranslate"><span class="pre">loadGravFromFileToList</span></code> function replace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.gravityEffector.gravCoeffOps</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadGravFromFileToList</span>
+</pre></div>
+</div>
+<p>with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.gravityEffector</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadGravFromFileToList</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>If you have written custom BSK modules outside of the BSK distribution, the swig <code class="docutils literal notranslate"><span class="pre">*.i</span></code> files and some code files
+will need to be adjusted as follows:</p>
+<ul>
+<li><p>To include the <code class="docutils literal notranslate"><span class="pre">swig_common_model.i</span></code> file, replace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="s2">"swig_common_model.i"</span>
+</pre></div>
+</div>
+<p>with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">pythoncode</span> <span class="o">%</span><span class="p">{</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.swig_common_model</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="o">%</span><span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>If Eigen variables are being swig’d, then import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="s2">"swig_eigen.i"</span>
+</pre></div>
+</div>
+</li>
+<li><p>To swig C arrays of variables, then import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="s2">"swig_conly_data.i"</span>
+</pre></div>
+</div>
+</li>
+<li><p>To provide support of C++ <code class="docutils literal notranslate"><span class="pre">std::string</span></code> <a class="reference external" href="http://www.swig.org/Doc1.3/Library.html#Library_nn14">types</a>, then import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="s2">"std_string.i"</span>
+</pre></div>
+</div>
+</li>
+<li><p>To provide support of C++ <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> <a class="reference external" href="http://www.swig.org/Doc1.3/Library.html#Library_nn15">class</a>, then import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="s2">"std_vector.i"</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>The files in <code class="docutils literal notranslate"><span class="pre">_GeneralModuleFiles</span></code> folders are now built into a separate library with the parent folders name
+plus <code class="docutils literal notranslate"><span class="pre">Lib</span></code>.
+This means in the IDE like Xcode and Visual Studio the code in <code class="docutils literal notranslate"><span class="pre">_GeneralModuleFiles</span></code> is shown in a folder with
+this library name.  Thus, for example, code in <code class="docutils literal notranslate"><span class="pre">src/simulation/environment/_GeneralModuleFiles</span></code>
+are shown in the IDE folder <code class="docutils literal notranslate"><span class="pre">environmentLib</span></code> within the <code class="docutils literal notranslate"><span class="pre">environment</span></code> parent folder.  This keeps the BSK
+folders cleaner and with less duplicated code being displayed.</p></li>
+<li><p>A new python package dependency is <code class="docutils literal notranslate"><span class="pre">Pillow</span></code>.  This is needed for the test scripts for <a class="reference internal" href="../../Documentation/simulation/sensors/camera/camera.html#camera"><span class="std std-ref">C++ Module: camera</span></a> to run.</p></li>
+<li><p>In Xcode the build will complain that it can’t find the <code class="docutils literal notranslate"><span class="pre">&lt;Eigen/Dense&gt;</span></code> library.  The code compiles ok.  The work
+around this conan issue is to run the build twice, once for Debug and once for Release.  At that point it can
+be run just once.</p></li>
+</ul>
+<p><strong>Version 1.7.5</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a> was not converting between the planet and inertial frame correctly.  This is now fixed in
+the later releases.</p></li>
+</ul>
+<p><strong>Version 1.7.4</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p>Version 1.7.3</p>
+<ul class="simple">
+<li><p>On Windows Basilisk didn’t compile due to missing math <code class="docutils literal notranslate"><span class="pre">#define</span></code> delaration in <code class="docutils literal notranslate"><span class="pre">geodeticConversion.cpp/h</span></code>.
+This is fixed in the latest release.</p></li>
+</ul>
+<p><strong>Version 1.7.2</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p><strong>Version 1.7.1</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p><strong>Version 1.7.0</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p><strong>Version 1.6.0</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p><strong>Version 1.5.1</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.5.0</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+<li><p>Here the reaction wheel dynamics have been modified such that the RW state output message is no longer hard-coded to <code class="docutils literal notranslate"><span class="pre">rw_config_0_data</span></code>, etc.  Rather, now the <code class="docutils literal notranslate"><span class="pre">ModelTag</span></code> string is pre-pended to make this output msg name unique with.  Any scripts that is logging this RW state message will have to be updated.  The reason for this change is to allow multiple spacecraft to have RW devices and unique RW state messages.</p></li>
+<li><p>There was an issue doing a clean compile using Python 2 which is addressed in the next version</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/reactionWheels/_UnitTest/test_reactionWheelStateEffector_integrated.html#test-reactionwheelstateeffector-integrated"><span class="std std-ref">test_reactionWheelStateEffector_integrated</span></a> didn’t run on Python 2, this is fixed in the next version.</p></li>
+</ul>
+<p><strong>Version 1.4.2</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.4.1</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+<li><p>We ran into issues compiling on Linux where <code class="docutils literal notranslate"><span class="pre">libsodium</span></code> and <code class="docutils literal notranslate"><span class="pre">conan</span></code> were not compiling properly  This is fixed in the next point release.</p></li>
+</ul>
+<p><strong>Version 1.4.0</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BSK_PRINT</span></code> has been replaced within Basilisk modules using <a class="reference internal" href="../../Documentation/architecture/utilities/bskLogging.html#bsklogging"><span class="std std-ref">bskLogging</span></a> (for C++) and <code class="docutils literal notranslate"><span class="pre">_bskLog</span></code> (for C).</p></li>
+<li><p>WINDOWS ONLY: there appears to be an issue compiling <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> with the new bskLog method on Windows.  We are working a point release that will fix this.</p></li>
+</ul>
+<p><strong>Version 1.3.2</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.3.1</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.3.0</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.2.1</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+</ul>
+<p><strong>Version 1.2.0</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+<li><p>The magnetometer unit tests don’t pass on all platforms. This is corrected in the next release.</p></li>
+</ul>
+<p><strong>Version 1.1.0</strong></p>
+<ul class="simple">
+<li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</p></li>
+<li><p>the unit tests of the magnetometer module don’t pass on all operating systems as the test tolerances are too tight.  This is resolved in the next release.</p></li>
+</ul>
+<p><strong>Version 1.0.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.</p>
+</li></ul><p><strong>Version 0.9.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.</p>
+</li></ul><p><strong>Version 0.8.1</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.</p>
+</li></ul><p><strong>Version 0.8.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.</p>
+</li></ul><p><strong>Version 0.7.2</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The python pandas package is now required to run BSK. The installation
+instructions have been updated to reflect this.</p>
+</li><li><p>Swig version 4 was released over the summer. This version is not
+compatible with our current Basilisk software. Be sure to install swig
+version 3.0.12.</p>
+</li></ul><p><strong>Version 0.7.1</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The python pandas package is now required to run BSK. The installation
+instructions have been updated to reflect this.</p>
+</li></ul><p><strong>Version 0.7.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The python pandas package is now required to run BSK. The installation
+instructions have been updated to reflect this.</p>
+</li></ul><p><strong>Version 0.6.2</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The enableUnityViz python function how has different inputs. Earlier
+python scripts must be updated. See the scenarios for examples. The
+arguments are now provided as optional keywords.</p>
+</li></ul><p><strong>Version 0.6.1</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>This version of Basilisk no longer support the ASIO module that
+communicated with the Qt-based visualization as the BOOST library has
+been removed. This visualization has been replaced with the new Vizard
+visualization.</p>
+</li><li><p>The <code class="docutils literal notranslate"><span class="pre">thrMomentumDumping</span></code> now reads in a 2nd required input message to
+determine if a new dumping sequence is requested.</p>
+</li></ul><p><strong>Version 0.6.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li></ul><p><strong>Version 0.5.1</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li></ul><p><strong>Version 0.5.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>the <code class="docutils literal notranslate"><span class="pre">exponentialAtmosphere</span></code> module has been replaced with a module
+based on the new atmospheric density base class. BSK simulations that
+used the older module must update to use the new module. The module unit
+test scripts illustrate how to use this module, and the module PDF
+documentation discusses this as well. The <code class="docutils literal notranslate"><span class="pre">dragEffector</span></code> integrated
+test is also updated to make use of the new module</p>
+</li><li><p>The <code class="docutils literal notranslate"><span class="pre">MRP_Feedback()</span></code> has the control vector <code class="docutils literal notranslate"><span class="pre">domega0</span></code> removed and
+keeps this term now as a permanent zero vector. Any code that was
+setting this needs to be updated to not set this parameter anymore.</p>
+</li></ul><p><strong>Version 0.4.1</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The <code class="docutils literal notranslate"><span class="pre">numpy</span></code> python package can’t be the current version 1.16.x as this
+causes some incompatibilities and massive amounts of depreciated
+warnings. These warnings are not related to BSK python code, but other
+support code. Thus, for now be sure to install version 1.15.14 of
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code>.</p>
+</li></ul><p><strong>Version 0.4.0</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>Version 4.x.x and higher of pytest works again with Basilisk. You are
+free to install the latest version of pytest.</p>
+</li><li><p>As we are now using the conan package management system, you can’t
+double the the Cmake GUI application. Instead, you must either launch
+the Cmake GUI application from the command line, or run CMake from the
+command line directly. See the platform specific Basilisk installation
+instructions.</p>
+</li><li><p>The <code class="docutils literal notranslate"><span class="pre">numpy</span></code> python package can’t be the current version 1.16.x as this
+causes some incompatibilities and massive amounts of depreciated
+warnings. These warnings are not related to BSK python code, but other
+support code. Thus, for now be sure to install version 1.15.14 of
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code>.</p>
+</li></ul><p><strong>Version 0.3.3</strong></p>
+<ul><li><p>WINDOWS ONLY: Windows users cannot currently run pytest directly on
+Basilisk <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory (there will be non-resolved python path
+issues that will result in erroneous ImportErrors). Instead, to verify
+proper installation of Basilisk, windows users must enter the specific
+subdirectory they are attempting to test, only then to run pytest. This
+should result in appropriate behavior. Right now there is no known
+solution to this issue.</p>
+</li><li><p>The latest version of pytest (version 3.7.1) has a conflict with the
+RadiationPressure module unit test. We are still investigating. In the
+meantime, using pytest version 3.6.1 is working correctly.</p>
+</li></ul></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.0.html" class="btn btn-neutral float-left" title="Version 2.0 Known Issues" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../User.html" class="btn btn-neutral float-right" title="User Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

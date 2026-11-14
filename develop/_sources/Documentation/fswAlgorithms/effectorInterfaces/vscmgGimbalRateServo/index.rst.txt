@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_vscmgGimbalRateServo:
+
+vscmgGimbalRateServo
+====================
+
+:doc:`Module documentation <vscmgGimbalRateServo>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

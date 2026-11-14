@@ -1,0 +1,10 @@
+.. _FacetElementMsgPayload:
+
+FacetElementMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: FacetElementMsgPayload.h
+   :project: msgPayloadDefC
+

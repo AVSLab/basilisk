@@ -1,0 +1,9 @@
+:orphan:
+
+.. _Folder_rasterManager:
+
+rasterManager
+=============
+
+:doc:`Module documentation <rasterManager>`
+

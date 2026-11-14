@@ -1,0 +1,808 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orbitalMotion &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="planetStates" href="planetStates.html" />
+    <link rel="prev" title="ommHandling" href="ommHandling.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ommHandling.html">ommHandling</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">orbitalMotion</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematicsNumba.html">RigidBodyKinematicsNumba</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simHelpers.html">simHelpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preCommitTools/index.html">preCommitTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">orbitalMotion</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/orbitalMotion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="orbitalmotion">
+<span id="id1"></span><h1>orbitalMotion<a class="headerlink" href="#orbitalmotion" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-orbitalMotion">
+<dt class="sig sig-object py" id="orbitalMotion.E2M">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">E2M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ecc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#E2M"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.E2M" title="Link to this definition"></a></dt>
+<dd><p>Maps the eccentric anomaly angle into the corresponding
+mean elliptic anomaly angle.  Both 2D and 1D elliptic
+orbit are allowed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ecc</strong> – eccentric anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (0 &lt;= e &lt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>M, mean elliptic anomaly (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.E2f">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">E2f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ecc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#E2f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.E2f" title="Link to this definition"></a></dt>
+<dd><p>Maps eccentric anomaly angles into true anomaly angles
+This function requires the orbit to be either circular or
+non-rectilinear elliptic orbit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ecc</strong> – eccentric anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentric (0 &lt;= e &lt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>f, true anomaly (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.H2N">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">H2N</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#H2N"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.H2N" title="Link to this definition"></a></dt>
+<dd><p>Maps the hyperbolic anomaly angle H into the corresponding
+mean hyperbolic anomaly angle N.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> – hyperbolic anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (e &gt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>N, mean hyperbolic anomaly (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.H2f">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">H2f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#H2f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.H2f" title="Link to this definition"></a></dt>
+<dd><p>Maps hyperbolic anomaly angles into true anomaly angles.
+This function requires the orbit to be hyperbolic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> – hyperbolic anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (e &gt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>f, true anomaly angle (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.M2E">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">M2E</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#M2E"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.M2E" title="Link to this definition"></a></dt>
+<dd><p>Solve the elliptic Kepler equation using bracketed Newton iteration.</p>
+<p>The returned eccentric anomaly preserves the revolutions in <code class="docutils literal notranslate"><span class="pre">M</span></code>. Very
+large unwrapped anomalies are limited by the resolution of the input and
+output angles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> – mean elliptic anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (0 &lt;= e &lt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>eccentric anomaly (rad); NumPy scalar types and zero-dimensional
+mean-array results are preserved</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – if either input is non-finite or eccentricity is outside its domain</p></li>
+<li><p><strong>RuntimeError</strong> – if the iteration limit is reached without convergence</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.N2H">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">N2H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#N2H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.N2H" title="Link to this definition"></a></dt>
+<dd><p>Solve the hyperbolic Kepler equation using bracketed Newton iteration.</p>
+<p>The equation is scaled to avoid overflow for large finite mean anomalies
+and evaluated without subtractive cancellation near the parabolic limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> – mean hyperbolic anomaly (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (e &gt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>hyperbolic anomaly (rad); NumPy scalar types and zero-dimensional
+mean-array results are preserved</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – if either input is non-finite or eccentricity is outside its domain</p></li>
+<li><p><strong>RuntimeError</strong> – if the iteration limit is reached without convergence</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.atmosphericDensity">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">atmosphericDensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#atmosphericDensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.atmosphericDensity" title="Link to this definition"></a></dt>
+<dd><p>This program computes the atmospheric density based on altitude
+supplied by user.  This function uses a curve fit based on
+atmospheric data from the Standard Atmosphere 1976 Data. This
+function is valid for altitudes ranging from 100km to 1000km.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This code can only be applied to spacecraft orbiting the Earth</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alt</strong> – altitude in km</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>density at the given altitude in kg/m^3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.atmosphericDrag">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">atmosphericDrag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Cd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#atmosphericDrag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.atmosphericDrag" title="Link to this definition"></a></dt>
+<dd><p>Estimate Earth’s drag acceleration opposite the supplied velocity.</p>
+<p>The atmosphere is assumed at rest in the input inertial frame; no rotation
+or wind correction is applied. The <a class="reference internal" href="#orbitalMotion.atmosphericDensity" title="orbitalMotion.atmosphericDensity"><code class="xref py py-func docutils literal notranslate"><span class="pre">atmosphericDensity()</span></code></a> fit is valid
+from 100 to 1000 km. Positive altitudes below this range are extrapolated;
+above 1000 km its existing exponential tail is retained without a cutoff.</p>
+<p>Zero speed, area, coefficient, or computed density gives a zero vector
+after input validation. Acceleration underflow is allowed. Inputs are not
+modified; sequences and NumPy arrays with shape <code class="docutils literal notranslate"><span class="pre">(3,)</span></code> are accepted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Cd</strong> – finite, nonnegative drag coefficient (dimensionless)</p></li>
+<li><p><strong>A</strong> – finite, nonnegative projected area (m^2)</p></li>
+<li><p><strong>m</strong> – finite, positive spacecraft mass (kg)</p></li>
+<li><p><strong>rvec</strong> – finite inertial position three-vector above Earth’s equatorial radius (km)</p></li>
+<li><p><strong>vvec</strong> – finite inertial velocity three-vector (km/s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>drag acceleration in the input frame (km/s^2), as a NumPy three-vector</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid inputs, unrepresentable norms, or acceleration overflow</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.clElem2eqElem">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">clElem2eqElem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements_cl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EquinoctialElements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/orbitalMotion.html#clElem2eqElem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.clElem2eqElem" title="Link to this definition"></a></dt>
+<dd><p>Convert elements with the compatibility policy described in <a class="reference internal" href="#orbitalMotion.clMeanOscMap" title="orbitalMotion.clMeanOscMap"><code class="xref py py-func docutils literal notranslate"><span class="pre">clMeanOscMap()</span></code></a>.</p>
+<p>Parameters and supported-domain results are those of <a class="reference internal" href="#orbitalMotion.clElem2eqElemChecked" title="orbitalMotion.clElem2eqElemChecked"><code class="xref py py-func docutils literal notranslate"><span class="pre">clElem2eqElemChecked()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.clElem2eqElemChecked">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">clElem2eqElemChecked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements_cl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EquinoctialElements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/orbitalMotion.html#clElem2eqElemChecked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.clElem2eqElemChecked" title="Link to this definition"></a></dt>
+<dd><p>Convert an ellipse to prograde equinoctial elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elements_cl</strong> – finite classical elements with a &gt; 0, 0 &lt;= e &lt; 1,
+0 &lt;= i &lt; pi; angles in radians</p></li>
+<li><p><strong>elements_eq</strong> – output elements, using the input length unit and radians</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None; writes <code class="docutils literal notranslate"><span class="pre">a,</span> <span class="pre">P1,</span> <span class="pre">P2,</span> <span class="pre">Q1,</span> <span class="pre">Q2,</span> <span class="pre">l,</span> <span class="pre">L</span></code> to <code class="docutils literal notranslate"><span class="pre">elements_eq</span></code></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid inputs, the retrograde-equatorial singularity,
+or nonfinite output; the output object is unchanged on failure</p>
+</dd>
+</dl>
+<p>The prograde equator is supported. The retrograde equator is singular:
+<code class="docutils literal notranslate"><span class="pre">cos(i/2)</span> <span class="pre">&lt;=</span> <span class="pre">8*machine</span> <span class="pre">epsilon</span></code> is rejected. Close to this boundary,
+the coordinates remain ill-conditioned.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.clMeanOscMap">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">clMeanOscMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/orbitalMotion.html#clMeanOscMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.clMeanOscMap" title="Link to this definition"></a></dt>
+<dd><p>Map mean/osculating elements while preserving historical failure behavior.</p>
+<p>Parameters and supported-domain results are those of <a class="reference internal" href="#orbitalMotion.clMeanOscMapChecked" title="orbitalMotion.clMeanOscMapChecked"><code class="xref py py-func docutils literal notranslate"><span class="pre">clMeanOscMapChecked()</span></code></a>.
+Inputs rejected by that function use the original formulas, including their
+historical exceptions or nonfinite results. Use the checked function to opt
+into explicit domain validation.
+Inclination must be finite and in [0, pi], including on the legacy path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.clMeanOscMapChecked">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">clMeanOscMapChecked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/orbitalMotion.html#clMeanOscMapChecked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.clMeanOscMapChecked" title="Link to this definition"></a></dt>
+<dd><p>Apply the first-order J2 mean/osculating element mapping.</p>
+<p>The mapping follows Appendix F of <em>Analytical Mechanics of Space Systems</em>,
+Schaub and Junkins, fourth edition. Inputs must be finite and elliptic,
+with inclination in [0, pi], and sufficiently far from the critical
+inclinations where <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">5*cos(i)**2</span> <span class="pre">=</span> <span class="pre">0</span></code>. The perturbation must be small;
+applying the opposite mapping leaves errors of second order in J2.</p>
+<p>Both equatorial limits are supported. Whole revolutions in true anomaly
+do not change the mapped Cartesian state; output angles need not retain
+input revolution counts. With <code class="docutils literal notranslate"><span class="pre">J2</span> <span class="pre">=</span> <span class="pre">0</span></code>, the six classical elements are
+copied exactly, including their angle branches. Only <code class="docutils literal notranslate"><span class="pre">a,</span> <span class="pre">e,</span> <span class="pre">i,</span> <span class="pre">Omega,</span>
+<span class="pre">omega,</span> <span class="pre">f</span></code> are written; auxiliary fields are unchanged. Input and output
+may be the same object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> – equatorial radius, in the same length unit as <code class="docutils literal notranslate"><span class="pre">oe.a</span></code></p></li>
+<li><p><strong>J2</strong> – dimensionless second zonal harmonic coefficient</p></li>
+<li><p><strong>oe</strong> – input classical elements, with angles in radians</p></li>
+<li><p><strong>oep</strong> – output classical elements, with the same units as <code class="docutils literal notranslate"><span class="pre">oe</span></code></p></li>
+<li><p><strong>sign</strong> – +1 for mean to osculating, -1 for osculating to mean</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None; the mapped elements are written to <code class="docutils literal notranslate"><span class="pre">oep</span></code></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid inputs, singular inclinations or invalid outputs</p>
+</dd>
+</dl>
+<p>For nonzero J2, <code class="docutils literal notranslate"><span class="pre">abs(1</span> <span class="pre">-</span> <span class="pre">5*cos(i)**2)</span> <span class="pre">&lt;=</span> <span class="pre">sqrt(machine</span> <span class="pre">epsilon)</span></code> is
+rejected. Mapped elements must remain finite and elliptic. This numerical
+guard does not establish the accuracy of the perturbation model. On failure,
+<code class="docutils literal notranslate"><span class="pre">oep</span></code> is unchanged. Zero J2 bypasses the critical-inclination guard only.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.debyeLength">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">debyeLength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#debyeLength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.debyeLength" title="Link to this definition"></a></dt>
+<dd><p>This program computes the debyeLength length for a given
+altitude and is valid for altitudes ranging
+from 200 km to GEO (35000km).  However, all values above
+1000 km are HIGHLY speculative at this point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alt</strong> – altitude in km</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>debye length given in m</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.elem2rv">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">elem2rv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#elem2rv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.elem2rv" title="Link to this definition"></a></dt>
+<dd><p>Convert classical elements to a finite inertial Cartesian state.</p>
+<p>Inclination must be in [0, pi]. Distances use the same unit L as <code class="docutils literal notranslate"><span class="pre">mu</span></code>. Ellipses have <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">0,</span> <span class="pre">e</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>;
+hyperbolas have <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0,</span> <span class="pre">e</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>. No eccentricity tolerance selects a conic.
+The C and Python core conversions share these degenerate conventions:</p>
+<ul class="simple">
+<li><p>Planar parabola: <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">rPeriap</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>; <code class="docutils literal notranslate"><span class="pre">f</span></code> is true anomaly.</p></li>
+<li><p>Rectilinear ellipse: <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>; <code class="docutils literal notranslate"><span class="pre">f</span></code> is eccentric anomaly E,
+with outward motion for <code class="docutils literal notranslate"><span class="pre">sin(E)</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p>Rectilinear hyperbola: <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>; <code class="docutils literal notranslate"><span class="pre">f</span></code> is signed hyperbolic
+anomaly H, with outward motion for <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p>Rectilinear parabola: <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">rPeriap</span> <span class="pre">=</span> <span class="pre">0</span></code>; <code class="docutils literal notranslate"><span class="pre">rmag</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> supplies
+radius, and <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">0</span></code> selects outward motion or <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">pi</span></code> inward motion.</p></li>
+</ul>
+<p>For rectilinear states, <code class="docutils literal notranslate"><span class="pre">i,</span> <span class="pre">Omega,</span> <span class="pre">omega</span></code> orient the outward radial ray
+along the perifocal x axis; the plane about that ray is arbitrary.
+Collisions and open-conic anomalies at or beyond infinity are rejected.
+The extra fields are read only where required by these conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – positive gravitational parameter (L^3/s^2)</p></li>
+<li><p><strong>elements</strong> – orbital elements, with distances in L and angles in radians</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>inertial position (L) and velocity (L/s)</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if the elements do not describe a finite physical state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.elem2rv_parab">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">elem2rv_parab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElements</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#elem2rv_parab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.elem2rv_parab" title="Link to this definition"></a></dt>
+<dd><p>Convert elements using the legacy Python parabolic encoding.</p>
+<p>This adapter accepts <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> for a planar parabola with periapsis
+radius <code class="docutils literal notranslate"><span class="pre">-a</span></code>, independently of auxiliary fields such as <code class="docutils literal notranslate"><span class="pre">rPeriap</span></code>.
+Use <a class="reference internal" href="#orbitalMotion.elem2rv" title="orbitalMotion.elem2rv"><code class="xref py py-func docutils literal notranslate"><span class="pre">elem2rv()</span></code></a> for rectilinear hyperbolas. Other conventions follow it, except
+for rectilinear elliptic motion. This adapter retains inward velocity for
+positive sin(E) on rectilinear ellipses. This convention remains supported.
+The input object is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – positive gravitational parameter (L^3/s^2)</p></li>
+<li><p><strong>elements</strong> – orbital elements, with distances in L and angles in radians</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>inertial position (L) and velocity (L/s)</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if the elements do not describe a finite physical state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.f2E">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">f2E</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#f2E"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.f2E" title="Link to this definition"></a></dt>
+<dd><p>Maps true anomaly angles into eccentric anomaly angles.
+This function requires the orbit to be either circular or
+non-rectilinear elliptic orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> – true anomaly angle (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (0 &lt;= e &lt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ecc, eccentric anomaly (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.f2H">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">f2H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#f2H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.f2H" title="Link to this definition"></a></dt>
+<dd><p>Maps true anomaly angles into hyperbolic anomaly angles.
+This function requires the orbit to be hyperbolic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> – true anomaly angle (rad)</p></li>
+<li><p><strong>e</strong> – eccentricity (e &gt; 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>H, hyperbolic anomaly (rad)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.hill2rv">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">hill2rv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoPrime_H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#hill2rv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.hill2rv" title="Link to this definition"></a></dt>
+<dd><p>Convert from Hill coordinates with the compatibility policy of <a class="reference internal" href="#orbitalMotion.hillFrame" title="orbitalMotion.hillFrame"><code class="xref py py-func docutils literal notranslate"><span class="pre">hillFrame()</span></code></a>.</p>
+<p>Parameters and supported-domain results are those of <a class="reference internal" href="#orbitalMotion.hill2rvChecked" title="orbitalMotion.hill2rvChecked"><code class="xref py py-func docutils literal notranslate"><span class="pre">hill2rvChecked()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.hill2rvChecked">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">hill2rvChecked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoPrime_H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#hill2rvChecked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.hill2rvChecked" title="Link to this definition"></a></dt>
+<dd><p>Map a deputy state in the chief’s rotating Hill frame to inertial vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rc_N</strong> – chief inertial position three-vector, in a consistent length unit</p></li>
+<li><p><strong>vc_N</strong> – chief inertial velocity three-vector, in length units per second</p></li>
+<li><p><strong>rho_H</strong> – Hill relative position three-vector, in the same length unit</p></li>
+<li><p><strong>rhoPrime_H</strong> – Hill rotating-frame velocity three-vector, in the same velocity unit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>deputy inertial position and velocity vectors</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid vectors, an unresolved chief plane (see
+<a class="reference internal" href="#orbitalMotion.hillFrame" title="orbitalMotion.hillFrame"><code class="xref py py-func docutils literal notranslate"><span class="pre">hillFrame()</span></code></a>), or unrepresentable angular rate or outputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.hillFrame">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">hillFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#hillFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.hillFrame" title="Link to this definition"></a></dt>
+<dd><p>Compute a Hill frame while preserving historical behavior for invalid states.</p>
+<p>Parameters and supported-domain results are those of <a class="reference internal" href="#orbitalMotion.hillFrameChecked" title="orbitalMotion.hillFrameChecked"><code class="xref py py-func docutils literal notranslate"><span class="pre">hillFrameChecked()</span></code></a>.
+Use the checked function to opt into explicit domain validation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.hillFrameChecked">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">hillFrameChecked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#hillFrameChecked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.hillFrameChecked" title="Link to this definition"></a></dt>
+<dd><p>Compute the Hill frame DCM HN for a nonrectilinear chief state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rc_N</strong> – finite inertial position three-vector, in a consistent length unit</p></li>
+<li><p><strong>vc_N</strong> – finite inertial velocity three-vector, in length units per second</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DCM mapping inertial frame N components to Hill frame H components</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid or zero vectors, unrepresentable norms, or
+<code class="docutils literal notranslate"><span class="pre">norm(cross(unit(rc_N),</span> <span class="pre">unit(vc_N)))</span> <span class="pre">&lt;=</span> <span class="pre">8*machine</span> <span class="pre">epsilon</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.jPerturb">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">jPerturb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'CELESTIAL_EARTH'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#jPerturb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.jPerturb" title="Link to this definition"></a></dt>
+<dd><p>Compute a body’s zonal perturbation acceleration through degree <code class="docutils literal notranslate"><span class="pre">num</span></code>.</p>
+<p>Earth includes J2 through J6. Mercury, Venus, Moon, Mars, Jupiter, Saturn,
+Uranus and Neptune include J2 only. Sun and Pluto use a zero-zonal
+approximation and return a zero vector with <code class="docutils literal notranslate"><span class="pre">strict=True</span></code>. Phobos, Deimos and unknown body
+names are unsupported by <code class="docutils literal notranslate"><span class="pre">strict=True</span></code>. The default retains the original
+Earth fallback, <code class="docutils literal notranslate"><span class="pre">None</span></code> for Sun/Pluto, and fractional-degree truncation.</p>
+<p>This external gravity expansion is intended for positions outside the
+body’s reference radius; the surface boundary is not enforced. The input
+frame must be planet-centered, with its z axis along the spin axis.
+Central gravity, tesseral terms and other forces are not included.
+With <code class="docutils literal notranslate"><span class="pre">strict=True</span></code>, all inputs are validated, including zero-zonal models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rvec</strong> – finite, nonzero position vector with shape (3,), in kilometers</p></li>
+<li><p><strong>num</strong> – integer maximum included degree, from 2 through 6 (inclusive)</p></li>
+<li><p><strong>planet</strong> – body name prefixed by <code class="docutils literal notranslate"><span class="pre">CELESTIAL_</span></code>; defaults to Earth</p></li>
+<li><p><strong>strict</strong> – opt in to checked body/degree selection and zero-vector Sun/Pluto
+results; the default preserves the original dispatch behavior</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>perturbation acceleration in the input frame, in km/s^2, or the legacy
+<code class="docutils literal notranslate"><span class="pre">None</span></code> sentinel for Sun/Pluto when <code class="docutils literal notranslate"><span class="pre">strict=False</span></code></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid inputs, unsupported bodies or nonfinite results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.rv2elem">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">rv2elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rVec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vVec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">canonical</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ClassicElements</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#rv2elem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.rv2elem" title="Link to this definition"></a></dt>
+<dd><p>Convert a Cartesian state to classical orbital elements.</p>
+<p>Inputs must be finite and use consistent distance units. Inclination <code class="docutils literal notranslate"><span class="pre">i</span></code>
+is in [0, pi]; <code class="docutils literal notranslate"><span class="pre">Omega</span></code> and <code class="docutils literal notranslate"><span class="pre">omega</span></code> are in [0, 2*pi). Nonradial true
+anomaly <code class="docutils literal notranslate"><span class="pre">f</span></code> is in [0, 2*pi) for ellipses/parabolas and [-pi, pi] for
+hyperbolas. With <code class="docutils literal notranslate"><span class="pre">canonical=True</span></code>, degenerate conics use the conventions
+of <a class="reference internal" href="#orbitalMotion.elem2rv" title="orbitalMotion.elem2rv"><code class="xref py py-func docutils literal notranslate"><span class="pre">elem2rv()</span></code></a>. The default retains the supported Python parabolic
+encoding <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">-rPeriap,</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">-1</span></code>.</p>
+<p>A dimensionless tolerance of 1e-12 selects singular-angle conventions:</p>
+<ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">&lt;=</span> <span class="pre">tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">f</span></code> is the argument of latitude.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">sin(i)</span> <span class="pre">&lt;=</span> <span class="pre">tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">Omega</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">i</span></code> is set to 0 or pi.
+<code class="docutils literal notranslate"><span class="pre">omega</span></code> measures periapsis from the inertial x axis in the direction of
+orbital motion. Equatorial retrograde longitudes therefore have the
+opposite sign to inertial azimuths.</p></li>
+<li><p>If both conditions hold, <code class="docutils literal notranslate"><span class="pre">f</span></code> measures position from that axis in the
+direction of motion.</p></li>
+</ul>
+<p>Replacing unresolved directions introduces relative state errors on the
+order of this tolerance. Energy is classified as parabolic only within
+8 machine epsilons of the local kinetic/potential energy scale. Radial
+motion is detected within 8 machine epsilons of zero transverse velocity;
+the plane is chosen deterministically about the outward ray.
+Near zero energy, relative accuracy of <code class="docutils literal notranslate"><span class="pre">a</span></code> and state reconstruction from
+rounded <code class="docutils literal notranslate"><span class="pre">a,</span> <span class="pre">e</span></code> degrades as machine epsilon divided by <code class="docutils literal notranslate"><span class="pre">abs(1-e)</span></code>.
+Nonradial finite-energy states whose eccentricity rounds to one or the
+wrong side of one cannot be encoded consistently and are rejected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – positive gravitational parameter (L^3/s^2)</p></li>
+<li><p><strong>rVec</strong> – nonzero inertial position vector (L)</p></li>
+<li><p><strong>vVec</strong> – inertial velocity vector (L/s)</p></li>
+<li><p><strong>canonical</strong> – if True, use the C-compatible parabolic encoding; otherwise
+retain the original Python <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">-rPeriap,</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">-1</span></code> result</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>orbital elements, with distances in L and angles in radians; a, e,
+rmag, alpha, rPeriap and rApoap retain NumPy float64 scalar arithmetic</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if the state is invalid or its elements are unrepresentable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.rv2elem_parab">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">rv2elem_parab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rVec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vVec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ClassicElements</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#rv2elem_parab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.rv2elem_parab" title="Link to this definition"></a></dt>
+<dd><p>Convert a Cartesian state using the legacy Python parabolic encoding.</p>
+<p>The computation and singular-angle conventions are those of <a class="reference internal" href="#orbitalMotion.rv2elem" title="orbitalMotion.rv2elem"><code class="xref py py-func docutils literal notranslate"><span class="pre">rv2elem()</span></code></a>.
+Planar parabolas return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">rApoap</span> <span class="pre">=</span> <span class="pre">-rPeriap</span></code>. Rectilinear states have
+<code class="docutils literal notranslate"><span class="pre">rPeriap</span> <span class="pre">=</span> <span class="pre">0</span></code>; use <a class="reference internal" href="#orbitalMotion.elem2rv" title="orbitalMotion.elem2rv"><code class="xref py py-func docutils literal notranslate"><span class="pre">elem2rv()</span></code></a> to reconstruct radial hyperbolas because
+<a class="reference internal" href="#orbitalMotion.elem2rv_parab" title="orbitalMotion.elem2rv_parab"><code class="xref py py-func docutils literal notranslate"><span class="pre">elem2rv_parab()</span></code></a> retains its negative-a planar encoding. Node, periapsis
+and nonradial true anomaly retain signed angles in [-pi, pi]; circular orbits
+place periapsis at the current position.
+Radial elliptic anomaly retains the supported inward-positive convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – positive gravitational parameter (L^3/s^2)</p></li>
+<li><p><strong>rVec</strong> – nonzero inertial position vector (L)</p></li>
+<li><p><strong>vVec</strong> – inertial velocity vector (L/s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>orbital elements, with distances in L and angles in radians</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if the state is invalid or its elements are unrepresentable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.rv2hill">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">rv2hill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rd_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vd_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#rv2hill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.rv2hill" title="Link to this definition"></a></dt>
+<dd><p>Convert to Hill coordinates with the compatibility policy of <a class="reference internal" href="#orbitalMotion.hillFrame" title="orbitalMotion.hillFrame"><code class="xref py py-func docutils literal notranslate"><span class="pre">hillFrame()</span></code></a>.</p>
+<p>Parameters and supported-domain results are those of <a class="reference internal" href="#orbitalMotion.rv2hillChecked" title="orbitalMotion.rv2hillChecked"><code class="xref py py-func docutils literal notranslate"><span class="pre">rv2hillChecked()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.rv2hillChecked">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">rv2hillChecked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vc_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rd_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vd_N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#rv2hillChecked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.rv2hillChecked" title="Link to this definition"></a></dt>
+<dd><p>Express the deputy state relative to the chief in its rotating Hill frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rc_N</strong> – chief inertial position three-vector, in a consistent length unit</p></li>
+<li><p><strong>vc_N</strong> – chief inertial velocity three-vector, in length units per second</p></li>
+<li><p><strong>rd_N</strong> – deputy inertial position three-vector, in the same length unit</p></li>
+<li><p><strong>vd_N</strong> – deputy inertial velocity three-vector, in the same velocity unit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hill relative position and rotating-frame velocity vectors</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – for invalid vectors, an unresolved chief plane (see
+<a class="reference internal" href="#orbitalMotion.hillFrame" title="orbitalMotion.hillFrame"><code class="xref py py-func docutils literal notranslate"><span class="pre">hillFrame()</span></code></a>), or unrepresentable angular rate or outputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orbitalMotion.solarRad">
+<span class="sig-prename descclassname"><span class="pre">orbitalMotion.</span></span><span class="sig-name descname"><span class="pre">solarRad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sunvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/orbitalMotion.html#solarRad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orbitalMotion.solarRad" title="Link to this definition"></a></dt>
+<dd><p>Computes the inertial solar radiation force vectors
+based on cross-sectional Area and mass of the spacecraft
+and the position vector of the planet to the sun.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is assumed that the solar radiation pressure decreases quadratically with distance from sun (in AU)</p>
+</div>
+<p>Solar Radiation Equations obtained from
+Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> – Cross-sectional area of the spacecraft that is facing the sun in m^2.</p></li>
+<li><p><strong>m</strong> – The mass of the spacecraft in kg.</p></li>
+<li><p><strong>sunvec</strong> – Position vector to the Sun in units of AU. Earth has a distance of 1 AU.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>arvec, The inertial acceleration vector due to the effects of Solar Radiation pressure in km/sec^2.  The vector
+components of the output are the same as the vector
+components of the sunvec input vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ommHandling.html" class="btn btn-neutral float-left" title="ommHandling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="planetStates.html" class="btn btn-neutral float-right" title="planetStates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

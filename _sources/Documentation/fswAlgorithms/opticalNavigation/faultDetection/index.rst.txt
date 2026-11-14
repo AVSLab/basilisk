@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_faultDetection:
+
+faultDetection
+==============
+
+:doc:`Module documentation <faultDetection>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

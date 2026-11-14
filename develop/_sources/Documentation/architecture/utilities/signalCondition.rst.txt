@@ -1,0 +1,10 @@
+.. _signalCondition:
+
+signalCondition
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: signalCondition.h
+   :project: utilities
+

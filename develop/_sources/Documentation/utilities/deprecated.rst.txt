@@ -1,0 +1,15 @@
+.. _deprecated:
+
+deprecated
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: deprecated
+   :members:
+   :show-inheritance:
+

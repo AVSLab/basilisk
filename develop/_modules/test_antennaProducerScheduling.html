@@ -1,0 +1,476 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_antennaProducerScheduling &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_antennaProducerScheduling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_antennaProducerScheduling</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Exercise antenna initialization through the simulation scheduler.</span>
+
+<span class="sd">Real spacecraft, ground, antenna, link-budget, downlink and storage modules run</span>
+<span class="sd">on ordered tasks. Delaying either the ground or antenna task exercises the</span>
+<span class="sd">waiting state over multiple timestamps. Reinitializing the same simulation</span>
+<span class="sd">after an altitude change exercises previously written producer messages.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">downlinkHandling</span><span class="p">,</span>
+    <span class="n">groundLocation</span><span class="p">,</span>
+    <span class="n">linkBudget</span><span class="p">,</span>
+    <span class="n">simpleAntenna</span><span class="p">,</span>
+    <span class="n">simpleStorageUnit</span><span class="p">,</span>
+    <span class="n">spacecraft</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span>
+
+
+<span class="n">TASK_PERIOD</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+<span class="n">FREQUENCY</span> <span class="o">=</span> <span class="mf">20.0e9</span>  <span class="c1"># [Hz]</span>
+<span class="n">BANDWIDTH</span> <span class="o">=</span> <span class="mf">8.0e6</span>  <span class="c1"># [Hz]</span>
+<span class="n">INITIAL_ALTITUDE</span> <span class="o">=</span> <span class="mf">1624.0</span>  <span class="c1"># [m]</span>
+<span class="n">ALTITUDE_CHANGE</span> <span class="o">=</span> <span class="mf">2000.0</span>  <span class="c1"># [m]</span>
+<span class="n">LINK_DISTANCE</span> <span class="o">=</span> <span class="mf">2000.0e3</span>  <span class="c1"># [m]</span>
+<span class="n">INITIAL_DATA</span> <span class="o">=</span> <span class="mi">10000000</span>  <span class="c1"># [bit]</span>
+
+
+<div class="viewcode-block" id="configure_antenna">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.configure_antenna">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configure_antenna</span><span class="p">(</span><span class="n">antenna</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure an antenna without sky-map or ephemeris dependencies.</span>
+
+<span class="sd">    :param antenna: Antenna module to configure.</span>
+<span class="sd">    :param name: Published antenna identifier.</span>
+<span class="sd">    :param state: Transmit or receive antenna state.</span>
+<span class="sd">    """</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaState</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaFrequency</span><span class="p">(</span><span class="n">FREQUENCY</span><span class="p">)</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaBandwidth</span><span class="p">(</span><span class="n">BANDWIDTH</span><span class="p">)</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaDirectivity_dB</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span>  <span class="c1"># [dBi]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaHpbwRatio</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaP_Tx</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [W]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaP_Rx</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [W]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaEquivalentNoiseTemp</span><span class="p">(</span><span class="mf">120.0</span><span class="p">)</span>  <span class="c1"># [K]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaRadEfficiency</span><span class="p">(</span><span class="mf">0.65</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaEnvironmentTemperature</span><span class="p">(</span><span class="mf">150.0</span><span class="p">)</span>  <span class="c1"># [K]</span></div>
+
+
+
+<div class="viewcode-block" id="ScheduledLink">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.ScheduledLink">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScheduledLink</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Keep the scheduled producer chain and its recorders alive together."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ground_first</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Connect the chain with explicit task and model priorities.</span>
+
+<span class="sd">        :param ground_first: Whether the ground antenna uses link input one.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"communication"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">priority</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"spacecraft"</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="p">(</span><span class="s2">"ground"</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="s2">"antennas"</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">TASK_PERIOD</span><span class="p">))</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spacecraft"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span> <span class="o">=</span> <span class="n">groundLocation</span><span class="o">.</span><span class="n">GroundLocation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"ground"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="o">*</span><span class="mf">1.0e3</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+        <span class="n">configure_antenna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="p">,</span> <span class="s2">"space"</span><span class="p">,</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_TX</span><span class="p">)</span>
+        <span class="n">configure_antenna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="p">,</span> <span class="s2">"ground"</span><span class="p">,</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RX</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">groundStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">currentGroundStateOutMsg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">budget</span> <span class="o">=</span> <span class="n">linkBudget</span><span class="o">.</span><span class="n">LinkBudget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"linkBudget"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">atmosAtt</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">antennas</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="p">)</span> <span class="k">if</span> <span class="n">ground_first</span> <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">antennaInPayload_1</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antennas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">antennaInPayload_2</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antennas</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"downlink"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">100000.0</span><span class="p">)</span>  <span class="c1"># [bit/s]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">linkBudgetOutPayload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">simpleStorageUnit</span><span class="o">.</span><span class="n">SimpleStorageUnit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"storage"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">INITIAL_DATA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">(</span><span class="n">INITIAL_DATA</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">priority</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"spacecraft"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"ground"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"antennas"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"antennas"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="n">priority</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">linkBudgetOutPayload</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">"L_atm"</span><span class="p">,</span> <span class="s2">"L_point"</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_log</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">INITIAL_ALTITUDE</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ScheduledLink.set_geometry">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.ScheduledLink.set_geometry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">altitude</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set stationary geometry with the spacecraft boresight at the station.</span>
+
+<span class="sd">        :param altitude: Ground station altitude in meters.</span>
+<span class="sd">        """</span>
+        <span class="n">latitude</span> <span class="o">=</span> <span class="mf">0.35</span>  <span class="c1"># [rad]</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.6</span>  <span class="c1"># [rad]</span>
+        <span class="n">elevation</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># [rad]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">specifyLocation</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">altitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">latitude</span><span class="p">),</span>
+        <span class="p">])</span>  <span class="c1"># [-]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground_position</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">+</span> <span class="n">altitude</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">normal</span>
+        <span class="n">east</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [-]</span>
+        <span class="n">ray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">elevation</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">elevation</span><span class="p">)</span><span class="o">*</span><span class="n">east</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_position</span> <span class="o">+</span> <span class="n">LINK_DISTANCE</span><span class="o">*</span><span class="n">ray</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft_position</span>
+        <span class="n">boresight</span> <span class="o">=</span> <span class="o">-</span><span class="n">ray</span>
+        <span class="n">axis_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">boresight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span>
+        <span class="n">axis_y</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis_y</span><span class="p">)</span>
+        <span class="n">axis_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">axis_y</span><span class="p">,</span> <span class="n">boresight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_x</span><span class="p">,</span> <span class="n">axis_y</span><span class="p">,</span> <span class="n">boresight</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="ScheduledLink.run_until">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.ScheduledLink.run_until">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_seconds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Advance the scheduler without manually updating any producer.</span>
+
+<span class="sd">        :param time_seconds: Absolute stop time in seconds.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time_seconds</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ScheduledLink.assert_reset_output">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.ScheduledLink.assert_reset_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assert_reset_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Check that reset publishes zero service even before the first tick."""</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">linkBudgetOutPayload</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">CNR1</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">CNR2</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">getL_atm</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="ScheduledLink.assert_ready">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.ScheduledLink.assert_ready">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assert_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_sample</span><span class="p">,</span> <span class="n">ground_first</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compare scheduled results with an explicitly primed link reference.</span>
+
+<span class="sd">        The reference uses published RF properties but independently supplied</span>
+<span class="sd">        positions and surface normal. Existing unit tests validate the RF and</span>
+<span class="sd">        atmospheric formulas; this test validates their scheduled initialization.</span>
+
+<span class="sd">        :param first_sample: First recorder index with ready producer inputs.</span>
+<span class="sd">        :param ground_first: Whether the ground antenna uses link input one.</span>
+<span class="sd">        :return: Reference atmospheric attenuation in decibels.</span>
+<span class="sd">        """</span>
+        <span class="n">ground_payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">ground_payload</span><span class="o">.</span><span class="n">r_AN_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_position</span>
+        <span class="n">ground_payload</span><span class="o">.</span><span class="n">r_AP_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_position</span>
+        <span class="n">ground_payload</span><span class="o">.</span><span class="n">nHat_LP_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span>
+        <span class="n">space_payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transmitter</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">space_payload</span><span class="o">.</span><span class="n">r_AN_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacecraft_position</span>
+        <span class="n">ground_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaLogMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ground_payload</span><span class="p">)</span>
+        <span class="n">space_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaLogMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">space_payload</span><span class="p">)</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">linkBudget</span><span class="o">.</span><span class="n">LinkBudget</span><span class="p">()</span>
+        <span class="n">reference</span><span class="o">.</span><span class="n">atmosAtt</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">reference</span><span class="o">.</span><span class="n">antennaInPayload_1</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">space_msg</span><span class="p">)</span>
+        <span class="n">reference</span><span class="o">.</span><span class="n">antennaInPayload_2</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ground_msg</span><span class="p">)</span>
+        <span class="n">reference</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+        <span class="n">reference</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+        <span class="n">expected_cnr</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">getCNR2</span><span class="p">()</span>
+        <span class="n">expected_loss</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">getL_atm</span><span class="p">()</span>  <span class="c1"># [dB]</span>
+        <span class="k">assert</span> <span class="n">expected_cnr</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">expected_loss</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">atmosAtt</span>
+        <span class="n">ready</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">first_sample</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">cnr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR1</span> <span class="k">if</span> <span class="n">ground_first</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR2</span>
+        <span class="n">unused_cnr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR2</span> <span class="k">if</span> <span class="n">ground_first</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR1</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cnr</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="n">expected_cnr</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-10</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">unused_cnr</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_log</span><span class="o">.</span><span class="n">L_atm</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="n">expected_loss</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">)</span>  <span class="c1"># [dB]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_log</span><span class="o">.</span><span class="n">L_point</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">)</span>  <span class="c1"># [dB]</span>
+        <span class="c1"># Match geometry samples to the timestamps at which the link is ready.</span>
+        <span class="n">antenna_ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="n">first_sample</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="n">antenna_ready</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="n">ready</span><span class="p">])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span><span class="o">.</span><span class="n">nHat_LP_N</span><span class="p">[</span><span class="n">antenna_ready</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-14</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">antenna_log</span><span class="o">.</span><span class="n">r_AP_N</span><span class="p">[</span><span class="n">antenna_ready</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_position</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span>
+        <span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="n">BANDWIDTH</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">ground_first</span> <span class="k">else</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">cnr</span><span class="p">[</span><span class="n">ready</span><span class="p">],</span> <span class="n">expected_cnr</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-10</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">timesWritten</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">())</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">timesWritten</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">())</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">)</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">timeStep</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+        <span class="c1"># At time zero the elapsed interval is zero; later ready ticks must deliver data immediately.</span>
+        <span class="n">flow_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">first_sample</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="n">flow_start</span><span class="p">:]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="n">flow_start</span><span class="p">:]</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">removed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">timeStep</span><span class="p">)</span>  <span class="c1"># [bit]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">cumulativeRemovedBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+            <span class="n">removed</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">times</span><span class="p">())</span>
+        <span class="p">)</span>  <span class="c1"># [bit] Storage rounds each integrated update to an integer number of bits.</span>
+        <span class="k">return</span> <span class="n">expected_loss</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="test_scheduled_antenna_initialization">
+<a class="viewcode-back" href="../Documentation/simulation/communication/linkBudget/_UnitTest/test_antennaProducerScheduling.html#test_antennaProducerScheduling.test_scheduled_antenna_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"ground_first"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"ground-second"</span><span class="p">,</span> <span class="s2">"ground-first"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"delayed_task"</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"antennas"</span><span class="p">,</span> <span class="s2">"ground"</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"ordered"</span><span class="p">,</span> <span class="s2">"delayed-antennas"</span><span class="p">,</span> <span class="s2">"delayed-ground"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scheduled_antenna_initialization</span><span class="p">(</span><span class="n">ground_first</span><span class="p">,</span> <span class="n">delayed_task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Validate initialization, waiting, downstream service and reset scheduling.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    Delayed tasks remain disabled for two ticks while consumers keep running,</span>
+<span class="sd">    then resume in producer order. A full simulation reset must subsequently</span>
+<span class="sd">    rebuild the atmosphere at the changed altitude on its first scheduled tick.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    Both link input orders are exercised with normal startup, delayed antenna</span>
+<span class="sd">    publication, and antennas publishing before the ground position is ready.</span>
+
+<span class="sd">    Description of Variables Being Tested</span>
+<span class="sd">    -------------------------------------</span>
+<span class="sd">    Check CNR, atmospheric and pointing loss, ground normal and position,</span>
+<span class="sd">    message timestamps, downlink service and integrated storage removal.</span>
+
+<span class="sd">    :param ground_first: Whether the ground antenna uses link input one.</span>
+<span class="sd">    :param delayed_task: Producer task to delay, or ``None`` for normal startup.</span>
+<span class="sd">    """</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="n">ScheduledLink</span><span class="p">(</span><span class="n">ground_first</span><span class="p">)</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">chain</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">antennaInPayload_1</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">chain</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">antennaInPayload_2</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">assert_reset_output</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">delayed_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chain</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">disableTask</span><span class="p">(</span><span class="n">delayed_task</span><span class="p">)</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="n">TASK_PERIOD</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">delayed_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">chain</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR1</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">CNR2</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">,</span>
+            <span class="n">chain</span><span class="o">.</span><span class="n">loss_log</span><span class="o">.</span><span class="n">L_atm</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">,</span>
+            <span class="n">chain</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">cumulativeRemovedBits</span><span class="p">,</span>
+            <span class="n">chain</span><span class="o">.</span><span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">,</span> <span class="n">INITIAL_DATA</span><span class="p">)</span>
+        <span class="n">chain</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="n">delayed_task</span><span class="p">)</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">TASK_PERIOD</span><span class="p">)</span>
+    <span class="n">expected_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">TASK_PERIOD</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">)</span>
+    <span class="n">first_loss</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">assert_ready</span><span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">delayed_task</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ground_first</span><span class="p">)</span>
+
+    <span class="n">previous_position</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">ground_position</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">INITIAL_ALTITUDE</span> <span class="o">+</span> <span class="n">ALTITUDE_CHANGE</span><span class="p">)</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">assert_reset_output</span><span class="p">()</span>
+    <span class="c1"># The old antenna publication survives reset; the next ordered tick must replace it.</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_AP_N</span><span class="p">,</span> <span class="n">previous_position</span><span class="p">)</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">TASK_PERIOD</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">link_log</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">expected_times</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">chain</span><span class="o">.</span><span class="n">assert_ready</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ground_first</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">first_loss</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

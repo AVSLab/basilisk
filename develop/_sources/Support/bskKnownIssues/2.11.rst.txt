@@ -1,0 +1,126 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.11 Known Issues
+=========================
+
+.. _bsk-known-issues-2-11-0:
+
+Version 2.11.0 (July 7, 2026)
+-----------------------------
+
+Compatibility and migration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- BSK-643: several simulation modules own dynamically-allocated output messages that are freed in their
+  destructors but inherited the compiler-generated copy operations, so copying such a module shallow-copied
+  the raw message pointers and both instances would free the same messages (double free). ``SysModel``-derived
+  modules are now non-copyable by default, while message recorders keep explicit copy-construction support.
+  This is fixed in the current version.
+
+Build, installation, and CI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Additional build-helper command execution, temporary file cleanup, remote example download, and image buffer
+  validation hardening is included in the current version.
+- SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
+  Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
+  for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
+  ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
+  supported 4.x release.
+- BSK-1410: user-facing utilities such as :ref:`simIncludeGravBody` and :ref:`vizSupport` imported the
+  test-support module :ref:`unitTestSupport`, which imports the test-only ``pytest`` package at module
+  load time. Scripts run against the Basilisk wheels (which do not ship ``pytest``) therefore failed to
+  import these utilities. The few general-purpose helpers those utilities needed have been moved into a
+  new :ref:`simHelpers` module, so user-facing code no longer depends on ``unitTestSupport`` (or ``pytest``)
+  at all. This is fixed in the current version.
+
+Simulation framework and module development
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
+  ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
+  visible destructors. Internal-only members are now private or hidden from Python, and public value-type
+  members now include the required Eigen, STL, enum, and BSpline wrapper support. This is fixed in the
+  current version.
+- Extension-generated custom messages using ``bsk_generate_messages(GENERATE_C_INTERFACE)`` could fail to subscribe
+  Python readers to C-interface output messages because generated bindings imported the built-in
+  ``Basilisk.architecture.messaging`` package. Generated bindings now resolve peer message classes from their own
+  module. This is fixed in the current version.
+- BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
+  ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
+  module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
+  destroyed. These cleanup paths now use C++ ``delete`` for the message objects and release the retained image
+  buffers. This is fixed in the current version.
+- BSK-788: Message recorders stored their recorded-message and time history in ``std::vector``, so the
+  recorder's ``UpdateState`` incurred periodic reallocation-and-copy timing spikes at power-of-two record
+  counts that grew with recording length, disrupting soft real-time and hardware-in-the-loop simulations.
+  Recorders now store this history in ``std::deque``. This is fixed in the current version.
+- BSK-2026-001, BSK-2026-002, BSK-2026-003, and related fixed-buffer string handling and format-string
+  logging issues are fixed in the current version.
+- Monte Carlo now applies nested dispersion paths and randomized ``RNGSeed`` modifications to the actual
+  simulation objects.
+- BSK-1107: A standalone message created inside a Python setup or helper function (for example a
+  reference or vehicle-configuration message) can be garbage collected when that function returns,
+  before the simulation runs. Consumers then read zeros or unwritten data. Retain such messages on the
+  simulation object or another persistent scope so they survive for the life of the simulation. This
+  affected :ref:`scenarioRoboticArm` and :ref:`scenarioFlexiblePanel` and is fixed in the current version.
+- BSK-548: :ref:`simHelpers` ``timeStringToGregorianUTCMsg`` leaked the SWIG-allocated ``doubleArray``
+  scratch buffer used to receive the ``str2et_c`` result (about 32 bytes per call). The buffer is now
+  freed with ``delete_doubleArray``. This is fixed in the current version.
+
+Spacecraft dynamics and effectors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- BSK-469: The :ref:`hingedRigidBodyStateEffector` and :ref:`nHingedRigidBodyStateEffector` constructors
+  called ``Eigen``'s static ``Identity()`` factory as a statement and discarded the result, so the default
+  ``dcm_HB`` (and ``IPntS_S`` for the single hinged effector) held uninitialized memory instead of identity.
+  Configurations that set these members explicitly (all shipped examples and tests do) were unaffected.
+- BSK-469: The spacecraft hub properties were not validated, so a zero hub mass or a singular hub
+  inertia tensor silently produced ``NaN`` states, and a negative hub mass silently reversed the
+  translational response to applied forces. :ref:`spacecraft` and ``spacecraftSystem`` now verify
+  on reset that ``mHub`` is strictly positive and ``IHubPntBc_B`` is symmetric positive definite.
+  This is fixed in the current version.
+- The :ref:`linearTranslationNDOFStateEffector` getter assertion no longer references the spinning-body-only
+  degree-of-freedom counter, fixing source builds where that assertion is compiled. The related
+  :ref:`spinningBodyNDOFStateEffector` getter assertion now rejects the first out-of-range index.
+- BSK-1395: :ref:`scenarioAttitudeConstrainedManeuver` and :ref:`scenarioAttitudeConstraintViolation`
+  pre-converted the reaction wheel ``maxSpeed`` to rad/s before passing it to ``rwFactory.create()``,
+  which expects ``Omega_max`` in RPM and applies the RPM-to-rad/s conversion internally. The resulting
+  double conversion set the wheel saturation speed about an order of magnitude too low, and since the
+  derived wheel inertia is ``maxMomentum / Omega_max`` it came out about an order of magnitude too high.
+  This is fixed in the current version.
+- BSK-968: :ref:`spacecraft` reported ``NaN`` for ``nonConservativeAccelpntB_B`` on the first integration
+  step because the accumulated velocity change was divided by a zero time step. The value is now set to
+  zero when the time step is zero, matching the existing ``omegaDot_BN_B`` guard. This is fixed in the
+  current version.
+
+Sensors and flight software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- The camera module now passes PNG encoding options as OpenCV key-value pairs, fixing OpNav image
+  processing failures with OpenCV 4.13.
+- The camera module filename input was only used to test filters and never published to imageOut. This is fixed
+  so images loaded from filename now follow the same processing and publishing pipeline as images from imageInMsg.
+- BSK-1387: :ref:`linkBudget` could compute excessive pointing loss for non-identity antenna attitudes
+  because the inertial line-of-sight vector was transformed using the antenna-to-inertial DCM. This is
+  fixed in the current version.
+- BSK-1416 : :ref:`jointThrAllocation` was using a static value for the vector between the hub center of
+  mass (CoM) and system CoM. This caused the resulting thruster mapping to be incorrect for a given
+  set of joint angles. This is fixed in the current version.
+- BSK-1353: :ref:`sunlineSEKF` and :ref:`okeefeEKF` computed the post-fit residual ``measMat * x`` using the
+  full ``SKF_N_STATES`` width rather than each filter's reduced state width, striding the measurement matrix
+  across the wrong row width and over-reading the state-error vector. This corrupted the reported post-fit
+  residuals during the convergence transient (the state and covariance estimates were unaffected). This is
+  fixed in the current version.
+
+MuJoCo and stochastic integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
+  3.7 upgrade.
+
+Visualization and data handling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- A Vizard ``noDisplay`` image request regression that caused OpNav scenarios to stop with a
+  ``Vizard image request acknowledgement was not received`` error is fixed in the current version.

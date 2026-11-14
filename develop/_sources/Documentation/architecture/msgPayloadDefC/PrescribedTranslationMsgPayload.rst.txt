@@ -1,0 +1,10 @@
+.. _PrescribedTranslationMsgPayload:
+
+PrescribedTranslationMsgPayload
+===============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PrescribedTranslationMsgPayload.h
+   :project: msgPayloadDefC
+

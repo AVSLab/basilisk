@@ -1,0 +1,106 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.1 Known Issues
+========================
+
+.. _bsk-known-issues-2-1-7:
+
+Version 2.1.7
+-------------
+- The way to include effector bodies in Vizard has changed in this release.
+- The streaming between ``vizInterface`` and Vizard was not reliable because of a ZMQ compatibility
+  issue between the two code bases.  BSK is reverting to using ZMQ 4.3.0 for now to avoid this issue.
+- Building Basilisk with ``opNav`` mode was no longer working as a conan package dependency issue came up.
+  This has been corrected in the new version by specifying ``xz_utils/5.4.0`` in ``conanfile.py``.  Note
+  that building with ``opNav`` now also appears to require ``conan>=1.59.0``, but less than 2.0.0.
+
+.. _bsk-known-issues-2-1-6:
+
+Version 2.1.6
+-------------
+- in :ref:`boreAngCalc`, the variable ``boreVecPoint`` is now called ``boreVec_Po``.
+
+.. _bsk-known-issues-2-1-5:
+
+Version 2.1.5
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
+  when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` module inertial state outputs are relative to the central gravity body,
+  not the inertial frame.  This is now corrected.
+- Adding an instrument camera to :ref:`vizInterface` has changed.  See :ref:`vizardSettings` on how
+  to use the new method ``addCamMsgToModule()``.
+
+.. _bsk-known-issues-2-1-4:
+
+Version 2.1.4
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
+  when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- prior version had a bug in computer the latitude in ``PCPF2LLA()`` inside :ref:`geodeticConversion`.  This is used
+  in the ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, and in
+  :ref:`msisAtmosphere` and :ref:`albedo`.
+- :ref:`coarsesunsensor` now receives in ``sensorList`` a list of CSS configuration state pointers, not
+  a copy to the configuration structures.  This allows these values to be changed on the fly from
+  within python.  However, the simulation code must ensure that the CSS configuration structures
+  are retained in memory or a segmentation fault will ensue.
+- How stand alone C-wrapped message objects are created in python has moved from ``cMsgCInterfacePy``
+  to ``messaging``.  Old scripts still using ``cMsgCInterfacePy`` still work as a link has been
+  created to ``messaging``.  But, the use of ``cMsgCInterfacePy`` is no depreciated and code should
+  be updated to using ``messaging`` instead.
+- The use of custom message in the external modules folders is broke with the new build
+  modification in this release.  This is fixed in the latest release.
+
+.. _bsk-known-issues-2-1-3:
+
+Version 2.1.3
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
+  when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- :ref:`planetEphemeris` was not computing the correct orientation, this is fixed in current release
+- updated ``examples/OpNavScenarios/BSK_OpNav.py`` path to the Vizard binary. If you are calling
+  Vizard 2.1+ from the python script, the Vizard binary name changed from ``Basilisk Vizard` to
+  simply ``Vizard``.
+- using newer versions of Python, such as 3.9.13 or 3.10.5, running ``conanfile.py`` runs into errors
+  and fails.  This is now addressed in the next release.  Upgrading ``pip`` to the newest version
+  manually can resolve this issue as well.
+
+.. _bsk-known-issues-2-1-2:
+
+Version 2.1.2
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
+  when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- ``conan`` version 1.44 is causing build issues because the way the source and build folders are set has
+  changed.  This is fixed in current version of Basilisk.
+- building Basilisk from scratch with ``opNav`` turned on was failing because ``conan`` was not able to
+  install ``opencv/4.1.1``.  In particular, the package ``jasper`` was now failing as a required argument
+  is no longer supported.  This is fixed in the current release by turning off this ``jasper`` requirement.
+
+.. _bsk-known-issues-2-1-1:
+
+Version 2.1.1
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- On windows when building with ``opNav`` mode on,
+  the ``gettext`` library was not included with the ``conan`` software unless the version is 0.21,
+  not 0.20.1.  This dependency has been upgraded.  This might require deleting the ``.conan`` folder in your
+  home directory and re-installing all dependencies.
+
+
+.. _bsk-known-issues-2-1-0:
+
+Version 2.1.0
+-------------
+- In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found when opNav is included.
+  The code compiles, but auto-completion etc. doesn't work in that module.
+- ``conan`` changed the default repos in version 1.40 onwards which broke the Basilisk installation.
+  This is now corrected in the latest release.  After pulling the latest code release, you'll need to
+  delete the ``.conan`` folder in your home directory to create a fresh copy.  This only has to be done once.
+- :ref:`spacecraftReconfig` has been changed to read in the spacecraft mass from an input message, not be set as
+  a module variable

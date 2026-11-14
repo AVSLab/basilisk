@@ -1,0 +1,15 @@
+.. _test_numpy_api_compatibility:
+
+test_numpy_api_compatibility
+============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_numpy_api_compatibility
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _TDBVehicleClockCorrelationMsgPayload:
+
+TDBVehicleClockCorrelationMsgPayload
+====================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TDBVehicleClockCorrelationMsgPayload.h
+   :project: msgPayloadDefC
+

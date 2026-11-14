@@ -1,0 +1,10 @@
+.. _ClassicElementsMsgPayload:
+
+ClassicElementsMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ClassicElementsMsgPayload.h
+   :project: msgPayloadDefC
+

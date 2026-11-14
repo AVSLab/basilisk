@@ -1,0 +1,10 @@
+.. _simDefinitions:
+
+simDefinitions
+==============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: simDefinitions.h
+   :project: utilities
+

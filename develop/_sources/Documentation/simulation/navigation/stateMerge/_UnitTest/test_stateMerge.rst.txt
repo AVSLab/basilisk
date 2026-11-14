@@ -1,0 +1,15 @@
+.. _test_stateMerge:
+
+test_stateMerge
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_stateMerge
+   :members:
+   :show-inheritance:
+

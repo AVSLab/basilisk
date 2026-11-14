@@ -1,0 +1,10 @@
+.. _STAttMsgPayload:
+
+STAttMsgPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: STAttMsgPayload.h
+   :project: msgPayloadDefC
+

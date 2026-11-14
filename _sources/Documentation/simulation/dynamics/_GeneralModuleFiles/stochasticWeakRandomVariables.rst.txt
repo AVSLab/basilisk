@@ -1,0 +1,10 @@
+.. _stochasticWeakRandomVariables:
+
+stochasticWeakRandomVariables
+=============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: stochasticWeakRandomVariables.h
+   :project: _GeneralModuleFiles4
+

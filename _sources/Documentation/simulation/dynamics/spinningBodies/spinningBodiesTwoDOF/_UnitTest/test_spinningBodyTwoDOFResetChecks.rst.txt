@@ -1,0 +1,15 @@
+.. _test_spinningBodyTwoDOFResetChecks:
+
+test_spinningBodyTwoDOFResetChecks
+==================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_spinningBodyTwoDOFResetChecks
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,15 @@
+.. _simSetPlanetEnvironment:
+
+simSetPlanetEnvironment
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: simSetPlanetEnvironment
+   :members:
+   :show-inheritance:
+
