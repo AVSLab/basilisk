@@ -1,0 +1,1 @@
+- Extended :ref:`scenarioVariableTimeStepIntegrators` with an accuracy comparison against Kepler's equation that shows how the tolerances and the task period affect the error of the RKF45 and RKF78 integrators on an eccentric orbit.
