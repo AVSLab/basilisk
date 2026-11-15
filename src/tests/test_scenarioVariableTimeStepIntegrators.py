@@ -75,6 +75,25 @@ def test_scenarioIntegrators(show_plots):
     for pltName, plt in list(figureList.items()):
         simHelpers.saveScenarioFigure(pltName, plt, path)
 
+@pytest.mark.scenarioTest
+def test_scenarioVariableTimeStepIntegratorsAccuracy(show_plots):
+    """
+    Check the accuracy comparison in the scenario. Tightened tolerances must meet the same bounds as the test
+    above, the default tolerances must give a much larger error with the coarse 2 hour task period, and a shorter
+    task period must recover the accuracy with the default tolerances, because the task period is the largest step.
+    """
+    finalErrors, figureList = scenarioVariableTimeStepIntegrators.runAccuracyComparison(show_plots)
+
+    assert finalErrors["RKF45, tightened tolerances"] < 2000  # [m]
+    assert finalErrors["RKF78, tightened tolerances"] < 100  # [m]
+    assert finalErrors["RKF45, default tolerances"] > 10 * finalErrors["RKF45, tightened tolerances"]
+    assert finalErrors["RKF78, default tolerances"] > 10 * finalErrors["RKF78, tightened tolerances"]
+    assert finalErrors["RKF78, default tolerances, 10 min task"] < 1  # [m]
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in list(figureList.items()):
+        simHelpers.saveScenarioFigure(pltName, plt, path)
+
 def getAnalyticalSolution(r0, v0, dt):
     mu = simIncludeGravBody.gravBodyFactory().createEarth().mu
     oe = orbitalMotion.rv2elem(mu, r0, v0)

@@ -47,6 +47,60 @@ this method in this scenario.
    :align: center
 
 
+Step Size and Tolerances
+------------------------
+
+The task rate sets the largest integration step. At each task update the variable time step integrators start
+with a trial step equal to the whole task period, and they can shorten the step to meet ``relTol`` and ``absTol``,
+but they never take a step longer than the task period. The tolerances therefore govern the accuracy only below
+the task period, and they apply to each state in its own units, for example the position in m and the velocity
+in m/s.
+
+At the default ``relTol`` of 1e-4, the error estimate can accept long steps even where the dynamics change rapidly,
+such as through the periapsis of an eccentric orbit. The function ``runAccuracyComparison()`` illustrates this by
+propagating the orbit of this scenario with the RKF45 and RKF78 integrators and comparing the position with the
+solution of Kepler's equation. It produces the following results:
+
+.. list-table:: Final position error after 0.9 orbits
+   :header-rows: 1
+
+   * - Integrator
+     - Task period
+     - ``relTol``, ``absTol``
+     - Position error
+   * - RKF45
+     - 2 h
+     - 1e-4, 1e-8 (default)
+     - 3,490 km
+   * - RKF45
+     - 2 h
+     - 1e-8, 1e-12
+     - 1.6 km
+   * - RKF78
+     - 2 h
+     - 1e-4, 1e-8 (default)
+     - 163 km
+   * - RKF78
+     - 2 h
+     - 1e-8, 1e-12
+     - 32 m
+   * - RKF78
+     - 10 min
+     - 1e-4, 1e-8 (default)
+     - 0.01 m
+
+::
+
+    show_plots = True, runAccuracyComparison()
+
+.. image:: /_images/Scenarios/scenarioVariableTimeStepIntegratorsAccuracy.svg
+   :align: center
+
+Most of the error is incurred during the first periapsis passage, a few hours into the run, and it then grows
+slowly. Either tightening the tolerances or shortening the task period reduces the error. The default tolerances
+may not be suitable for all orbit regimes, so the user should check the accuracy against a reference before relying
+on them.
+
 Creating New Integrator Modules
 -------------------------------
 
@@ -90,7 +144,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, integratorCase, relTol, absTol):
+def run(show_plots, integratorCase, relTol, absTol, simulationTimeStep=None):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -108,6 +162,7 @@ def run(show_plots, integratorCase, relTol, absTol):
 
         relTol (double): Specify the relative tolerance to use in the integration
         absTol (double): Specify the absolute tolerance to use in the integration
+        simulationTimeStep (int): Optional dynamics task period in nanoseconds. Defaults to 2 hours.
 
     """
 
@@ -127,7 +182,8 @@ def run(show_plots, integratorCase, relTol, absTol):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.hour2nano(2.)
+    if simulationTimeStep is None:
+        simulationTimeStep = macros.hour2nano(2.)  # [ns]
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -277,6 +333,89 @@ def run(show_plots, integratorCase, relTol, absTol):
 
     # return some information of value for testing
     return dataLog.times(), posData, velData, figureList
+
+
+def getKeplerPosition(mu, r0, v0, dt):
+    """
+    Return the inertial position reached after propagating an initial state with Kepler's equation.
+
+    Args:
+        mu (double): Gravitational parameter of the central body [m^3/s^2]
+        r0 (array): Initial inertial position [m]
+        v0 (array): Initial inertial velocity [m/s]
+        dt (double): Propagation time [s]
+
+    Returns:
+        array: Inertial position after ``dt`` [m]
+    """
+    oe = orbitalMotion.rv2elem(mu, r0, v0)
+    E0 = orbitalMotion.f2E(oe.f, oe.e)
+    M0 = orbitalMotion.E2M(E0, oe.e)
+    Mf = M0 + np.sqrt(mu / oe.a / oe.a / oe.a) * dt
+    Ef = orbitalMotion.M2E(Mf, oe.e)
+    oe.f = orbitalMotion.E2f(Ef, oe.e)
+    rF, _ = orbitalMotion.elem2rv(mu, oe)
+    return np.array(rF)
+
+
+def runAccuracyComparison(show_plots):
+    """
+    Compare the position error of the RKF45 and RKF78 integrators against the solution of Kepler's equation,
+    using the default and tightened tolerances and two task periods.
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+
+    Returns:
+        tuple: A dictionary of final position errors in meters, keyed by case label, and the figure dictionary
+    """
+    mu = simIncludeGravBody.gravBodyFactory().createEarth().mu  # [m^3/s^2]
+
+    # (label, integrator, relTol, absTol, task period)
+    cases = [
+        ("RKF45, default tolerances", "rkf45", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [-], [ns]
+        ("RKF45, tightened tolerances", "rkf45", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [-], [ns]
+        ("RKF78, default tolerances", "rkf78", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [-], [ns]
+        ("RKF78, tightened tolerances", "rkf78", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [-], [ns]
+        ("RKF78, default tolerances, 10 min task", "rkf78", 1e-4, 1e-8, macros.min2nano(10.)),  # [-], [-], [ns]
+    ]
+
+    errorHistory = {}
+    finalErrors = {}
+    for label, integratorCase, relTol, absTol, taskStep in cases:
+        timeData, posData, velData, _ = run(False, integratorCase, relTol, absTol, taskStep)
+        timeSec = (timeData - timeData[0]) * macros.NANO2SEC  # [s]
+        errors = np.array([
+            np.linalg.norm(posData[idx] - getKeplerPosition(mu, posData[0], velData[0], timeSec[idx]))
+            for idx in range(len(timeSec))
+        ])  # [m]
+        errorHistory[label] = (timeSec, errors)
+        finalErrors[label] = errors[-1]
+
+    # run() leaves its orbit figure open for some cases, so start the comparison figure from a clean state
+    plt.close("all")
+    fig = plt.figure(2, figsize=(8, 5))
+    labels = list(errorHistory.keys())
+    for idx, label in enumerate(labels):
+        timeSec, errors = errorHistory[label]
+        plt.semilogy(timeSec / 3600., np.maximum(errors, 1e-6)
+                     , color=simHelpers.getLineColor(idx, len(labels))
+                     , label=label
+                     )
+    plt.xlabel('Time [h]')
+    plt.ylabel('Position Error [m]')
+    # leave headroom above the curves so the legend does not cover them
+    plt.ylim(1e-6, 1e12)  # [m]
+    plt.legend(loc='upper left', ncol=2, fontsize='small')
+    plt.grid()
+    figureList = {fileName + "Accuracy": fig}
+
+    if show_plots:
+        plt.show()
+
+    plt.close("all")
+
+    return finalErrors, figureList
 
 
 #
