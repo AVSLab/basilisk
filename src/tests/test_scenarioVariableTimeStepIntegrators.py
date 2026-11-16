@@ -82,7 +82,11 @@ def test_scenarioVariableTimeStepIntegratorsAccuracy(show_plots):
     above, the default tolerances must give a much larger error with the coarse 2 hour task period, and a shorter
     task period must recover the accuracy with the default tolerances, because the task period is the largest step.
     """
-    finalErrors, figureList = scenarioVariableTimeStepIntegrators.runAccuracyComparison(show_plots)
+    finalErrors, evaluationTimes, figureList = scenarioVariableTimeStepIntegrators.runAccuracyComparison(show_plots)
+
+    # every case must be compared at the same epoch, the one stated in the documentation
+    for evalTime in evaluationTimes.values():
+        assert evalTime == pytest.approx(156. * 3600.)  # [s]
 
     assert finalErrors["RKF45, tightened tolerances"] < 2000  # [m]
     assert finalErrors["RKF78, tightened tolerances"] < 100  # [m]

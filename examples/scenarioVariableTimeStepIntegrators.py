@@ -59,9 +59,11 @@ in m/s.
 At the default ``relTol`` of 1e-4, the error estimate can accept long steps even where the dynamics change rapidly,
 such as through the periapsis of an eccentric orbit. The function ``runAccuracyComparison()`` illustrates this by
 propagating the orbit of this scenario with the RKF45 and RKF78 integrators and comparing the position with the
-solution of Kepler's equation. It produces the following results:
+solution of Kepler's equation. The cases log their states at different times, because the logging interval depends
+on the task period, so the errors are compared at a common epoch: the latest time logged by every case, 156 hours
+after the start, or about 0.88 orbits. It produces the following results:
 
-.. list-table:: Final position error after 0.9 orbits
+.. list-table:: Position error after 156 hours
    :header-rows: 1
 
    * - Integrator
@@ -71,7 +73,7 @@ solution of Kepler's equation. It produces the following results:
    * - RKF45
      - 2 h
      - 1e-4, 1e-8 (default)
-     - 3,490 km
+     - 3,310 km
    * - RKF45
      - 2 h
      - 1e-8, 1e-12
@@ -79,11 +81,11 @@ solution of Kepler's equation. It produces the following results:
    * - RKF78
      - 2 h
      - 1e-4, 1e-8 (default)
-     - 163 km
+     - 154 km
    * - RKF78
      - 2 h
      - 1e-8, 1e-12
-     - 32 m
+     - 31 m
    * - RKF78
      - 10 min
      - 1e-4, 1e-8 (default)
@@ -91,7 +93,7 @@ solution of Kepler's equation. It produces the following results:
 
 ::
 
-    show_plots = True, runAccuracyComparison()
+    runAccuracyComparison(show_plots=True)
 
 .. image:: /_images/Scenarios/scenarioVariableTimeStepIntegratorsAccuracy.svg
    :align: center
@@ -367,30 +369,46 @@ def runAccuracyComparison(show_plots):
         show_plots (bool): Determines if the script should display plots
 
     Returns:
-        tuple: A dictionary of final position errors in meters, keyed by case label, and the figure dictionary
+        tuple: A dictionary of position errors in meters at the common evaluation epoch, a dictionary of the
+        evaluation time used for each case in seconds, both keyed by case label, and the figure dictionary
     """
     mu = simIncludeGravBody.gravBodyFactory().createEarth().mu  # [m^3/s^2]
 
-    # (label, integrator, relTol, absTol, task period)
+    # (label, integrator, relTol [-], absTol [state units: m for position, m/s for velocity], task period [ns])
     cases = [
-        ("RKF45, default tolerances", "rkf45", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [-], [ns]
-        ("RKF45, tightened tolerances", "rkf45", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [-], [ns]
-        ("RKF78, default tolerances", "rkf78", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [-], [ns]
-        ("RKF78, tightened tolerances", "rkf78", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [-], [ns]
-        ("RKF78, default tolerances, 10 min task", "rkf78", 1e-4, 1e-8, macros.min2nano(10.)),  # [-], [-], [ns]
+        ("RKF45, default tolerances", "rkf45", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [m, m/s], [ns]
+        ("RKF45, tightened tolerances", "rkf45", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [m, m/s], [ns]
+        ("RKF78, default tolerances", "rkf78", 1e-4, 1e-8, macros.hour2nano(2.)),  # [-], [m, m/s], [ns]
+        ("RKF78, tightened tolerances", "rkf78", 1e-8, 1e-12, macros.hour2nano(2.)),  # [-], [m, m/s], [ns]
+        ("RKF78, default tolerances, 10 min task", "rkf78", 1e-4, 1e-8, macros.min2nano(10.)),  # [-], [m, m/s], [ns]
     ]
 
     errorHistory = {}
-    finalErrors = {}
+    loggedTimes = {}
     for label, integratorCase, relTol, absTol, taskStep in cases:
         timeData, posData, velData, _ = run(False, integratorCase, relTol, absTol, taskStep)
-        timeSec = (timeData - timeData[0]) * macros.NANO2SEC  # [s]
+        timeNano = np.asarray(timeData - timeData[0], dtype=np.int64)  # [ns]
+        timeSec = timeNano * macros.NANO2SEC  # [s]
         errors = np.array([
             np.linalg.norm(posData[idx] - getKeplerPosition(mu, posData[0], velData[0], timeSec[idx]))
             for idx in range(len(timeSec))
         ])  # [m]
         errorHistory[label] = (timeSec, errors)
-        finalErrors[label] = errors[-1]
+        loggedTimes[label] = timeNano
+
+    # The logging interval depends on the task period, so the cases do not share a final sample time.
+    # Compare them at the latest time that every case has logged.
+    commonTimes = loggedTimes[cases[0][0]]
+    for timeNano in loggedTimes.values():
+        commonTimes = np.intersect1d(commonTimes, timeNano)
+    evalTimeNano = commonTimes[-1]  # [ns]
+
+    finalErrors = {}
+    evaluationTimes = {}
+    for label, timeNano in loggedTimes.items():
+        idx = int(np.flatnonzero(timeNano == evalTimeNano)[0])
+        finalErrors[label] = errorHistory[label][1][idx]  # [m]
+        evaluationTimes[label] = timeNano[idx] * macros.NANO2SEC  # [s]
 
     # run() leaves its orbit figure open for some cases, so start the comparison figure from a clean state
     plt.close("all")
@@ -415,7 +433,7 @@ def runAccuracyComparison(show_plots):
 
     plt.close("all")
 
-    return finalErrors, figureList
+    return finalErrors, evaluationTimes, figureList
 
 
 #
