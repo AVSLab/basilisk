@@ -37,6 +37,7 @@ from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 import matplotlib.pyplot as plt
 from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging
 
 orbitPosAccuracy = 1.0
 orbitVelAccuracy = 0.01
@@ -358,6 +359,95 @@ def test_chebyPosEphem_reset_rebuilds_velocity(reset_method, old_count, new_coun
                 velocity_tolerance = 1.0e-15  # [m/s]
                 numpy.testing.assert_allclose(output.r_BdyZero_N, position, rtol=1.0e-13, atol=position_tolerance)
                 numpy.testing.assert_allclose(output.v_BdyZero_N, velocity, rtol=1.0e-13, atol=velocity_tolerance)
+
+
+@pytest.mark.parametrize("record_slots", [(0, 1), (1, 0), (1, 3)])
+@pytest.mark.parametrize(
+    "intervals,epoch,expected_record,expected_time",
+    [
+        # Interval endpoints and epochs are [s]; expected_time is normalized [-].
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], -100.0, 0, -1.0, id="before-first"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 0.0, 0, -1.0, id="first-start"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 500.0, 0, 0.0, id="first-interior"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 1500.0, 1, 0.0, id="last-interior"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 2000.0, 1, 1.0, id="last-end"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 2500.0, 1, 1.0, id="after-last"),
+        pytest.param([(0.0, 2000.0), (4000.0, 4500.0)], 2900.0, 0, 1.0, id="gap-near-left-end"),
+        pytest.param([(0.0, 2000.0), (4000.0, 4500.0)], 3100.0, 1, -1.0, id="gap-near-right-end"),
+        pytest.param([(0.0, 2000.0), (4000.0, 4500.0)], 3000.0, None, None, id="gap-tie"),
+        pytest.param([(0.0, 1000.0), (1000.0, 2000.0)], 1000.0, None, None, id="shared-endpoint"),
+        pytest.param([(0.0, 1000.0), (500.0, 1500.0)], 750.0, None, None, id="overlap"),
+    ],
+)
+def test_chebyPosEphem_record_selection(record_slots, intervals, epoch, expected_record, expected_time):
+    """Evaluate the containing record or nearest endpoint, regardless of storage order.
+
+    Unequal interval widths distinguish endpoint distance from midpoint distance.
+    Ties and overlapping coverage retain the first record in array order.
+    Check both position and velocity against independently evaluated polynomials.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    task_period = 1.0  # [s]
+    simulation.CreateNewProcess("process").addTask(
+        simulation.CreateNewTask("task", macros.sec2nano(task_period))
+    )
+    model = chebyPosEphem.chebyPosEphem()
+    simulation.AddModelToTask("task", model)
+    coefficients = numpy.array([
+        [[1.0e6, 2.0e5, 3.0e4], [-2.0e6, 4.0e5, -5.0e4], [3.0e6, -6.0e5, 7.0e4]],
+        [[5.0e6, -3.0e5, 8.0e4], [6.0e6, 7.0e5, -9.0e4], [-7.0e6, 8.0e5, 1.0e5]],
+    ])  # [m]
+    for record_index, slot in enumerate(record_slots):
+        start, end = intervals[record_index]
+        record = model.ephArray[slot]
+        record.nChebCoeff = coefficients.shape[2]
+        record.ephemTimeMid = (start + end) / 2.0
+        record.ephemTimeRad = (end - start) / 2.0
+        record.posChebyCoeff = coefficients[record_index].ravel().tolist()
+
+    clock_data = messaging.TDBVehicleClockCorrelationMsgPayload()
+    clock_data.vehicleClockTime = 10.0  # [s]
+    clock_data.ephemerisTime = epoch + clock_data.vehicleClockTime
+    clock_message = messaging.TDBVehicleClockCorrelationMsg().write(clock_data)
+    model.clockCorrInMsg.subscribeTo(clock_message)
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(0)
+    simulation.ExecuteSimulation()
+
+    if expected_record is None:
+        expected_record = record_slots.index(min(record_slots))
+        start, end = intervals[expected_record]
+        expected_time = numpy.clip((2.0 * epoch - start - end) / (end - start), -1.0, 1.0)
+    start, end = intervals[expected_record]
+    radius = (end - start) / 2.0
+    position = [
+        numpy.polynomial.chebyshev.chebval(expected_time, axis)
+        for axis in coefficients[expected_record]
+    ]
+    velocity = [
+        numpy.polynomial.chebyshev.chebval(expected_time, numpy.polynomial.chebyshev.chebder(axis)) / radius
+        for axis in coefficients[expected_record]
+    ]
+    output = model.posFitOutMsg.read()
+    position_tolerance = 1.0e-8  # [m]
+    velocity_tolerance = 1.0e-10  # [m/s]
+    assert model.coeffSelector == record_slots[expected_record]
+    numpy.testing.assert_allclose(output.r_BdyZero_N, position, rtol=1.0e-14, atol=position_tolerance)
+    numpy.testing.assert_allclose(output.v_BdyZero_N, velocity, rtol=1.0e-14, atol=velocity_tolerance)
+    assert output.timeTag == 0.0
+
+
+def test_chebyPosEphem_requires_configured_record():
+    """Reject evaluation when every record slot is unused."""
+    model = chebyPosEphem.chebyPosEphem()
+    clock_message = messaging.TDBVehicleClockCorrelationMsg().write(
+        messaging.TDBVehicleClockCorrelationMsgPayload()
+    )
+    model.clockCorrInMsg.subscribeTo(clock_message)
+    model.SelfInit()
+    model.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match="at least one configured ephemeris record"):
+        model.UpdateState(0)
 
 
 if __name__ == "__main__":

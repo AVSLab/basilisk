@@ -1,0 +1,1 @@
+- Fixed :ref:`chebyPosEphem` to evaluate the nearest configured interval endpoint outside ephemeris coverage, including gaps and times after the last record, instead of falling back to record zero (issue #1685).

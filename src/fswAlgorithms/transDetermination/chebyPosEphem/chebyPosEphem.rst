@@ -11,6 +11,20 @@ Each configured record requires a positive ``ephemTimeRad`` in seconds and
 between one and ``MAX_CHEB_COEFF`` coefficients per axis. The coefficients
 describe position in meters as a function of normalized time over the record's
 interval. The input clock correlation maps simulation time to ephemeris time.
+Unused slots have ``nChebCoeff`` set to zero and are ignored during record
+selection. At least one record must be configured; evaluating with no configured
+records raises ``BSK_ERROR``.
+
+Within coverage, the first record in array order whose interval contains the
+ephemeris time is used, including at shared endpoints and in overlapping
+intervals. Outside all intervals, including gaps between records, the module
+selects the nearest interval endpoint and evaluates both position and velocity
+there. Equal-distance ties use the first record in array order. Records do not
+need to be stored chronologically.
+
+Clamping holds the endpoint position and the fitted endpoint velocity; the
+reported velocity is not forced to zero outside coverage. The output ``timeTag``
+continues to report the current simulation time in seconds.
 
 Message Connection Descriptions
 -------------------------------

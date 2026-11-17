@@ -80,9 +80,11 @@ void Reset_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64
     }
 }
 
-/*! This method takes the current time and computes the state of the object
-    using that time and the stored Chebyshev coefficients.  If the time provided
-    is outside the specified range, the position vectors rail high/low appropriately.
+/*! @brief Compute the state from the first record containing the current ephemeris time.
+    Outside all configured intervals, evaluate position and velocity at the nearest
+    interval endpoint. Unused records with zero coefficients are skipped.
+
+ @note Overlapping intervals and equally distant endpoints use the first record in array order.
 
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -93,6 +95,7 @@ void Update_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int6
 
     double currentEphTime;
     double currentScaledValue;
+    double closestDistance = HUGE_VAL; // [s]
     ChebyEphemRecord* currRec;
     uint32_t i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
@@ -104,12 +107,24 @@ void Update_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int6
     currentEphTime = (double)callTime * NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
-    configData->coeffSelector = 0;
+    configData->coeffSelector = MAX_CHEB_RECORDS;
     for (i = 0; i < MAX_CHEB_RECORDS; i++) {
-        if (fabs(currentEphTime - configData->ephArray[i].ephemTimeMid) <= configData->ephArray[i].ephemTimeRad) {
+        currRec = &(configData->ephArray[i]);
+        if (currRec->nChebCoeff == 0) {
+            continue;
+        }
+        // Outside an interval this is the distance to its nearest endpoint.
+        const double distanceToInterval = fabs(currentEphTime - currRec->ephemTimeMid) - currRec->ephemTimeRad;
+        if (distanceToInterval < closestDistance) {
             configData->coeffSelector = i;
+            closestDistance = distanceToInterval;
+        }
+        if (distanceToInterval <= 0.0) {
             break;
         }
+    }
+    if (configData->coeffSelector == MAX_CHEB_RECORDS) {
+        _bskError(configData->bskLogger, "Error: chebyPosEphem requires at least one configured ephemeris record.");
     }
 
     currRec = &(configData->ephArray[configData->coeffSelector]);
