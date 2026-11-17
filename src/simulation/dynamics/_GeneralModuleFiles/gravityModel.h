@@ -77,10 +77,14 @@ class GravityModel
      */
     virtual Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const = 0;
 
-    /** Returns the gravitational potential energy at a position around this body.
+    /** @brief Compute specific gravitational potential energy at a body-fixed position.
      *
-     * The position is given relative to the body and in the inertial
-     * reference frame.
+     * @param positionWrtPlanet_N Position relative to the body in its body-fixed frame [m].
+     * @return Potential energy per unit spacecraft mass, with zero at infinity [m^2/s^2].
+     * @note The point-mass limit is negative, `-mu/r`. The gravity effector converts inertial
+     * positions into the body-fixed frame before calling this method.
+     * @note The historical parameter name is retained for Python keyword compatibility.
+     *       The input is body-fixed despite the `_N` suffix.
      */
     virtual double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const = 0;
 

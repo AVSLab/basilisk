@@ -11,13 +11,20 @@ The gravity acceleration is evaluated as
     \mathbf{a}^{P}=\frac{\mu}{V}\left(-\sum_{e\in\text{edges}}\mathbf{E}_e\mathbf{r}_eL_e
     +\sum_{f\in\text{faces}}\mathbf{F}_f\mathbf{r}_fw_f\right)
 
-and the gravity potential as
+and the positive gravitational potential of the Werner and Scheeres formulation as
 
 .. math::
     :label: eq:U_poly
 
     U=\frac{\mu}{2V}\left(\sum_{e\in\text{edges}}\mathbf{r}^T_e\mathbf{E}_e\mathbf{r}_e
     -\sum_{f\in\text{faces}}\mathbf{r}^T_f\mathbf{F}_f\mathbf{r}_f\right)
+
+``computePotentialEnergy()`` returns the specific potential energy
+:math:`\Phi=-U`, in :math:`\mathrm{m^2/s^2}`, with zero at infinity. Thus
+:math:`\Phi\rightarrow-\mu/r` far from the body and
+:math:`\mathbf{a}=-\nabla\Phi`. Multiplying :math:`\Phi` by spacecraft mass gives
+potential energy in joules. This sign agrees with the point-mass model and the
+potential term in ``Spacecraft.totOrbEnergy``.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -101,6 +108,19 @@ use only the corrected mesh data.
         raise ValueError(error)
     pos = [40e3, 30e3, 10e3]  # [m] Evaluation point in the body-fixed frame
     acc = poly.computeField(pos)  # [m/s^2]
+    potential = poly.computePotentialEnergy(pos)  # [m^2/s^2]
+
+Both direct model calls require a position relative to the gravity body in its
+body-fixed frame. For an inertial relative position, use
+``erosGravBody.computePotentialEnergyInertial(position, timeNanos)`` after
+initializing the body and loading its ephemeris. The gravity effector uses this
+conversion automatically, extrapolating the planet orientation to the energy
+evaluation time with the same rotation model used for acceleration.
+
+Before the fix for issue 1689, ``computePotentialEnergy()`` returned :math:`+U`,
+and spacecraft energy calculations used the inertial position without rotating
+it into the body frame. Callers that previously negated the returned potential
+to obtain specific potential energy should remove that extra negation.
 
 Supported polyhedron shape files
 --------------------------------

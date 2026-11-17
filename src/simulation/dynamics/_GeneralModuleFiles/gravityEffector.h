@@ -58,12 +58,22 @@ class GravBodyData
      */
     void initBody(int64_t moduleID);
 
-    /** Computes the gravitational acceleration
+    /** @brief Compute gravitational acceleration in inertial coordinates.
      *
-     * @param r_I inertial position vector
-     * @param simTimeNanos simulation time (ns)
+     * @param r_I Position relative to this body in inertial coordinates [m].
+     * @param simTimeNanos Evaluation time [ns].
+     * @return Acceleration in inertial coordinates [m/s^2].
      */
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
+
+    /** @brief Compute specific gravitational potential energy from an inertial position.
+     *
+     * @param r_I Position relative to this body in inertial coordinates [m].
+     * @param simTimeNanos Evaluation time [ns].
+     * @return Specific potential energy, with zero at infinity [m^2/s^2].
+     * @note Uses the same extrapolated body orientation as computeGravityInertial().
+     */
+    double computePotentialEnergyInertial(const Eigen::Vector3d& r_I, uint64_t simTimeNanos) const;
 
     /** Read the ephemeris data from planetBodyInMsg if it's linked.
      * Otherwise, zeros `this->localPlanet`.
@@ -108,6 +118,15 @@ class GravBodyData
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
+    /** @brief Extrapolate the planet orientation and its derivative to an evaluation time.
+     * @param simTimeNanos Evaluation time [ns].
+     * @param dcmAdvanced_NPfix Output rotation from body-fixed to inertial coordinates [-].
+     * @param dcmAdvanced_NPfix_dot Output time derivative of dcmAdvanced_NPfix [1/s].
+     */
+    void computePlanetOrientation(uint64_t simTimeNanos,
+                                  Eigen::Matrix3d& dcmAdvanced_NPfix,
+                                  Eigen::Matrix3d& dcmAdvanced_NPfix_dot) const;
+
     Eigen::MatrixXd* r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
     Eigen::MatrixXd* v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
     Eigen::MatrixXd* muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
@@ -146,8 +165,11 @@ class GravityEffector : public SysModel
     /** Updates the inertial position and velocity properties */
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
 
-    /** Computes the Potential Energy Contributions from every associated `GravBodyData` */
-    void updateEnergyContributions(Eigen::Vector3d r_CN_N, double& orbPotEnergyContr);
+    /** @brief Accumulate specific potential energy from the associated gravity bodies.
+     * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin, in inertial coordinates [m].
+     * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     */
+    void updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr);
 
     /** Sets the `GravBodyData` associated with this effector */
     void setGravBodies(std::vector<std::shared_ptr<GravBodyData>> gravBodies);

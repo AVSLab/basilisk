@@ -382,6 +382,13 @@ The polyhedral model, described in Werner and Scheeres publication\cite{werner19
 U(\bar{\mathbf{r}})=- \frac{1}{2}G\sigma\sum_{f\in\text{faces}}\left(\mathbf{r}_f \cdot\mathbf{n}_f\mathbf{n}_f\cdot\mathbf{r}_f\omega_f-\sum_{e\in\text{face's edges}}\mathbf{r}_f\cdot\mathbf{n}_f\mathbf{n}_e\cdot\mathbf{r}_e L_e\right)\label{eq:polyhedral_potential}
 \end{equation}
 
+This formulation uses the positive gravitational potential $U$. Basilisk's
+\texttt{computePotentialEnergy()} returns the specific potential energy
+$\Phi=-U$, with units of $\mathrm{m^2/s^2}$ and zero at infinity, so that
+$\mathbf{a}=-\nabla\Phi$ and $\Phi\rightarrow-\mu/r$ far from the body.
+The method takes a body-fixed relative position. The gravity effector rotates
+inertial relative positions into that frame at the energy evaluation epoch.
+
  The vector $\mathbf{r}_f$ extends from the evaluation point to any vertex on the face. The variable $\mathbf{n}_f$ is the outward-pointing normal vector of face $f$. The term $\omega_f$ is the signed solid angle subtended by the face $f$ when viewed from the evalution point. The variable $\mathbf{r}_e$ is a vector from the evaluation point to the initial vertex of edge $e$. The vector $\mathbf{n}_e$ is the normal of the edge lying on the face plane. The term $L_e$ corresponds to the potential of a 1D wire.
 
  Note that in Werner and Scheeres\cite{werner1996}, the double summation term of \eqref{eq:polyhedral_potential} was simplified to a single summation over all polyhedron's edges. Although that reduction is convenient for mathematical compactness, retaining the double summation simplifies the algorithmic implementation (so that there is no need to check for common edges between adjacent faces).

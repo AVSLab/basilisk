@@ -113,6 +113,40 @@ the required table dimensions remain valid. The explicit-degree overload checks
 only the coefficient rows used by that evaluation, allowing lower-degree
 evaluation even when unused higher-degree rows are incomplete.
 
+Potential Energy
+----------------
+All gravity-model ``computePotentialEnergy(position)`` methods accept a position
+relative to the gravity body in its body-fixed frame and return potential energy
+per unit spacecraft mass in :math:`\mathrm{m^2/s^2}`, with zero at infinity.
+The point-mass limit is :math:`-\mu/r`. For the polyhedral model this is the
+negative of the positive potential used in the Werner and Scheeres formulation.
+The spherical-harmonic model currently returns only the point-mass potential;
+its higher-degree acceleration terms are not included in the energy calculation.
+
+``GravBodyData.computePotentialEnergyInertial(position, timeNanos)`` accepts an
+inertial position relative to the body and performs the frame conversion at the
+requested simulation time. Like acceleration evaluation, it uses the loaded
+planet ephemeris and advances its orientation from the message timestamp.
+An absent or all-zero orientation uses the same identity fallback as acceleration.
+
+The spacecraft's reported ``totOrbEnergy`` includes mass times the specific
+potential.
+For an isolated, static polyhedral body, orbital energy is conserved up to
+integration error. A rotating, non-axisymmetric body can exchange energy with
+the orbit. For uniform rotation about a fixed axis through the body's center,
+the conserved quantity is the Jacobi integral
+:math:`E/m-\boldsymbol{\omega}\cdot(\mathbf{r}\times\mathbf{v})`, using position
+and velocity relative to that center in an inertial frame.
+
+Custom C++ gravity models must follow the body-fixed position and negative
+potential-energy convention of ``GravityModel.computePotentialEnergy()``.
+Python calls to individual gravity models retain their existing signatures,
+including the ``positionWrtPlanet_N`` keyword on the ``GravityModel`` base-class
+wrapper and the point-mass and spherical-harmonic potential methods. This
+historical keyword still takes a body-fixed position despite its ``_N`` suffix.
+The point-mass and spherical-harmonic potentials are radial, so their potential
+energy is independent of the position frame's orientation.
+
 Planet Orientation
 ------------------
 The planet orientation is read from ``planetBodyInMsg`` together with its time derivative ``J20002Pfix_dot``. Between
