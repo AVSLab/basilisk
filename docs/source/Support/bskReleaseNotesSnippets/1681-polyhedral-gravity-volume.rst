@@ -1,0 +1,1 @@
+- Fixed :ref:`polyhedralGravityModel` volume normalization for bodies that are not star-shaped about their center of mass (issue 1681), correcting underestimated acceleration and potential. Initialization now rejects non-finite or non-positive signed volume, including consistently inward-oriented meshes, and rebuilds cached dyads so corrected meshes can be retried safely.

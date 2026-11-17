@@ -21,35 +21,47 @@
 #define POLY_GRAVITY_MODEL_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+#include <Eigen/Dense>
+#include <optional>
+#include <string>
 #include <vector>
 
-/** The Polyhedral gravity model.
+class GravBodyData;
+
+/** @brief Constant-density polyhedral gravity model.
  *
  * In this class, a polyhedron is defined by its triangular facets.
  * Each facet is defined by three vertices (they are triangles), and
  * each vertex is defined by its position relative to the center of
- * mass of the body.
+ * mass of the body. The mesh must be closed and consistently outward oriented.
+ * Signed tetrahedral volumes support bodies that are not star-shaped about
+ * their center of mass.
  */
 class PolyhedralGravityModel : public GravityModel
 {
   public:
-    /** Initialize all parameters necessary for the computation of gravity.
+    /** @brief Initialize all parameters necessary for the computation of gravity.
      *
      * The attribute `muBody` must be set separately.
+     * Previous facet and edge dyads are discarded on every call, including retries.
      *
-     * Will return an error message (string) if `xyzVertex` or `orderFacet` were not set.
-     * Otherwise, returns an empty optional.
+     * @return An empty optional on success, or an error message if vertex or facet
+     * data is missing or the total signed volume is non-positive or non-finite.
+     * @note A positive total volume does not validate mesh closure or local facet winding.
      */
     std::optional<std::string> initializeParameters() override;
 
-    /** Initialize all parameters necessary for the computation of gravity.
+    /** @brief Initialize all parameters using the body's gravitational parameter.
      *
      * The attribute `muBody` is read from the given `GravBodyData`.
+     * Previous facet and edge dyads are discarded on every call, including retries.
      *
-     * Will return an error message (string) if `xyzVertex` or `orderFacet` were not set.
-     * Otherwise, returns an empty optional.
+     * @param body Body supplying the gravitational parameter.
+     * @return An empty optional on success, or an error message if vertex or facet
+     * data is missing or the total signed volume is non-positive or non-finite.
+     * @note A positive total volume does not validate mesh closure or local facet winding.
      */
-    std::optional<std::string> initializeParameters(const GravBodyData&) override;
+    std::optional<std::string> initializeParameters(const GravBodyData& body) override;
 
     /** Returns the gravity acceleration at a position around this body.
      *
@@ -90,14 +102,15 @@ class PolyhedralGravityModel : public GravityModel
      */
     Eigen::MatrixX3d xyzVertex;
 
-    /**
-     * This matrix defines the facets of the matrix. Each row
-     * contains three numbers, each of them corresponding to the
+    /** @brief One-based vertex indices of the triangular facets.
+     *
+     * Each row contains three numbers, each corresponding to the
      * index of a vertex, as defined in xyzVertex. These three
      * vertices define a single facet of the polyhedron.
      *
      * Note that the order of the vertex index is important: the facets
-     * must all be outward pointing.
+     * must all be outward pointing and form a closed surface. Individual signed
+     * tetrahedral volumes may be negative, but their total must be positive.
      */
     Eigen::MatrixX3i orderFacet;
 
