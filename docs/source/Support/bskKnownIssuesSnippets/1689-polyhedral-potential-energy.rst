@@ -6,7 +6,8 @@
   ``totOrbEnergy`` had the wrong potential sign and, for a rotated or rotating
   body, evaluated the potential at the wrong location. The fix returns negative
   specific potential energy and transforms relative positions into each body's
-  frame at the energy evaluation epoch. On affected
+  frame at the energy evaluation epoch. Planet translation and orientation use
+  the output time rather than the last integrator-stage time. On affected
   releases, compute the specific potential independently as the negative of
   ``poly.computePotentialEnergy()`` evaluated at the correct body-fixed position.
   Remove that extra negation after upgrading. Acceleration calculations retain

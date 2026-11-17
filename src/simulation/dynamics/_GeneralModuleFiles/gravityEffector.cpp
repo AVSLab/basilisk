@@ -218,7 +218,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
 
     if (this->centralBody) // If there is a central body
     {
-        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody, systemClock);
         r_cN_N = r_cF_N + r_CN_N; // shift s/c to be wrt inertial frame origin
                                   // if it isn't already
     } else {
@@ -230,7 +230,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
 
     for (auto&& body : this->gravBodies) {
         // position of Planet being queried wrt N
-        Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body);
+        Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body, systemClock);
         Eigen::Vector3d r_cP_N = r_cN_N - r_PN_N; // position of s/c CoM wrt planet in N
 
         if (this->centralBody && !body->isCentralBody) // If there is a central body, and its not
@@ -260,7 +260,8 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
     // relative to the central body
     if (this->centralBody) // If there is a central body
     {
-        Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        const uint64_t systemClock = static_cast<uint64_t>(this->timeCorr->data()[0]);
+        Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody, systemClock);
         *this->inertialPositionProperty = r_CN_N + r_BF_N;
         *this->inertialVelocityProperty =
             cArray2EigenVector3d(this->centralBody->localPlanet.VelocityVector) + rDot_BF_N;
@@ -270,24 +271,25 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
     }
 }
 
-Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData)
+Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData,
+                                                                 uint64_t simTimeNanos)
 {
-    uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
-    double dt = diffNanoToSec(systemClock, bodyData->timeWritten);
+    double dt = diffNanoToSec(simTimeNanos, bodyData->timeWritten);
     Eigen::Vector3d r_PN_N = cArray2EigenVector3d(bodyData->localPlanet.PositionVector);
     r_PN_N += cArray2EigenVector3d(bodyData->localPlanet.VelocityVector) * dt;
     return r_PN_N;
 }
 
-void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr)
+void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N,
+                                                double& orbPotEnergyContr,
+                                                uint64_t simTimeNanos)
 {
-    const uint64_t simTimeNanos = static_cast<uint64_t>(this->timeCorr->data()[0]);
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero(); // C is central body. position of C wrt N in N
     Eigen::Vector3d r_cN_N;                           // position c wrt N in N
 
     if (this->centralBody) { // Evaluates true if there is a central body, false
                              // otherwise
-        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody, simTimeNanos);
         r_cN_N = r_cF_N + r_CN_N; // shift s/c to be wrt inertial frame origin
                                   // if it isn't already
     } else {
@@ -296,7 +298,7 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& 
 
     for (auto&& body : this->gravBodies) {
         // P is planet being queried. position of planet wrt N in N
-        Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body);
+        Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body, simTimeNanos);
         // c is s/c CoM. position of c wrt P in N
         Eigen::Vector3d r_cP_N = r_cN_N - r_PN_N;
 
