@@ -23,6 +23,12 @@
 
 #include "gravityModel.h"
 
+#include <Eigen/Dense>
+#include <optional>
+#include <string>
+
+class GravBodyData;
+
 /**
  * The point mass gravity model
  */
