@@ -295,5 +295,70 @@ def earthOrbitFit(show_plots):
     return [testFailCount, "".join(testMessages)]
 
 
+@pytest.mark.parametrize("reset_method", ["direct", "simulation"])
+@pytest.mark.parametrize("old_count,new_count", [(4, 3), (10, 6), (6, 10), (6, 6), (6, 2), (6, 1)])
+def test_chebyPosEphem_reset_rebuilds_velocity(reset_method, old_count, new_count):
+    """Rebuild derivatives after changing coefficient counts, values, and time radii.
+
+    Exercise every record and all three axes through both reset entry points.
+    Compare position and velocity with NumPy's independent Chebyshev evaluator
+    and derivative at multiple times, including a second reset without changes.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    task_period = 1.0  # [s]
+    simulation.CreateNewProcess("process").addTask(
+        simulation.CreateNewTask("task", macros.sec2nano(task_period))
+    )
+    model = chebyPosEphem.chebyPosEphem()
+    simulation.AddModelToTask("task", model)
+    clock_data = messaging.TDBVehicleClockCorrelationMsgPayload()
+    clock_message = messaging.TDBVehicleClockCorrelationMsg().write(clock_data)
+    model.clockCorrInMsg.subscribeTo(clock_message)
+
+    old_radius = 1000.0  # [s]
+    new_radius = 500.0  # [s]
+    record_spacing = 10000.0  # [s]
+    coefficient_scale = 0.25  # [m]
+    for record_index in range(chebyPosEphem.MAX_CHEB_RECORDS):
+        record = model.ephArray[record_index]
+        record.nChebCoeff = old_count
+        record.ephemTimeMid = (record_index + 1) * record_spacing
+        record.ephemTimeRad = old_radius
+        coefficients = coefficient_scale * numpy.arange(1, 3 * old_count + 1)
+        record.posChebyCoeff = coefficients.tolist()
+    simulation.InitializeSimulation()
+
+    coefficients = -coefficient_scale * numpy.arange(1, 3 * new_count + 1).reshape(3, new_count)
+    for record_index in range(chebyPosEphem.MAX_CHEB_RECORDS):
+        record = model.ephArray[record_index]
+        record.nChebCoeff = new_count
+        record.ephemTimeRad = new_radius
+        record.posChebyCoeff = coefficients.ravel().tolist()
+
+    for _ in range(2):
+        if reset_method == "direct":
+            model.Reset(0)
+        else:
+            simulation.InitializeSimulation()
+        for record_index in range(chebyPosEphem.MAX_CHEB_RECORDS):
+            record = model.ephArray[record_index]
+            for scaled_time in [-0.75, 0.0, 0.6]:
+                clock_data.ephemerisTime = record.ephemTimeMid + scaled_time * new_radius
+                clock_message.write(clock_data)
+                model.UpdateState(0)
+                output = model.posFitOutMsg.read()
+                position = [numpy.polynomial.chebyshev.chebval(scaled_time, axis) for axis in coefficients]
+                velocity = [
+                    numpy.polynomial.chebyshev.chebval(
+                        scaled_time, numpy.polynomial.chebyshev.chebder(axis)
+                    ) / new_radius
+                    for axis in coefficients
+                ]
+                position_tolerance = 1.0e-13  # [m]
+                velocity_tolerance = 1.0e-15  # [m/s]
+                numpy.testing.assert_allclose(output.r_BdyZero_N, position, rtol=1.0e-13, atol=position_tolerance)
+                numpy.testing.assert_allclose(output.v_BdyZero_N, velocity, rtol=1.0e-13, atol=velocity_tolerance)
+
+
 if __name__ == "__main__":
     test_chebyPosFitAllTest(True)
