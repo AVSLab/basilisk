@@ -1,0 +1,1 @@
+- Fixed :ref:`sphericalHarmonicsGravityModel` coefficient-table validation and evaluation bounds (issue 1682), replacing crashes from excessive degrees or incomplete tables with initialization errors or ``BasiliskError``. Reinitialization now rebuilds recurrence caches, supporting degree changes and retries after a rejected configuration.

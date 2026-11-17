@@ -71,6 +71,48 @@ initialized:
   ``planet.mu = planet.spherHarm.muBody`` after loading the file and before initializing the simulation.
   No warning is given when a valid body GM differs from the gravitational parameter of the file.
 
+Spherical Harmonics Coefficient Tables and Initialization
+---------------------------------------------------------
+When setting ``spherHarm.cBar``, ``spherHarm.sBar``, and ``spherHarm.maxDeg``
+directly, both coefficient tables must contain at least ``maxDeg + 1`` rows.
+Row ``l`` holds orders zero through ``l`` and must contain at least ``l + 1``
+entries. This includes degree zero, which requires one row with at least one
+entry in each table. Additional columns and rows above ``maxDeg`` are ignored,
+so padded tables and truncation of a higher-degree model are supported.
+
+Both initialization overloads discard the previous recurrence tables on each
+attempt. In Python, direct ``initializeParameters()`` calls return ``None`` on
+success or an error string identifying an incomplete coefficient table.
+Initialization through ``GravBodyData`` raises ``BasiliskError`` on failure.
+After correcting a rejected configuration, initialize successfully before
+evaluating the field. For example:
+
+.. code-block:: python
+
+    from Basilisk.simulation import sphericalHarmonicsGravityModel
+
+    model = sphericalHarmonicsGravityModel.SphericalHarmonicsGravityModel()
+    model.muBody = 3.986004415e14  # [m^3/s^2]
+    model.radEquator = 6378136.3  # [m]
+    model.maxDeg = 2
+    model.cBar = [[1.0], [0.0, 0.0], [-4.84e-4, 0.0, 2.44e-6]]  # [-]
+    model.sBar = [[0.0], [0.0, 0.0], [0.0, 0.0, -1.40e-6]]  # [-]
+    error = model.initializeParameters()
+    if error is not None:
+        raise ValueError(error)
+    position = [7.0e6, 1.0e6, 2.0e6]  # [m] Body-fixed position
+    acceleration = model.computeField(position)  # [m/s^2]
+
+``computeField()`` raises ``BasiliskError`` if initialization has not succeeded,
+the requested degree exceeds either the current ``maxDeg`` or the last
+successfully initialized degree, or a required coefficient row or entry is
+missing. These checks also apply after public attributes are changed.
+Reinitialize before evaluating degrees above the initialized range. Changing
+coefficient values within that range does not require reinitialization, provided
+the required table dimensions remain valid. The explicit-degree overload checks
+only the coefficient rows used by that evaluation, allowing lower-degree
+evaluation even when unused higher-degree rows are incomplete.
+
 Planet Orientation
 ------------------
 The planet orientation is read from ``planetBodyInMsg`` together with its time derivative ``J20002Pfix_dot``. Between
