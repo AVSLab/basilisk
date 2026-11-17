@@ -1,0 +1,1 @@
+- Fixed :ref:`chebyPosEphem` retaining stale velocity coefficients when records are reconfigured and reset, including changes to the coefficient count (issue #1687).

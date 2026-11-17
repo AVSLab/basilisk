@@ -60,6 +60,8 @@ void Reset_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64
     memset(tempCVec, 0x0, MAX_CHEB_COEFF * sizeof(double));
     for (i = 0; i < MAX_CHEB_RECORDS; i++) {
         currRec = &(configData->ephArray[i]);
+        // Rebuild the derivative cache, including coefficients not written by the recurrence.
+        vSetZero(currRec->velChebyCoeff, 3 * MAX_CHEB_COEFF);
         n = (int)currRec->nChebCoeff;
         for (k = 0; k < 3; k++) {
             const size_t coefficientOffset = (size_t)k * currRec->nChebCoeff;
