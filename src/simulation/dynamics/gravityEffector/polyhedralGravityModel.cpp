@@ -20,6 +20,8 @@
 #include "polyhedralGravityModel.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
+#include <cmath>
+
 namespace {
 // Computes the facet solid angle.
 inline double computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eigen::Vector3d rk)
@@ -37,15 +39,23 @@ inline double computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d 
 
 std::optional<std::string> PolyhedralGravityModel::initializeParameters()
 {
+    // Discard dyads from previous attempts, including partially initialized rejected meshes.
+    this->FfDyad.clear();
+    this->EeDyad.clear();
+
     // If data hasn't been loaded, quit and return failure
     if (this->xyzVertex.size() == 0 || this->orderFacet.size() == 0) {
         return "Could not initialize polyhedral data: the vertex (xyzVertex) or facet (orderFacet) "
                "were not provided.";
-        ;
     }
 
     // Initializes facet parameters
     this->initializeFacets();
+
+    if (!std::isfinite(this->volPoly) || this->volPoly <= 0.0) {
+        return "Could not initialize polyhedral data: signed volume must be finite and positive. "
+               "Provide a closed mesh with consistently outward-pointing facets.";
+    }
 
     // Initializes edges parameters
     this->initializeEdges();
@@ -235,7 +245,7 @@ void PolyhedralGravityModel::initializeFacets()
     this->edgeVertex.setZero(nEdge, 2);
 
     // Initialize polyhedron volume
-    this->volPoly = 0.0;
+    this->volPoly = 0.0; // [m^3]
 
     // For the facet in loop: declare vertex indexes,
     // positions and lines between vertexes
@@ -272,8 +282,8 @@ void PolyhedralGravityModel::initializeFacets()
         this->normalFacet.row(m) = nf.transpose();
         this->xyzFacet.row(m) = (xyz3 + xyz2 + xyz1) / 3;
 
-        // Add facet contribution to volume
-        this->volPoly += abs(xyz1.cross(xyz2).transpose() * xyz3) / 6;
+        // Keep signed tetrahedra so overlapping contributions cancel for non-star-shaped bodies.
+        this->volPoly += xyz1.dot(xyz2.cross(xyz3)) / 6.0;
 
         // Store facet dyad product
         this->FfDyad.push_back(nf * nf.transpose());

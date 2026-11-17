@@ -25,9 +25,20 @@ The evaluation point is referred to geographical coordinates with respect to the
 
 The module assumes the polyhedron body has constant density.
 
-The polyhedron shape is defined by triangular faces.
+The polyhedron shape must be a closed surface defined by non-degenerate triangular
+faces with consistently outward-pointing normals. Each edge must belong to two
+faces with opposite traversal directions. Vertex positions are measured from the
+body's center of mass, and ``orderFacet`` uses one-based vertex indices.
+
+The body need not be convex or star-shaped about its center of mass. Individual
+tetrahedra formed by a face and the origin may have negative signed volumes.
 
 The module requires the standard gravity parameter to be provided by the user. Then, the body volume is internally computed from the polyhedron data to ensure consistency with the shape.
+
+Initialization rejects a non-finite, zero, or negative total signed volume. For a
+closed, consistently oriented surface, a negative total indicates inward-pointing
+normals. A positive total alone does not establish mesh validity: callers remain
+responsible for closure, non-degenerate faces, and consistent local winding.
 
 Detailed Module Description
 ---------------------------
@@ -37,6 +48,20 @@ The ``polyhedralGravityModel`` module handles the following behavior:
 #. The module initializes and stores all the variables that have no dependency with the evaluation point: edge-facet dyad matrices, facet normals, facet centers and length of edges.
 #. By looping over edges and faces at the same time, the gravity acceleration and potential can be computed for an evaluation point.
 
+The volume used to normalize both acceleration and potential is
+
+.. math::
+
+    V = \frac{1}{6}\sum_{f\in\text{faces}}
+        \mathbf{r}_{f,1}\cdot
+        \left(\mathbf{r}_{f,2}\times\mathbf{r}_{f,3}\right)
+
+where the three vertex positions follow the outward winding of each face.
+The contributions are summed with their signs so overlapping tetrahedra cancel.
+Taking the absolute value of each contribution overestimates the volume of bodies
+that are not star-shaped about the origin and weakens both acceleration and
+potential by the ratio of the true volume to that overestimate (issue 1681).
+
 User Guide
 ----------
 
@@ -44,7 +69,7 @@ To use the polyhedron gravity model, instantiate the ``simIncludeGravBody.gravBo
 
 .. code-block:: python
 
-    mu = 4.46275472004 * 1e5 # Eros standard gravity parameter
+    mu = 4.46275472004e5  # [m^3/s^2] Eros gravitational parameter
     file_poly = 'eros007790.tab'  # Path to a shape file of Eros
     gravFactory = simIncludeGravBody.gravBodyFactory() # Instantiate gravity factory
     erosGravBody = gravFactory.createCustomGravObject('eros_poly', mu=mu) # Create Eros gravity body
@@ -59,13 +84,23 @@ For orbital propagation, the list of gravity bodies have to be appended to a spa
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values())) # Attach list of created gravity bodies to spacecraft
 
 
-For gravity evaluations, the polyhedron gravity has to be initialized
+For direct gravity evaluations, initialize the attached polyhedral model and check
+the returned error before evaluating it. In Python, ``initializeParameters()``
+returns ``None`` on success or an error string on failure. Simulation initialization
+performs this check through ``GravBodyData`` and reports a Basilisk error on failure.
+After correcting a rejected mesh, initialize the same model again before evaluating
+gravity. Each attempt discards previous facet and edge dyads, so successful retries
+use only the corrected mesh data.
 
 .. code-block:: python
 
-    erosGravBody.initializeParameters() # Initializes polyhedron module internal variables
-    pos = [40*1e3, 30*1e3, 10*1e3] # Evaluation point
-    acc = erosGravBody.computeField(pos) # Gravity evaluation
+    poly = erosGravBody.poly
+    poly.muBody = erosGravBody.mu
+    error = poly.initializeParameters()
+    if error is not None:
+        raise ValueError(error)
+    pos = [40e3, 30e3, 10e3]  # [m] Evaluation point in the body-fixed frame
+    acc = poly.computeField(pos)  # [m/s^2]
 
 Supported polyhedron shape files
 --------------------------------
