@@ -71,9 +71,11 @@ class PolyhedralGravityModel : public GravityModel
      */
     Eigen::Vector3d computeField(const Eigen::Vector3d& pos_BP_P) const override;
 
-    /** Returns the gravitational potential energy at a position around this body.
+    /** @brief Compute polyhedral specific gravitational potential energy.
      *
-     * The position is given in the body-centred rotating reference frame.
+     * @param pos_BP_P Position relative to the body in its body-fixed frame [m].
+     * @return Specific potential energy, approaching `-muBody/r` at infinity [m^2/s^2].
+     * @note This is the negative of the positive potential in the Werner and Scheeres formulation.
      */
     double computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const override;
 

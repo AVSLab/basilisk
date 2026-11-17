@@ -16,17 +16,60 @@
 
 """Tests for the Python ``GravBodyData`` gravity-model configuration API."""
 
+from functools import partial
+
 import numpy as np
 import pytest
 
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import GravityGradientEffector, gravityEffector, spacecraft
+from Basilisk.simulation.gravityModel import GravityModel
+from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.sphericalHarmonicsGravityModel import (
     SphericalHarmonicsGravityModel,
 )
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
+
+
+@pytest.mark.parametrize("model_type", [PointMassGravityModel, SphericalHarmonicsGravityModel])
+@pytest.mark.parametrize("through_body", [False, True], ids=["direct", "body"])
+@pytest.mark.parametrize("through_base", [False, True], ids=["derived_api", "base_api"])
+def test_potential_energy_preserves_position_keyword(model_type, through_body, through_base):
+    """Preserve positional and historical keyword calls to the potential API.
+
+    Both models return the point-mass potential. Check its analytic value for
+    direct instances and models retrieved through ``GravBodyData``, using both
+    the derived methods and the ``GravityModel`` base-class wrapper.
+
+    :param model_type: Point-mass or spherical-harmonic gravity model class.
+    :param through_body: Whether to initialize and retrieve the model through a body.
+    :param through_base: Whether to call the base-class wrapper explicitly.
+    """
+    model = model_type()
+    mu = 3.986004415e14  # [m^3/s^2]
+    model.muBody = mu
+    if isinstance(model, SphericalHarmonicsGravityModel):
+        model.radEquator = 6378136.3  # [m]
+        model.maxDeg = 0
+        model.cBar = [[1.0]]  # [-]
+        model.sBar = [[0.0]]
+    if through_body:
+        body = gravityEffector.GravBodyData()
+        body.mu = mu
+        body.gravityModel = model
+        body.initBody(0)
+        model = body.gravityModel
+    else:
+        assert model.initializeParameters() is None
+    position = [7.0e6, -1.0e6, 2.0e6]  # [m]
+    expected = -mu / np.linalg.norm(position)  # [m^2/s^2]
+    compute_potential = (
+        partial(GravityModel.computePotentialEnergy, model) if through_base else model.computePotentialEnergy
+    )
+    assert compute_potential(position) == pytest.approx(expected, rel=1e-14)
+    assert compute_potential(positionWrtPlanet_N=position) == pytest.approx(expected, rel=1e-14)
 
 
 def test_legacy_gravity_model_flags_are_read_only():

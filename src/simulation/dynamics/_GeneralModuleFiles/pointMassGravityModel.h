@@ -50,10 +50,12 @@ class PointMassGravityModel : public GravityModel
      */
     Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const override;
 
-    /** Returns the gravitational potential energy at a position around this body.
+    /** @brief Compute point-mass specific potential energy.
      *
-     * The position is given relative to the body and in the inertial
-     * reference frame.
+     * @param positionWrtPlanet_N Position relative to the body in its body-fixed frame [m].
+     * @return Specific potential energy `-muBody/r`, with zero at infinity [m^2/s^2].
+     * @note The historical parameter name is retained for Python keyword compatibility.
+     *       This radial potential is independent of the position frame's orientation.
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 

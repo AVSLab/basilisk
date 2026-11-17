@@ -90,13 +90,13 @@ class SphericalHarmonicsGravityModel : public GravityModel
                                  size_t degree,
                                  bool include_zero_degree) const;
 
-    /** Returns the gravitational potential energy at a position around this body.
+    /** @brief Compute the point-mass approximation to specific potential energy.
      *
-     * The current implementation returns the potential energy of a point-mass
-     * (the spherical harmonics coefficients of the body are ignored)
-     *
-     * The position is given relative to the body and in the inertial
-     * reference frame.
+     * @param positionWrtPlanet_N Position relative to the body in its body-fixed frame [m].
+     * @return Specific potential energy `-muBody/r`, with zero at infinity [m^2/s^2].
+     * @note Spherical harmonics coefficients are currently ignored in the potential energy.
+     * @note The historical parameter name is retained for Python keyword compatibility.
+     *       This radial potential is independent of the position frame's orientation.
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 

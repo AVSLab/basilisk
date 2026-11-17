@@ -226,7 +226,8 @@ double PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos
     double U;
     U = (this->muBody / this->volPoly) * (Ue - Uf) / 2;
 
-    return U;
+    // Specific potential energy uses zero at infinity and acceleration = -gradient(potential).
+    return -U;
 }
 
 void PolyhedralGravityModel::initializeFacets()

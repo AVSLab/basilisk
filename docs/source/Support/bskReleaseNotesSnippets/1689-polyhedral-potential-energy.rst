@@ -1,0 +1,1 @@
+- Fixed :ref:`polyhedralGravityModel` potential energy to approach ``-mu/r`` and corrected the body-frame conversion in spacecraft orbital-energy reporting (issue 1689). Remove any extra negation previously applied to the polyhedral potential; custom C++ gravity models must accept body-fixed positions for potential evaluation.

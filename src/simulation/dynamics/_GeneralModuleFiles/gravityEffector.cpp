@@ -52,23 +52,33 @@ void GravBodyData::initBody(int64_t moduleID [[maybe_unused]])
     }
 }
 
-Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
+void GravBodyData::computePlanetOrientation(uint64_t simTimeNanos,
+                                            Eigen::Matrix3d& dcmAdvanced_NPfix,
+                                            Eigen::Matrix3d& dcmAdvanced_NPfix_dot) const
 {
     double dt = diffNanoToSec(simTimeNanos, this->timeWritten);
 
     // The message holds [PN], the rotation from the inertial to the planet-fixed frame. The orientation is advanced
     // in its transpose [NP].
-    Eigen::Matrix3d dcm_NPfix = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
+    using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+    Eigen::Matrix3d dcm_NPfix = Eigen::Map<const RowMajorMatrix3d>(&this->localPlanet.J20002Pfix[0][0]).transpose();
     if (dcm_NPfix.isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
         dcm_NPfix = Eigen::Matrix3d::Identity();
     }
-    const Eigen::Matrix3d dcm_NPfix_dot = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
+    const Eigen::Matrix3d dcm_NPfix_dot =
+        Eigen::Map<const RowMajorMatrix3d>(&this->localPlanet.J20002Pfix_dot[0][0]).transpose();
 
     // Advance the planet orientation by the time since the message was written as a rotation
     // about the planet angular velocity, see advanceDcm().
     const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
-    const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
-    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = advanceDcmDot(spin, dcmAdvanced_NPfix, dcm_NPfix_dot);
+    dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
+    dcmAdvanced_NPfix_dot = advanceDcmDot(spin, dcmAdvanced_NPfix, dcm_NPfix_dot);
+}
+
+Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
+{
+    Eigen::Matrix3d dcmAdvanced_NPfix, dcmAdvanced_NPfix_dot;
+    this->computePlanetOrientation(simTimeNanos, dcmAdvanced_NPfix, dcmAdvanced_NPfix_dot);
 
     // store the current planet orientation and rates as [PN] and [PN_dot], as documented for the properties
     *this->J20002Pfix = dcmAdvanced_NPfix.transpose();
@@ -79,6 +89,13 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64
     Eigen::Vector3d grav_Pfix = this->gravityModel->computeField(r_Pfix);
 
     return dcmAdvanced_NPfix * grav_Pfix;
+}
+
+double GravBodyData::computePotentialEnergyInertial(const Eigen::Vector3d& r_I, uint64_t simTimeNanos) const
+{
+    Eigen::Matrix3d dcm_NPfix, dcm_NPfix_dot;
+    this->computePlanetOrientation(simTimeNanos, dcm_NPfix, dcm_NPfix_dot);
+    return this->gravityModel->computePotentialEnergy(dcm_NPfix.transpose() * r_I);
 }
 
 void GravBodyData::loadEphemeris()
@@ -264,6 +281,7 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr
 
 void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr)
 {
+    const uint64_t simTimeNanos = static_cast<uint64_t>(this->timeCorr->data()[0]);
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero(); // C is central body. position of C wrt N in N
     Eigen::Vector3d r_cN_N;                           // position c wrt N in N
 
@@ -287,9 +305,9 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& 
         {
             // potential of central body w/in current planet field. leads to
             // relative potential energy solution
-            orbPotEnergyContr += body->gravityModel->computePotentialEnergy(r_PN_N - r_CN_N);
+            orbPotEnergyContr += body->computePotentialEnergyInertial(r_PN_N - r_CN_N, simTimeNanos);
         }
-        orbPotEnergyContr += body->gravityModel->computePotentialEnergy(r_cP_N); // Potential w/in current planet field
+        orbPotEnergyContr += body->computePotentialEnergyInertial(r_cP_N, simTimeNanos);
     }
 }
 
