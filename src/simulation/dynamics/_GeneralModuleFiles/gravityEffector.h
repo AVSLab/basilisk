@@ -168,8 +168,9 @@ class GravityEffector : public SysModel
     /** @brief Accumulate specific potential energy from the associated gravity bodies.
      * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin, in inertial coordinates [m].
      * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     * @param simTimeNanos Evaluation time for planet positions and orientations [ns].
      */
-    void updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr);
+    void updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, uint64_t simTimeNanos);
 
     /** Sets the `GravBodyData` associated with this effector */
     void setGravBodies(std::vector<std::shared_ptr<GravBodyData>> gravBodies);
@@ -178,11 +179,12 @@ class GravityEffector : public SysModel
     void addGravBody(std::shared_ptr<GravBodyData> gravBody);
 
   private:
-    /**
-        Compute planet position with Euler integration
-        @param bodyData planet data
-    */
-    Eigen::Vector3d getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData);
+    /** @brief Extrapolate a planet position with constant velocity.
+     * @param bodyData Planet data supplying the position and velocity.
+     * @param simTimeNanos Evaluation time [ns].
+     * @return Planet position in inertial coordinates [m].
+     */
+    Eigen::Vector3d getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData, uint64_t simTimeNanos);
 
     /** Writes to centralBodyOutMsg if it is linked and there is a central body */
     void writeOutputMessages(uint64_t currentSimNanos);

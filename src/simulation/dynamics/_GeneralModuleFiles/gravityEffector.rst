@@ -130,7 +130,8 @@ planet ephemeris and advances its orientation from the message timestamp.
 An absent or all-zero orientation uses the same identity fallback as acceleration.
 
 The spacecraft's reported ``totOrbEnergy`` includes mass times the specific
-potential.
+potential. Planet positions and orientations for this calculation are evaluated
+at the output epoch, even when the integrator's last stage occurs earlier.
 For an isolated, static polyhedral body, orbital energy is conserved up to
 integration error. A rotating, non-axisymmetric body can exchange energy with
 the orbit. For uniform rotation about a fixed axis through the body's center,
@@ -140,7 +141,9 @@ and velocity relative to that center in an inertial frame.
 
 Custom C++ gravity models must follow the body-fixed position and negative
 potential-energy convention of ``GravityModel.computePotentialEnergy()``.
-Python calls to individual gravity models retain their existing signatures,
+The C++ ``GravityEffector.updateEnergyContributions()`` method also requires the
+evaluation time in nanoseconds so it does not depend on a cached integrator-stage
+time. Python calls to individual gravity models retain their existing signatures,
 including the ``positionWrtPlanet_N`` keyword on the ``GravityModel`` base-class
 wrapper and the point-mass and spherical-harmonic potential methods. This
 historical keyword still takes a body-fixed position despite its ``_N`` suffix.

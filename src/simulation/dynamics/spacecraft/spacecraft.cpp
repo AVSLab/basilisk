@@ -743,7 +743,7 @@ void Spacecraft::computeEnergyMomentum(double time)
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;
     Eigen::Vector3d rLocal_CN_N = this->hubR_N->stateView() + dcmLocal_NB * (*this->c_B);
-    gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr);
+    gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr, secToNano(time));
     this->totOrbEnergy += (*this->m_SC)(0, 0) * this->orbPotentialEnergyContr;
 
     // - Find total rotational energy

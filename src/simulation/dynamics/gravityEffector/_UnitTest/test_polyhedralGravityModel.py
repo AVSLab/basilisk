@@ -467,15 +467,17 @@ def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, movin
 
 @pytest.mark.parametrize("model_kind", ["polyhedral", "point_mass", "spherical_harmonics"])
 @pytest.mark.parametrize("frame", ["central", "inertial", "secondary"])
-@pytest.mark.parametrize("integrator_name", ["svIntegratorRK4"])
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRK4", "svIntegratorRKF45"])
 def test_reported_energy_uses_body_frame_and_output_epoch(model_kind, frame, integrator_name):
     """Check energy at the output epoch for moving, rotating gravity bodies.
 
+    RKF45 evaluates its last stage before the step endpoint. Energy must use the
+    output time for both planet translation and orientation, rather than that stage.
     The secondary-body case exercises both existing potential contribution terms.
 
     :param model_kind: Gravity model whose energy contribution is checked.
     :param frame: Integration origin and role of the tested body.
-    :param integrator_name: Integrator class used for the energy check.
+    :param integrator_name: Fixed-step or adaptive integrator.
     """
     spin_rate = 0.002  # [rad/s]
     time_step = 10.0  # [s]
