@@ -32,9 +32,9 @@ inline double getK(const size_t degree)
 
 std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters()
 {
-    if (this->cBar.size() == 0 || this->sBar.size() == 0) {
-        return "Could not initialize spherical harmonics: the 'C' or 'S' parameters were not "
-               "provided.";
+    this->clearParameters();
+    if (auto error = this->validateCoefficients(this->maxDeg)) {
+        return "Could not initialize spherical harmonics: " + error.value();
     }
 
     for (size_t i = 0; i <= this->maxDeg + 1; i++) {
@@ -78,12 +78,14 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         this->nQuot2.push_back(nq2Row);
     }
 
+    this->initializedDegree = this->maxDeg;
     return {}; // No error!
 }
 
 std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body)
 {
     if (!std::isfinite(body.mu) || body.mu <= 0.0) {
+        this->clearParameters();
         return "Could not initialize spherical harmonics: 'GravBodyData.mu' must be finite and positive.";
     }
     // The normalized coefficients are only valid with the reference radius of their model,
@@ -94,6 +96,40 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
     // Use the body gravitational parameter for both the field and consumers of the planet's .mu property.
     this->muBody = body.mu;
     return this->initializeParameters();
+}
+
+void SphericalHarmonicsGravityModel::clearParameters()
+{
+    this->initializedDegree.reset();
+    this->aBar.clear();
+    this->n1.clear();
+    this->n2.clear();
+    this->nQuot1.clear();
+    this->nQuot2.clear();
+}
+
+std::optional<std::string> SphericalHarmonicsGravityModel::validateCoefficients(size_t degree) const
+{
+    // Compare before adding one, so even an unrepresentable row count is rejected safely.
+    if (degree >= this->cBar.size()) {
+        return "cBar must contain a row for degree " + std::to_string(degree) + "; only " +
+               std::to_string(this->cBar.size()) + " rows were provided.";
+    }
+    if (degree >= this->sBar.size()) {
+        return "sBar must contain a row for degree " + std::to_string(degree) + "; only " +
+               std::to_string(this->sBar.size()) + " rows were provided.";
+    }
+    for (size_t row = 0; row <= degree; row++) {
+        if (this->cBar[row].size() <= row) {
+            return "cBar row " + std::to_string(row) + " must contain at least " + std::to_string(row + 1) +
+                   " entries.";
+        }
+        if (this->sBar[row].size() <= row) {
+            return "sBar row " + std::to_string(row) + " must contain at least " + std::to_string(row + 1) +
+                   " entries.";
+        }
+    }
+    return {};
 }
 
 Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const
@@ -108,6 +144,19 @@ Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector
     if (degree > this->maxDeg) {
         auto errorMsg = "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
         bskLogger.bskError("%s", errorMsg);
+    }
+    if (!this->initializedDegree) {
+        this->bskLogger.bskError("Spherical harmonics parameters are not initialized. "
+                                 "Call initializeParameters() successfully before computeField().");
+    }
+    if (degree > this->initializedDegree.value()) {
+        this->bskLogger.bskError("Requested degree %zu exceeds initialized degree %zu in spherical harmonics. "
+                                 "Call initializeParameters() again before evaluating the higher degree.",
+                                 degree,
+                                 this->initializedDegree.value());
+    }
+    if (auto error = this->validateCoefficients(degree)) {
+        this->bskLogger.bskError("Could not compute spherical harmonics: %s", error.value().c_str());
     }
 
     double x = position_planetFixed[0];

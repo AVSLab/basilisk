@@ -29,18 +29,22 @@
 #include <string>
 #include <vector>
 
+class GravBodyData;
+
 /**
  * The Spherical Harmonics gravity model
  */
 class SphericalHarmonicsGravityModel : public GravityModel
 {
   public:
-    /** Initialize all parameters necessary for the computation of gravity.
+    /** @brief Validate coefficients and initialize the recurrence tables.
      *
-     * The attributes `muBody`and `radEquator` must be set separately.
+     * The attributes `muBody` and `radEquator` must be set separately.
+     * Previous recurrence tables are discarded on every attempt.
      *
-     * Will return an error message (string) if `cBar` or `sBar` were not set.
-     * Otherwise, returns an empty optional.
+     * @return An empty optional on success, or an error message if either coefficient
+     * table has fewer than `maxDeg + 1` rows or a retained row `l` has fewer than `l + 1` entries.
+     * @note After failure, correct the configuration and initialize successfully before evaluating the field.
      */
     std::optional<std::string> initializeParameters() override;
 
@@ -53,33 +57,34 @@ class SphericalHarmonicsGravityModel : public GravityModel
      *
      * The attribute `muBody` is replaced by `body.mu`, which must be finite and
      * positive so the field and other gravity consumers use the same parameter.
+     * Previous recurrence tables are discarded on every attempt.
      *
      * @param body Gravity body supplying the gravitational parameter and fallback reference radius.
-     * @return An error message if `body.mu` is invalid or `cBar` or `sBar` were not set;
-     * otherwise, an empty optional.
+     * @return An empty optional on success, or an error message if `body.mu` is invalid
+     * or the coefficient tables do not contain all entries through `maxDeg`.
+     * @note After failure, correct the configuration and initialize successfully before evaluating the field.
      */
     std::optional<std::string> initializeParameters(const GravBodyData& body) override;
 
-    /** Returns the gravity acceleration at a position around this body.
+    /** @brief Compute gravity acceleration using the current `maxDeg`, including the point-mass term.
      *
-     * The position is given in the body-fixed reference frame.
-     * Likewise, the resulting acceleration should be given in the
-     * body-fixed reference frame.
+     * @param position_planetFixed Position relative to the body in the body-fixed frame [m].
+     * @return Acceleration in the body-fixed frame [m/s^2].
+     * @throws BasiliskError If initialization has not succeeded, `maxDeg` exceeds the initialized degree,
+     * or either coefficient table lacks an entry needed for the evaluation.
      */
     Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const override;
 
-    /** Returns the gravity acceleration at a position around this body.
+    /** @brief Compute gravity acceleration through a requested degree.
      *
-     * The position is given in the body-fixed reference frame.
-     * Likewise, the resulting acceleration should be given in the
-     * body-fixed reference frame.
-     *
-     * If the given `degree` is smaller than the maximum degree stored in
-     * this class, then the field is computed using only degrees up to `degree`.
-     * If the requested degree is higher than the available one, an error is thrown.
-     *
-     * If include_zero_degree is false the degree that corresponds to the spherical
-     * term (point-mass) of the gravity is ignored.
+     * @param position_planetFixed Position relative to the body in the body-fixed frame [m].
+     * @param degree Maximum degree to evaluate; must not exceed `maxDeg` or the last initialized degree.
+     * @param include_zero_degree Whether to include the point-mass contribution.
+     * @return Acceleration in the body-fixed frame [m/s^2].
+     * @throws BasiliskError If initialization has not succeeded, the requested degree exceeds a limit,
+     * or either coefficient table lacks an entry needed for the evaluation.
+     * @note Coefficient values may be changed without reinitialization. Only rows and orders used by
+     * this evaluation are checked; higher degrees and extra columns are ignored.
      */
     Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed,
                                  size_t degree,
@@ -106,23 +111,39 @@ class SphericalHarmonicsGravityModel : public GravityModel
     double radEquator = 0; /**< [m] Reference radius of the spherical harmonics coefficients */
     double muBody = 0;     /**< [m^3/s^2] Gravitation parameter for the planet */
 
-    /** The maximum degree of Spherical Harmonics to use
+    /** @brief Maximum degree of spherical harmonics to use.
      *
-     * A value of maxDeg greater than the size of cBar or sBar will cause an error.
-     * A value that is lower will truncate the spherical harmonics, ignoring any
-     * parameters in cBar/sBar with degree greater than maxDeg.
+     * Initialization requires at least `maxDeg + 1` rows in each coefficient table.
+     * Each retained row `l` must contain at least `l + 1` entries. Higher degrees
+     * and extra columns are ignored. Reinitialize before evaluating degrees above
+     * the degree prepared by the last successful initialization.
      */
     size_t maxDeg = 0;
 
-    /** The normalized "C" spherical harmonics coefficients */
+    /** @brief Normalized cosine coefficients indexed as `cBar[degree][order]` [-].
+     * @note See `maxDeg` for the required table dimensions.
+     */
     std::vector<std::vector<double>> cBar;
 
-    /** The normalized "S" spherical harmonics coefficients */
+    /** @brief Normalized sine coefficients indexed as `sBar[degree][order]` [-].
+     * @note See `maxDeg` for the required table dimensions.
+     */
     std::vector<std::vector<double>> sBar;
 
     mutable BSKLogger bskLogger; //!< BSK Logging
 
   private:
+    /** @brief Discard recurrence tables and invalidate the initialized degree. */
+    void clearParameters();
+
+    /** @brief Check the coefficient entries needed through a given degree.
+     * @param degree Highest degree whose coefficients must be present.
+     * @return An empty optional on success, or an error identifying the missing row or entries.
+     */
+    std::optional<std::string> validateCoefficients(size_t degree) const;
+
+    std::optional<size_t> initializedDegree; //!< Degree prepared by the last successful initialization.
+
     /**
      * The following parameters are used internally to compute the gravity.
      *
