@@ -1,0 +1,1 @@
+- Fixed :ref:`dentonFluxModel` to reject truncated files and invalid or non-finite values in electron and ion data files during initialization (#1694).
