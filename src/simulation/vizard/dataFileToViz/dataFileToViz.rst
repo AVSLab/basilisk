@@ -74,47 +74,46 @@ The module is configurable with the following optional parameters:
      - Specify the attitude coordinate set used in the data file.  0 - MRP, 1 - quaternions
        as :math:`(q_0, q_1, q_2, q_3)`, and 2 - (3-2-1) Euler angles in radians
 
-To add Thrusters to the setup, for each of the spacecraft included do the following steps.  The spacecraft
-can contain a number of thruster clusters defined through ``ThrClusterMap``.  In the examle below, the
+To add thrusters to the setup, follow these steps for each spacecraft in data-file order.  The spacecraft
+can contain a number of thruster clusters defined through ``ThrClusterMap``.  In the example below, the
 spacecraft contains 2 clusters (ADCS and DV) which contain one thruster each.
+Pass one nonnegative thruster count per cluster to ``appendThrClusterMap()``; mismatched list lengths
+or negative counts raise an error before the spacecraft configuration is added.
 
 .. code-block:: python
 
     # setup thruster cluster for the current spacecraft
     thSetAdcs1 = dataFileToViz.ThrClusterMap()
-    # set the number of thruster in this cluster
-    thSetAdcs1.thrCount = 1
     # set the thruster cluster tag label string
     thSetAdcs1.thrTag = "adcs_sc_0"
     # (Optional) set the color for the thruster visualization in this cluster.
     thSetAdcs1.color = vizSupport.toRGBA255("red")
 
     thSetDV1 = dataFileToViz.ThrClusterMap()
-    thSetDV1.thrCount = 1
     thSetDV1.thrTag = "dv_sc_0"
     thSetDV1.color = vizSupport.toRGBA255("blue")
 
-    # assign this thruster cluster to module
+    # assign the clusters and their thruster counts to the module
     thList1 = [thSetAdcs1, thSetDV1]
-    testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1))
+    testModule.appendThrClusterMap(dataFileToViz.VizThrConfig(thList1), dataFileToViz.IntVector([1, 1]))
 
     # add the position and orientation information for each thruster in this cluster
     # ADCS1
     testModule.appendThrPos([0, 0, 3.])  # thr location in B frame, meters
     testModule.appendThrDir([0, 0, -1])  # thr force direction in B frame
-    testModule.appendThrForceMax(1.0)
+    testModule.appendThrForceMax(1.0)  # [N]
     # DV1
     testModule.appendThrPos([0, 0, -3.])  # thr location in B frame, meters
     testModule.appendThrDir([0, 0, 1])  # thr force direction in B frame
-    testModule.appendThrForceMax(1.0)
+    testModule.appendThrForceMax(1.0)  # [N]
 
-These steps must be done for each spacecraft in the data file.  If a spacecraft does not have thrusters, then
-an empty thruster cluster vector must be added for that spacecraft.
+When thruster data is configured, add a cluster map for every spacecraft.  For a spacecraft without
+thrusters, pass both an empty cluster vector and an empty count vector.
 See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
 
 .. code-block:: python
 
-    testModule.appendThrClusterMap([])
+    testModule.appendThrClusterMap(dataFileToViz.VizThrConfig([]), dataFileToViz.IntVector([]))
 
 To add RW devices to the list, for each spacecraft you must specify the number of RW that it contains through::
 

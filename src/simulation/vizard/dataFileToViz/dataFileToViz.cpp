@@ -169,17 +169,27 @@ void DataFileToViz::appendThrForceMax(double forceMax)
     this->thrForceMaxList.push_back(forceMax);
 }
 
-/*!
- Add a thruster cluster map for each spacecraft
-*/
+/*! @brief Add a thruster cluster map for one spacecraft.
+ @param thrMsgData Thruster cluster configurations in data-file order.
+ @param numThrPerCluster Nonnegative thruster counts, one per cluster.
+ */
 void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster)
 {
+    if (thrMsgData.size() != numThrPerCluster.size()) {
+        bskLogger.bskError("DataFileToViz: each thruster cluster must have one thruster count.");
+    }
+    for (int count : numThrPerCluster) {
+        if (count < 0) {
+            bskLogger.bskError("DataFileToViz: thruster counts must be nonnegative.");
+        }
+    }
+
     this->thrMsgDataSC.push_back(thrMsgData);
+    this->numThrPerCluster.push_back(numThrPerCluster);
 
     std::vector<Message<THROutputMsgPayload>*> vecMsgs;
     // loop over the number of thruster clusters for this spacecraft
     if (thrMsgData.size() > 0) {
-        this->numThrPerCluster.push_back(numThrPerCluster);
         for (long unsigned int thrClusterCount = 0; thrClusterCount < thrMsgData.size(); thrClusterCount++) {
             // loop over the number of thrusters in this cluster and create an output message
             for (int i = 0; i < numThrPerCluster[thrClusterCount]; i++) {
