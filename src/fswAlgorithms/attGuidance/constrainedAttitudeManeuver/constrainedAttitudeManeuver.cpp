@@ -21,7 +21,9 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <algorithm>
 #include <iterator>
+#include <limits>
 #include <map>
 #include <math.h>
 
@@ -59,7 +61,7 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
                 boresight_B[j] = boresights.keepOutBoresight_B[n][j];
             }
             v3tMultM33(boresight_B, BN, boresight_N);
-            if (v3Dot(boresight_N, constraints.keepOutDir_N) >= cos(boresights.keepOutFov[n])) {
+            if (std::clamp(v3Dot(boresight_N, constraints.keepOutDir_N), -1.0, 1.0) >= cos(boresights.keepOutFov[n])) {
                 this->isFree = false;
                 return;
             }
@@ -74,7 +76,7 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
                 boresight_B[j] = boresights.keepInBoresight_B[n][j];
             }
             v3tMultM33(boresight_B, BN, boresight_N);
-            if (v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n])) {
+            if (std::clamp(v3Dot(boresight_N, constraints.keepInDir_N), -1.0, 1.0) >= cos(boresights.keepInFov[n])) {
                 isIn = true;
             }
         }
@@ -333,8 +335,10 @@ void ConstrainedAttitudeManeuver::ReadInputs()
     }
 }
 
-/*! This method generates the MRP grid and connects the free neighboring nodes
-
+/*! @brief Rebuild the MRP grid and connect the free neighboring nodes.
+ @param startNode Initial attitude node.
+ @param goalNode Target attitude node.
+ @note Requires a grid refinement level from 2 through 20 and at least one constraint-free grid node.
  */
 void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
@@ -344,6 +348,9 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
         bskLogger.bskError(
             "ConstrainedAttitudeManeuver: grid refinement N must be between 2 and %zu (received %d).", std::size(u), N);
     }
+    this->path.clear();
+    this->NodesMap.clear();
+
     for (int n = 0; n < N; n++) {
         u[n] = n / ((double)N - 1);
     }
@@ -517,11 +524,13 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
     }
 
     // add start and goal node to grid and connecting them to the neighboring nodes:
-    double ds = 10;
-    double dg = 10;
+    double ds = std::numeric_limits<double>::infinity(); // [-] MRP distance
+    double dg = std::numeric_limits<double>::infinity(); // [-] MRP distance
     double d1, d2;
-    int keyS[3];
-    int keyG[3];
+    int keyS[3] = {};
+    int keyG[3] = {};
+    bool foundStart = false;
+    bool foundGoal = false;
     for (std::map<int, std::map<int, std::map<int, Node>>>::iterator it1 = this->NodesMap.begin();
          it1 != this->NodesMap.end();
          it1++) {
@@ -529,7 +538,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
             for (std::map<int, Node>::iterator it3 = it2->second.begin(); it3 != it2->second.end(); it3++) {
                 if (it3->second.isFree) {
                     d1 = distance(startNode, it3->second);
-                    if (abs(d1 - ds) < 1e-6) {
+                    if (foundStart && abs(d1 - ds) < 1e-6) {
                         if (v3Norm(it3->second.sigma_BN) < v3Norm(NodesMap[keyS[0]][keyS[1]][keyS[2]].sigma_BN)) {
                             ds = d1;
                             keyS[0] = it1->first;
@@ -538,6 +547,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         }
                     } else {
                         if (d1 < ds) {
+                            foundStart = true;
                             ds = d1;
                             keyS[0] = it1->first;
                             keyS[1] = it2->first;
@@ -545,7 +555,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         }
                     }
                     d2 = distance(goalNode, it3->second);
-                    if (abs(d2 - dg) < 1e-6) {
+                    if (foundGoal && abs(d2 - dg) < 1e-6) {
                         if (v3Norm(it3->second.sigma_BN) < v3Norm(NodesMap[keyG[0]][keyG[1]][keyG[2]].sigma_BN)) {
                             dg = d2;
                             keyG[0] = it1->first;
@@ -554,6 +564,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         }
                     } else {
                         if (d2 < dg) {
+                            foundGoal = true;
                             dg = d2;
                             keyG[0] = it1->first;
                             keyG[1] = it2->first;
@@ -563,6 +574,10 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                 }
             }
         }
+    }
+    if (!foundStart || !foundGoal) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: no constraint-free grid node could be selected for the start "
+                           "and goal attitudes.");
     }
     if (startNode.isBoundary) {
         for (int n = 0; n < 3; n++) {
@@ -582,7 +597,8 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
         startNode.appendNeighbor(this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighbors[n]);
     }
     for (int n = 0; n < this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighborCount; n++) {
-        this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(&goalNode);
+        this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(
+            &this->NodesMap[keyG[0]][keyG[1]][keyG[2]]);
     }
     this->NodesMap[keyS[0]][keyS[1]][keyS[2]] = startNode;
     this->NodesMap[keyG[0]][keyG[1]][keyG[2]] = goalNode;

@@ -47,6 +47,11 @@ value, including changes made after construction, and raises an error outside th
 The planner also raises an error rather than overflowing its fixed storage if a node would have
 more than 52 neighbors or a search/path list would have more than 10000 entries.
 
+Each grid generation clears the previous grid and path. If no constraint-free grid node can be
+selected for the start and goal attitudes, initialization raises an error before graph search.
+This means the sampled grid cannot support planning; it does not prove that no continuous maneuver
+exists. Review the constraints or choose another supported refinement level.
+
 
 Detailed Module Description
 ---------------------------

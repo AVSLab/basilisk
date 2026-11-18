@@ -500,6 +500,61 @@ def test_grid_refinement_boundaries(refinement):
         assert all(np.isfinite(model.returnNodeCoord(key, axis)) for axis in range(3))
 
 
+@pytest.mark.parametrize("cost_type", [0, 1])
+@pytest.mark.parametrize("refinement", [5, 20])
+def test_grid_without_free_nodes(cost_type, refinement):
+    """Reject fully blocked grids, including nodes affected by rotation-matrix roundoff."""
+    model, messages = _configured_grid_module(refinement, cost_type)
+    model.boresights.keepOutFov = [np.pi]*10  # [rad]
+    model.boresights.keepInFov = [np.pi]*10  # [rad] Avoid masking keep-out classification errors.
+    with pytest.raises(bskLogging.BasiliskError, match="no constraint-free grid node"):
+        model.Reset(0)
+    assert model.path.N == 0
+
+
+def test_full_sphere_keep_in_roundoff():
+    """Include antipodal nodes whose computed unit-vector dot products fall below -1."""
+    model, messages = _configured_grid_module(20)
+    model.boresights.keepInBoresightCount = 0
+    model.appendKeepInDirection([1.0, 0.0, 0.0], np.pi)  # [-], [rad]
+    _generate_test_grid(model)
+    for key in ([0, -18, -8], [0, 18, 8]):
+        assert model.returnNodeState(key)
+
+
+@pytest.mark.parametrize("cost_type", [0, 1])
+@pytest.mark.parametrize("refinement", [5, 6])
+def test_grid_reset_and_recovery(cost_type, refinement):
+    """Rebuild without stale nodes, reject changed constraints, and recover after failure."""
+    model, messages = _configured_grid_module(5, cost_type)
+    model.Reset(0)
+    assert model.N == 5
+    model.N = refinement
+    model.Reset(0)
+    assert model.N == refinement
+    expected = np.array([[model.returnPathCoord(index, axis) for axis in range(3)]
+                         for index in range(model.path.N)])
+    expected_cost = model.pathCost
+    model.Reset(0)
+    assert model.N == refinement
+    actual = np.array([[model.returnPathCoord(index, axis) for axis in range(3)]
+                       for index in range(model.path.N)])
+    np.testing.assert_allclose(actual, expected, rtol=0, atol=1e-12)
+    assert model.pathCost == pytest.approx(expected_cost, rel=1e-12)
+
+    model.boresights.keepOutFov = [np.pi]*10  # [rad]
+    with pytest.raises(bskLogging.BasiliskError, match="no constraint-free grid node"):
+        model.Reset(0)
+    assert model.path.N == 0
+    model.boresights.keepOutFov = [20.0*macros.D2R]*10  # [rad]
+    model.Reset(0)
+    assert model.N == refinement
+    recovered = np.array([[model.returnPathCoord(index, axis) for axis in range(3)]
+                          for index in range(model.path.N)])
+    np.testing.assert_allclose(recovered, expected, rtol=0, atol=1e-12)
+    assert model.pathCost == pytest.approx(expected_cost, rel=1e-12)
+
+
 @pytest.mark.parametrize("container_type,capacity", [("neighbors", 52), ("list", 10000)])
 def test_graph_container_capacity(container_type, capacity):
     """Allow the last available slot and reject overflow without changing the count."""
