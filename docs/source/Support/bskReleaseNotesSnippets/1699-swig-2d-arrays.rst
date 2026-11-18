@@ -1,0 +1,1 @@
+- Fixed Python assignment to fixed-size two-dimensional C arrays to reject oversized or ragged inputs and propagate conversion errors without modifying the destination. Smaller rectangular inputs are now safely zero-padded (issue #1699).
