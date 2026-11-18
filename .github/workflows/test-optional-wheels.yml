@@ -2,9 +2,16 @@ name: Test Optional Wheels
 
 on:
   workflow_dispatch:
+    inputs:
+      windows_artifact_run_id:
+        description: "Test existing Windows nightly wheel inputs instead of rebuilding"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   resolve-rust-toolchain:
+    if: ${{ inputs.windows_artifact_run_id == '' }}
     uses: ./.github/workflows/resolve-rust-toolchain.yml
 
   build-opnav-wheels:
@@ -80,7 +87,7 @@ jobs:
   test-opnav-wheels:
     name: Test opNav Wheels (${{ matrix.os }})
     needs: build-opnav-wheels
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && inputs.windows_artifact_run_id == '' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -139,6 +146,115 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: optional-wheel-test-${{ matrix.os }}
+          path: |
+            wheelhouse-core/*.whl
+            wheelhouse-opnav-full/*.whl
+            wheelhouse-optional/*.whl
+
+  test-existing-windows-wheels:
+    name: Test Existing Windows Wheels
+    if: ${{ inputs.windows_artifact_run_id != '' }}
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 30 # [min]
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout validation scripts
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.15"
+
+      - name: Download original core wheel
+        uses: actions/download-artifact@v6
+        with:
+          name: nightly-wheel-input-windows-2025-vs2026-core
+          path: wheelhouse-core
+          run-id: ${{ inputs.windows_artifact_run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Download original opNav wheel
+        uses: actions/download-artifact@v6
+        with:
+          name: nightly-wheel-input-windows-2025-vs2026-opnav-full
+          path: wheelhouse-opnav-full
+          run-id: ${{ inputs.windows_artifact_run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Record wheel checksums and validate runtime metadata
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          sys.path.insert(0, ".github/scripts")
+          from build_optional_bsk_wheel import (
+              MSVC_RUNTIME_DLL_PATTERN,
+              read_msvc_runtime_version,
+              validate_msvc_runtime_payloads,
+          )
+
+          wheels = []
+          for directory in ("wheelhouse-core", "wheelhouse-opnav-full"):
+              wheel, = Path(directory).glob("*.whl")
+              wheels.append(wheel)
+              print(hashlib.sha256(wheel.read_bytes()).hexdigest(), wheel)
+              with zipfile.ZipFile(wheel) as archive:
+                  for name in sorted(archive.namelist()):
+                      if MSVC_RUNTIME_DLL_PATTERN.fullmatch(name):
+                          print(name, read_msvc_runtime_version(archive.read(name)))
+          with zipfile.ZipFile(wheels[0]) as base, zipfile.ZipFile(wheels[1]) as component:
+              shared = sorted(set(base.namelist()) & set(component.namelist()))
+              # Exercise the version reader on real DLLs even when bytes match.
+              validate_msvc_runtime_payloads(
+                  base, component,
+                  [name for name in shared if MSVC_RUNTIME_DLL_PATTERN.fullmatch(name)],
+              )
+          PY
+
+      - name: Install core wheel and test dependencies
+        shell: bash
+        run: python -m pip install pytest wheelhouse-core/*.whl
+
+      - name: Test optional-wheel compatibility rules
+        shell: bash
+        run: python -m pytest src/tests/test_optionalWheelBuilder.py -q
+
+      - name: Generate and test mixed optional wheel installs
+        shell: bash
+        run: >
+          python .github/scripts/run_optional_bsk_wheel_test.py
+          --component opnav
+          --base-wheel-dir wheelhouse-core
+          --component-wheel-dir wheelhouse-opnav-full
+          --optional-wheel-dir wheelhouse-optional
+          --test-wheelhouse wheelhouse-test
+
+      - name: Exercise mixed native modules and messages
+        shell: bash
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python -m pip install wheelhouse-optional/*.whl
+          python -c "from Basilisk import hasBuildFeature; assert hasBuildFeature('opNav')"
+          python -m pytest -q \
+            src/simulation/sensors/camera/_UnitTest/test_camera.py \
+            src/fswAlgorithms/imageProcessing/limbFinding/_UnitTest/test_limbFinding.py \
+            src/fswAlgorithms/imageProcessing/houghCircles/_UnitTest/test_houghCirlces.py
+
+      - name: Retain tested wheel artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: verified-windows-wheel-pair
+          retention-days: 7 # [days]
           path: |
             wheelhouse-core/*.whl
             wheelhouse-opnav-full/*.whl

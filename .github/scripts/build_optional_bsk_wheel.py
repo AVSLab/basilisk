@@ -29,6 +29,7 @@ import csv
 import hashlib
 import io
 import re
+import struct
 import sys
 import zipfile
 from dataclasses import dataclass
@@ -61,6 +62,11 @@ PRE_RELEASE_VERSION_PATTERN = re.compile(
 )
 VERSION_MAJOR_MINOR_PATTERN = re.compile(r"^(?P<major>\d+)\.(?P<minor>\d+)(?:\.|$)")
 COMPILER_VERSION_FIELDS = ("version", "simulatedVersion")
+# Stable MSVC STL families covered by Microsoft's v14 binary-compatibility policy.
+MSVC_STL_ABI_VERSIONS = frozenset({140, 141, 142, 143, 145})
+MSVC_RUNTIME_DLL_PATTERN = re.compile(
+    r"bsk\.libs/(?:msvcp|vcruntime|concrt)[^/]*\.dll", re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -358,6 +364,8 @@ def normalize_nonsemantic_diagnostic_field(
 def normalize_compatible_diagnostics(
     base_build_info: dict[str, object],
     component_build_info: dict[str, object],
+    *,
+    compatible_msvc_abi: bool = False,
 ) -> list[str]:
     """Normalize compatible differences in build diagnostics.
 
@@ -365,8 +373,10 @@ def normalize_compatible_diagnostics(
     runner-image rollout, those machines can carry different patch releases of
     otherwise compatible compilers and build tools. Compiler launchers only
     wrap compiler invocation and can differ when optional caching is unavailable.
-    All other build metadata remains exact, and compiled ABI metadata is
-    validated separately by :func:`validate_build_abi_metadata`.
+    MSVC minor versions may also differ after the compiled ABI comparison has
+    passed. All other build metadata remains exact; callers must validate the
+    compiled ABI with :func:`validate_build_abi_metadata` before enabling that
+    exception.
     """
     differences: list[str] = []
     base_diagnostics = base_build_info.get("diagnostics")
@@ -388,6 +398,18 @@ def normalize_compatible_diagnostics(
                 dict,
             ):
                 continue
+            if (
+                compatible_msvc_abi
+                and compiler_name in ("c", "cxx")
+                and base_compiler.get("id") == component_compiler.get("id") == "MSVC"
+            ):
+                normalize_nonsemantic_diagnostic_field(
+                    base_compiler,
+                    component_compiler,
+                    "version",
+                    f"diagnostics.compilers.{compiler_name}.version",
+                    differences,
+                )
             for field in COMPILER_VERSION_FIELDS:
                 normalize_compatible_version_field(
                     base_compiler,
@@ -467,12 +489,89 @@ def parse_build_abi_data(data: bytes) -> dict[str, object]:
     return parse_generated_dictionary(data, BUILD_ABI_DATA_PATH, "buildAbiData")
 
 
+def uses_compatible_msvc_abi(abi: dict[str, object]) -> bool:
+    """Recognize compiled release DLL metadata covered by MSVC v14 compatibility.
+
+    Compiler minor versions and STL update dates are provenance, not ABI epochs.
+    This exception is for already-linked native wheel payloads, not mixed
+    ``/GL`` objects or ``/LTCG`` inputs. All remaining ABI fields are compared
+    exactly after normalization, including the STL family and layout canaries.
+
+    See https://learn.microsoft.com/cpp/porting/binary-compat-2015-2017.
+    """
+    try:
+        c_compiler = abi["c"]["compiler"]
+        cxx = abi["cxx"]
+        cxx_compiler = cxx["compiler"]
+        standard_library = cxx["standardLibrary"]
+        msvc_version = c_compiler["msvcVersion"]
+        if not isinstance(msvc_version, int) or not 1900 <= msvc_version < 2000:
+            return False
+        for compiler in (c_compiler, cxx_compiler):
+            if (
+                compiler["id"] != "MSVC"
+                or compiler["majorVersion"] != msvc_version // 100
+                or compiler["minorVersion"] != msvc_version % 100
+                or not str(compiler["version"]).startswith(str(msvc_version))
+            ):
+                return False
+        return (
+            abi["capture"] == "compiled"
+            and abi["target"]["system"] == "Windows"
+            and abi["build"]["debugRuntime"] is False
+            and cxx_compiler["abiFamily"] == "msvc"
+            and cxx_compiler["abiVersion"] == msvc_version
+            and cxx_compiler["msvcFullVersion"] // 100000 == msvc_version
+            and cxx_compiler["languageStandard"] in (201402, 201703, 202002, 202302)
+            and standard_library["family"] == "msvc"
+            and standard_library["version"] == standard_library["abiVersion"]
+            and standard_library["abiVersion"] in MSVC_STL_ABI_VERSIONS
+            and isinstance(standard_library["msvcStlUpdate"], int)
+            and standard_library["msvcStlUpdate"] > 0
+            and cxx["runtime"]["linkage"] == "dynamic"
+            and cxx["runtime"]["debug"] is False
+        )
+    except (KeyError, TypeError):
+        return False
+
+
+def normalize_msvc_abi_versions(
+    base_abi: dict[str, object],
+    component_abi: dict[str, object],
+) -> list[str]:
+    """Normalize only MSVC provenance fields within a supported ABI family."""
+    if not all(uses_compatible_msvc_abi(abi) for abi in (base_abi, component_abi)):
+        return []
+
+    differences = []
+    fields_by_section = (
+        ("c", "compiler", ("version", "minorVersion", "patchVersion", "msvcVersion")),
+        ("cxx", "compiler", (
+            "version", "minorVersion", "patchVersion", "abiVersion", "msvcFullVersion",
+        )),
+        ("cxx", "standardLibrary", ("msvcStlUpdate",)),
+    )
+    for language, section, fields in fields_by_section:
+        base_values = base_abi[language][section]
+        component_values = component_abi[language][section]
+        for field in fields:
+            if field not in base_values or field not in component_values:
+                continue
+            if base_values[field] != component_values[field]:
+                differences.append(
+                    f"{BUILD_ABI_DATA_PATH}:{language}.{section}.{field}: "
+                    f"{base_values[field]!r} versus {component_values[field]!r}"
+                )
+                component_values[field] = base_values[field]
+    return differences
+
+
 def normalize_compatible_abi_compiler_versions(
     base_abi: dict[str, object],
     component_abi: dict[str, object],
 ) -> list[str]:
-    """Normalize raw compiler build revisions with equal ABI version fields."""
-    differences: list[str] = []
+    """Normalize compiler provenance without changing ABI-relevant settings."""
+    differences = normalize_msvc_abi_versions(base_abi, component_abi)
     compatibility_fields = ("id", "majorVersion", "minorVersion")
     for language in ("c", "cxx"):
         base_language = base_abi.get(language)
@@ -566,7 +665,7 @@ def validate_build_abi_metadata(
     if normalized_component_abi != normalized_base_abi:
         raise ValueError(
             f"{BUILD_ABI_DATA_PATH} differs between the base and component builds "
-            "beyond compatible compiler patch/build versions."
+            "beyond compatible compiler versions."
         )
     return version_differences
 
@@ -575,6 +674,8 @@ def validate_build_feature_metadata(
     base_archive: zipfile.ZipFile,
     component_archive: zipfile.ZipFile,
     component: OptionalComponent,
+    *,
+    compatible_msvc_abi: bool = False,
 ) -> list[str]:
     """Validate feature metadata and return compatible diagnostic differences."""
     base_build_info = parse_build_info_data(base_archive.read(BUILD_INFO_DATA_PATH))
@@ -613,6 +714,7 @@ def validate_build_feature_metadata(
     diagnostic_differences = normalize_compatible_diagnostics(
         normalized_base_info,
         normalized_component_info,
+        compatible_msvc_abi=compatible_msvc_abi,
     )
     if normalized_component_info != normalized_base_info:
         raise ValueError(
@@ -620,6 +722,125 @@ def validate_build_feature_metadata(
             f"beyond the expected {component.build_feature!r} feature value."
         )
     return diagnostic_differences
+
+
+def read_msvc_runtime_version(data: bytes) -> tuple[int, tuple[int, ...]]:
+    """Read a release v14 DLL's machine and file version without loading it.
+
+    Follow the PE resource directories to ``RT_VERSION`` and read the numeric
+    ``VS_FIXEDFILEINFO`` value. Searching for a byte signature alone could pick
+    up unrelated data or an overlay instead of the DLL's version resource.
+    This uses only the standard library so packaging remains host-independent.
+    """
+    def unpack(format_string, buffer, offset):
+        if offset < 0 or offset + struct.calcsize(format_string) > len(buffer):
+            raise ValueError("Truncated PE metadata")
+        return struct.unpack_from(format_string, buffer, offset)
+
+    if data[:2] != b"MZ":
+        raise ValueError("Missing DOS signature")
+    pe_offset, = unpack("<I", data, 0x3c)
+    if data[pe_offset:pe_offset + 4] != b"PE\0\0":
+        raise ValueError("Missing PE signature")
+    machine, section_count = unpack("<HH", data, pe_offset + 4)
+    optional_size, characteristics = unpack("<HH", data, pe_offset + 20)
+    if not characteristics & 0x2000:
+        raise ValueError("PE image is not a DLL")
+    optional_offset = pe_offset + 24
+    magic, = unpack("<H", data, optional_offset)
+    directory_offset = {0x10b: 96, 0x20b: 112}.get(magic)
+    if directory_offset is None or optional_size < directory_offset + 24:
+        raise ValueError("Unsupported PE optional header")
+    directory_count, = unpack("<I", data, optional_offset + directory_offset - 4)
+    if directory_count < 3:
+        raise ValueError("Missing PE resource directory")
+    resource_rva, resource_size = unpack("<II", data, optional_offset + directory_offset + 16)
+    sections = [
+        unpack("<IIII", data, optional_offset + optional_size + index * 40 + 8)
+        for index in range(section_count)
+    ]
+
+    def rva_bytes(rva, size):
+        for virtual_size, virtual_address, raw_size, raw_offset in sections:
+            relative = rva - virtual_address
+            if 0 <= relative and relative + size <= min(virtual_size, raw_size):
+                start = raw_offset + relative
+                if start + size <= len(data):
+                    return data[start:start + size]
+        raise ValueError("PE resource lies outside section data")
+
+    resources = rva_bytes(resource_rva, resource_size)
+
+    def entries(offset):
+        named_count, id_count = unpack("<HH", resources, offset + 12)
+        return [
+            unpack("<II", resources, offset + 16 + index * 8)
+            for index in range(named_count + id_count)
+        ]
+
+    def subdirectory(entry):
+        if not entry & 0x80000000:
+            raise ValueError("Expected a PE resource subdirectory")
+        return entry & 0x7fffffff
+
+    versions = set()
+    for resource_type, type_entry in entries(0):
+        if resource_type != 16:  # RT_VERSION
+            continue
+        for _, name_entry in entries(subdirectory(type_entry)):
+            for _, language_entry in entries(subdirectory(name_entry)):
+                if language_entry & 0x80000000:
+                    raise ValueError("Expected PE version resource data")
+                value_rva, value_size = unpack("<II", resources, language_entry)
+                value = rva_bytes(value_rva, value_size)
+                length, fixed_size, value_type = unpack("<HHH", value, 0)
+                key = "VS_VERSION_INFO\0".encode("utf-16-le")
+                fixed_offset = (6 + len(key) + 3) & ~3
+                if (
+                    value[6:6 + len(key)] != key or value_type != 0
+                    or fixed_size != 52 or not fixed_offset + fixed_size <= length <= len(value)
+                ):
+                    raise ValueError("Invalid VS_VERSION_INFO resource")
+                fixed = unpack("<13I", value, fixed_offset)
+                if fixed[0] != 0xfeef04bd or fixed[1] != 0x10000:
+                    raise ValueError("Invalid VS_FIXEDFILEINFO signature or format")
+                if fixed[6] & fixed[7] or fixed[9] != 2:
+                    raise ValueError("Runtime must be an unmodified release DLL")
+                version = (fixed[2] >> 16, fixed[2] & 0xffff, fixed[3] >> 16, fixed[3] & 0xffff)
+                if version[0] != 14:
+                    raise ValueError("Runtime is outside the supported MSVC v14 family")
+                versions.add(version)
+    if len(versions) != 1:
+        raise ValueError("Missing or conflicting runtime file versions")
+    return machine, versions.pop()
+
+
+def validate_msvc_runtime_payloads(
+    base_archive: zipfile.ZipFile,
+    component_archive: zipfile.ZipFile,
+    changed_runtimes: list[str],
+) -> None:
+    """Keep the core's shared runtime only when it cannot downgrade the component.
+
+    Microsoft's v14 compatibility policy allows newer release redistributables
+    to serve older binaries. Compare each DLL's own file version, not the
+    compiler version: redistributable updates can retain unchanged older DLLs.
+    Identical DLLs need no additional check; differing, unreadable versions fail
+    closed. Architecture and release-family checks still apply to replacements.
+    """
+    for name in changed_runtimes:
+        try:
+            base_machine, base_version = read_msvc_runtime_version(base_archive.read(name))
+            component_machine, component_version = read_msvc_runtime_version(component_archive.read(name))
+        except ValueError as error:
+            raise ValueError(f"Cannot establish shared MSVC runtime compatibility for {name}: {error}") from error
+        if base_machine != component_machine or base_version < component_version:
+            raise ValueError(
+                f"Core shared MSVC runtime {name} cannot replace the component runtime: "
+                f"machine {base_machine:#x}, version {base_version} versus "
+                f"machine {component_machine:#x}, version {component_version}. "
+                "The core must retain the same architecture and an equal or newer runtime."
+            )
 
 
 def validate_common_payloads(
@@ -636,11 +857,8 @@ def validate_common_payloads(
         raise ValueError(
             f"Both wheel build inputs must contain {BUILD_INFO_DATA_PATH}."
         )
-    compatible_differences = validate_build_feature_metadata(
-        base_archive,
-        component_archive,
-        component,
-    )
+    compatible_differences = []
+    compatible_msvc_abi = False
     base_has_abi_data = BUILD_ABI_DATA_PATH in base_payload
     component_has_abi_data = BUILD_ABI_DATA_PATH in component_payload
     if base_has_abi_data != component_has_abi_data:
@@ -652,6 +870,16 @@ def validate_common_payloads(
         compatible_differences.extend(
             validate_build_abi_metadata(base_archive, component_archive)
         )
+        compatible_msvc_abi = all(
+            uses_compatible_msvc_abi(parse_build_abi_data(archive.read(BUILD_ABI_DATA_PATH)))
+            for archive in (base_archive, component_archive)
+        )
+    compatible_differences.extend(validate_build_feature_metadata(
+        base_archive,
+        component_archive,
+        component,
+        compatible_msvc_abi=compatible_msvc_abi,
+    ))
     warn_compatible_build_metadata(compatible_differences)
 
     changed = []
@@ -662,6 +890,11 @@ def validate_common_payloads(
             changed.append(name)
 
     native_changed = [name for name in changed if is_native_payload(name)]
+    changed_msvc_runtimes = [
+        name for name in native_changed if MSVC_RUNTIME_DLL_PATTERN.fullmatch(name)
+    ]
+    if compatible_msvc_abi and changed_msvc_runtimes:
+        validate_msvc_runtime_payloads(base_archive, component_archive, changed_msvc_runtimes)
     non_native_changed = [name for name in changed if not is_native_payload(name)]
     warn_changed_native_payloads(native_changed)
 
