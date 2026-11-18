@@ -1,0 +1,2 @@
+- Fixed :ref:`dataFileToViz` crashes when spacecraft without thrusters precede spacecraft with thrusters, and added validation for mismatched or negative cluster counts before modifying configuration (#1696).
+- Fixed :ref:`dataFileToViz` to use each spacecraft's own thruster and reaction-wheel positions, directions, and limits; updated the multi-spacecraft configuration examples (#1700).
