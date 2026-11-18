@@ -177,6 +177,35 @@ def test_dentonFluxModel_periodic_interpolation(denton_interpolation_tables, kp_
         np.testing.assert_allclose(np.asarray(flux)[[0, 5]], expected, rtol=1e-12, atol=0.0)
 
 
+@pytest.mark.parametrize(
+    "num_energies, last_energy", [(1, 100.0), (40, 39061.0), (41, 39100.0), (50, 39251.0)])  # last_energy [eV]
+def test_dentonFluxModel_output_energy_bounds(denton_interpolation_tables, num_energies, last_energy):
+    """Check the full output energy grid and endpoint fluxes at the storage boundaries."""
+    output = denton_flux_output(denton_interpolation_tables, "9o", num_energies, 12.0, [1.0, 0.0])
+    energies = np.linspace(100.0, last_energy, num_energies)  # [eV]
+    np.testing.assert_array_equal(np.asarray(output.energies)[:num_energies], energies)
+    np.testing.assert_array_equal(np.asarray(output.energies)[num_energies:], 0.0)
+    for flux, (_, log_energies, means) in zip(
+            (output.meanElectronFlux, output.meanIonFlux), denton_interpolation_tables):
+        log_flux = np.interp(np.log(energies[[0, -1]]), log_energies, means[27, :, 12])
+        expected = 10.0**log_flux * 1e4  # [m^-2 s^-1 sr^-1 eV^-1]
+        np.testing.assert_allclose(np.asarray(flux)[[0, num_energies - 1]], expected, rtol=1e-12, atol=0.0)
+        np.testing.assert_array_equal(np.asarray(flux)[num_energies:], 0.0)
+
+
+@pytest.mark.parametrize("num_energies", [-1, 0, messaging.MAX_PLASMA_FLUX_SIZE + 1])
+def test_dentonFluxModel_invalid_output_energy_count(num_energies):
+    """Reject invalid counts before dividing by the count or accessing the energy arrays."""
+    module = dentonFluxModel.DentonFluxModel()
+    module.numOutputEnergies = num_energies
+    module.kpIndex = "3o"
+    module.scStateInMsg.subscribeTo(messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload()))
+    module.earthStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload()))
+    module.sunStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload()))
+    with pytest.raises(bskLogging.BasiliskError, match="numOutputEnergies must be between"):
+        module.Reset(0)
+
+
 def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN, accuracy):
     """Test method"""
     unitTaskName = "unitTask"
