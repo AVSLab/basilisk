@@ -1,0 +1,1 @@
+- Fixed :ref:`dentonFluxModel` output-energy storage to support all 50 entries in the flux message and reject output-energy counts outside 1 through 50.
