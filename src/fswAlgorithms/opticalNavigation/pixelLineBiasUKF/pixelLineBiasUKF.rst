@@ -27,3 +27,6 @@ description provides information on what this message is used for.
         camera config input message
     input attInMsg NavAttMsgPayload
         attitude input message
+
+The filter output contains all six post-fit residuals, which are zero on updates
+without an accepted measurement.

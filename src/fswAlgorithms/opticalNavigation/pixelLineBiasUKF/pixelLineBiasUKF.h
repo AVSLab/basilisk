@@ -20,6 +20,7 @@
 #ifndef _PIXLINE_UKF_H_
 #define _PIXLINE_UKF_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "cMsgCInterface/CameraConfigMsg_C.h"
@@ -28,6 +29,7 @@
 #include "cMsgCInterface/OpNavCirclesMsg_C.h"
 #include "cMsgCInterface/PixelLineFilterMsg_C.h"
 
+#include "architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/linearAlgebra.h"
@@ -84,12 +86,12 @@ typedef struct
     double sQnoise[PIXLINE_N_STATES * PIXLINE_N_STATES]; //!< [-] cholesky of Qnoise
     double measNoise[PIXLINE_N_MEAS * PIXLINE_N_MEAS];   //!< [-] Measurement Noise
 
-    int planetIdInit;           //!< [-] Planet being navigated initial value
-    int planetId;               //!< [-] Planet being navigated as per measurement
-    uint32_t firstPassComplete; //!< [-] Flag to know if first filter update
-    double postFits[3];         //!< [-] PostFit residuals
-    double timeTagOut;          //!< [s] Output time-tag information
-    double maxTimeJump;         //!< [s] Maximum time jump to allow in propagation
+    int planetIdInit;                //!< [-] Planet being navigated initial value
+    int planetId;                    //!< [-] Planet being navigated as per measurement
+    uint32_t firstPassComplete;      //!< [-] Flag to know if first filter update
+    double postFits[PIXLINE_N_MEAS]; //!< [-] PostFit residuals
+    double timeTagOut;               //!< [s] Output time-tag information
+    double maxTimeJump;              //!< [s] Maximum time jump to allow in propagation
 
     OpNavCirclesMsgPayload circlesInBuffer; //!< [-] ST sensor data read in from message bus
     CameraConfigMsgPayload cameraSpecs;     //!< [-] Camera specs for nav

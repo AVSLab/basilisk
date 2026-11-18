@@ -142,7 +142,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTi
     configData->moduleId = (int)moduleId;
 
     computePostFits = 0;
-    v3SetZero(configData->postFits);
+    vSetZero(configData->postFits, PIXLINE_N_MEAS);
 
     opNavOutBuffer = PixelLineFilterMsg_C_zeroMsgPayload();
     outputRelOD = NavTransMsg_C_zeroMsgPayload();

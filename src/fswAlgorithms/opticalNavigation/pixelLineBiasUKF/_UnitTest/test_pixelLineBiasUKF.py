@@ -337,6 +337,69 @@ if __name__ == "__main__":
     StatePropRelOD(True, 1.0)
 
 
+@pytest.mark.parametrize("reset_time", [0.0, 5.0])  # [s]
+@pytest.mark.parametrize("measurement_delay", [0.0, 0.5])  # [s]
+def test_update_residual_storage(reset_time, measurement_delay):
+    """Preserve adjacent fields and publish all six residuals without stale values.
+
+    Exercise a valid circle, a subsequent update without a measurement, and a
+    repeated reset, both with and without delayed measurements.
+    """
+    module = pixelLineBiasUKF.pixelLineBiasUKF()
+    setupFilterData(module)
+    module.maxTimeJump = 10.0  # [s]
+
+    camera = messaging.CameraConfigMsgPayload()
+    camera.fieldOfView = 2.0*np.arctan(0.5)  # [rad]
+    camera.resolution = [512, 512]  # [pixel]
+    camera.sigma_CB = [1.0, 0.3, 0.1]  # [-]
+    attitude = messaging.NavAttMsgPayload()
+    attitude.sigma_BN = [0.6, 1.0, 0.1]  # [-]
+    circles = messaging.OpNavCirclesMsgPayload()
+    circles.planetIds = [2]
+    circles.circlesCenters = [256.0, 256.0]  # [pixel]
+    circles.circlesRadii = [50.0]  # [pixel]
+    circles.uncertainty = np.eye(3).reshape(9).tolist()  # [pixel^2]
+    circles.timeTag = macros.sec2nano(123.0)  # [ns] Sentinel following maxTimeJump.
+
+    measurement_time = reset_time + 1.0  # [s]
+    update_time = measurement_time + measurement_delay
+    camera_msg = messaging.CameraConfigMsg().write(camera)
+    attitude_msg = messaging.NavAttMsg().write(attitude, macros.sec2nano(measurement_time))
+    circles_msg = messaging.OpNavCirclesMsg()
+    module.cameraConfigInMsg.subscribeTo(camera_msg)
+    module.attInMsg.subscribeTo(attitude_msg)
+    module.circlesInMsg.subscribeTo(circles_msg)
+    module.SelfInit()
+
+    for _ in range(2):
+        module.Reset(macros.sec2nano(reset_time))
+        circles.valid = 1
+        circles_msg.write(circles, macros.sec2nano(measurement_time))
+        module.UpdateState(macros.sec2nano(update_time))
+
+        residuals = np.asarray(module.filtDataOutMsg.read().postFitRes)
+        assert np.all(np.isfinite(residuals))
+        assert np.all(np.abs(residuals[3:]) > 1.0)  # [pixel] Exercise all overflow slots.
+        assert module.maxTimeJump == 10.0  # [s]
+        assert module.circlesInBuffer.timeTag == circles.timeTag
+        np.testing.assert_array_equal(module.postFits, residuals)
+        assert module.timeTagOut == pytest.approx(reset_time)
+        assert module.navStateOutMsg.read().timeTag == module.timeTagOut
+        assert module.filtDataOutMsg.read().timeTag == pytest.approx(update_time)
+
+        circles.valid = 0
+        circles_msg.write(circles)
+        next_time = update_time + 1.0  # [s]
+        module.UpdateState(macros.sec2nano(next_time))
+        np.testing.assert_array_equal(module.postFits, np.zeros(6))
+        np.testing.assert_array_equal(module.filtDataOutMsg.read().postFitRes, np.zeros(6))
+        assert module.maxTimeJump == 10.0  # [s]
+        assert module.timeTagOut == pytest.approx(reset_time)
+        assert module.navStateOutMsg.read().timeTag == module.timeTagOut
+        assert module.filtDataOutMsg.read().timeTag == pytest.approx(next_time)
+
+
 @pytest.mark.parametrize("planet_id", [0, -1, 4])
 def test_state_propagation_rejects_unknown_planet(planet_id):
     """Reject unsupported gravity models before modifying the propagated state."""
