@@ -109,6 +109,119 @@ def test_data_file_to_viz_viz_interface_import_order(import_statement):
     assert result.returncode == 0, result.stderr
 
 
+@pytest.mark.parametrize("cluster_counts,rw_counts", [
+    ([[], [1]], [0, 1]),
+    ([[1], []], [1, 0]),
+    ([[], [], []], [0, 0, 0]),
+], ids=["empty-first", "empty-last", "all-empty"])
+def test_multi_spacecraft_devices(tmp_path, cluster_counts, rw_counts):
+    """Check device configuration and row alignment across heterogeneous spacecraft.
+
+    Distinct positions, directions, limits, and dynamic values identify each
+    device. Two data rows and a reset verify that configuration indices restart
+    for each update and that empty spacecraft consume no device data.
+    """
+    model = dataFileToViz.DataFileToViz()
+    num_spacecraft = len(cluster_counts if cluster_counts is not None else rw_counts)
+    model.setNumOfSatellites(num_spacecraft)
+    states, thrusters, wheels = [], [], []
+    for sc_index in range(num_spacecraft):
+        state = [7000.0 + sc_index, 2.0, 3.0]  # [km]
+        state += [1.0, 2.0 + sc_index, 3.0]  # [km/s]
+        state += [0.01*sc_index, 0.02, 0.03]  # MRPs [-]
+        state += [0.001, 0.002*sc_index, 0.003]  # [rad/s]
+        states.append(state)
+        thrusters.append([])
+        wheels.append([])
+
+        if cluster_counts is not None:
+            counts = cluster_counts[sc_index]
+            clusters = [dataFileToViz.ThrClusterMap() for _ in counts]
+            model.appendThrClusterMap(dataFileToViz.VizThrConfig(clusters), dataFileToViz.IntVector(counts))
+            for local_index in range(sum(counts)):
+                device_id = 10*(sc_index + 1) + local_index
+                position = [float(device_id), 0.5, -0.25]  # [m]
+                direction = np.eye(3)[device_id % 3].tolist()  # [-]
+                maximum = 20.0 + device_id  # [N]
+                model.appendThrPos(position)
+                model.appendThrDir(direction)
+                model.appendThrForceMax(maximum)
+                thrusters[-1].append((position, direction, maximum))
+
+        if rw_counts is not None:
+            model.appendNumOfRWs(rw_counts[sc_index])
+            for local_index in range(rw_counts[sc_index]):
+                device_id = 10*(sc_index + 1) + local_index
+                position = [0.5, float(device_id), -0.25]  # [m]
+                direction = np.eye(3)[device_id % 3].tolist()  # [-]
+                omega_max = 100.0 + device_id  # [rad/s]
+                torque_max = 0.01*device_id  # [N*m]
+                model.appendRwPos(position)
+                model.appendRwDir(direction)
+                model.appendOmegaMax(omega_max)
+                model.appendUMax(torque_max)
+                wheels[-1].append((position, direction, omega_max, torque_max))
+
+    rows = []
+    for step in range(2):
+        row = [float(step)]  # [s]
+        for sc_index, state in enumerate(states):
+            row.extend(state)
+            row.extend(maximum/2 + step for _, _, maximum in thrusters[sc_index])  # [N]
+            for _, _, omega_max, torque_max in wheels[sc_index]:
+                row.extend([omega_max/2 + step, torque_max/2])  # [rad/s], [N*m]
+        rows.append(" ".join(map(str, row)))
+    data_path = tmp_path / "states.txt"
+    data_path.write_text("# spacecraft and device states\n" + "\n".join(rows) + "\n", encoding="utf-8")
+    model.dataFileName = str(data_path)
+
+    for _ in range(2):
+        model.Reset(0)
+        for step in range(2):
+            model.UpdateState(macros.sec2nano(float(step)))
+            for sc_index, state in enumerate(states):
+                actual = model.scStateOutMsgs[sc_index].read()
+                np.testing.assert_allclose(actual.r_BN_N, np.array(state[:3])*1000.0)  # [m]
+                np.testing.assert_allclose(actual.v_BN_N, np.array(state[3:6])*1000.0)  # [m/s]
+                np.testing.assert_allclose(actual.sigma_BN, state[6:9])
+                np.testing.assert_allclose(actual.omega_BN_B, state[9:12])
+                if cluster_counts is not None:
+                    assert len(model.thrScOutMsgs[sc_index]) == len(thrusters[sc_index])
+                for local_index, (position, direction, maximum) in enumerate(thrusters[sc_index]):
+                    actual = model.thrScOutMsgs[sc_index][local_index].read()
+                    np.testing.assert_allclose(actual.thrusterLocation, position)
+                    np.testing.assert_allclose(actual.thrusterDirection, direction)
+                    assert actual.maxThrust == maximum
+                    assert actual.thrustForce == maximum/2 + step
+                if rw_counts is not None:
+                    assert len(model.rwScOutMsgs[sc_index]) == len(wheels[sc_index])
+                for local_index, (position, direction, omega_max, torque_max) in enumerate(wheels[sc_index]):
+                    actual = model.rwScOutMsgs[sc_index][local_index].read()
+                    np.testing.assert_allclose(actual.rWB_B, position)
+                    np.testing.assert_allclose(actual.gsHat_B, direction)
+                    assert actual.Omega_max == omega_max
+                    assert actual.u_max == torque_max
+                    assert actual.Omega == omega_max/2 + step
+                    assert actual.u_current == torque_max/2
+
+
+@pytest.mark.parametrize("num_clusters,counts,error", [
+    (1, [], "each thruster cluster"),
+    (0, [1], "each thruster cluster"),
+    (1, [1, 1], "each thruster cluster"),
+    (1, [-1], "nonnegative"),
+    (2, [1, -1], "nonnegative"),
+])
+def test_invalid_thruster_counts(num_clusters, counts, error):
+    """Reject malformed counts before adding spacecraft entries or messages."""
+    model = dataFileToViz.DataFileToViz()
+    clusters = [dataFileToViz.ThrClusterMap() for _ in range(num_clusters)]
+    with pytest.raises(bskLogging.BasiliskError, match=error):
+        model.appendThrClusterMap(dataFileToViz.VizThrConfig(clusters), dataFileToViz.IntVector(counts))
+    assert len(model.thrMsgDataSC) == 0
+    assert len(model.thrScOutMsgs) == 0
+
+
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [False, True])
