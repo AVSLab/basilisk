@@ -66,6 +66,7 @@ The Denton model averaged GEO space plasma properties module is created using:
 The :math:`K_p` index (``kpIndex``) and number of output energies (``numOutputEnergies``) must be
 added to FluxModule as well, while
 the local time is computed within the module using the position vectors of the spacecraft, Sun and Earth.
+The number of output energies must be between 1 and 50 (``MAX_PLASMA_FLUX_SIZE``), inclusive.
 
 Note that the `Kp index <https://www.spaceweatherlive.com/en/help/the-kp-index.html>`__ (global geomagnetic activity
 index) ranges from 0 to 9, with sub-indices '-','o' and '+' and therefore a total number of 28 indices (:math:`K_p` index 0-

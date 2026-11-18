@@ -48,15 +48,11 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("DentonFluxModel.sunStateInMsg was not linked.");
     }
     // Check that required parameters are set
-    if (this->numOutputEnergies < 0) {
-        bskLogger.bskError("DentonFluxModel.numEnergies was not set.");
+    if (this->numOutputEnergies <= 0 || this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE) {
+        bskLogger.bskError("DentonFluxModel.numOutputEnergies must be between 1 and %d.", MAX_PLASMA_FLUX_SIZE);
     }
     if (this->kpIndex == "") {
         bskLogger.bskError("DentonFluxModel.kpIndex was not set.");
-    }
-    // Check the desired array size is not larger than the maximum value
-    if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE) {
-        bskLogger.bskError("DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
     // Check that the Kp index is a string of length 2
     if (!(this->kpIndex.length() == 2)) {

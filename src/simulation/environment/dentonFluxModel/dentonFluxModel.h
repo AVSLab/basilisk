@@ -20,6 +20,9 @@
 #ifndef DENTONFLUXMODEL_H
 #define DENTONFLUXMODEL_H
 
+#include <cstdint>
+#include <string>
+
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
@@ -78,11 +81,11 @@ class DentonFluxModel : public SysModel
     void readDentonDataFile(const std::string& fullPath,
                             double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
 
-    int kpIndexCounter;                     //!< Kp index counter (betweeen 0 and 27)
-    double localTime;                       //!< spacecraft location time relative to sun heading at GEO
-    double logEnElec[MAX_NUM_ENERGIES];     //!< log of the electron energies
-    double logEnProt[MAX_NUM_ENERGIES];     //!< log of the proton energies
-    double inputEnergies[MAX_NUM_ENERGIES]; //!< input energies considered in this module
+    int kpIndexCounter;                         //!< Kp index counter (betweeen 0 and 27)
+    double localTime;                           //!< spacecraft location time relative to sun heading at GEO
+    double logEnElec[MAX_NUM_ENERGIES];         //!< log of the electron energies
+    double logEnProt[MAX_NUM_ENERGIES];         //!< log of the proton energies
+    double inputEnergies[MAX_PLASMA_FLUX_SIZE]; //!< [eV] energies at which the output fluxes are evaluated
 
     //!< Electron Flux:
     double mean_e_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
