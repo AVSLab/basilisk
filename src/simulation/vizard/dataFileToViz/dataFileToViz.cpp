@@ -271,6 +271,10 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
             /* pull time, this is not used in the BSK msg */
             pullScalar(&iss);
 
+            // Configuration lists span all spacecraft; output-message indices are local to each spacecraft.
+            size_t thrConfigIndex = 0;
+            size_t rwConfigIndex = 0;
+
             // create all the state output messages for each spacecraft
             for (long unsigned int scCounter = 0; scCounter < this->scStateOutMsgs.size(); scCounter++) {
                 SCStatesMsgPayload scMsg;
@@ -335,15 +339,16 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                                 thrMsg = this->thrScOutMsgs[scCounter].at(thrCounter)->zeroMsgPayload;
 
                                 /* fill out the thruster state message */
-                                thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
+                                thrMsg.maxThrust = this->thrForceMaxList[thrConfigIndex];
                                 thrMsg.thrustForce = pullScalar(&iss);
-                                eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
-                                eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
+                                eigenVector3d2CArray(this->thrPosList[thrConfigIndex], thrMsg.thrusterLocation);
+                                eigenVector3d2CArray(this->thrDirList[thrConfigIndex], thrMsg.thrusterDirection);
 
                                 this->thrScOutMsgs[scCounter]
                                     .at(thrCounter)
                                     ->write(&thrMsg, this->moduleID, CurrentSimNanos);
                                 thrCounter++;
+                                thrConfigIndex++;
                             }
                             thrClusterCounter++;
                         }
@@ -361,14 +366,15 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 
                             /* create RW message */
                             rwOutMsg.Omega = pullScalar(&iss);
-                            rwOutMsg.Omega_max = this->rwOmegaMaxList[rwCounter];
+                            rwOutMsg.Omega_max = this->rwOmegaMaxList[rwConfigIndex];
                             rwOutMsg.u_current = pullScalar(&iss);
-                            rwOutMsg.u_max = this->rwUMaxList[rwCounter];
-                            eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
-                            eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
+                            rwOutMsg.u_max = this->rwUMaxList[rwConfigIndex];
+                            eigenVector3d2CArray(this->rwPosList[rwConfigIndex], rwOutMsg.rWB_B);
+                            eigenVector3d2CArray(this->rwDirList[rwConfigIndex], rwOutMsg.gsHat_B);
 
                             this->rwScOutMsgs[scCounter].at(rwCounter)->write(
                                 &rwOutMsg, this->moduleID, CurrentSimNanos);
+                            rwConfigIndex++;
                         }
                     }
                 }

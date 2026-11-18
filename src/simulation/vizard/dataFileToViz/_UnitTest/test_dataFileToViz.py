@@ -112,8 +112,14 @@ def test_data_file_to_viz_viz_interface_import_order(import_statement):
 @pytest.mark.parametrize("cluster_counts,rw_counts", [
     ([[], [1]], [0, 1]),
     ([[1], []], [1, 0]),
+    ([[1, 2], [], [2]], [2, 0, 1]),
+    ([[], [1, 2], []], [2, 0, 1]),
     ([[], [], []], [0, 0, 0]),
-], ids=["empty-first", "empty-last", "all-empty"])
+    ([[0, 2], [1, 0]], [1, 2]),
+    ([[2], [1]], None),
+    (None, [2, 1]),
+], ids=["empty-first", "empty-last", "empty-middle", "different-device-layouts", "all-empty",
+        "zero-count-clusters", "thrusters-only", "wheels-only"])
 def test_multi_spacecraft_devices(tmp_path, cluster_counts, rw_counts):
     """Check device configuration and row alignment across heterogeneous spacecraft.
 

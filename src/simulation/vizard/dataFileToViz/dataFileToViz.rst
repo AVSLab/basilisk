@@ -38,7 +38,7 @@ The module assumes the data file is in plain text form and the following format:
 - inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles (rad)
 - inertial angular velocity vector in radians per second (rad/s)
 - (optional) thruster force values (N)
-- (optional) RW Speed :math:`\Omega` (rad/s) and RW motor torque :math:`u_s` (N)
+- (optional) RW Speed :math:`\Omega` (rad/s) and RW motor torque :math:`u_s` (N*m)
 - repeat on the same line for additional spacecraft
 
 The required module configuration is::
@@ -107,6 +107,8 @@ or negative counts raise an error before the spacecraft configuration is added.
     testModule.appendThrDir([0, 0, 1])  # thr force direction in B frame
     testModule.appendThrForceMax(1.0)  # [N]
 
+Append thruster positions, directions, and maximum forces in spacecraft order, then cluster order,
+then thruster order within each cluster, matching the force columns in the data file.
 When thruster data is configured, add a cluster map for every spacecraft.  For a spacecraft without
 thrusters, pass both an empty cluster vector and an empty count vector.
 See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
@@ -119,11 +121,13 @@ To add RW devices to the list, for each spacecraft you must specify the number o
 
     testModule.appendNumOfRWs(2)
 
-Next, the RW position, spin axis direction, the wheel speed and the maximum motor torque value is setup using::
+Next, set the RW position, spin axis direction, maximum wheel speed, and maximum motor torque using::
 
     testModule.appendRwPos([0, 0, 0])
     testModule.appendRwDir([1, 0, 0])
-    testModule.appendOmegaMax(3000.*macros.RPM)
-    testModule.appendUMax(0.5)
+    testModule.appendOmegaMax(3000.*macros.RPM)  # [rad/s]
+    testModule.appendUMax(0.5)  # [N*m]
 
-Repeat the above steps for each wheel.
+Repeat these steps in spacecraft order, then wheel order within each spacecraft, matching the wheel
+columns in the data file.  When RW data is configured, call ``appendNumOfRWs(0)`` for spacecraft
+without wheels.
