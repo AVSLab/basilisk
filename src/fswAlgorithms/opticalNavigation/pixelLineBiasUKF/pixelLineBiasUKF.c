@@ -190,8 +190,8 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTi
     }
 
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
+    configData->timeTagOut = configData->timeTag;
     v3Copy(configData->state, outputRelOD.r_BN_N);
-    outputRelOD.timeTag = configData->timeTag;
     v3Scale(1E3, outputRelOD.r_BN_N, outputRelOD.r_BN_N); // Convert to m
     v3Copy(&configData->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
