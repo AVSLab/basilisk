@@ -21,6 +21,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <iterator>
 #include <map>
 #include <math.h>
 
@@ -94,6 +95,9 @@ Node::~Node()
 /*! This method appends a pointer to neighboring node to the neighbors class variable */
 void Node::appendNeighbor(Node* node)
 {
+    if (this->neighborCount < 0 || this->neighborCount >= static_cast<int>(std::size(this->neighbors))) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node neighbor capacity exceeded.");
+    }
     this->neighbors[this->neighborCount] = node;
     this->neighborCount += 1;
     return;
@@ -115,6 +119,9 @@ NodeList::~NodeList()
 /*! This method appends a pointer to the node list. */
 void NodeList::append(Node* node)
 {
+    if (this->N < 0 || this->N >= static_cast<int>(std::size(this->list))) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node list capacity exceeded.");
+    }
     this->list[this->N] = node;
     this->N += 1;
 }
@@ -333,6 +340,10 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
     int N = this->N;
     double u[20];
+    if (N < 2 || N > static_cast<int>(std::size(u))) {
+        bskLogger.bskError(
+            "ConstrainedAttitudeManeuver: grid refinement N must be between 2 and %zu (received %d).", std::size(u), N);
+    }
     for (int n = 0; n < N; n++) {
         u[n] = n / ((double)N - 1);
     }
@@ -842,8 +853,8 @@ double ConstrainedAttitudeManeuver::effortEvaluation()
     double L_a[3], L_b[3];
     computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
 
-    N = (int)this->Output.T.size();
-    for (int n = 0; n < N - 1; n++) {
+    const int numSamples = static_cast<int>(this->Output.T.size());
+    for (int n = 0; n < numSamples - 1; n++) {
         computeTorque(n + 1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
         l_a = v3Norm(L_a);
         l_b = v3Norm(L_b);

@@ -30,6 +30,7 @@ import os
 import numpy as np
 import pytest
 from Basilisk.architecture import BSpline
+from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -425,6 +426,94 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
     path = backtrack(O[0], n_start)
 
     return path
+
+def _configured_grid_module(refinement, cost_type=0):
+    """Return a configured planner and its input-message owners for grid tests."""
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(refinement)
+    model.sigma_BN_goal = [0.0, 0.5, 0.0]  # MRPs [-]
+    model.omega_BN_B_goal = [0.0, 0.0, 0.0]  # [rad/s]
+    model.avgOmega = 0.03  # [rad/s]
+    model.BSplineType = 0
+    model.costFcnType = cost_type
+    model.appendKeepOutDirection([1.0, 0.0, 0.0], 20.0*macros.D2R)  # [-], [rad]
+    model.appendKeepInDirection([0.0, 1.0, 0.0], 70.0*macros.D2R)  # [-], [rad]
+    model.appendKeepInDirection([0.0, 0.0, 1.0], 70.0*macros.D2R)  # [-], [rad]
+
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = [1.0, 0.0, 0.0]  # [m]
+    state.sigma_BN = [0.0, 0.0, -0.5]  # MRPs [-]
+    vehicle = messaging.VehicleConfigMsgPayload()
+    vehicle.ISCPntB_B = [0.02/3, 0.0, 0.0, 0.0, 0.1256/3, 0.0, 0.0, 0.0, 0.1256/3]  # [kg*m^2]
+    planet = messaging.SpicePlanetStateMsgPayload()
+    planet.PositionVector = [10.0, 0.0, 0.0]  # [m]
+    messages = (messaging.SCStatesMsg().write(state), messaging.VehicleConfigMsg().write(vehicle),
+                messaging.SpicePlanetStateMsg().write(planet))
+    model.scStateInMsg.subscribeTo(messages[0])
+    model.vehicleConfigInMsg.subscribeTo(messages[1])
+    model.keepOutCelBodyInMsg.subscribeTo(messages[2])
+    model.keepInCelBodyInMsg.subscribeTo(messages[2])
+    return model, messages
+
+
+def _generate_test_grid(model):
+    """Generate only the grid, without running the graph search or spline."""
+    model.ReadInputs()
+    # Initialize explicitly because the overloaded SWIG constructor does not accept sequences.
+    nodes = []
+    for attitude in ([0.0, 0.0, -0.5], model.sigma_BN_goal):  # MRPs [-]
+        endpoint = constrainedAttitudeManeuver.Node()
+        endpoint.sigma_BN = attitude
+        endpoint.isBoundary = False
+        endpoint.isFree = True
+        endpoint.heuristic = 0.0  # [-]
+        endpoint.priority = 0.0  # [-]
+        endpoint.neighborCount = 0
+        endpoint.backPointer = None
+        nodes.append(endpoint)
+    model.GenerateGrid(*nodes)
+
+
+@pytest.mark.parametrize("refinement", [-1, 0, 1, 21, 2**31 - 1])
+@pytest.mark.parametrize("change_after_construction", [False, True])
+@pytest.mark.parametrize("entry_point", ["reset", "grid"])
+def test_invalid_grid_refinement(refinement, change_after_construction, entry_point):
+    """Reject invalid refinement through both entry points, including public N changes."""
+    model, messages = _configured_grid_module(5 if change_after_construction else refinement)
+    if change_after_construction:
+        model.N = refinement
+    with pytest.raises(bskLogging.BasiliskError, match="grid refinement N must be between 2 and 20"):
+        if entry_point == "reset":
+            model.Reset(0)
+        else:
+            _generate_test_grid(model)
+
+
+@pytest.mark.parametrize("refinement", [2, 20])
+def test_grid_refinement_boundaries(refinement):
+    """Build grids at both supported limits and select valid endpoint keys."""
+    model, messages = _configured_grid_module(refinement)
+    model.boresights.keepInFov = [np.pi]*10  # [rad] Include nodes on the coarsest grid.
+    _generate_test_grid(model)
+    for key in (model.keyS, model.keyG):
+        assert all(abs(index) < refinement for index in key)
+        assert model.returnNodeState(key)
+        assert all(np.isfinite(model.returnNodeCoord(key, axis)) for axis in range(3))
+
+
+@pytest.mark.parametrize("container_type,capacity", [("neighbors", 52), ("list", 10000)])
+def test_graph_container_capacity(container_type, capacity):
+    """Allow the last available slot and reject overflow without changing the count."""
+    node = constrainedAttitudeManeuver.Node()
+    node.neighborCount = 0
+    container = node if container_type == "neighbors" else constrainedAttitudeManeuver.NodeList()
+    append = container.appendNeighbor if container_type == "neighbors" else container.append
+    for _ in range(capacity):
+        append(node)
+    with pytest.raises(bskLogging.BasiliskError, match="capacity exceeded"):
+        append(node)
+    count = container.neighborCount if container_type == "neighbors" else container.N
+    assert count == capacity
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
