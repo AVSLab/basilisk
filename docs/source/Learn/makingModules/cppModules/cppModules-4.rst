@@ -48,7 +48,14 @@ Adjust this sample interface code as follows:
 - If you miss including ``struct SomeMsg_C`` for your message types, the code will still compile without issue.  However, when you set a message variable from python the C++ module variable will not reflect this value and show 0.0 instead.
 
 
-The line ``%include "swig_conly_data.i"`` enables the python interface to read and set basic integer and float values. The following additional includes can be made if a python interface is required for additional types.
+The line ``%include "swig_conly_data.i"`` enables the python interface to read and set basic integer and float values.
+For fixed-size two-dimensional C arrays, supply a rectangular sequence of rows
+that fits within the declared dimensions. Smaller rectangular inputs, including
+empty inputs, are zero-padded. Ragged rows, non-sequence rows, or excess rows or
+columns raise ``ValueError``. Element conversion errors propagate to Python.
+Failed assignments leave the destination unchanged.
+
+The following additional includes can be made if a python interface is required for additional types.
 
 ``%include "std_string.i"``
     Interface with module string variables

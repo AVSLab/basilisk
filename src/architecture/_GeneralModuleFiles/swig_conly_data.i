@@ -242,30 +242,60 @@ ARRAYASLIST(bool, PyBool_FromLong, PyObject_IsTrue)
     Py_ssize_t i;
     if(!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
-        return NULL;
+        SWIG_fail;
     }
+    Py_ssize_t rowCount = PySequence_Length($input);
+    if(rowCount < 0) {
+        SWIG_fail;
+    }
+    if(rowCount > $1_dim0) {
+        PyErr_SetString(PyExc_ValueError,"Too many rows. Expected at most $1_dim0 rows");
+        SWIG_fail;
+    }
+    memset(temp, 0, sizeof(temp));
     Py_ssize_t rowLength = 0;
-    for(i=0; i<PySequence_Length($input); i++){
+    for(i=0; i<rowCount; i++){
         PyObject *obj = PySequence_GetItem($input, i);
+        if(!obj) {
+            SWIG_fail;
+        }
         if(!PySequence_Check(obj)) {
-            printf("Row bad in matrix: %zd\n", i);
+            Py_DECREF(obj);
             PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+            SWIG_fail;
         }
-        if(!rowLength)
-        {
-            rowLength = PySequence_Length(obj);
+        Py_ssize_t currentRowLength = PySequence_Length(obj);
+        if(currentRowLength < 0) {
+            Py_DECREF(obj);
+            SWIG_fail;
         }
-        if(!rowLength || rowLength != PySequence_Length(obj))
-        {
-            printf("Row bad in matrix: %zd\n", i);
+        if(currentRowLength > $1_dim1) {
+            Py_DECREF(obj);
+            PyErr_SetString(PyExc_ValueError,"Too many columns. Expected at most $1_dim1 columns");
+            SWIG_fail;
+        }
+        if(i == 0) {
+            rowLength = currentRowLength;
+        }
+        if(rowLength != currentRowLength) {
+            Py_DECREF(obj);
             PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+            SWIG_fail;
         }
-        int j;
+        Py_ssize_t j;
         for(j=0; j<rowLength; j++)
         {
             PyObject *o = PySequence_GetItem(obj, j);
+            if(!o) {
+                Py_DECREF(obj);
+                SWIG_fail;
+            }
             temp[i][j] = (type)asfunc(o);
             Py_DECREF(o);
+            if(PyErr_Occurred()) {
+                Py_DECREF(obj);
+                SWIG_fail;
+            }
         }
         Py_DECREF(obj);
     }
