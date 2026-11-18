@@ -32,6 +32,7 @@ ARRAY_FIELDS = [
     "uint8TestArray2", "ucharTestArray2", "int8TestArray2", "scharTestArray2",
     "boolTestArray2",
 ]
+ARRAY1_FIELDS = [field[:-1] for field in ARRAY_FIELDS]
 
 
 class ConversionFailure:
@@ -60,6 +61,184 @@ class SequenceFailure:
 
     def __getitem__(self, index):
         raise IndexError("item failed")
+
+
+class ResizingList(list):
+    """Change length on the first item access to exercise cached bounds."""
+
+    def __init__(self, values, grow):
+        super().__init__(values)
+        self.grow = grow
+
+    def __getitem__(self, index):
+        value = super().__getitem__(index)
+        if index == 0:
+            if self.grow:
+                self.append(value)
+            else:
+                self.pop()
+        return value
+
+
+@pytest.mark.parametrize("field", ARRAY1_FIELDS)
+def test_array1_scalar_types(field):
+    """Supported scalar arrays preserve full inputs and zero-pad short ones."""
+    payload = messaging.TypesTestMsgPayload()
+    values = [1, 0, 3]
+    expected = list(map(bool, values)) if field == "boolTestArray" else values
+    setattr(payload, field, values)
+    assert getattr(payload, field) == expected
+    setattr(payload, field, [1])
+    assert getattr(payload, field) == [1, 0, 0]
+    setattr(payload, field, [])
+    assert getattr(payload, field) == [0, 0, 0]
+
+
+@pytest.mark.parametrize("container", [list, tuple, np.array])
+def test_array1_sequences(container):
+    """Lists, tuples and NumPy arrays remain valid inputs."""
+    payload = messaging.TypesTestMsgPayload()
+    payload.f64TestArray = container([-1, 2])
+    assert payload.f64TestArray == [-1, 2, 0]
+
+
+@pytest.mark.parametrize("field", ARRAY1_FIELDS)
+def test_array1_conversion_failure(field):
+    """Numeric conversion errors preserve the destination and release items."""
+    payload = messaging.TypesTestMsgPayload()
+    setattr(payload, field, [1, 1, 1])
+    value = ConversionFailure()
+    values = [0, value]
+    count = sys.getrefcount(value)
+    error = TypeError if field.startswith(("ui", "uchar")) else RuntimeError
+    with pytest.raises(error):
+        setattr(payload, field, values)
+    assert getattr(payload, field) == [1, 1, 1]
+    assert sys.getrefcount(value) == count
+
+
+@pytest.mark.parametrize("field,value,error", [
+    ("f64TestArray", 10**1000, OverflowError),
+    ("i64TestArray", 2**100, OverflowError),
+    ("ui64TestArray", -1, OverflowError),
+    ("f64TestArray", None, TypeError),
+])
+def test_array1_invalid_elements(field, value, error):
+    """Overflow and invalid pointer elements cannot partially update arrays."""
+    payload = messaging.TypesTestMsgPayload()
+    setattr(payload, field, [9, 9, 9])
+    with pytest.raises(error):
+        setattr(payload, field, [0, value])
+    assert getattr(payload, field) == [9, 9, 9]
+
+
+def test_array1_invalid_pointer_reference():
+    """Invalid pointer elements cannot modify arrays or leak references."""
+    payload = messaging.TypesTestMsgPayload()
+    payload.f64TestArray = [9, 9, 9]
+    value = object()
+    count = sys.getrefcount(value)
+    with pytest.raises(TypeError):
+        payload.f64TestArray = [0, value]
+    assert payload.f64TestArray == [9, 9, 9]
+    assert sys.getrefcount(value) == count
+
+
+@pytest.mark.parametrize("values,error", [
+    (None, ValueError),
+    ([0] * 4, ValueError),
+    (SequenceFailure("length"), RuntimeError),
+    (SequenceFailure("item"), IndexError),
+])
+def test_array1_sequence_failure(values, error):
+    """Sequence validation and access errors leave the destination intact."""
+    payload = messaging.TypesTestMsgPayload()
+    payload.f64TestArray = [9, 9, 9]
+    with pytest.raises(error):
+        payload.f64TestArray = values
+    assert payload.f64TestArray == [9, 9, 9]
+
+
+def test_array1_pointer_proxy():
+    """Valid numeric pointer proxies work; null proxies are rejected."""
+    class PointerProxy:
+        def __init__(self, pointer):
+            self.this = pointer
+
+    pointer = messaging.new_doubleArray(1)
+    try:
+        messaging.doubleArray_setitem(pointer, 0, 3.5)
+        payload = messaging.TypesTestMsgPayload()
+        proxy = PointerProxy(pointer)
+        payload.f64TestArray = [proxy]
+        assert payload.f64TestArray == [3.5, 0, 0]
+        count = sys.getrefcount(proxy)
+        proxy.this = None
+        with pytest.raises(TypeError):
+            payload.f64TestArray = [0, proxy]
+        assert payload.f64TestArray == [3.5, 0, 0]
+        assert sys.getrefcount(proxy) == count
+    finally:
+        messaging.delete_doubleArray(pointer)
+
+
+@pytest.mark.parametrize("grow", [False, True])
+@pytest.mark.parametrize("struct_array", [False, True])
+def test_array1_resizing_sequence(grow, struct_array):
+    """Sequence resizing cannot bypass bounds or copy partial data."""
+    if struct_array:
+        payload = messaging.CSSConfigMsgPayload()
+        field = "cssVals"
+        value = messaging.CSSUnitConfigMsgPayload()
+        value.CBias = 0.75  # [-]
+        size = len(payload.cssVals)
+    else:
+        payload = messaging.TypesTestMsgPayload()
+        field = "f64TestArray"
+        value = 3.5
+        size = 3
+    values = ResizingList([value] * size, grow)
+    if grow:
+        setattr(payload, field, values)
+    else:
+        with pytest.raises(IndexError):
+            setattr(payload, field, values)
+    actual = getattr(payload, field)
+    if struct_array:
+        actual = [item.CBias for item in actual]
+        value = value.CBias
+    assert actual == ([value] * size if grow else [0] * size)
+
+
+@pytest.mark.parametrize("failure,error", [
+    ("length", RuntimeError),
+    ("item", IndexError),
+    ("invalid", TypeError),
+    ("null", TypeError),
+    ("oversized", ValueError),
+    ("nonsequence", ValueError),
+])
+def test_struct_array_failure(failure, error):
+    """Struct arrays share safe sequence handling and pointer cleanup."""
+    payload = messaging.CSSConfigMsgPayload()
+    css = messaging.CSSUnitConfigMsgPayload()
+    css.CBias = 0.75  # [-]
+    payload.cssVals = [css]
+    initial = [item.CBias for item in payload.cssVals]
+    invalid = object()
+    inputs = {
+        "length": SequenceFailure("length"),
+        "item": SequenceFailure("item"),
+        "invalid": [css, invalid],
+        "null": [css, None],
+        "oversized": [css] * (len(payload.cssVals) + 1),
+        "nonsequence": None,
+    }
+    counts = [sys.getrefcount(item) for item in (css, invalid)]
+    with pytest.raises(error):
+        payload.cssVals = inputs[failure]
+    assert [item.CBias for item in payload.cssVals] == initial
+    assert [sys.getrefcount(item) for item in (css, invalid)] == counts
 
 
 @pytest.mark.parametrize("field", ARRAY_FIELDS)
