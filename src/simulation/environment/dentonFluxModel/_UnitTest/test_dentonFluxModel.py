@@ -108,6 +108,88 @@ def test_dentonFluxModel_missing_file_format_string():
 
 
 @pytest.fixture(scope="module")
+def denton_constant_files(tmp_path_factory):
+    """Create complete electron and ion tables with constant logarithmic fluxes."""
+    directory = tmp_path_factory.mktemp("denton_data")
+    files = [directory / "electrons.txt", directory / "ions.txt"]
+    for file_path, token in zip(files, ("2.0", "3.0")):
+        file_path.write_text(" ".join([token] * (28 * 7 * 40 * 24)), encoding="ascii")
+    return [str(file_path) for file_path in files]
+
+
+@pytest.fixture
+def denton_file_model(denton_constant_files):
+    """Configure a model at local noon for testing data-file initialization."""
+    module = dentonFluxModel.DentonFluxModel()
+    module.kpIndex = "9o"
+    module.numOutputEnergies = 6
+    module.configureDentonFiles(*denton_constant_files)
+    sc_payload = messaging.SCStatesMsgPayload()
+    sc_payload.r_BN_N = [42164e3, 0.0, 0.0]  # [m]
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = [1.495978707e11, 0.0, 0.0]  # [m]
+    module.scStateInMsg.subscribeTo(messaging.SCStatesMsg().write(sc_payload))
+    module.sunStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(sun_payload))
+    module.earthStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload()))
+    return module
+
+
+@pytest.mark.parametrize("species", [0, 1], ids=["electrons", "ions"])
+@pytest.mark.parametrize("value_index, replacement", [
+    (0, None),                         # Empty file.
+    (40 * 24, None),                   # Truncated at the first discarded statistic.
+    (75264, None),                     # The issue's file truncated to 40 percent.
+    (28 * 7 * 40 * 24 - 1, None),      # Missing only the last required value.
+    (0, "invalid"),
+    (40 * 24, "invalid"),
+    (27 * 7 * 40 * 24, "invalid"),    # First mean value in the last Kp bin.
+    (28 * 7 * 40 * 24 - 1, "invalid"),
+    (0, "nan"),
+    (40 * 24, "inf"),
+    (28 * 7 * 40 * 24 - 1, "-inf"),
+    (0, "1e309"),
+    (28 * 7 * 40 * 24 - 1, "1junk"),
+])
+def test_dentonFluxModel_invalid_data_file(denton_file_model, denton_constant_files, tmp_path,
+                                         species, value_index, replacement):
+    """Reject missing or invalid values in either file, including unused statistics."""
+    tokens = ["2.0"] * (28 * 7 * 40 * 24)
+    if replacement is None:
+        tokens = tokens[:value_index]
+    else:
+        tokens[value_index] = replacement
+    bad_file = tmp_path / "bad_%s_%n.txt"
+    bad_file.write_text(" ".join(tokens), encoding="ascii")
+    files = list(denton_constant_files)
+    files[species] = str(bad_file)
+    denton_file_model.configureDentonFiles(*files)
+    with pytest.raises(bskLogging.BasiliskError, match=f"value {value_index + 1} from") as error:
+        denton_file_model.Reset(0)
+    assert str(bad_file) in str(error.value)
+
+
+@pytest.mark.parametrize("trailing_whitespace", ["", " \t\r\n"])
+def test_dentonFluxModel_complete_data_files(denton_file_model, denton_constant_files, tmp_path,
+                                           trailing_whitespace):
+    """Accept a complete table with or without trailing whitespace and preserve its fluxes."""
+    files = []
+    for source, name in zip(denton_constant_files, ("electrons.txt", "ions.txt")):
+        with open(source, encoding="ascii") as stream:
+            text = stream.read()
+        destination = tmp_path / name
+        destination.write_text(text + trailing_whitespace, encoding="ascii")
+        files.append(str(destination))
+    denton_file_model.configureDentonFiles(*files)
+    denton_file_model.Reset(0)
+    denton_file_model.UpdateState(0)
+    output = denton_file_model.fluxOutMsg.read()
+    expected_electron_flux = 1e6  # [m^-2 s^-1 sr^-1 eV^-1]
+    expected_ion_flux = 1e7  # [m^-2 s^-1 sr^-1 eV^-1]
+    np.testing.assert_allclose(output.meanElectronFlux[:6], expected_electron_flux, rtol=1e-12)
+    np.testing.assert_allclose(output.meanIonFlux[:6], expected_ion_flux, rtol=1e-12)
+
+
+@pytest.fixture(scope="module")
 def denton_interpolation_tables():
     """Load the table rows bracketing the endpoint energies used in these tests."""
     files = (DataFile.DentonGEOData.model_e_array_all, DataFile.DentonGEOData.model_i_array_all)

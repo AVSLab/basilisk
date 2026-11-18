@@ -19,6 +19,7 @@
 
 #include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <cctype>
 #include <cmath>
 #include <fstream>
 
@@ -319,11 +320,19 @@ void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
         for (int i = 0; i < MAX_NUM_KPS * MAX_NUM_VALUE_TYPES; i++) {
             for (int j = 0; j < MAX_NUM_ENERGIES; j++) {
                 for (int k = 0; k < MAX_NUM_LOCAL_TIMES; k++) {
+                    // Capture extraction success before peek(), which can set failbit at a valid EOF.
+                    const bool valueRead = static_cast<bool>(inputFile >> temp);
+                    const int nextChar = inputFile.peek();
+                    if (!valueRead || !std::isfinite(temp) ||
+                        (nextChar != std::ifstream::traits_type::eof() &&
+                         !std::isspace(static_cast<unsigned char>(nextChar)))) {
+                        bskLogger.bskError("DentonFluxModel: Could not read a finite value %d from %s.",
+                                           (i * MAX_NUM_ENERGIES + j) * MAX_NUM_LOCAL_TIMES + k + 1,
+                                           fullPath.c_str());
+                    }
                     // MEAN corresponds to every 7th index
                     if (i % MAX_NUM_VALUE_TYPES == 0) {
-                        inputFile >> data[i / MAX_NUM_VALUE_TYPES][j][k];
-                    } else {
-                        inputFile >> temp;
+                        data[i / MAX_NUM_VALUE_TYPES][j][k] = temp;
                     }
                 }
             }
