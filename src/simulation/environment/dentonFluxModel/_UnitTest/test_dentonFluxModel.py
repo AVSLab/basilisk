@@ -107,6 +107,76 @@ def test_dentonFluxModel_missing_file_format_string():
     assert missing_path in str(err.value)
 
 
+@pytest.fixture(scope="module")
+def denton_interpolation_tables():
+    """Load the table rows bracketing the endpoint energies used in these tests."""
+    files = (DataFile.DentonGEOData.model_e_array_all, DataFile.DentonGEOData.model_i_array_all)
+    # [eV] Electron and ion table energies at indices 16, 17, 38 and 39.
+    energy_axes = (
+        [80.120170, 104.563461, 30782.000000, 40326.937500],
+        [89.082473, 115.585487, 31140.962890, 40649.562500],
+    )
+    tables = []
+    for data_file, energy_axis in zip(files, energy_axes):
+        file_path = get_path(data_file)
+        means = np.loadtxt(file_path).reshape(28, 7, 40, 24)[:, 0, [16, 17, 38, 39], :]
+        tables.append((str(file_path), np.log(energy_axis), means))
+    return tables
+
+
+def denton_flux_output(tables, kp_index, num_energies, local_time, sun_direction):
+    """Evaluate the module once at the requested local time in hours."""
+    module = dentonFluxModel.DentonFluxModel()
+    module.kpIndex = kp_index
+    module.numOutputEnergies = num_energies
+    module.configureDentonFiles(*(table[0] for table in tables))
+
+    sun_direction = np.asarray(sun_direction) / np.linalg.norm(sun_direction)
+    angle = (local_time - 12.0) * np.pi / 12.0  # [rad]
+    rotation = np.array([[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]])
+    sc_payload = messaging.SCStatesMsgPayload()
+    sc_payload.r_BN_N = [*(42164e3 * (rotation @ sun_direction)), 0.0]  # [m]
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = [*(1.495978707e11 * sun_direction), 0.0]  # [m]
+    sc_msg = messaging.SCStatesMsg().write(sc_payload)
+    sun_msg = messaging.SpicePlanetStateMsg().write(sun_payload)
+    earth_msg = messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload())
+    module.scStateInMsg.subscribeTo(sc_msg)
+    module.sunStateInMsg.subscribeTo(sun_msg)
+    module.earthStateInMsg.subscribeTo(earth_msg)
+    module.Reset(0)
+    module.UpdateState(0)
+    return module.fluxOutMsg.read()
+
+
+@pytest.mark.parametrize("kp_index, kp_row", [("0o", 0), ("3o", 9), ("9o", 27)])
+@pytest.mark.parametrize(
+    "local_time", list(range(24)) + [0.01, 11.999, 12.001, 23.01, 23.5, 23.99, 24.0])  # [h]
+@pytest.mark.parametrize("sun_direction", [[1.0, 0.0], [1.0, 1.0]])  # [-]
+def test_dentonFluxModel_periodic_interpolation(denton_interpolation_tables, kp_index, kp_row,
+                                              local_time, sun_direction):
+    """Check both species against independent interpolation of the source tables.
+
+    Cover every whole hour, both sides of noon and midnight, and the last Kp
+    and energy bins. Include rotated Sun directions and exactly 24 h, where
+    rounding can leave the normalized dot product above -1. Expected values
+    interpolate in log energy first, then periodically in local time.
+    """
+    output = denton_flux_output(denton_interpolation_tables, kp_index, 6, local_time, sun_direction)
+
+    energies = np.array([100.0, 33430.0])  # [eV]
+    np.testing.assert_array_equal(np.asarray(output.energies)[[0, 5]], energies)
+    for flux, (_, log_energies, means) in zip(
+            (output.meanElectronFlux, output.meanIonFlux), denton_interpolation_tables):
+        expected = []
+        for energy in energies:
+            hourly_flux = [np.interp(np.log(energy), log_energies, means[kp_row, :, hour])
+                           for hour in range(24)]
+            log_flux = np.interp(local_time % 24.0, np.arange(25), hourly_flux + hourly_flux[:1])
+            expected.append(10.0**log_flux * 1e4)  # [m^-2 s^-1 sr^-1 eV^-1]
+        np.testing.assert_allclose(np.asarray(flux)[[0, 5]], expected, rtol=1e-12, atol=0.0)
+
+
 def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN, accuracy):
     """Test method"""
     unitTaskName = "unitTask"
@@ -185,6 +255,8 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
 
     # load true data from corresponding support file (note that Python indexing starts at 0 and Fortran indexing
     # starts at 1, relevant for Kp index counter)
+    # Midnight references were recomputed for #1693 by interpolating the mean table's
+    # log10(flux) values in log(energy), rather than selecting the lower energy bin.
     filename = 'FluxData_' + str(kpIndexCounter+1) + '_' + str("%.2f" % param2_LT) + '.txt'
     filepath = path + '/Support/' + filename
     trueEnergyData = np.array([0.0] * messaging.MAX_PLASMA_FLUX_SIZE)
