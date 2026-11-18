@@ -2,6 +2,8 @@
 #include "GeomagnetismHeader.h"
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -325,6 +327,21 @@ int MAG_robustReadMagneticModel_Large(char* filename, char* filenameSV, MAGtype_
     return 1;
 } /*MAG_robustReadMagneticModel_Large*/
 
+/* Read one whitespace-delimited integer, checking its range before narrowing. */
+static int MAG_readInteger(char** cursor, int* value)
+{
+    char* end;
+    errno = 0;
+    long parsed = strtol(*cursor, &end, 10);
+    if (end == *cursor || errno == ERANGE || parsed < INT_MIN || parsed > INT_MAX ||
+        (*end != '\0' && !isspace((unsigned char)*end))) {
+        return FALSE;
+    }
+    *value = (int)parsed;
+    *cursor = end;
+    return TRUE;
+}
+
 int MAG_robustReadMagModels(char* filename, MAGtype_MagneticModel* (*magneticmodels)[1], int array_size)
 {
     char line[MAXLINELENGTH];
@@ -335,6 +352,7 @@ int MAG_robustReadMagModels(char* filename, MAGtype_MagneticModel* (*magneticmod
         return 0;
     }
     if (NULL == fgets(line, MAXLINELENGTH, MODELFILE)) {
+        fclose(MODELFILE);
         return 0;
     }
     if (line[0] == '%') {
@@ -344,19 +362,38 @@ int MAG_robustReadMagModels(char* filename, MAGtype_MagneticModel* (*magneticmod
         do {
             if (NULL == fgets(line, MAXLINELENGTH, MODELFILE))
                 break;
-            a = sscanf(line, "%d", &n);
-            if (n > nMax && (n < 99999 && a == 1 && n > 0))
+            if (strncmp(line, "9999", 4) == 0)
+                break;
+            char* cursor = line;
+            a = MAG_readInteger(&cursor, &n);
+            if (a == 1 && n > nMax && n < 99999)
                 nMax = n;
-        } while (n < 99999 && a == 1);
+        } while (a == 1 && n < 99999);
+        /* Keep the coefficient-count products representable in int. */
+        if (nMax == 0 || nMax + 1 > INT_MAX / (nMax + 2)) {
+            fclose(MODELFILE);
+            return 0;
+        }
         num_terms = CALCULATE_NUMTERMS(nMax);
         (*magneticmodels)[0] = MAG_AllocateModelMemory(num_terms);
+        if ((*magneticmodels)[0] == NULL) {
+            fclose(MODELFILE);
+            return 0;
+        }
         (*magneticmodels)[0]->nMax = nMax;
         (*magneticmodels)[0]->nMaxSecVar = nMax;
-        MAG_readMagneticModel(filename, (*magneticmodels)[0]);
+        if (!MAG_readMagneticModel(filename, (*magneticmodels)[0])) {
+            MAG_FreeMagneticModelMemory((*magneticmodels)[0]);
+            (*magneticmodels)[0] = NULL;
+            fclose(MODELFILE);
+            return 0;
+        }
         (*magneticmodels)[0]->CoefficientFileEndDate = (*magneticmodels)[0]->epoch + 5;
 
-    } else
+    } else {
+        fclose(MODELFILE);
         return 0;
+    }
     fclose(MODELFILE);
     return 1;
 } /*MAG_robustReadMagModels*/
@@ -1759,8 +1796,8 @@ int MAG_readMagneticModel(char* filename, MAGtype_MagneticModel* MagneticModel)
      */
 
     FILE* MAG_COF_File;
-    char c_str[81], c_new[5]; /*these strings are used to read a line from coefficient file*/
-    int i, icomp, m, n, EOF_Flag = 0, index;
+    char c_str[81]; /* Buffer for a line from the coefficient file. */
+    int m, n, index;
     double epoch, gnm, hnm, dgnm, dhnm;
     MAG_COF_File = fopen(filename, "r");
 
@@ -1778,31 +1815,28 @@ int MAG_readMagneticModel(char* filename, MAGtype_MagneticModel* MagneticModel)
         MAG_Error(20);
         return FALSE;
     }
-    sscanf(c_str, "%lf%31s", &epoch, MagneticModel->ModelName);
+    if (sscanf(c_str, "%lf%31s", &epoch, MagneticModel->ModelName) != 2) {
+        fclose(MAG_COF_File);
+        return FALSE;
+    }
     MagneticModel->epoch = epoch;
-    while (EOF_Flag == 0) {
-        if (NULL == fgets(c_str, 80, MAG_COF_File)) {
-            break;
-        }
+    while (fgets(c_str, 80, MAG_COF_File) != NULL) {
         /* CHECK FOR LAST LINE IN FILE */
-        for (i = 0; i < 4 && (c_str[i] != '\0'); i++) {
-            c_new[i] = c_str[i];
-            c_new[i + 1] = '\0';
-        }
-        icomp = strcmp("9999", c_new);
-        if (icomp == 0) {
-            EOF_Flag = 1;
+        if (strncmp(c_str, "9999", 4) == 0) {
             break;
         }
         /* END OF FILE NOT ENCOUNTERED, GET VALUES */
-        sscanf(c_str, "%d%d%lf%lf%lf%lf", &n, &m, &gnm, &hnm, &dgnm, &dhnm);
-        if (m <= n) {
-            index = (n * (n + 1) / 2 + m);
-            MagneticModel->Main_Field_Coeff_G[index] = gnm;
-            MagneticModel->Secular_Var_Coeff_G[index] = dgnm;
-            MagneticModel->Main_Field_Coeff_H[index] = hnm;
-            MagneticModel->Secular_Var_Coeff_H[index] = dhnm;
+        char* cursor = c_str;
+        if (!MAG_readInteger(&cursor, &n) || !MAG_readInteger(&cursor, &m) || n < 0 || n > MagneticModel->nMax ||
+            m < 0 || m > n || sscanf(cursor, "%lf%lf%lf%lf", &gnm, &hnm, &dgnm, &dhnm) != 4) {
+            fclose(MAG_COF_File);
+            return FALSE;
         }
+        index = (n * (n + 1) / 2 + m);
+        MagneticModel->Main_Field_Coeff_G[index] = gnm;
+        MagneticModel->Secular_Var_Coeff_G[index] = dgnm;
+        MagneticModel->Main_Field_Coeff_H[index] = hnm;
+        MagneticModel->Secular_Var_Coeff_H[index] = dhnm;
     }
 
     fclose(MAG_COF_File);
