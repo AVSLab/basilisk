@@ -1,0 +1,1 @@
+- Fixed :ref:`magneticFieldWMM` coefficient-file parsing to reject incomplete records and invalid degree/order indices, including integers outside the supported range, before writing coefficients. Load failures now stop initialization instead of silently producing an incorrect magnetic field (issue #1691).
