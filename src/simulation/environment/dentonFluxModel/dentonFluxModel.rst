@@ -63,6 +63,10 @@ The Denton model averaged GEO space plasma properties module is created using:
 
     scSim.AddModelToTask(dynTaskName, fluxModule)
 
+Each data file must provide the complete table of 188,160 finite, whitespace-separated values,
+including the statistics fields that the module does not use. Missing, truncated, or malformed
+files raise ``BasiliskError`` during initialization.
+
 The :math:`K_p` index (``kpIndex``) and number of output energies (``numOutputEnergies``) must be
 added to FluxModule as well, while
 the local time is computed within the module using the position vectors of the spacecraft, Sun and Earth.
