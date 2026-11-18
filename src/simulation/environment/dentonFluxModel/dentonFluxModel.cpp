@@ -202,6 +202,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 
         int localTimeFloor = static_cast<int>(floor(this->localTime));
         int localTimeCeil = static_cast<int>(ceil(this->localTime));
+        // Keep 24 h as the interpolation coordinate, but read the periodic 0 h column.
+        int localTimeCeilIndex = localTimeCeil % MAX_NUM_LOCAL_TIMES;
 
         // Initialize flux variables
         double flux11 = 0.0;
@@ -212,8 +214,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         // ELECTRON: Gather four nearest *MEAN* flux values
         flux11 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeFloor];
         flux12 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeFloor];
-        flux13 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeCeil];
-        flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeil];
+        flux13 = this->mean_e_flux[this->kpIndexCounter][eLowerIndex][localTimeCeilIndex];
+        flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeilIndex];
 
         // ELECTRON: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
         finalElec = bilinear(localTimeFloor,
@@ -230,8 +232,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
         // ION: Gather four nearest *MEAN* flux values
         flux11 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeFloor];
         flux12 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeFloor];
-        flux13 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeCeil];
-        flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeil];
+        flux13 = this->mean_i_flux[this->kpIndexCounter][iLowerIndex][localTimeCeilIndex];
+        flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeilIndex];
 
         // ION: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
         finalIon = bilinear(localTimeFloor,
@@ -274,11 +276,8 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
     double y = r_BE_N_hat[0] * r_SE_N_hat[1] - r_BE_N_hat[1] * r_SE_N_hat[0];
     double theta = atan2(y, x);
 
-    if (x <= -1.0) {
-        this->localTime = 0.0; //!<  Data files are from 0-23 LT, this results in 24h being 0h
-    } else {
-        this->localTime = 12.00 + (theta / (2. * M_PI)) * 24;
-    }
+    // Map local time to [0, 24) h, including exactly midnight.
+    this->localTime = fmod(12.0 + (theta / (2.0 * M_PI)) * 24.0, 24.0); // [h]
 
     return;
 }
@@ -305,7 +304,7 @@ double DentonFluxModel::bilinear(int x1,
         R2 = ((x2 - x) / (x2 - x1)) * f12 + ((x - x1) / (x2 - x1)) * f14;
         bilinear = ((y2 - y) / (y2 - y1)) * R1 + ((y - y1) / (y2 - y1)) * R2;
     } else {
-        bilinear = ((y2 - y) / (y2 - y1)) * f11 + ((y - y1) / (y2 - y1)) * f13;
+        bilinear = ((y2 - y) / (y2 - y1)) * f11 + ((y - y1) / (y2 - y1)) * f12;
     }
     return bilinear;
 }
