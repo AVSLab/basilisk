@@ -1,0 +1,1 @@
+- Fixed ``pixelLineBiasUKF`` residual storage to hold all six measurements without overwriting adjacent fields, clear all residuals on updates without a measurement, and publish the filter state's time of validity in the navigation output (#1707).
