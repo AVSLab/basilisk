@@ -1,0 +1,1 @@
+- Fixed :ref:`dentonFluxModel` electron and ion flux interpolation across local midnight and at whole-hour local times (#1692, #1693).
