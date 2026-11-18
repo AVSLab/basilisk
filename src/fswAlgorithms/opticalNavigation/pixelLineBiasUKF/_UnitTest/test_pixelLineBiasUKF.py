@@ -339,11 +339,12 @@ if __name__ == "__main__":
 
 @pytest.mark.parametrize("reset_time", [0.0, 5.0])  # [s]
 @pytest.mark.parametrize("measurement_delay", [0.0, 0.5])  # [s]
-def test_update_residual_storage(reset_time, measurement_delay):
-    """Preserve adjacent fields and publish all six residuals without stale values.
+def test_update_residual_storage_and_time_tags(reset_time, measurement_delay):
+    """Preserve adjacent fields and publish all residuals and the propagated state epoch.
 
     Exercise a valid circle, a subsequent update without a measurement, and a
-    repeated reset, both with and without delayed measurements.
+    repeated reset. Delayed measurements must still produce navigation and
+    filter outputs tagged with the final propagation time.
     """
     module = pixelLineBiasUKF.pixelLineBiasUKF()
     setupFilterData(module)
@@ -384,8 +385,8 @@ def test_update_residual_storage(reset_time, measurement_delay):
         assert module.maxTimeJump == 10.0  # [s]
         assert module.circlesInBuffer.timeTag == circles.timeTag
         np.testing.assert_array_equal(module.postFits, residuals)
-        assert module.timeTagOut == pytest.approx(reset_time)
-        assert module.navStateOutMsg.read().timeTag == module.timeTagOut
+        assert module.timeTagOut == pytest.approx(update_time)
+        assert module.navStateOutMsg.read().timeTag == pytest.approx(update_time)
         assert module.filtDataOutMsg.read().timeTag == pytest.approx(update_time)
 
         circles.valid = 0
@@ -395,8 +396,8 @@ def test_update_residual_storage(reset_time, measurement_delay):
         np.testing.assert_array_equal(module.postFits, np.zeros(6))
         np.testing.assert_array_equal(module.filtDataOutMsg.read().postFitRes, np.zeros(6))
         assert module.maxTimeJump == 10.0  # [s]
-        assert module.timeTagOut == pytest.approx(reset_time)
-        assert module.navStateOutMsg.read().timeTag == module.timeTagOut
+        assert module.timeTagOut == pytest.approx(next_time)
+        assert module.navStateOutMsg.read().timeTag == pytest.approx(next_time)
         assert module.filtDataOutMsg.read().timeTag == pytest.approx(next_time)
 
 

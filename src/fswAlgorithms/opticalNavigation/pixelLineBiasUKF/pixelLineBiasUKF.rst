@@ -28,5 +28,6 @@ description provides information on what this message is used for.
     input attInMsg NavAttMsgPayload
         attitude input message
 
-The filter output contains all six post-fit residuals, which are zero on updates
-without an accepted measurement.
+Both output payloads use the filter state's time of validity in seconds, including
+propagation beyond the measurement epoch. The filter output contains all six
+post-fit residuals, which are zero on updates without an accepted measurement.
