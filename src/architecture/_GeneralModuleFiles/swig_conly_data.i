@@ -154,33 +154,41 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
 
 %define ARRAYASLIST(type, fromfunc, asfunc)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
-    int i;
+    Py_ssize_t i;
     void *blankPtr = 0 ;
     int resOut = 0 ;
     if (!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-        return NULL;
+        SWIG_fail;
     }
-    if (PySequence_Length($input) > $1_dim0) {
-        printf("Value: %d\n", $1_dim0);
+    Py_ssize_t length = PySequence_Length($input);
+    if (length < 0) {
+        SWIG_fail;
+    }
+    if (length > $1_dim0) {
         PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
-        return NULL;
+        SWIG_fail;
     }
     memset(temp, 0x0, $1_dim0*sizeof(type));
-    for (i = 0; i < PySequence_Length($input); i++) {
+    for (i = 0; i < length; i++) {
         PyObject *o = PySequence_GetItem($input,i);
+        if (!o) {
+            SWIG_fail;
+        }
         if (PyNumber_Check(o)) {
             temp[i] = (type)asfunc(o);
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
-            if (!SWIG_IsOK(resOut)) {
-                SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
+            if (!SWIG_IsOK(resOut) || !blankPtr) {
                 Py_DECREF(o);
-                return NULL;
+                SWIG_exception_fail(SWIG_TypeError, "Expected a number or a non-null type pointer");
             }
             memcpy(&(temp[i]), blankPtr, sizeof(type));
         }
         Py_DECREF(o);
+        if (PyErr_Occurred()) {
+            SWIG_fail;
+        }
     }
     $1 = temp;
 }
@@ -353,26 +361,31 @@ ARRAY2ASLIST(bool, PyBool_FromLong, PyObject_IsTrue)
 
 %define STRUCTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
-    int i;
+    Py_ssize_t i;
     void *blankPtr = 0 ;
     int resOut = 0 ;
     if (!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-        return NULL;
+        SWIG_fail;
     }
-    if (PySequence_Length($input) > $1_dim0) {
-        printf("Value: %d\n", $1_dim0);
+    Py_ssize_t length = PySequence_Length($input);
+    if (length < 0) {
+        SWIG_fail;
+    }
+    if (length > $1_dim0) {
         PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
-        return NULL;
+        SWIG_fail;
     }
     memset(temp, 0x0, $1_dim0*sizeof(type));
-    for (i = 0; i < PySequence_Length($input); i++) {
+    for (i = 0; i < length; i++) {
         PyObject *o = PySequence_GetItem($input,i);
+        if (!o) {
+            SWIG_fail;
+        }
         resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
-        if (!SWIG_IsOK(resOut)) {
-            SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failur Good luck.\n");
+        if (!SWIG_IsOK(resOut) || !blankPtr) {
             Py_DECREF(o);
-            return NULL;
+            SWIG_exception_fail(SWIG_TypeError, "Expected a non-null type pointer");
         }
         memcpy(&(temp[i]), blankPtr, sizeof(type));
         Py_DECREF(o);

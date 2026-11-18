@@ -49,6 +49,12 @@ Adjust this sample interface code as follows:
 
 
 The line ``%include "swig_conly_data.i"`` enables the python interface to read and set basic integer and float values.
+For fixed-size one-dimensional C arrays, supply a sequence no longer than the
+declared size. Shorter inputs, including empty sequences, are zero-padded.
+Sequence-access and numeric-conversion errors propagate to Python without
+modifying the destination. Invalid or null pointer elements are rejected;
+these checks also apply to one-dimensional arrays of wrapped structs.
+
 For fixed-size two-dimensional C arrays, supply a rectangular sequence of rows
 that fits within the declared dimensions. Smaller rectangular inputs, including
 empty inputs, are zero-padded. Ragged rows, non-sequence rows, or excess rows or

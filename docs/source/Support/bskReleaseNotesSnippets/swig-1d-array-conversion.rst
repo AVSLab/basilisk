@@ -1,0 +1,1 @@
+- Fixed Python assignment to one-dimensional C arrays so sequence and numeric-conversion errors leave the destination unchanged and acquired references are released on failure. Numeric and struct arrays now use a checked, fixed iteration bound and reject null pointer elements while preserving zero-padding for shorter inputs.
