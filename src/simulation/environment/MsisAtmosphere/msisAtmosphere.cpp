@@ -22,6 +22,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/utcTime.h"
 #include "msisAtmosphere.h"
 
@@ -182,20 +183,22 @@ void MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch
-   message is set then this variable is not used.
-
+/*! @brief Rebuild the default UTC epoch and apply a positive day-of-year setting.
+ @note A linked epoch message takes precedence; the base class then bypasses this method.
  */
 void MsisAtmosphere::customSetEpochFromVariable()
 {
-    //! - only convert if the day-in-year variable was set to a non-zero value.  Otherwise use the BSK epoch default
-    //! setup by the base class.
-    if (this->epochDoy > 0.0) {
-        /* here the BSK default epoch year is used on Jan 1, mid-night, and the requested days of year are added and
-         * converted to a proper date-time structure */
+    this->epochDateTime = {};
+    this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
+    this->epochDateTime.tm_mon = EPOCH_MONTH - 1;
+    this->epochDateTime.tm_mday = EPOCH_DAY;
+    this->epochDateTime.tm_hour = EPOCH_HOUR;
+    this->epochDateTime.tm_min = EPOCH_MIN;
+    this->epochDateTime.tm_sec = static_cast<int>(std::round(EPOCH_SEC));
+    if (this->epochDoy > 0) {
         this->epochDateTime.tm_mday = this->epochDoy; // assumes 1 is first day of year
-        normalizeUtcTime(&this->epochDateTime);
     }
+    normalizeUtcTime(&this->epochDateTime);
 
     return;
 }
