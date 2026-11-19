@@ -1,0 +1,1 @@
+- Fixed ``astroFunctions.GregorianDate`` to return the correct month and day near month ends, including leap days and year boundaries (#1702).
