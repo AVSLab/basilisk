@@ -127,7 +127,19 @@ def quadrant4(x):
 
 
 def RV2OE(mu, r_IJK, v_IJK):
-    """(r,v) to OE conversion"""
+    """Convert an inertial Cartesian state to classical orbital elements.
+
+    :param mu: positive gravitational parameter (L^3/s^2)
+    :param r_IJK: nonzero inertial position vector (L)
+    :param v_IJK: inertial velocity vector (L/s)
+    :return: tuple ``(a, e, i, Omega, omega, nu)`` with ``a`` in L and angles in radians
+
+    Zero angular momentum gives ``i = 0``. A zero node vector defaults
+    ``Omega`` and ``omega`` to zero, and zero eccentricity defaults ``omega``
+    and ``nu`` to zero. Legacy quadrant adjustments can express zero as ``2*pi``.
+    These placeholders can discard orientation information for singular orbits.
+    The zero tests use the computed vector magnitudes without a tolerance.
+    """
     r = r_IJK
     v = v_IJK
     K = np.array([0, 0, 1])
@@ -148,30 +160,30 @@ def RV2OE(mu, r_IJK, v_IJK):
         a = 0.
         p = h*h/mu
 
-    if h[2] == 0:
-        i = 0.0
+    if hm == 0:
+        i = 0.0  # [rad]
     else:
-        i = np.arccos(h[2]/hm)
-    if n[0] == 0:
-        Omega = 0.0
+        i = np.arccos(np.clip(h[2]/hm, -1.0, 1.0))
+    if nm == 0:
+        Omega = 0.0  # [rad]
     else:
-        Omega = np.arccos(n[0]/nm)
+        Omega = np.arccos(np.clip(n[0]/nm, -1.0, 1.0))
     if n[1] < 0:
         Omega = quadrant4(Omega)
 
     dotProd = np.dot(n, e_vec)
-    if dotProd == 0:
-        omega = 0.0
+    if nm == 0 or e == 0:
+        omega = 0.0  # [rad]
     else:
-        omega = np.arccos(np.dot(n, e_vec) / (nm * e))
+        omega = np.arccos(np.clip(dotProd/(nm*e), -1.0, 1.0))
     if e_vec[2] < 0:
         omega = quadrant4(omega)
 
     dotProd = np.dot(e_vec, r)
-    if dotProd == 0:
-        nu = 0.0
+    if e == 0:
+        nu = 0.0  # [rad]
     else:
-        nu = np.arccos(np.dot(e_vec, r)/(e*rm))
+        nu = np.arccos(np.clip(dotProd/(e*rm), -1.0, 1.0))
     if np.dot(r, v) < 0:
         nu = quadrant4(nu)
     return (a, e, i, Omega, omega, nu)
