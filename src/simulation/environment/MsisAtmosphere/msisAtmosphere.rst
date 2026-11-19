@@ -51,6 +51,17 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          21 - f107_1944_0
          22 - f107_24_-24
 
+Epoch Initialization
+--------------------
+The optional ``epochInMsg`` takes precedence over ``epochDoy``. Without an epoch message,
+a positive ``epochDoy`` selects a one-based day of year in the Basilisk default epoch year
+(2019), at midnight UTC. A nonpositive value selects the Basilisk default epoch
+(January 1, 2019, at midnight UTC).
+
+Each reset rebuilds the epoch from the current configuration, so repeated
+``InitializeSimulation()`` calls produce the same epoch. Changing ``epochDoy`` between
+runs, including changing it back to a nonpositive value, takes effect on the next reset.
+
 Planet Shape
 ------------
 The NRLMSISE-00 model expects the geodetic latitude and altitude above the reference ellipsoid. By default the module
