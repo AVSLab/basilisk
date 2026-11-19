@@ -1,0 +1,2 @@
+- Fixed :ref:`waypointReference` to restart waypoint playback after repeated initialization and release file streams safely during reset and destruction (#1690).
+- Fixed :ref:`msisAtmosphere` to rebuild its configured epoch on every reset, preventing day-of-year drift and honoring changes back to the default epoch (#1697).
