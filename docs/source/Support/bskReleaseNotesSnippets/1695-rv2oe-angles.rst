@@ -1,0 +1,1 @@
+- Fixed ``astroFunctions.RV2OE`` to recover valid 90-degree and 270-degree orbital angles when components or dot products are zero, and clamp inverse-cosine inputs against roundoff (#1695).
