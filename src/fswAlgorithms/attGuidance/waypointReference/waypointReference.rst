@@ -54,6 +54,11 @@ description.
 
 User Guide
 ----------
+Each reset, including a repeated ``InitializeSimulation()`` call, reopens ``dataFileName``
+and reads the waypoints from the beginning. This also applies after a previous run reached
+the end of the file. The module releases the previous file stream when resetting and
+closes its current stream when destroyed.
+
 The module assumes the data file is in plain text form and the following format:
 
 - time (seconds)

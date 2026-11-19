@@ -41,8 +41,8 @@ WaypointReference::WaypointReference()
 WaypointReference::~WaypointReference()
 {
     /* close the data file if it is open */
-    if (this->fileHandle->is_open()) {
-        this->fileHandle->close();
+    if (this->fileHandle.is_open()) {
+        this->fileHandle.close();
         bskLogger.bskLog(BSK_INFORMATION, "WaypointReference:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
@@ -58,18 +58,19 @@ void WaypointReference::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("WaypointReference: dataFileName must be an non-empty string.");
     }
 
-    /* open the data file*/
-    this->fileHandle = new std::ifstream(this->dataFileName);
-    if (this->fileHandle->fail()) {
+    /* Reopen the data file, releasing the previous stream and its read state. */
+    this->fileHandle = std::ifstream(this->dataFileName);
+    if (this->fileHandle.fail()) {
         bskLogger.bskError("WaypointReference: was not able to load the file %s.", this->dataFileName.c_str());
     }
+    this->endOfFile = false;
 
     /* read and bypass header line(s) */
     int count = 0;
     std::string line;
     while (count < this->headerLines) {
         count += 1;
-        getline(*this->fileHandle, line);
+        getline(this->fileHandle, line);
     }
 
     /* Pull first line of dataFileName and stores relative time and attitude in this->t_a and this->attRefMsg_a */
@@ -88,7 +89,7 @@ void WaypointReference::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
-    if (this->fileHandle->is_open()) {
+    if (this->fileHandle.is_open()) {
         /* read in next line*/
         std::string line;
 
@@ -166,7 +167,7 @@ void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
 
     /* read in next line, if line is not empty, stores the information ;
        if line is empty, switches this_endOfFile to true */
-    if (getline(*this->fileHandle, line)) {
+    if (getline(this->fileHandle, line)) {
         std::istringstream iss(line);
 
         *attRefMsg_t = this->attRefOutMsg.zeroMsgPayload;
