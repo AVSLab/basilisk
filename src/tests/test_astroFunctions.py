@@ -14,14 +14,15 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Regressions for orbital-element and calendar-date conversions in astroFunctions."""
+"""Regressions for orbital elements, calendar dates, and Meeus ephemerides."""
 
 from datetime import date, timedelta
 
 import numpy as np
 import pytest
 
-from Basilisk.utilities import astroFunctions
+from Basilisk.architecture import astroConstants
+from Basilisk.utilities import astroFunctions, orbitalMotion
 
 
 # Columns: mu [m^3/s^2], position [m], velocity [m/s], expected (i, Omega, omega, nu) [deg].
@@ -115,3 +116,54 @@ def test_gregorian_date(year, day_fraction):
         assert isinstance(actual, np.ndarray) and np.issubdtype(actual.dtype, np.integer)
         np.testing.assert_array_equal(
             actual, [expected.year, expected.month, expected.day], err_msg=str(expected))
+
+
+@pytest.mark.parametrize("eccentricity", [0.0, 0.005, 0.05, 0.25])  # [-]
+@pytest.mark.parametrize("mean_anomaly", [-450.0, 30.0, 45.0, 90.0, 225.0, 450.0])  # [deg]
+def test_compute_coe_kepler(eccentricity, mean_anomaly):
+    """Compare the fifth-order equation of center with an independent Kepler solution."""
+    longitude_periapsis = 30.0  # [deg]
+    # Inputs: mean longitude [deg], semimajor axis [AU], eccentricity [-], angles [deg].
+    actual = astroFunctions.computeCOE(
+        mean_anomaly+longitude_periapsis, 2.0, eccentricity, 10.0, 20.0, longitude_periapsis)
+    expected = (2.0*astroConstants.AU, eccentricity, *np.deg2rad([10.0, 20.0, 10.0]))
+    np.testing.assert_allclose(actual[:5], expected, rtol=1e-14, atol=0)
+    eccentric_anomaly = orbitalMotion.M2E(np.deg2rad(mean_anomaly), eccentricity)
+    true_anomaly = orbitalMotion.E2f(eccentric_anomaly, eccentricity)
+    error = np.arctan2(np.sin(actual[5]-true_anomaly), np.cos(actual[5]-true_anomaly))
+    tolerance = 3.0*eccentricity**6 + 1e-14  # [rad] Sixth-order truncation and roundoff.
+    assert abs(error) < tolerance
+
+
+# Reference polynomials evaluated with 40-digit Decimal arithmetic using Horner's rule.
+# Columns: planet, Julian centuries since J2000, (L [deg], a [AU], e [-], i/Omega/Pi [deg]).
+@pytest.mark.parametrize("planet,centuries,mean_elements", [
+    ("SATURN", -0.5, [-560.979373637625, 9.55491066545, 0.0556818671775,
+                      2.48758999025, 113.793810542875, 92.77364361225]),
+    ("SATURN", 0.0, [50.077471, 9.554909596, 0.05550862, 2.488878, 113.665524, 93.056787]),
+    ("SATURN", 0.5, [661.134420657625, 9.55490852655, 0.0553350500225,
+                     2.49014149475, 113.537145732125, 93.34019443275]),
+    ("URANUS", -0.5, [99.12305303175, 19.218446080845, 0.04630958821875,
+                      0.772818184, 73.7457167405, 172.262505995875]),
+    ("URANUS", 0.0, [314.055005, 19.218446062, 0.04629590, 0.773196, 74.005947, 173.005159]),
+    ("URANUS", 0.5, [528.98710913825, 19.218446043645, 0.04628225128125,
+                     0.773592561, 74.2668471695, 173.748884504125]),
+    ("NEPTUNE", -0.5, [194.40708771275, 30.1103869523225, 0.00898488580625,
+                       1.7746043265, 131.2330192445, 47.410651945375]),
+    ("NEPTUNE", 0.0, [304.348665, 30.110386869, 0.00898809, 1.769952, 131.784057, 48.123691]),
+    ("NEPTUNE", 0.5, [414.29039691725, 30.1103867860225, 0.00899129379375,
+                      1.7652961335, 132.3352247855, 48.836919644625]),
+])
+def test_meeus_ephemerides(planet, centuries, mean_elements):
+    """Check outer-planet elements before, at, and after J2000 against independent references."""
+    longitude, semimajor_axis, eccentricity, inclination, node, periapsis = mean_elements
+    julian_date = 2451545.0 + 36525.0*centuries  # [day]
+    actual = astroFunctions.ephemeridesMeeus(julian_date, planet)
+    expected = (semimajor_axis*astroConstants.AU, eccentricity,
+                *np.deg2rad([inclination, node, periapsis-node]))
+    np.testing.assert_allclose(actual[:5], expected, rtol=1e-13, atol=0)
+    eccentric_anomaly = orbitalMotion.M2E(np.deg2rad(longitude-periapsis), eccentricity)
+    true_anomaly = orbitalMotion.E2f(eccentric_anomaly, eccentricity)
+    error = np.arctan2(np.sin(actual[5]-true_anomaly), np.cos(actual[5]-true_anomaly))
+    tolerance = 3.0*eccentricity**6 + 1e-14  # [rad] Sixth-order truncation and roundoff.
+    assert abs(error) < tolerance

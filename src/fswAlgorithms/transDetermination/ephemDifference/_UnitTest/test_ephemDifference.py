@@ -62,6 +62,8 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
     changeBodyList = list()
     ephInMsgList = list()
+    trueRVector = []
+    trueVVector = []
     if ephBdyCount == 3:
         for i in range(ephBdyCount):
             # Create the change body message
@@ -75,6 +77,10 @@ def ephemDifferenceTestFunction(ephBdyCount):
             inputMsg.r_BdyZero_N = position
             inputMsg.v_BdyZero_N = velocity
             inputMsg.timeTag = 321.0
+
+            # Expected differences follow the configured input states.
+            trueRVector.append(position - inputEphemBase.r_BdyZero_N)
+            trueVVector.append(velocity - inputEphemBase.v_BdyZero_N)
 
             # Set this message
             ephInMsgList.append(messaging.EphemerisMsg().write(inputMsg))
@@ -98,15 +104,6 @@ def ephemDifferenceTestFunction(ephBdyCount):
     unitTestSim.ExecuteSimulation()
 
     if ephBdyCount == 3:
-        trueRVector = [[69313607.6209608,  -75620898.04028425,   -5443274.17030424],
-                       [-5.33462105e+08,  -7.56888610e+08,   1.17556184e+07],
-                       [9.94135029e+07,  -1.54721593e+09,   1.65081472e+07]]
-
-        trueVVector = [[15.04232523,  -1.13359121,   0.47668898],
-                       [23.2531093,  -33.17628299,  -0.22550391],
-                       [21.02793499, -25.86425597,  -0.38273815]]
-
-
         posAcc = 1e1
         velAcc = 1e-4
         simHelpers.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
@@ -124,11 +121,11 @@ def ephemDifferenceTestFunction(ephBdyCount):
             testFailCount, testMessages = unitTestSupport.compareArrayND([trueRVector[i]], outputData_R,
                                                                          posAcc,
                                                                          "ephemDifference position output body " + str(i),
-                                                                         2, testFailCount, testMessages)
+                                                                         3, testFailCount, testMessages)
             testFailCount, testMessages = unitTestSupport.compareArrayND([trueVVector[i]], outputData_V,
                                                                          velAcc,
                                                                          "ephemDifference velocity output body " + str(i),
-                                                                         2, testFailCount, testMessages)
+                                                                         3, testFailCount, testMessages)
             if timeTag[0] != 321.0:
                 testFailCount += 1
                 testMessages.append("ephemDifference timeTag output body " + str(i))
