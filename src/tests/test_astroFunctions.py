@@ -14,7 +14,9 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Regressions for the orbital-element conversion in astroFunctions."""
+"""Regressions for orbital-element and calendar-date conversions in astroFunctions."""
+
+from datetime import date, timedelta
 
 import numpy as np
 import pytest
@@ -99,3 +101,17 @@ def test_rv2oe_apsis_roundoff(anomaly):
         difference = actual[5] - anomaly
         wrapped_error = np.arctan2(np.sin(difference), np.cos(difference))
         assert abs(wrapped_error) < angle_tolerance
+
+
+@pytest.mark.parametrize("year", [2000, 2020, 2021])
+@pytest.mark.parametrize("day_fraction", [0.0, 0.5, 1.0-1.0/86400.0])  # [day]
+def test_gregorian_date(year, day_fraction):
+    """Check every date in common and leap years at midnight, noon, and the last second."""
+    first_day = date(year, 1, 1)
+    for offset in range((date(year+1, 1, 1) - first_day).days):
+        expected = first_day + timedelta(days=offset)
+        julian_date = 2451544.5 + (expected - date(2000, 1, 1)).days + day_fraction  # [day]
+        actual = astroFunctions.GregorianDate(julian_date)
+        assert isinstance(actual, np.ndarray) and np.issubdtype(actual.dtype, np.integer)
+        np.testing.assert_array_equal(
+            actual, [expected.year, expected.month, expected.day], err_msg=str(expected))
