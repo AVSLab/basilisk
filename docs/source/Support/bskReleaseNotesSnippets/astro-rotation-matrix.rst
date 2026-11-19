@@ -1,0 +1,1 @@
+- Fixed ``astroFunctions.rotationMatrix`` to return a proper rotation about the z axis, preserving vector lengths and returning identity at zero angle.

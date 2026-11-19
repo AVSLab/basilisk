@@ -633,11 +633,12 @@ def V_circular(r, mu):
 
 
 def rotationMatrix(alpha):
+    """Return the active rotation matrix about the positive z axis for ``alpha`` radians."""
     M = np.identity(3)
     M[0, 0] = np.cos(alpha)
     M[0, 1] = -np.sin(alpha)
     M[1, 0] = np.sin(alpha)
-    M[0, 1] = np.cos(alpha)
+    M[1, 1] = np.cos(alpha)
     return M
 
 

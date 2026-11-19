@@ -14,7 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Regressions for orbital elements, calendar dates, and Meeus ephemerides."""
+"""Regressions for orbital elements, calendar dates, ephemerides, and rotations."""
 
 from datetime import date, timedelta
 
@@ -167,3 +167,20 @@ def test_meeus_ephemerides(planet, centuries, mean_elements):
     error = np.arctan2(np.sin(actual[5]-true_anomaly), np.cos(actual[5]-true_anomaly))
     tolerance = 3.0*eccentricity**6 + 1e-14  # [rad] Sixth-order truncation and roundoff.
     assert abs(error) < tolerance
+
+
+# Columns: rotation angle [rad], expected rotated vector [-].
+@pytest.mark.parametrize("angle,expected", [
+    (0.0, [2.0, -3.0, 4.0]),
+    (np.pi/2, [3.0, 2.0, 4.0]),
+    (-np.pi/2, [-3.0, -2.0, 4.0]),
+    (np.pi, [-2.0, 3.0, 4.0]),
+    (np.pi/4, [5/np.sqrt(2), -1/np.sqrt(2), 4.0]),
+])
+def test_rotation_matrix(angle, expected):
+    """Check right-handed z rotations and the defining properties of a rotation matrix."""
+    vector = np.array([2.0, -3.0, 4.0])  # [-]
+    matrix = astroFunctions.rotationMatrix(angle)
+    np.testing.assert_allclose(matrix @ vector, expected, rtol=0, atol=1e-14)
+    np.testing.assert_allclose(matrix.T @ matrix, np.identity(3), rtol=0, atol=1e-14)
+    np.testing.assert_allclose(np.linalg.det(matrix), 1.0, rtol=0, atol=1e-14)
