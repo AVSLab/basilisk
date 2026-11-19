@@ -24,8 +24,10 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include <cstdint>
 #include <fstream>
-#include <iostream>
+#include <sstream>
+#include <string>
 
 /*! @brief waypoint reference module class */
 class WaypointReference : public SysModel
@@ -48,8 +50,8 @@ class WaypointReference : public SysModel
     BSKLogger bskLogger; //!< -- BSK Logging
 
   private:
-    std::ifstream* fileHandle; //!< pointer to the file that is to be read
-    bool endOfFile;            //!< boolean that indicates if the last line of file has been reached
+    std::ifstream fileHandle; //!< owned stream for the waypoint data file
+    bool endOfFile;           //!< boolean that indicates if the last line of file has been reached
     double pullScalar(std::istringstream* iss);
     void pullVector(std::istringstream* iss, double*);
     void pullVector4(std::istringstream* iss, double*);

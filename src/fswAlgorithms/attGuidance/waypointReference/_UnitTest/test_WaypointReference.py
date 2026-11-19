@@ -26,6 +26,8 @@
 
 
 import os
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -39,6 +41,96 @@ from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None
+
+
+def _write_reset_waypoints(path, attitude_type=0):
+    """Write three waypoints, including a header, for initialization regressions."""
+    times = [0.0, 10.0, 20.0]  # [s]
+    attitudes = [[0.1, 0.0, 0.0], [0.2, 0.0, 0.0], [0.3, 0.1, 0.0]]  # MRPs [-]
+    rates = [[0.0, 0.0, 0.0], [0.01, 0.02, 0.03], [0.02, 0.04, 0.06]]  # [rad/s]
+    accelerations = [[0.0, 0.0, 0.0], [0.001, 0.002, 0.003], [0.002, 0.004, 0.006]]  # [rad/s^2]
+    lines = ["time [s], attitude [-], angular rate [rad/s], angular acceleration [rad/s^2]"]
+    for time, attitude, rate, acceleration in zip(times, attitudes, rates, accelerations):
+        if attitude_type != 0:
+            attitude = rbk.MRP2EP(attitude).tolist()
+            if attitude_type == 2:
+                attitude = attitude[1:] + attitude[:1]
+        lines.append(",".join(str(value) for value in [time] + attitude + rate + acceleration))
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+@pytest.mark.parametrize("attitude_type", [0, 1, 2])
+@pytest.mark.parametrize("first_stop", [15.0, 30.0])  # [s]
+def test_waypoint_reinitialize(tmp_path, attitude_type, first_stop):
+    """Replay attitude, rate, and acceleration after resets before and after EOF."""
+    data_path = tmp_path / "waypoints.csv"
+    _write_reset_waypoints(data_path, attitude_type)
+    model = waypointReference.WaypointReference()
+    model.dataFileName = str(data_path)
+    model.attitudeType = attitude_type
+    model.headerLines = 1
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", macros.sec2nano(1.0)))  # [s]
+    sim.AddModelToTask("task", model)
+    recorder = model.attRefOutMsg.recorder()
+    sim.AddModelToTask("task", recorder)
+
+    for stop_time in (first_stop, 30.0, 30.0):  # [s]
+        sim.InitializeSimulation()
+        sim.ConfigureStopTime(macros.sec2nano(stop_time))
+        sim.ExecuteSimulation()
+        index = np.flatnonzero(recorder.times() == macros.sec2nano(15.0))[0]  # [s]
+        np.testing.assert_allclose(recorder.sigma_RN[index], [0.25, 0.05, 0.0], atol=1e-14, rtol=0)  # MRPs [-]
+        np.testing.assert_allclose(recorder.omega_RN_N[index], [0.015, 0.03, 0.045], atol=1e-14, rtol=0)  # [rad/s]
+        np.testing.assert_allclose(recorder.domega_RN_N[index], [0.0015, 0.003, 0.0045],
+                                   atol=1e-14, rtol=0)  # [rad/s^2]
+        if stop_time > 20.0:  # [s]
+            np.testing.assert_allclose(recorder.sigma_RN[-1], [0.3, 0.1, 0.0], atol=1e-14, rtol=0)  # MRPs [-]
+            np.testing.assert_array_equal(recorder.omega_RN_N[-1], [0.0, 0.0, 0.0])  # [rad/s]
+            np.testing.assert_array_equal(recorder.domega_RN_N[-1], [0.0, 0.0, 0.0])  # [rad/s^2]
+
+
+@pytest.mark.parametrize("failure", ["empty", "missing"])
+def test_waypoint_reset_after_open_failure(tmp_path, failure):
+    """Recover from an invalid filename by reopening a valid waypoint file."""
+    model = waypointReference.WaypointReference()
+    model.dataFileName = "" if failure == "empty" else str(tmp_path / "missing.csv")
+    with pytest.raises(bskLogging.BasiliskError):
+        model.Reset(0)
+    data_path = tmp_path / "waypoints.csv"
+    _write_reset_waypoints(data_path)
+    model.dataFileName = str(data_path)
+    model.headerLines = 1
+    model.Reset(0)
+    model.UpdateState(macros.sec2nano(15.0))  # [s]
+    np.testing.assert_allclose(model.attRefOutMsg.read().sigma_RN, [0.25, 0.05, 0.0],
+                               atol=1e-14, rtol=0)  # MRPs [-]
+
+
+@pytest.mark.parametrize("initialization", ["none", "empty", "missing"])
+def test_waypoint_destruction_without_open_file(tmp_path, initialization):
+    """Destroy unused or unsuccessfully initialized modules without crashing Python."""
+    code = """
+import sys
+from Basilisk.architecture import bskLogging
+from Basilisk.fswAlgorithms import waypointReference
+model = waypointReference.WaypointReference()
+if sys.argv[1] != "none":
+    if sys.argv[1] == "missing":
+        model.dataFileName = sys.argv[2]
+    try:
+        model.Reset(0)
+    except bskLogging.BasiliskError:
+        pass
+    else:
+        raise AssertionError("Invalid filename did not raise BasiliskError")
+del model
+"""
+    result = subprocess.run([sys.executable, "-c", code, initialization, str(tmp_path / "missing.csv")],
+                            capture_output=True, text=True, timeout=30)  # [s] subprocess timeout
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("attType", [0, 1, 2])
