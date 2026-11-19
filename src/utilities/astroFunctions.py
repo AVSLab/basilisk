@@ -361,6 +361,15 @@ def JulianDate(GDE):
 
 # From JD to GD
 def GregorianDate(JDE):
+    """Convert a Julian date to an integer calendar date, omitting the time of day.
+
+    :param JDE: Julian date in days, including any fractional day
+    :return: NumPy integer array ``[year, month, day]``
+
+    .. note::
+        The retained simplified leap-year calculation limits this routine to
+        dates from 1901 through February 2100.
+    """
     LMonth = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
     T = (JDE - 2415019.5) / 365.25
     Yr = 1900 + np.trunc(T)
@@ -376,9 +385,11 @@ def GregorianDate(JDE):
     sum = 0
     i = 0
     for month in LMonth:
-        if (sum + month <= DayOfYr):
+        if (sum + month < DayOfYr):
             sum += month
             i += 1
+        else:
+            break
     Mo = i + 1
     Day = DayOfYr - sum
     GD = np.array([int(Yr), int(Mo), int(Day)])
