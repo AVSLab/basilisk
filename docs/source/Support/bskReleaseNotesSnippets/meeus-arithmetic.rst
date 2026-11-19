@@ -1,0 +1,1 @@
+- Corrected the quadratic time term in ``astroFunctions.ephemeridesMeeus`` and restored fractional equation-of-center coefficients in ``computeCOE``, correcting the affected planetary elements and states.
