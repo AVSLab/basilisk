@@ -1,7 +1,7 @@
 - In Basilisk ``2.12.2``, ``astroFunctions.ephemeridesMeeus`` evaluates the
   quadratic time coefficients for Saturn, Uranus, and Neptune as linear terms.
-  Separately, ``computeCOE`` uses floor division for fractional equation-of-center
-  coefficients, which can bias true anomalies and the resulting planetary states.
-  Both arithmetic errors are corrected. The existing polynomial ephemeris model
-  and fifth-order eccentricity approximation are retained, as are the return
-  interfaces; computed elements and states can differ from previous releases.
+  Uranus and Neptune also use angular elements referred to the equinox of date,
+  which introduces a frame mismatch with the other planets away from J2000.0.
+  Both now use the mean ecliptic and equinox of J2000.0. The quadratic terms
+  are corrected, and ``computeCOE`` now uses the fractional coefficients of
+  the fifth-order equation of center in computing true anomaly.

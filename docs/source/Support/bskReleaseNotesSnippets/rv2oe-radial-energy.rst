@@ -1,1 +1,1 @@
-- Fixed ``astroFunctions.RV2OE`` to compute the semimajor axis of radial orbits from their orbital energy and to return unit eccentricity for radial motion.
+- Fixed ``astroFunctions.RV2OE`` to compute the semimajor axis of radial orbits from their orbital energy and return unit eccentricity when transverse motion is zero to roundoff, including for off-axis states.
