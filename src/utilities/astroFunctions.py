@@ -237,7 +237,18 @@ def PQW2IJK(Omega, i, w, r_PQW, v_PQW):
 
 
 def ephemeridesMeeus(JDE, celestialBody):
-    T = (JDE - 2451545.0)/36525
+    """Approximate heliocentric orbital elements in the mean ecliptic and equinox of J2000.0.
+
+    The planetary ``*_RV`` helpers use these elements to return positions in km
+    and velocities in km/s.
+
+    :param JDE: Julian Ephemeris Day (TT), with J2000.0 at 2451545.0 days
+    :param celestialBody: uppercase planet name (VENUS, EARTH, MARS, JUPITER,
+        SATURN, URANUS, NEPTUNE, or PLUTO)
+    :return: tuple ``(a, e, i, Omega, omega, nu)`` with semimajor axis in km,
+        dimensionless eccentricity and angles in radians
+    """
+    T = (JDE - 2451545.0)/36525  # [Julian centuries since J2000.0]
 
     def ephem(vec, T):
         val = vec[0] + vec[1]*T + vec[2]*T*T + vec[3]*T*T*T
@@ -307,13 +318,14 @@ def ephemeridesMeeus(JDE, celestialBody):
         Omega = ephem(Omega_vec, T)
         Pi = ephem(Pi_vec, T)
     elif celestialBody == 'URANUS':
-        L_vec = np.array([314.055005, 429.8640561, 0.00030434, 0.000000026])
+        # Angular polynomials for Uranus and Neptune are in degrees (Meeus, 1st ed., Table 30.B).
+        L_vec = np.array([314.055005, 428.4669983, -0.00000486, 0.000000006])
         a_vec = np.array([19.218446062, -0.0000000372, 0.00000000098, 0.0])
         e_vec = np.array(
             [0.04629590, -0.000027337, 0.0000000790, 0.00000000025])
-        i_vec = np.array([0.773196,	0.0007744, 0.00003749, -0.000000092])
-        Omega_vec = np.array([74.005947, 0.5211258,	0.00133982,	0.000018516])
-        Pi_vec = np.array([173.005159, 1.4863784, 0.0021450, 0.000000433])
+        i_vec = np.array([0.773196, -0.0016869, 0.00000349, 0.000000016])
+        Omega_vec = np.array([74.005947, 0.0741461, 0.00040540, 0.000000104])
+        Pi_vec = np.array([173.005159, 0.0893206, -0.00009470, 0.000000413])
         L = ephem(L_vec, T)
         a = ephem(a_vec, T)
         e = ephem(e_vec, T)
@@ -321,13 +333,13 @@ def ephemeridesMeeus(JDE, celestialBody):
         Omega = ephem(Omega_vec, T)
         Pi = ephem(Pi_vec, T)
     elif celestialBody == 'NEPTUNE':
-        L_vec = np.array([304.348665, 219.8833092, 0.00030926, 0.000000018])
+        L_vec = np.array([304.348665, 218.4862002, 0.00000059, -0.000000002])
         a_vec = np.array([30.110386869,	-0.0000001663, 0.00000000069, 0.0])
         e_vec = np.array([0.00898809, 0.000006408, -
                          0.0000000008, -0.00000000005])
-        i_vec = np.array([1.769952, -0.0093082, -0.00000708, 0.000000028])
-        Omega_vec = np.array([131.784057, 1.1022057, 0.00026006, -0.000000636])
-        Pi_vec = np.array([48.123691, 1.4262677, 0.00037918, -0.000000003])
+        i_vec = np.array([1.769952, 0.0002257, 0.00000023, 0.0])
+        Omega_vec = np.array([131.784057, -0.0061651, -0.00000219, -0.000000078])
+        Pi_vec = np.array([48.123691, 0.0291587, 0.00007051, -0.000000023])
         L = ephem(L_vec, T)
         a = ephem(a_vec, T)
         e = ephem(e_vec, T)
@@ -347,7 +359,18 @@ def ephemeridesMeeus(JDE, celestialBody):
 
 
 def computeCOE(L, a, e, i, Omega, Pi):
-    # Units:
+    """Convert mean planetary elements using the fifth-order equation of center.
+
+    :param L: mean longitude in degrees
+    :param a: semimajor axis in astronomical units
+    :param e: dimensionless eccentricity
+    :param i: inclination in degrees
+    :param Omega: longitude of the ascending node in degrees
+    :param Pi: longitude of perihelion in degrees
+    :return: tuple ``(a, e, i, Omega, omega, nu)`` in the input reference frame,
+        with semimajor axis in km and angles in radians. The last two angles
+        are the argument of perihelion and the approximate true anomaly.
+    """
     L = L*astroConstants.D2R
     a = a*astroConstants.AU
     i = i*astroConstants.D2R
