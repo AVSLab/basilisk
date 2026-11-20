@@ -1,0 +1,1 @@
+- Fixed :ref:`spiceInterface` initialization for epoch messages with fractional seconds just below a minute boundary. SPICE epoch conversion errors now raise a catchable ``BasiliskError`` (issue #1686).
