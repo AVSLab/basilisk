@@ -83,6 +83,19 @@ def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
         readAtmTable(path, "VenusGRAM")
 
 
+@pytest.mark.parametrize("rows", [
+    "0,64.79,True\n0.5,63.15,False\n",
+    "0,64.79,735.3\n0.5,NaN,731.5\n",
+    "0,64.79,735.3\ninf,63.15,731.5\n",
+], ids=["boolean-temperature", "nan-density", "infinite-height"])
+def test_gram_csv_requires_finite_numbers(tmp_path, rows):
+    """Reject Boolean fields and nonfinite samples anywhere in a GRAM profile."""
+    path = tmp_path / "profile.csv"
+    path.write_text("Height_km,Density_kgm3,Temperature_K\n" + rows, encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
+
+
 def _tabular_model(table):
     model = tabularAtmosphere.TabularAtmosphere()
     file = DataFile.AtmosphereData[f"{table}Nominal"]

@@ -69,12 +69,14 @@ def _read_gram_csv(filename):
         "Density_kgm3": ("kg/m3", "[kg/m3]", "kg/m^3", "[kg/m^3]", "kg/m³", "[kg/m³]"),
         "Temperature_K": ("K", "[K]", "Kelvin", "[Kelvin]"),
     }
-    df = pd.read_csv(filename, usecols=list(units), keep_default_na=False)
-    if not df.empty and all(str(df[column].iat[0]).strip() in labels for column, labels in units.items()):
+    df = pd.read_csv(filename, usecols=list(units), dtype=str, keep_default_na=False)
+    if not df.empty and all(df[column].iat[0].strip() in labels for column, labels in units.items()):
         df = df.iloc[1:]
     df = df.astype(float).sort_values("Height_km")
-    altitude = df["Height_km"] * 1000.0  # [m]
-    return altitude.to_list(), df["Density_kgm3"].to_list(), df["Temperature_K"].to_list()
+    df["Height_m"] = df.pop("Height_km") * 1000.0  # [m]
+    if not np.isfinite(df.to_numpy()).all():
+        raise ValueError("GRAM height, density, and temperature must be finite.")
+    return df["Height_m"].to_list(), df["Density_kgm3"].to_list(), df["Temperature_K"].to_list()
 
 
 def readVenusGRAM(filename):
