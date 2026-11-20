@@ -1,1 +1,3 @@
-- Fixed ``astroFunctions.GregorianDate`` to return the correct month and day near month ends, including leap days and year boundaries (#1702).
+- Fixed ``astroFunctions.JulianDate`` to interpret integer calendar days as midnight and retain fractional days. Pass ``day + 0.5`` for noon.
+- ``JulianDate`` validates the entire day array. Any unmasked NaN, infinity, or day outside the specified month raises ``ValueError`` for the entire call. Complex day arrays raise ``TypeError``.
+- Fixed ``astroFunctions.GregorianDate`` and ``exactGregorianDate`` to handle month ends, year boundaries, and Gregorian century leap years consistently (#1702).

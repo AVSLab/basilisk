@@ -17,6 +17,7 @@
 """Regressions for orbital elements, calendar dates, ephemerides, and rotations."""
 
 from datetime import date, timedelta
+from decimal import Decimal
 
 import numpy as np
 import pytest
@@ -188,6 +189,74 @@ def test_gregorian_date(year, day_fraction):
         assert isinstance(actual, np.ndarray) and np.issubdtype(actual.dtype, np.integer)
         np.testing.assert_array_equal(
             actual, [expected.year, expected.month, expected.day], err_msg=str(expected))
+
+
+# Columns give the Gregorian date, Julian date at midnight [day], seconds since midnight [s], and clock time.
+@pytest.mark.parametrize("ymd,midnight,seconds,clock", [
+    ((1900, 3, 1), 2415079.5, 0, "0:0:0"),
+    ((2000, 1, 1), 2451544.5, 43200, "12:0:0"),
+    ((2000, 2, 29), 2451603.5, 64800, "18:0:0"),
+    ((2100, 2, 28), 2488127.5, 86399, "23:59:59"),
+    ((2100, 3, 1), 2488128.5, 1, "0:0:1"),
+    ((2400, 2, 29), 2597700.5, 45296.75, "12:34:56"),
+])
+def test_calendar_conversions(ymd, midnight, seconds, clock):
+    """Check all three conversions against fixed epochs and Gregorian century boundaries."""
+    year, month, day = ymd
+    day_fraction = seconds / 86400  # [day]
+    jd = midnight + day_fraction  # [day]
+    assert astroFunctions.JulianDate(np.array([year, month, day + day_fraction])) == jd
+    np.testing.assert_array_equal(astroFunctions.GregorianDate(jd), ymd)
+    assert astroFunctions.exactGregorianDate(jd) == f"[{year}, {month}, {day}, {clock}]"
+
+
+def test_julian_date_array_days():
+    """Convert fractional days in a leap month and preserve the array shape."""
+    days = np.array([[1, 2.5], [28, 29.75]])  # [day]
+    expected = [[2451575.5, 2451577.0], [2451602.5, 2451604.25]]  # [day]
+    actual = astroFunctions.JulianDate([2000, 2, days])
+    assert isinstance(actual, np.ndarray)
+    np.testing.assert_array_equal(actual, expected)
+
+
+def test_julian_date_longdouble_days_before_midnight():
+    """Preserve the last Julian date before midnight at the day array's precision."""
+    midnight = np.longdouble("2451544.5")  # [day] 2000-01-01.
+    before = np.nextafter(midnight, np.longdouble("-inf"))  # [day]
+    days = np.array([32 + (before - midnight)])  # [day] Fractional December 31.
+    actual = astroFunctions.JulianDate([1999, 12, days])
+    np.testing.assert_array_equal(actual, [before])
+
+
+@pytest.mark.parametrize("jd", [
+    np.nextafter(2451544.5, -np.inf),
+    np.nextafter(np.longdouble("2451544.5"), np.longdouble("-inf")),
+    Decimal("2451544.4999999999"),
+])  # [day] Just before 2000-01-01 at each input precision.
+def test_exact_gregorian_date_before_midnight(jd):
+    """An instant just before a new year still belongs to the previous year's final second."""
+    np.testing.assert_array_equal(astroFunctions.GregorianDate(jd), [1999, 12, 31])
+    assert astroFunctions.exactGregorianDate(jd) == "[1999, 12, 31, 23:59:59]"
+
+
+@pytest.mark.parametrize("days", [
+    np.array([1 + 2j, 2 + 3j]),
+    np.array([1, np.complex128(2 + 3j)], dtype=object),
+])
+def test_julian_date_complex_days(days):
+    """Reject complex day values before converting an array to Julian dates."""
+    with pytest.raises(TypeError):
+        astroFunctions.JulianDate([2000, 1, days])
+
+
+@pytest.mark.parametrize("ymd", [
+    (2100, 2, 29), (2100, 2, np.array([28.5, 29])), (2000, 1, [1, np.nan]),
+    (2000.5, 1, 1), (2000, 1.5, 1),
+])
+def test_julian_date_invalid_calendar_fields(ymd):
+    """Reject invalid days, including NaN in an array, and fractional years or months."""
+    with pytest.raises(ValueError):
+        astroFunctions.JulianDate(ymd)
 
 
 @pytest.mark.parametrize("eccentricity", [0.0, 0.005, 0.05, 0.25])  # [-]

@@ -1,6 +1,6 @@
-- In Basilisk ``2.12.2``, ``astroFunctions.GregorianDate`` can return an incorrect
-  month or day near month ends, including day zero and month 13 (#1702).
-  The month loop now retains the last day of each month and stops at the
-  containing month. The integer ``[year, month, day]`` array interface is
-  unchanged. The separate simplified leap-year calculation is also unchanged;
-  the routine is limited to dates from 1901 through February 2100.
+- In Basilisk ``2.12.2``, ``astroFunctions.JulianDate`` rounds calendar dates up
+  to noon, and ``GregorianDate`` can return day zero or month 13 near month ends
+  (#1702). Both ``GregorianDate`` and ``exactGregorianDate`` also count 1900
+  and 2100 as leap years. All three helpers now use
+  Gregorian leap-year rules and count fractional calendar days from midnight.
+  Callers that intended noon should pass ``day + 0.5`` to ``JulianDate``.

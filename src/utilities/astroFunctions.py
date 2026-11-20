@@ -17,6 +17,10 @@
 #
 
 
+from calendar import monthrange
+from datetime import date
+from fractions import Fraction
+
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import linalg as la
@@ -363,87 +367,72 @@ def computeCOE(L, a, e, i, Omega, Pi):
 
 # ------------------------------------------------------------------------------------------------------------------- #
 #                                             DATES CONVERSION
-# From GD to JD
+
+_JD_ORDINAL_OFFSET = 1721424.5  # [day] Gregorian ordinal 1 starts at JD 1721425.5.
 
 
 def JulianDate(GDE):
-    yr = GDE[0]
-    mo = GDE[1]
-    d = GDE[2]
-    JD = 367*yr - int(7*(yr + int((mo+9)/12))/4) + \
-        int(275*mo/9) + d + 1721013.5
-    return np.ceil(JD)
+    """Convert a proleptic Gregorian calendar date to a Julian date.
 
-
-# From JD to GD
-def GregorianDate(JDE):
-    """Convert a Julian date to an integer calendar date, omitting the time of day.
-
-    :param JDE: Julian date in days, including any fractional day
-    :return: NumPy integer array ``[year, month, day]``
-
-    .. note::
-        The retained simplified leap-year calculation limits this routine to
-        dates from 1901 through February 2100.
+    :param GDE: ``[year, month, day]`` with integer year (1 through 9999) and
+        month (1 through 12). The day may be a scalar or an array, with its
+        fractional part measured from midnight.
+    :return: Julian date in days, as a scalar or an array matching the shape
+        of the input days. Integer Julian dates denote noon.
     """
-    LMonth = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
-    T = (JDE - 2415019.5) / 365.25
-    Yr = 1900 + np.trunc(T)
-    LeapYrs = np.trunc((Yr - 1900 - 1)*0.25)
-    Days = JDE - 2415019.5 - ((Yr-1900)*365.0 + LeapYrs)
-    if Days < 1.0:
-        Yr = Yr - 1
-        LeapYrs = np.trunc((Yr - 1900 - 1)*0.25)
-        Days = JDE - 2415019.5 - ((Yr-1900)*365.0 + LeapYrs)
-    if Yr % 4 == 0:
-        LMonth[1] = 29
-    DayOfYr = np.trunc(Days)
-    sum = 0
-    i = 0
-    for month in LMonth:
-        if (sum + month < DayOfYr):
-            sum += month
-            i += 1
-        else:
-            break
-    Mo = i + 1
-    Day = DayOfYr - sum
-    GD = np.array([int(Yr), int(Mo), int(Day)])
-    return GD
+    year, month, day = GDE[:3]
+    if int(year) != year or int(month) != month:
+        raise ValueError("year and month must be integers")
+    first_day = date(int(year), int(month), 1)
+    days_in_month = monthrange(first_day.year, first_day.month)[1]
+    day = np.asanyarray(day)
+    if np.iscomplexobj(day) or (day.dtype == object and any(map(np.iscomplexobj, day.flat))):
+        raise TypeError("day must be real")
+    dtype = np.result_type(day.dtype, np.float64) if day.dtype.kind == "f" else np.float64
+    day = day.astype(dtype, copy=False)
+    valid_days = (day >= 1) & (day < days_in_month + 1)
+    if np.any(~valid_days):
+        raise ValueError("day is out of range for month")
+    return _JD_ORDINAL_OFFSET + first_day.toordinal() + (day - 1)
+
+
+def _gregorian_day(jd):
+    """Return the Gregorian date and whole seconds since midnight."""
+    jd = np.asarray(jd).item()
+    if isinstance(jd, (float, np.floating)):
+        ordinal, fraction = divmod(jd - _JD_ORDINAL_OFFSET, 1)
+        # Recover whole seconds rounded down at the precision of the Julian date.
+        fraction += np.spacing(jd) / 2
+    else:
+        ordinal, fraction = divmod(Fraction(jd) - Fraction(_JD_ORDINAL_OFFSET), 1)
+    return date.fromordinal(int(ordinal)), int(fraction * 86400)
+
+
+def GregorianDate(JDE):
+    """Return the proleptic Gregorian calendar date containing a Julian date.
+
+    :param JDE: Julian date in days within Gregorian years 1 through 9999
+    :return: NumPy integer array ``[year, month, day]``
+    """
+    day, _ = _gregorian_day(JDE)
+    return np.array([day.year, day.month, day.day])
 
 
 def exactGregorianDate(JD):
-    L_month = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
-    T_1900 = (JD - 2415019.5)/365.25
-    Year = 1900 + np.trunc(T_1900)
-    LeapYrs = np.trunc(0.25*(Year - 1900 - 1))
-    Days = (JD - 2415019.5) - (365.0*(Year - 1900) + LeapYrs)
-    if Days < 1.0:
-        Year = Year - 1
-        LeapYrs = np.trunc(0.25*(Year - 1900 - 1))
-        Days = (JD - 2415019.5) - (365.0*(Year - 1900) + LeapYrs)
-    if Year % 4 == 0:
-        L_month[1] = 29
-    DOY = np.trunc(Days)  # Day of the year
-    monthDays = 0  # summation of days in months
-    m = 0  # months counter
-    while True:
-        if monthDays + L_month[m] >= DOY:
-            break
-        else:
-            monthDays += L_month[m]
-            m += 1
-    Month = m
-    Day = DOY - monthDays
-    time = (Days - DOY)*24
-    h = np.trunc(time)
-    min = np.trunc(60*(time - h))
-    s = 3600 * (time - h - min/60.0)
+    """Format the proleptic Gregorian date and time to whole seconds.
 
-    GD = '[' + str(int(Year)) + ', ' + str(int(Month) + 1) + ', ' + str(int(Day)) + ', ' + \
-         str(int(h)) + ':' + str(int(min)) + ':' + str(int(s)) + ']'
+    Fractional seconds are discarded. To recover a whole second that rounded
+    down in a binary floating-point Julian date, the conversion allows a
+    tolerance of half the spacing at the working precision (at least binary64).
+    Decimal and rational inputs are treated as exact.
 
-    return GD
+    :param JD: Julian date in days within Gregorian years 1 through 9999
+    :return: String ``[year, month, day, hour:minute:second]``
+    """
+    day, seconds = _gregorian_day(JD)
+    hour, remainder = divmod(seconds, 3600)
+    minute, second = divmod(remainder, 60)
+    return f"[{day.year}, {day.month}, {day.day}, {hour}:{minute}:{second}]"
 
 
 def optimalDate(GD0, DaysPastDeparture, TOF):
