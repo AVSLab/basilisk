@@ -87,6 +87,29 @@ def test_rv2oe_radial_energy(speed, expected_a):
     assert e == 1.0
 
 
+@pytest.mark.parametrize("speed", [-7000.0, 12000.0])  # [m/s] Bound inward and unbound outward.
+def test_rv2oe_off_axis_radial_state(speed):
+    """Recover radial elements when normalizing an oblique direction introduces roundoff."""
+    mu = 3.986004418e14  # [m^3/s^2]
+    position = np.array([6e6, 2e6, 2e6])  # [m]
+    radius = np.linalg.norm(position)
+    velocity = speed * (position / radius)
+    a, e, *angles = astroFunctions.RV2OE(mu, position, velocity)
+    assert a == pytest.approx(1 / (2 / radius - speed**2 / mu), rel=1e-14)
+    assert e == 1.0
+    np.testing.assert_array_equal(angles, [0.0, 0.0, 2*np.pi, np.pi])
+
+
+@pytest.mark.parametrize("epsilons,expected_i", [(4, 0.0), (16, np.pi/2)])  # [rad] Expected inclination.
+def test_rv2oe_transverse_roundoff(epsilons, expected_i):
+    """Retain the orbital plane when transverse motion is above the radial threshold."""
+    mu = 1.0  # [m^3/s^2]
+    position = np.array([1.0, 0.0, 0.0])  # [m]
+    velocity = np.array([1.0, 0.0, epsilons*np.finfo(float).eps])  # [m/s]
+    _, _, inclination, *_ = astroFunctions.RV2OE(mu, position, velocity)
+    assert inclination == expected_i
+
+
 # Columns: specific energy offset [m^2/s^2], velocity [m/s].
 @pytest.mark.parametrize("energy_offset,velocity", [
     (-2.0**-40, [1.0, 1.0, 0.0]),

@@ -142,10 +142,12 @@ def RV2OE(mu, r_IJK, v_IJK):
     ``Omega`` and ``omega`` to zero, and zero eccentricity defaults ``omega``
     and ``nu`` to zero. Legacy quadrant adjustments can express zero as ``2*pi``.
     These placeholders can discard orientation information for singular orbits.
-    The angle tests use the computed vector magnitudes without a tolerance.
+    Outside the radial case, the node and eccentricity tests use exact zeros.
 
-    Radial states have unit eccentricity. Their semimajor axis is positive
-    below escape speed and negative above it. For any state whose
+    Motion is radial when the transverse speed is at most eight machine epsilons
+    of the working precision times the total speed. Radial states have unit
+    eccentricity and ``nu = pi``. Their semimajor axis is positive below escape
+    speed and negative above it. For any state whose
     specific orbital energy is zero to roundoff, the parabolic convention
     is ``a = 0``, ``e = 1``. ``OE2RV`` does not reconstruct unit-eccentricity states.
     All inputs use a common working precision of at least ``float64``.
@@ -156,23 +158,27 @@ def RV2OE(mu, r_IJK, v_IJK):
     r = r.astype(dtype, copy=False)
     v = v.astype(dtype, copy=False)
     mu = dtype.type(mu)
-    K = np.array([0, 0, 1])
-    h = np.cross(r, v)
-    n = np.cross(K, h)
-    hm = np.linalg.norm(h)
-    nm = np.linalg.norm(n)
     rm = np.linalg.norm(r)
-
+    vm = np.linalg.norm(v)
     mu_over_r = mu/rm
-    if hm == 0:
-        e_vec = -(r/rm)
-        e = 1.0  # [-]
-        i = 0.0  # [rad]
-    else:
-        vm = np.linalg.norm(v)
-        e_vec = 1./mu * ((vm*vm - mu_over_r)*r - np.dot(r, v)*v)
-        e = np.linalg.norm(e_vec)
-        i = np.arccos(np.clip(h[2]/hm, -1.0, 1.0))
+    kinetic = np.dot(0.5*v, v)
+    energy = kinetic - mu_over_r
+    roundoff = 8*np.finfo(dtype).eps
+    parabolic = abs(energy) <= roundoff*max(kinetic, mu_over_r)
+    a = 0.0 if parabolic else -0.5*mu/energy  # [L]
+
+    h = np.cross(r, v)
+    hm = np.linalg.norm(h)
+    if hm <= roundoff*rm*vm:
+        # The radial eccentricity vector points opposite r. Preserve the legacy quadrant convention.
+        omega = 2*astroConstants.MPI if r[2] > 0 else 0.0  # [rad]
+        return (a, 1.0, 0.0, 0.0, omega, astroConstants.MPI)
+
+    n = np.cross([0, 0, 1], h)
+    nm = np.linalg.norm(n)
+    e_vec = 1./mu * ((vm*vm - mu_over_r)*r - np.dot(r, v)*v)
+    e = np.linalg.norm(e_vec)
+    i = np.arccos(np.clip(h[2]/hm, -1.0, 1.0))
     if nm == 0:
         Omega = 0.0  # [rad]
     else:
@@ -196,16 +202,7 @@ def RV2OE(mu, r_IJK, v_IJK):
     if np.dot(r, v) < 0:
         nu = quadrant4(nu)
 
-    kinetic = np.dot(0.5*v, v)
-    energy = kinetic - mu_over_r
-    # Match the relative escape-energy tolerance in orbitalMotion.rv2elem.
-    roundoff = 8*np.finfo(dtype).eps
-    if abs(energy) <= roundoff*max(kinetic, mu_over_r):
-        a = 0.0  # [L] Parabolic convention.
-        e = 1.0  # [-]
-    else:
-        a = -0.5*mu/energy
-    return (a, e, i, Omega, omega, nu)
+    return (a, 1.0 if parabolic else e, i, Omega, omega, nu)
 
 
 def PQW2IJK(Omega, i, w, r_PQW, v_PQW):
