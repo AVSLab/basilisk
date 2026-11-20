@@ -12,6 +12,7 @@ Detailed Module Description
 ---------------------------
 Within the configured altitude reach, the module returns the tabulated density and temperature
 at either endpoint and linearly interpolates between adjacent rows.
+An altitude that falls just outside the table by roundoff in the spacecraft radius uses the nearest endpoint.
 
 Module Assumptions and Limitations
 ----------------------------------

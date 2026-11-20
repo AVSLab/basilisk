@@ -73,23 +73,26 @@ def test_gram_csv_with_units_row(tmp_path):
     assert readAtmTable(path, "VenusGRAM") == expected
 
 
-@pytest.mark.parametrize("table, altitude, density, temperature", [
-    # Altitude [m], density [kg/m^3], temperature [K].
-    ("VenusGRAM", 250.0, 63.97, 733.4),
-    ("EarthGRAM", 200000.0, 4.2191e-10, 1240.60),
-    ("EarthGRAM", 200001.0, 0.0, 0.0),
+@pytest.mark.parametrize("table, altitude, direction, density, temperature", [
+    # Altitude [m], radial direction [-], density [kg/m^3], temperature [K].
+    ("VenusGRAM", 250.0, [1, 0, 0], 63.97, 733.4),
+    ("EarthGRAM", 200000.0, [1, 0, 0], 4.2191e-10, 1240.60),
+    ("VenusGRAM", 0.0, [1, 4, 4], 64.79, 735.3),
+    ("EarthGRAM", 200000.0, [1, 1, 1], 4.2191e-10, 1240.60),
+    ("VenusGRAM", -0.001, [1, 4, 4], 0.0, 0.0),
+    ("EarthGRAM", 200000.001, [1, 1, 1], 0.0, 0.0),
 ])
-def test_tabular_atmosphere_boundaries(table, altitude, density, temperature):
-    """Check both atmosphere outputs in the lowest interval, at the top, and above it."""
+def test_tabular_atmosphere_boundaries(table, altitude, direction, density, temperature):
+    """Check interpolation, off-axis endpoints, and altitudes a millimeter outside the table."""
     model = tabularAtmosphere.TabularAtmosphere()
     file = DataFile.AtmosphereData[f"{table}Nominal"]
     alt, rho, temp = readAtmTable(get_path(file), table)
     model.altList = tabularAtmosphere.DoubleVector(alt)
     model.rhoList = tabularAtmosphere.DoubleVector(rho)
     model.tempList = tabularAtmosphere.DoubleVector(temp)
-    model.planetRadius = 6371000.0  # [m]
+    model.planetRadius = {"EarthGRAM": 6378136.6, "VenusGRAM": 6051800.0}[table]  # [m]
     state = messaging.SCStatesMsgPayload()
-    state.r_BN_N = [model.planetRadius + altitude, 0.0, 0.0]  # [m]
+    state.r_BN_N = np.array(direction) * ((model.planetRadius + altitude) / np.linalg.norm(direction))  # [m]
     model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
     model.Reset(0)
     model.UpdateState(0)
