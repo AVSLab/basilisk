@@ -132,14 +132,15 @@ class VSCMGStateEffector final
     std::vector<VSCMGConfigMsgPayload> VSCMGData; //!< [-] VSCMG data structure
     /** @brief Validate and derive configuration without requiring linked states or clearing commands. */
     void initializeConfiguration();
+    void requireRegisteredStates(); //!< @brief Require spacecraft state registration for configured devices.
     VSCMGArrayTorqueMsgPayload incomingCmdBuffer{}; //!< [-] One-time allocation for savings
     uint64_t prevCommandTime;                       //!< [-] Time for previous valid thruster firing
 
-    StateData* hubOmega;       //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
-    StateData* OmegasState;    //!< [rad/s] RW spin state
-    StateData* thetasState;    //!< [rad] RW angle
-    StateData* gammasState;    //!< [rad] CMG gimbal angle
-    StateData* gammaDotsState; //!< [rad/s] CMG gimbal angle rate
+    StateData* hubOmega;              //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
+    StateData* OmegasState = nullptr; //!< [rad/s] RW spin state
+    StateData* thetasState = nullptr; //!< [rad] RW angle
+    StateData* gammasState = nullptr; //!< [rad] CMG gimbal angle
+    StateData* gammaDotsState = nullptr; //!< [rad/s] CMG gimbal angle rate
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<VSCMGConfigMsgPayload>>> ownedVscmgOutMsgs; //!< Storage for vscmgOutMsgs.

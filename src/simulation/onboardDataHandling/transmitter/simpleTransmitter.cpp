@@ -29,7 +29,6 @@ SimpleTransmitter::SimpleTransmitter()
     this->packetSize = 0.0;
     this->nodeBaudRate = 0.0;
     this->packetTransmitted = 0.0;
-    this->previousTime = 0.0;
     this->numBuffers = 0;
     return;
 }
@@ -47,34 +46,31 @@ SimpleTransmitter::~SimpleTransmitter()
 void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
+    this->packetTransmitted = 0.0; // [bit]
     return;
+}
+
+void SimpleTransmitter::customReset(uint64_t currentClock [[maybe_unused]])
+{
+    this->packetTransmitted = 0.0; // [bit]
+    this->currentIndex = -1;
+    this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
 }
 
 bool SimpleTransmitter::customReadMessages()
 {
-
-    DataStorageStatusMsgPayload nodeMsg;
-
-    this->storageUnitMsgs.clear();
-
-    //! - read in the data node use/supply messages
-    bool dataRead = true;
-    bool tmpDataRead;
-
-    if (this->storageUnitInMsgs.size() > 0) {
-        for (long unsigned int c = 0; c < storageUnitInMsgs.size(); c++) {
-            tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
-            nodeMsg = this->storageUnitInMsgs.at(c)();
-            dataRead = dataRead && tmpDataRead;
-
-            this->storageUnitMsgs.push_back(nodeMsg);
-        }
-    } else {
-        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
-        dataRead = false;
+    const auto storageAddress = readStorageMessages(this->storageUnitInMsgs, this->storageUnitMsgs);
+    if (this->storageUnitInMsgs.empty()) {
+        this->bskLogger.bskLog(BSK_INFORMATION, "SimpleTransmitter has no storage unit attached.");
     }
-
-    return true;
+    if (storageAddress != this->lastStorageAddress) {
+        this->packetTransmitted = 0.0; // [bit]
+        this->lastStorageAddress = storageAddress;
+    }
+    if (!storageAddress) {
+        this->currentIndex = -1;
+    }
+    return storageAddress != 0;
 }
 
 /*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
@@ -82,8 +78,9 @@ bool SimpleTransmitter::customReadMessages()
 void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
 {
 
-    this->currentTimestep = currentTime - this->previousTime;
+    this->currentTimestep = currentTime - this->previousUpdateTime;
 
+    *dataUsageSimMsg = this->nodeDataOutMsg.zeroMsgPayload;
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
     this->currentIndex = this->getMaxIndex();
@@ -127,7 +124,6 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimM
         dataUsageSimMsg->baudRate = 0;
         this->packetTransmitted = 0;
     }
-    this->previousTime = currentTime;
     return;
 }
 
@@ -136,6 +132,9 @@ int SimpleTransmitter::getMaxIndex()
     //! - Loop through storedData, select index w/ largest amt
     double maxVal = -1.0;
     int maxIndex = -1;
+    if (this->storageUnitMsgs.empty()) {
+        return maxIndex;
+    }
     for (long unsigned int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
         if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgs.back().storedData[i];

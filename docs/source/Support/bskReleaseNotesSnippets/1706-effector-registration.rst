@@ -1,0 +1,1 @@
+- Configured ``ReactionWheelStateEffector`` and ``VSCMGStateEffector`` modules raise ``BasiliskError`` on scheduled updates, mass-property updates, or direct output writes if the spacecraft has not registered their device states (#1706).

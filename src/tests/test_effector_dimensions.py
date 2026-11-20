@@ -250,6 +250,27 @@ def wheels(count):
     return effector
 
 
+@pytest.mark.parametrize("attached", [False, True], ids=["unattached", "unscheduled-spacecraft"])
+def test_wheel_update_requires_registered_states(attached):
+    """Reject scheduled updates, output writes, and mass-property updates before registration."""
+    effector = wheels(1)
+    parent = spacecraft.Spacecraft()
+    if attached:
+        parent.addStateEffector(effector)
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", macros.sec2nano(0.1)))  # [ns]
+    sim.AddModelToTask("task", effector)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)  # [ns]
+    with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+        sim.ExecuteSimulation()
+    for publish in (effector.WriteOutputMessages, effector.writeOutputStateMessages):
+        with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+            publish(0)  # [ns]
+    with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+        effector.updateEffectorMassProps(0.0)  # [s]
+
+
 @pytest.mark.parametrize("path", ["reset", "attachment", "input", "output"])
 def test_wheel_capacity(path):
     """Guard both fixed-size wheel payloads even when the command input is unlinked."""

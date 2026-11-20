@@ -128,12 +128,16 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
  */
 void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
+    this->requireRegisteredStates();
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
     this->effProps.rEff_CB_B.setZero();
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
+    if (this->VSCMGData.empty()) {
+        return;
+    }
 
     const auto omegasVector = this->OmegasState->stateView();
     const auto gammasVector = this->gammasState->stateView();
@@ -758,6 +762,15 @@ void VSCMGStateEffector::initializeConfiguration()
     }
 }
 
+void VSCMGStateEffector::requireRegisteredStates()
+{
+    if (!this->VSCMGData.empty() && (!this->OmegasState || !this->gammasState || !this->gammaDotsState ||
+                                     (this->numVSCMGJitter > 0 && !this->thetasState))) {
+        this->bskLogger.bskError("VSCMGStateEffector: state registration is incomplete. "
+                                 "Please attach the effector to a scheduled spacecraft and complete initialization.");
+    }
+}
+
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
@@ -765,7 +778,12 @@ void VSCMGStateEffector::initializeConfiguration()
  */
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    this->requireRegisteredStates();
     this->outputStates = this->speedOutMsg.zeroMsgPayload;
+    if (this->VSCMGData.empty()) {
+        this->speedOutMsg.write(&this->outputStates, this->moduleID, CurrentClock);
+        return;
+    }
     VSCMGConfigMsgPayload tmpVSCMG;
     const auto omegasVector = this->OmegasState->stateView();
     const auto gammasVector = this->gammasState->stateView();
@@ -984,6 +1002,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
  */
 void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->requireRegisteredStates();
     //! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
     ReadInputs();
     ConfigureVSCMGRequests(static_cast<double>(CurrentSimNanos) * NANO2SEC);

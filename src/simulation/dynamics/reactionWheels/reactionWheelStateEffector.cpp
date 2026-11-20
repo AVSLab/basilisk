@@ -194,6 +194,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
  */
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
+    this->requireRegisteredStates();
     this->validateRegisteredLayout();
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
@@ -582,6 +583,14 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]]
     this->rwSpeedMsgBuffer = this->rwSpeedOutMsg.zeroMsgPayload;
 }
 
+void ReactionWheelStateEffector::requireRegisteredStates()
+{
+    if (!this->ReactionWheelData.empty() && !this->registeredWheelModels) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: state registration is incomplete. "
+                                 "Please attach the effector to a scheduled spacecraft and complete initialization.");
+    }
+}
+
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
@@ -589,6 +598,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]]
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    this->requireRegisteredStates();
     this->validateRegisteredLayout();
     const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
     const double* thetaVector = this->numRWJitter > 0 ? this->thetasState->stateView().data() : nullptr;
@@ -630,6 +640,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
     this->validateDimensions();
+    this->requireRegisteredStates();
     const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
     const double* thetaVector = this->numRWJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     int thetaCount = 0;
@@ -746,6 +757,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_
  */
 void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->requireRegisteredStates();
     //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(static_cast<double>(CurrentSimNanos) * NANO2SEC);
