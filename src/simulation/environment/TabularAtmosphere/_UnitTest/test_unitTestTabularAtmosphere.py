@@ -83,6 +83,16 @@ def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
         readAtmTable(path, "VenusGRAM")
 
 
+def _tabular_model(table):
+    model = tabularAtmosphere.TabularAtmosphere()
+    file = DataFile.AtmosphereData[f"{table}Nominal"]
+    alt, rho, temp = readAtmTable(get_path(file), table)
+    model.altList = tabularAtmosphere.DoubleVector(alt)
+    model.rhoList = tabularAtmosphere.DoubleVector(rho)
+    model.tempList = tabularAtmosphere.DoubleVector(temp)
+    return model
+
+
 @pytest.mark.parametrize("table, altitude, direction, density, temperature", [
     # Altitude [m], radial direction [-], density [kg/m^3], temperature [K].
     ("VenusGRAM", 250.0, [1, 0, 0], 63.97, 733.4),
@@ -94,15 +104,42 @@ def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
 ])
 def test_tabular_atmosphere_boundaries(table, altitude, direction, density, temperature):
     """Check interpolation, off-axis endpoints, and altitudes a millimeter outside the table."""
-    model = tabularAtmosphere.TabularAtmosphere()
-    file = DataFile.AtmosphereData[f"{table}Nominal"]
-    alt, rho, temp = readAtmTable(get_path(file), table)
-    model.altList = tabularAtmosphere.DoubleVector(alt)
-    model.rhoList = tabularAtmosphere.DoubleVector(rho)
-    model.tempList = tabularAtmosphere.DoubleVector(temp)
+    model = _tabular_model(table)
     model.planetRadius = {"EarthGRAM": 6378136.6, "VenusGRAM": 6051800.0}[table]  # [m]
     state = messaging.SCStatesMsgPayload()
     state.r_BN_N = np.array(direction) * ((model.planetRadius + altitude) / np.linalg.norm(direction))  # [m]
+    model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
+    model.Reset(0)
+    model.UpdateState(0)
+    atmosphere = model.envOutMsgs[0].read()
+    assert atmosphere.neutralDensity == pytest.approx(density, rel=1e-12, abs=0.0)
+    assert atmosphere.localTemp == pytest.approx(temperature, rel=1e-12, abs=0.0)
+
+
+@pytest.mark.parametrize("altitude, density, temperature", [
+    (2000000.0, 2.589e-11, 900.5),  # [m], [kg/m^3], [K] at the last GRAM row
+    (2000000.001, 0.0, 0.0),        # [m], [kg/m^3], [K] one millimeter above it
+])
+def test_oblate_jupiter_table_top(altitude, density, temperature):
+    """Evaluate the top of the Jupiter profile using height above the reference ellipsoid."""
+    model = _tabular_model("JupiterGRAM")
+    model.planetRadius = 71492000.0  # [m] equatorial radius
+    polar_radius = 66854000.0  # [m]
+    model.setPlanetPolarRadius(polar_radius)
+    planet = messaging.SpicePlanetStateMsgPayload()
+    planet.J20002Pfix = np.eye(3)
+    planet_msg = messaging.SpicePlanetStateMsg().write(planet)
+    model.planetPosInMsg.subscribeTo(planet_msg)
+
+    latitude, longitude = np.deg2rad([40.0, 37.0])  # [rad]
+    eccentricity_sq = 1.0 - (polar_radius / model.planetRadius)**2
+    prime_vertical_radius = model.planetRadius / np.sqrt(1.0 - eccentricity_sq * np.sin(latitude)**2)  # [m]
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = [
+        (prime_vertical_radius + altitude) * np.cos(latitude) * np.cos(longitude),
+        (prime_vertical_radius + altitude) * np.cos(latitude) * np.sin(longitude),
+        (prime_vertical_radius * (1.0 - eccentricity_sq) + altitude) * np.sin(latitude),
+    ]  # [m]
     model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
     model.Reset(0)
     model.UpdateState(0)

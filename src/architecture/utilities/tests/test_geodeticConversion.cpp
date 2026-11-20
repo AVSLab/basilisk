@@ -110,3 +110,12 @@ TEST(GeodeticConversion, testPCPF2LLARoundTripFromEquatorToPole)
         }
     }
 }
+
+TEST(GeodeticConversion, testOblateJupiterAltitude)
+{
+    const double equatorialRadius = 71492000.0;                                     // [m]
+    const double polarRadius = 66854000.0;                                          // [m]
+    const Eigen::Vector3d lla(40.0 * M_PI / 180.0, 37.0 * M_PI / 180.0, 2000000.0); // [rad, rad, m]
+    const auto position = LLA2PCPF(lla, equatorialRadius, polarRadius);
+    EXPECT_NEAR(PCPF2LLA(position, equatorialRadius, polarRadius)[2], lla[2], 1.0e-7); // [m]
+}
