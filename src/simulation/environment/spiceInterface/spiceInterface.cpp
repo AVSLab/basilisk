@@ -32,6 +32,7 @@
 #include <limits>
 #include <sstream>
 #include <string.h>
+#include <utility>
 
 namespace {
 constexpr double julianDateJ2000 = 2451545.0; //!< [d] Julian date of the J2000 epoch
@@ -750,6 +751,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
  */
 void SpiceInterface::initTimeData()
 {
+    std::string utcCalInit = this->UTCCalInit;
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
@@ -760,26 +762,44 @@ void SpiceInterface::initTimeData()
                                "the input message.");
         } else {
             // Set the epoch information from the input message
-            char string[255];
+            // Keep the existing six decimal places when they represent the message exactly.
+            constexpr double microsecondsPerSecond = 1.0e6; // [us/s]
+            const double seconds = epochMsg.seconds;
+            const int precision = std::round(seconds * microsecondsPerSecond) / microsecondsPerSecond == seconds
+                                      ? 6
+                                      : std::numeric_limits<double>::max_digits10;
+            char string[charBufferSize];
             snprintf(string,
-                     255,
-                     "%4d/%02d/%02d, %02d:%02d:%04.6f (UTC)",
+                     sizeof(string),
+                     "%4d/%02d/%02d, %02d:%02d:%.*f (UTC)",
                      epochMsg.year,
                      epochMsg.month,
                      epochMsg.day,
                      epochMsg.hours,
                      epochMsg.minutes,
-                     epochMsg.seconds);
-            this->UTCCalInit = string;
+                     precision,
+                     seconds);
+            utcCalInit = string;
         }
     }
 
     //! - Get the TAI of the GPS epoch, which is fixed, so the conversion is done once here
-    double etGPSEpoch;
+    SpiceErrorModeGuard guard;
+    double etGPSEpoch{};
     str2et_c(this->GPSEpochTime.c_str(), &etGPSEpoch);
-    this->TAIGPSEpoch = unitim_c(etGPSEpoch, "TDB", "TAI"); // [s]
-    //! - Get the time value associate with the requested UTC date
-    str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
+    const double taiGPSEpoch = unitim_c(etGPSEpoch, "TDB", "TAI"); // [s]
+    //! - Get the ephemeris time for the requested UTC date
+    double etInit{};
+    str2et_c(utcCalInit.c_str(), &etInit);
+    if (failed_c()) {
+        SpiceChar cause[SPICE_ERROR_LMSGLN];
+        getmsg_c("LONG", sizeof(cause), cause);
+        reset_c();
+        bskLogger.bskError("SPICE epoch conversion failed: %s", cause);
+    }
+    this->UTCCalInit = std::move(utcCalInit);
+    this->TAIGPSEpoch = taiGPSEpoch;
+    this->J2000ETInit = etInit;
     if (this->J2000ETInit < etGPSEpoch) {
         bskLogger.bskLog(BSK_WARNING,
                          "The initial time is before the GPS epoch.  "
