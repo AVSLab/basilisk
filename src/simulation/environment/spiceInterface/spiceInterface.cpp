@@ -274,7 +274,7 @@ class SpiceInterface::SpiceReconstruction
         // SPICE query at the current time, which may still be within coverage.
         bool allOk = true;
         for (long i : idx) {
-            allOk &= ensurePosKnot(pi, planetName, i);
+            allOk &= ensurePosKnot(pi, planetName, i, kdSec);
         }
         if (!allOk) {
             return false;
@@ -461,14 +461,13 @@ class SpiceInterface::SpiceReconstruction
     //! Query + cache position knot k (spkezr_c, metres). Re-queries a previously-failed
     //! (fallback) knot so a transient / out-of-coverage failure does not poison the cache.
     //! Returns true if knot k holds a good (successfully queried) sample.
-    bool ensurePosKnot(PlanetInterp& pi, const std::string& planetName, long k)
+    bool ensurePosKnot(PlanetInterp& pi, const std::string& planetName, long k, double stepSeconds)
     {
         auto it = pi.posKnots.find(k);
         if (it != pi.posKnots.end() && it->second.ok) {
             return true; // already have a good knot; a stored fallback (ok==false) falls through
         }
-        // knotStep is in nanoseconds; the knot ET (seconds past J2000) is et0 + k*knotStep.
-        double et = this->et0 + static_cast<double>(k) * nanoToSec(pi.posCfg.knotStep);
+        const double et = this->et0 + static_cast<double>(k) * stepSeconds; // [s] past J2000
         double lighttime;
         double localState[6];
         // Reconstruction may request a future knot (interpolate=true); guard against a query past
