@@ -42,6 +42,16 @@ results in a coarser grid, which is more likely to yield a trajectory that viola
 finer grid where the chance of obtaining a constraint-incompliant grid is reduced. However, the trajectory in this case is less regular due to the fact that the
 interpolating curve is forced to pass through a larger number of waypoints. A higher ``N`` is also associated with a higher computational cost.
 
+The supported grid refinement range is ``2 <= N <= 20``. Grid generation validates the current
+value, including changes made after construction, and raises an error outside this range.
+The planner also raises an error rather than overflowing its fixed storage if a node would have
+more than 52 neighbors or a search/path list would have more than 10000 entries.
+
+Each grid generation clears the previous grid and path. If no constraint-free grid node can be
+selected for the start and goal attitudes, initialization raises an error before graph search.
+This means the sampled grid cannot support planning; it does not prove that no continuous maneuver
+exists. Review the constraints or choose another supported refinement level.
+
 
 Detailed Module Description
 ---------------------------
@@ -85,6 +95,8 @@ The module is configurable with the following parameters:
 
    * - Parameter
      - Description
+   * - ``N``
+     - grid refinement level, an integer from 2 through 20 inclusive
    * - ``sigma_BN_goal``
      - goal MRP attitude set
    * - ``omega_BN_B_goal``

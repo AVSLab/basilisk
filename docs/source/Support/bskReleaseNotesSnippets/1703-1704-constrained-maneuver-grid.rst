@@ -1,0 +1,3 @@
+- Added grid refinement validation (``2 <= N <= 20``) and node/neighbor capacity checks to :ref:`constrainedAttitudeManeuver` to prevent writes beyond fixed arrays (#1703).
+- Fixed :ref:`constrainedAttitudeManeuver` to reject grids without constraint-free endpoint candidates, rebuild the grid and path on each reset, and link neighbors to the stored goal node; effort evaluation now preserves the configured refinement level (#1704).
+- Clamped unit-vector dot products in :ref:`constrainedAttitudeManeuver` to prevent roundoff from misclassifying antipodal nodes for 180-degree keep-in and keep-out cones (#1704).
