@@ -43,6 +43,8 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk import __path__, hasBuildFeature
+from Basilisk.architecture import bskLogging
+from Basilisk.topLevelModules import pyswice
 bskPath = __path__[0]
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.simulation import spiceInterface
@@ -165,6 +167,120 @@ def test_singleKnotOrientationExtrapolationExactForConstantSpinner():
     assert nOrient == 1, f"constant spinner should need exactly one sxform query, got {nOrient}"
     # The position channel is on the exact path, so it counts one SPICE call per step.
     assert nPos > nOrient, f"exact position channel should query every step, got {nPos}"
+
+
+def _sample_orientation(planet, times, *reconstruction, epoch=DATE):
+    """Return the DCM, its time derivative, and the orientation query count for times in seconds."""
+    model = spiceInterface.SpiceInterface()
+    model.UTCCalInit = epoch
+    model.addPlanetNames([planet])
+    if reconstruction:
+        model.bskLogger.setLogLevel(bskLogging.BSK_WARNING)
+        model.setPlanetOrientationReconstruction(planet, *reconstruction)
+    model.Reset(0)
+    dcms, rates = [], []
+    for seconds in times:
+        model.UpdateState(macros.sec2nano(seconds))
+        state = model.planetStateOutMsgs[0].read()
+        dcms.append(state.J20002Pfix)
+        rates.append(state.J20002Pfix_dot)
+    return np.array(dcms), np.array(rates), model.getPlanetSpiceQueryCount(planet)[1]
+
+
+@pytest.mark.parametrize("use_rates", [True, False])
+@pytest.mark.parametrize("interpolate", [True, False])
+def test_orientation_stencil_crosses_half_turn(use_rates, interpolate):
+    """Four six-hour Earth knots span a branch cut. The local pair still resolves the rotation."""
+    knot = macros.hour2nano(6.0)  # [ns]
+    times = np.arange(97) * 1800.0  # [s] Two days, including knot boundaries and midpoints
+    truth, truth_rate, _ = _sample_orientation("earth", times)
+    pair, pair_rate, _ = _sample_orientation("earth", times, knot, 2, use_rates, interpolate)
+    dcm, rate, queries = _sample_orientation("earth", times, knot, 4, use_rates, interpolate)
+    np.testing.assert_array_equal(dcm, pair)
+    np.testing.assert_array_equal(rate, pair_rate)
+    np.testing.assert_allclose(dcm, truth, rtol=0.0, atol=2e-7)  # [-]
+    np.testing.assert_allclose(rate, truth_rate, rtol=0.0, atol=1e-11)  # [1/s]
+    assert queries < len(times)
+
+
+@pytest.mark.parametrize("n_knots", [2, 4])
+def test_aliased_orientation_interval_uses_exact_spice(n_knots, capfd):
+    """Earth turns about once per day, so successive daily DCMs hide the intervening rotation."""
+    knot = macros.hour2nano(24.0)  # [ns]
+    times = np.arange(9) * 21600.0  # [s] Quarter-day samples
+    truth, truth_rate, _ = _sample_orientation("earth", times)
+    dcm, rate, _ = _sample_orientation("earth", times, knot, n_knots, False, True)
+    np.testing.assert_array_equal(dcm, truth)
+    np.testing.assert_array_equal(rate, truth_rate)
+    assert capfd.readouterr().out.count("half a turn") == 1
+
+
+@pytest.mark.parametrize("planet, days, epoch", [
+    ("moon", 13.661, "2021 JUN 01 00:00:00 TDB"),  # [d] Short arc opposes both sampled rates
+    ("venus", 122.0, DATE),  # [d] Retrograde half-turn beyond 2**53 ns
+])
+def test_planet_half_turn_uses_exact_orientation_and_rate(planet, days, epoch):
+    """Resolve a variable-rate lunar half-turn and a long Venus interval at off-knot times."""
+    times = np.array([0.25, 0.5, 0.75]) * days * 86400.0  # [s]
+    truth, truth_rate, _ = _sample_orientation(planet, times, epoch=epoch)
+    dcm, rate, _ = _sample_orientation(planet, times, macros.day2nano(days), 2, True, True, epoch=epoch)
+    np.testing.assert_array_equal(dcm, truth)
+    np.testing.assert_array_equal(rate, truth_rate)
+
+
+def test_exact_orientation_fallback_recovers_from_coverage_gap(tmp_path):
+    """A binary Earth orientation kernel covers both daily knots with a gap between them."""
+    kernel = str(tmp_path / "earth_gap.bpc")
+    day = 86400.0  # [s]
+    half_window = 60.0  # [s] Coverage on either side of each knot
+    spin = 7.292e-5  # [rad/s]
+    handle = pyswice.new_spiceIntArray(1)
+    pyswice.pckopn_c(kernel, "Earth coverage gap", 0, handle)
+    file_id = pyswice.spiceIntArray_getitem(handle, 0)
+    pyswice.delete_spiceIntArray(handle)
+    coefficients = pyswice.new_doubleArray(6)
+    try:
+        for center in (0.0, day):
+            # Each Euler angle has two Chebyshev coefficients [rad]. Only the third angle changes.
+            for i, value in enumerate((0.0, 0.0, 0.0, 0.0, spin * center, spin * half_window)):
+                pyswice.doubleArray_setitem(coefficients, i, value)
+            start = center - half_window  # [s] ET
+            # NAIF frame class ID 3000 identifies ITRF93 in a binary PCK.
+            pyswice.pckw02_c(file_id, 3000, "J2000", start, center + half_window, "ITRF93",
+                             2 * half_window, 1, 1, coefficients, start)
+    finally:
+        pyswice.pckcls_c(file_id)
+        pyswice.delete_doubleArray(coefficients)
+
+    model = spiceInterface.SpiceInterface()
+    model.addKernelPath(kernel)
+    model.addPlanetNames(["earth"])
+    model.planetFrames = ["ITRF93"]
+    model.UTCCalInit = "2000 JAN 01 12:00:00 TDB"
+    model.setPlanetOrientationReconstruction("earth", macros.sec2nano(day))
+    model.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match=r"ITRF93.*ET 43200.*SPICE\(FRAMEDATANOTFOUND\)"):
+        model.UpdateState(macros.sec2nano(day / 2))
+    assert model.planetStateOutMsgs[0].read().J2000Current == 0.0  # [s] Still the reset output
+
+    covered_time = day - half_window / 2  # [s]
+    model.UpdateState(macros.sec2nano(covered_time))
+    recovered = model.planetStateOutMsgs[0].read()
+    assert recovered.J2000Current == covered_time
+    assert np.linalg.norm(recovered.J20002Pfix_dot) / np.sqrt(2.0) == pytest.approx(spin)
+
+
+@pytest.mark.parametrize("planet, days, n_knots", [
+    ("moon", 2.0, 4),  # [d] Preserve the accuracy of the four-knot fit
+    ("venus", 120.0, 2),  # [d] Resolved retrograde rotation beyond 2**53 ns
+])
+def test_resolved_orientation_keeps_requested_fit(planet, days, n_knots):
+    """Well-sampled orientations retain interpolation accuracy and reuse their cached knots."""
+    times = np.arange(25) * (days * 86400.0 / 8)  # [s] Eight samples per knot interval
+    truth, _, _ = _sample_orientation(planet, times)
+    dcm, _, queries = _sample_orientation(planet, times, macros.day2nano(days), n_knots, True, True)
+    np.testing.assert_allclose(dcm, truth, rtol=0.0, atol=1e-9)  # [-]
+    assert queries < len(times)
 
 
 def test_disabledChannelsEmitTrivialDefault():
