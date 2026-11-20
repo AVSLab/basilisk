@@ -63,11 +63,18 @@ def readMarsGRAM(filename):
 	return altList, rhoList, tempList
 
 
+def _gram_unit_label(value):
+    value = value.strip()
+    if (value.startswith("[") and value.endswith("]")) or (value.startswith("(") and value.endswith(")")):
+        value = value[1:-1].strip()
+    return "K" if value.casefold() == "kelvin" else value
+
+
 def _read_gram_csv(filename):
     units = {
-        "Height_km": ("km", "[km]"),
-        "Density_kgm3": ("kg/m3", "[kg/m3]", "kg/m^3", "[kg/m^3]", "kg/m³", "[kg/m³]"),
-        "Temperature_K": ("K", "[K]", "Kelvin", "[Kelvin]"),
+        "Height_km": {"km"},
+        "Density_kgm3": {"kg/m3", "kg/m^3", "kg/m³"},
+        "Temperature_K": {"K"},
     }
     # Read the header as a record so it sets the width even for the first sample.
     # The Python parser rejects long rows and pads short rows with missing fields.
@@ -77,7 +84,7 @@ def _read_gram_csv(filename):
     header = records.iloc[0].tolist()
     columns = [header.index(name) for name in units]
     df = records.iloc[1:, columns].set_axis(list(units), axis="columns")
-    if not df.empty and all(df[column].iat[0].strip() in labels for column, labels in units.items()):
+    if not df.empty and all(_gram_unit_label(df[column].iat[0]) in labels for column, labels in units.items()):
         df = df.iloc[1:]
     df = df.astype(float).sort_values("Height_km")
     df["Height_m"] = df.pop("Height_km") * 1000.0  # [m]
