@@ -404,7 +404,9 @@ A componentwise roundoff bound rejects parallel and antiparallel endpoints
 even when normalization produces a tiny nonzero cross product and the
 configured angular threshold would otherwise allow it. Alignment rejection
 occurs before computing <code class="docutils literal notranslate"><span class="pre">lambda</span></code> and the scaled flight time, avoiding
-invalid square roots or division by zero for rejected collinear geometry.</p></li>
+invalid square roots or division by zero for rejected collinear geometry.
+On Windows with MSVC, the cross-product norm could itself raise <code class="docutils literal notranslate"><span class="pre">FE_INVALID</span></code>
+through an unused SIMD lane. The alignment check now uses a scalar square root.</p></li>
 <li><p>An aligned input to <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">C++ Module: lambertSolver</span></a> could permanently disable solutions
 on that module instance, even after a later input defined a valid transfer
 plane. Alignment rejection now applies only to the current update. Both
