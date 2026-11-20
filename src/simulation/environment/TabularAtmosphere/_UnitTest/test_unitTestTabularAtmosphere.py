@@ -62,15 +62,25 @@ def test_gram_surface_row(planet, row_count, density, temperature):
     assert (alt[0], rho[0], temp[0]) == (0.0, density, temperature)  # altitude [m]
 
 
-def test_gram_csv_with_units_row(tmp_path):
+@pytest.mark.parametrize("csv_rows", [
+    "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n1,2,300\n0,3,310\n",
+    "Temperature_K,Height_km,Density_kgm3\nKelvin,km,kg/m^3\n300,1,2\n310,0,3\n",
+])
+def test_gram_csv_with_units_row(tmp_path, csv_rows):
     """Read a user-supplied GRAM CSV with a units row and descending altitudes."""
     path = tmp_path / "profile.csv"
-    path.write_text(
-        "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n1,2,300\n0,3,310\n",
-        encoding="utf-8",
-    )
+    path.write_text(csv_rows, encoding="utf-8")
     expected = ([0.0, 1000.0], [3.0, 2.0], [310.0, 300.0])  # [m], [kg/m^3], [K]
     assert readAtmTable(path, "VenusGRAM") == expected
+
+
+@pytest.mark.parametrize("first_row", ["bad_height,bad_density,bad_temp", "km,g/cm3,K", "NA,NA,NA"])
+def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
+    """Reject malformed samples and incompatible units even when a valid data row follows."""
+    path = tmp_path / "profile.csv"
+    path.write_text(f"Height_km,Density_kgm3,Temperature_K\n{first_row}\n0.5,63.15,731.5\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
 
 
 @pytest.mark.parametrize("table, altitude, direction, density, temperature", [
