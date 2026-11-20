@@ -74,6 +74,42 @@ def simulation_with_effector(config, priority=None):
     return simulation, parent, effector, command
 
 
+@pytest.mark.parametrize("attached", [False, True], ids=["unattached", "unscheduled-spacecraft"])
+def test_vscmg_update_requires_registered_states(attached):
+    """Reject scheduled updates, output writes, and mass-property updates before registration."""
+    effector = vscmgStateEffector.VSCMGStateEffector()
+    effector.AddVSCMG(configuration(MODELS[0]))
+    parent = spacecraft.Spacecraft()
+    if attached:
+        parent.addStateEffector(effector)
+    command = messaging.VSCMGArrayTorqueMsg().write(messaging.VSCMGArrayTorqueMsgPayload())
+    effector.cmdsInMsg.subscribeTo(command)
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", macros.sec2nano(0.1)))  # [ns]
+    sim.AddModelToTask("task", effector)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)  # [ns]
+    with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+        sim.ExecuteSimulation()
+    with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+        effector.WriteOutputMessages(0)  # [ns]
+    with pytest.raises(BasiliskError, match="attach the effector to a scheduled spacecraft"):
+        effector.updateEffectorMassProps(0.0)  # [s]
+
+
+def test_empty_vscmg_output():
+    """An empty effector contributes zero mass and publishes zero speeds and gimbal states."""
+    effector = vscmgStateEffector.VSCMGStateEffector()
+    effector.updateEffectorMassProps(0.0)  # [s]
+    assert effector.effProps.mEff == 0.0  # [kg]
+    output = effector.speedOutMsg.addSubscriber()
+    effector.WriteOutputMessages(0)  # [ns]
+    assert output.isWritten()
+    state = effector.speedOutMsg.read()
+    for values in (state.wheelSpeeds, state.gimbalAngles, state.gimbalRates):
+        assert not any(values)
+
+
 @pytest.mark.parametrize("model", MODELS)
 def test_attachment_matches_both_scheduler_orders(model):
     """Derived properties and propagation must agree with either Reset ordering or no scheduled Reset."""
