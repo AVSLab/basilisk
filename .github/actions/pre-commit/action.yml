@@ -12,17 +12,16 @@ runs:
         rustup toolchain install stable --profile minimal --component rustfmt
         rustup default stable
 
-    - id: file_changes
+    - name: List changed files
       uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
       with:
         json: true
-        escape_json: false
         safe_output: false
         quotepath: false
+        write_output_files: true
+        output_dir: ${{ runner.temp }}/pre-commit-changed-files
     - name: Check changed files
       shell: bash
-      env:
-        CHANGED_FILES: ${{ steps.file_changes.outputs.all_changed_files }}
       run: |
-        jq --raw-output0 '.[] | "./" + .' <<< "$CHANGED_FILES" |
+        jq --raw-output0 '.[] | "./" + .' "$RUNNER_TEMP/pre-commit-changed-files/all_changed_files.json" |
           xargs -0 -r pre-commit run --show-diff-on-failure --color=always --files
