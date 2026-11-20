@@ -22,6 +22,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,8 @@ class DataNodeBase : public SysModel
   protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
+    static std::uintptr_t readStorageMessages(std::vector<ReadFunctor<DataStorageStatusMsgPayload>>& readers,
+                                              std::vector<DataStorageStatusMsgPayload>& messages);
     virtual void evaluateDataModel(
         DataNodeUsageMsgPayload* dataUsageMsg,
         double currentTime) = 0; //!< Virtual void method used to compute module-wise data usage/generation.
@@ -58,6 +61,7 @@ class DataNodeBase : public SysModel
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
   protected:
+    double previousUpdateTime = 0.0;     //!< [s] Time of the previous data-node update, including idle updates.
     DataNodeUsageMsgPayload nodeDataMsg; //!< class variable
     DeviceCmdMsgPayload nodeStatusMsg;   //!< class variable
 };
