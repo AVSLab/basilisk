@@ -1,0 +1,3 @@
+- Fixed ``readAtmTable`` dropping the surface row of the nominal Venus, Uranus, Titan, and Jupiter GRAM tables and :ref:`tabularAtmosphere` returning zero density and temperature at the highest tabulated altitude (issue #1698).
+- Fixed a geodetic altitude conversion error that could place a spacecraft just above the final atmosphere sample on an oblate planet (issue #1698).
+- The Venus, Uranus, Titan, and Jupiter GRAM CSV readers now raise ``ValueError`` for Boolean or nonfinite height, density, or temperature samples (issue #1698).

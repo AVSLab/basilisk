@@ -18,8 +18,7 @@
  */
 
 #include "tabularAtmosphere.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include <iostream>
+#include <limits>
 
 /*! The constructor method initializes data list lengths to zero.
 
@@ -72,9 +71,18 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock [[maybe_unused]])
  */
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime [[maybe_unused]])
 {
-    if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
+    // Computing altitude from the position norm can round a table endpoint just outside its range.
+    const double tolerance = 4.0 * std::numeric_limits<double>::epsilon() * this->planetRadius; // [m]
+    if (this->orbitAltitude < this->altList.front() - tolerance ||
+        this->orbitAltitude > this->altList.back() + tolerance) {
         msg->neutralDensity = 0.0;
         msg->localTemp = 0.0;
+    } else if (this->orbitAltitude <= this->altList.front()) {
+        msg->neutralDensity = this->rhoList.front();
+        msg->localTemp = this->tempList.front();
+    } else if (this->orbitAltitude >= this->altList.back()) {
+        msg->neutralDensity = this->rhoList.back();
+        msg->localTemp = this->tempList.back();
     } else {
         for (uint32_t i = 0; i <= this->altList.size() - 1; i++) {
             if (this->altList[i] > this->orbitAltitude) {

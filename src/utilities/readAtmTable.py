@@ -63,48 +63,50 @@ def readMarsGRAM(filename):
 	return altList, rhoList, tempList
 
 
-def readVenusGRAM(filename):
-	df = pd.read_csv(filename, skiprows=[1])
-	df.sort_values(by=['Height_km'],ascending=True, inplace=True)
-	df.Height_km = df.Height_km * 1000
-	altList = df.Height_km.to_list()
-	rhoList = df.Density_kgm3.to_list()
-	tempList = df.Temperature_K.to_list()
+def _gram_unit_label(value):
+    value = value.strip()
+    if (value.startswith("[") and value.endswith("]")) or (value.startswith("(") and value.endswith(")")):
+        value = value[1:-1].strip()
+    return "K" if value.casefold() == "kelvin" else value
 
-	return altList, rhoList, tempList
+
+def _read_gram_csv(filename):
+    units = {
+        "Height_km": {"km"},
+        "Density_kgm3": {"kg/m3", "kg/m^3", "kg/m³"},
+        "Temperature_K": {"K"},
+    }
+    # Read the header as a record so it sets the width even for the first sample.
+    # The Python parser rejects long rows and pads short rows with missing fields.
+    records = pd.read_csv(filename, header=None, engine="python", dtype=str, keep_default_na=False)
+    if records.isna().any(axis=None):
+        raise ValueError("GRAM CSV row has fewer fields than the header.")
+    header = records.iloc[0].tolist()
+    columns = [header.index(name) for name in units]
+    df = records.iloc[1:, columns].set_axis(list(units), axis="columns")
+    if not df.empty and all(_gram_unit_label(df[column].iat[0]) in labels for column, labels in units.items()):
+        df = df.iloc[1:]
+    df = df.astype(float).sort_values("Height_km")
+    df["Height_m"] = df.pop("Height_km") * 1000.0  # [m]
+    if not np.isfinite(df.to_numpy()).all():
+        raise ValueError("GRAM height, density, and temperature must be finite.")
+    return df["Height_m"].to_list(), df["Density_kgm3"].to_list(), df["Temperature_K"].to_list()
+
+
+def readVenusGRAM(filename):
+    return _read_gram_csv(filename)
 
 
 def readUranusGRAM(filename):
-	df = pd.read_csv(filename, skiprows=[1])
-	df.sort_values(by=['Height_km'],ascending=True, inplace=True)
-	df.Height_km = df.Height_km * 1000
-	altList = df.Height_km.to_list()
-	rhoList = df.Density_kgm3.to_list()
-	tempList = df.Temperature_K.to_list()
-
-	return altList, rhoList, tempList
+    return _read_gram_csv(filename)
 
 
 def readTitanGRAM(filename):
-	df = pd.read_csv(filename, skiprows=[1])
-	df.sort_values(by=['Height_km'],ascending=True, inplace=True)
-	df.Height_km = df.Height_km * 1000
-	altList = df.Height_km.to_list()
-	rhoList = df.Density_kgm3.to_list()
-	tempList = df.Temperature_K.to_list()
-
-	return altList, rhoList, tempList
+    return _read_gram_csv(filename)
 
 
 def readJupiterGRAM(filename):
-	df = pd.read_csv(filename, skiprows=[1])
-	df.sort_values(by=['Height_km'],ascending=True, inplace=True)
-	df.Height_km = df.Height_km * 1000
-	altList = df.Height_km.to_list()
-	rhoList = df.Density_kgm3.to_list()
-	tempList = df.Temperature_K.to_list()
-
-	return altList, rhoList, tempList
+    return _read_gram_csv(filename)
 
 
 def readMSIS(filename):

@@ -47,6 +47,147 @@ from Basilisk.utilities.supportDataTools.dataFetcher import (
 )
 
 
+@pytest.mark.parametrize("planet, row_count, density, temperature", [
+    # Surface density [kg/m^3] and temperature [K] from the nominal GRAM files.
+    ("Venus", 401, 64.79, 735.3),
+    ("Uranus", 2001, 0.3788, 76.4),
+    ("Titan", 2001, 5.475, 93.9),
+    ("Jupiter", 2001, 0.1740, 166.1),
+])
+def test_gram_surface_row(planet, row_count, density, temperature):
+    """Read the complete nominal profile, including the surface sample."""
+    file = DataFile.AtmosphereData[f"{planet}GRAMNominal"]
+    alt, rho, temp = readAtmTable(get_path(file), f"{planet}GRAM")
+    assert len(alt) == len(rho) == len(temp) == row_count
+    assert (alt[0], rho[0], temp[0]) == (0.0, density, temperature)  # altitude [m]
+
+
+@pytest.mark.parametrize("csv_rows", [
+    "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n1,2,300\n0,3,310\n",
+    "Temperature_K,Height_km,Density_kgm3\nKelvin,km,kg/m^3\n300,1,2\n310,0,3\n",
+    "Height_km,Density_kgm3,Temperature_K\n(km),(kg/m^3),(K)\n1,2,300\n0,3,310\n",
+    "Height_km,Density_kgm3,Temperature_K\nkm,kg/m3,kelvin\n1,2,300\n0,3,310\n",
+])
+def test_gram_csv_with_units_row(tmp_path, csv_rows):
+    """Read a user-supplied GRAM CSV with a units row and descending altitudes."""
+    path = tmp_path / "profile.csv"
+    path.write_text(csv_rows, encoding="utf-8")
+    expected = ([0.0, 1000.0], [3.0, 2.0], [310.0, 300.0])  # [m], [kg/m^3], [K]
+    assert readAtmTable(path, "VenusGRAM") == expected
+
+
+@pytest.mark.parametrize("profile", [
+    "Height_km,Density_kgm3,Temperature_K\n0,64,79,735.3\n0.5,63,15,731.5\n",
+    "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n0,64.79,735.3\n0.5,63,15,731.5\n",
+    "Height_km,Density_kgm3,Temperature_K,Note\n0,64.79,735.3\n",
+], ids=["wide-first-row", "wide-later-row", "short-row"])
+def test_gram_csv_rejects_wrong_row_width(tmp_path, profile):
+    """Reject records whose field count differs from the header, including unused columns."""
+    path = tmp_path / "profile.csv"
+    path.write_text(profile, encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
+
+
+def test_gram_csv_with_extra_named_columns(tmp_path):
+    """Read the required fields by name when an unused field contains a quoted comma."""
+    path = tmp_path / "profile.csv"
+    path.write_text(
+        'Temperature_K,Note,Height_km,Density_kgm3\n735.3,"surface, nominal",0,64.79\n731.5,,0.5,63.15\n',
+        encoding="utf-8",
+    )
+    assert readAtmTable(path, "VenusGRAM") == ([0.0, 500.0], [64.79, 63.15], [735.3, 731.5])  # [m], [kg/m^3], [K]
+
+
+@pytest.mark.parametrize("first_row", [
+    "bad_height,bad_density,bad_temp", "km,g/cm3,K", "(km),(g/cm3),(K)", "[km),kg/m3,K", "NA,NA,NA",
+])
+def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
+    """Reject malformed samples and incompatible units even when a valid data row follows."""
+    path = tmp_path / "profile.csv"
+    path.write_text(f"Height_km,Density_kgm3,Temperature_K\n{first_row}\n0.5,63.15,731.5\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
+
+
+@pytest.mark.parametrize("rows", [
+    "0,64.79,True\n0.5,63.15,False\n",
+    "0,64.79,735.3\n0.5,NaN,731.5\n",
+    "0,64.79,735.3\ninf,63.15,731.5\n",
+], ids=["boolean-temperature", "nan-density", "infinite-height"])
+def test_gram_csv_requires_finite_numbers(tmp_path, rows):
+    """Reject Boolean fields and nonfinite samples anywhere in a GRAM profile."""
+    path = tmp_path / "profile.csv"
+    path.write_text("Height_km,Density_kgm3,Temperature_K\n" + rows, encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
+
+
+def _tabular_model(table):
+    model = tabularAtmosphere.TabularAtmosphere()
+    file = DataFile.AtmosphereData[f"{table}Nominal"]
+    alt, rho, temp = readAtmTable(get_path(file), table)
+    model.altList = tabularAtmosphere.DoubleVector(alt)
+    model.rhoList = tabularAtmosphere.DoubleVector(rho)
+    model.tempList = tabularAtmosphere.DoubleVector(temp)
+    return model
+
+
+@pytest.mark.parametrize("table, altitude, direction, density, temperature", [
+    # Altitude [m], radial direction [-], density [kg/m^3], temperature [K].
+    ("VenusGRAM", 250.0, [1, 0, 0], 63.97, 733.4),
+    ("EarthGRAM", 200000.0, [1, 0, 0], 4.2191e-10, 1240.60),
+    ("VenusGRAM", 0.0, [1, 4, 4], 64.79, 735.3),
+    ("EarthGRAM", 200000.0, [1, 1, 1], 4.2191e-10, 1240.60),
+    ("VenusGRAM", -0.001, [1, 4, 4], 0.0, 0.0),
+    ("EarthGRAM", 200000.001, [1, 1, 1], 0.0, 0.0),
+])
+def test_tabular_atmosphere_boundaries(table, altitude, direction, density, temperature):
+    """Check interpolation, off-axis endpoints, and altitudes a millimeter outside the table."""
+    model = _tabular_model(table)
+    model.planetRadius = {"EarthGRAM": 6378136.6, "VenusGRAM": 6051800.0}[table]  # [m]
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = np.array(direction) * ((model.planetRadius + altitude) / np.linalg.norm(direction))  # [m]
+    model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
+    model.Reset(0)
+    model.UpdateState(0)
+    atmosphere = model.envOutMsgs[0].read()
+    assert atmosphere.neutralDensity == pytest.approx(density, rel=1e-12, abs=0.0)
+    assert atmosphere.localTemp == pytest.approx(temperature, rel=1e-12, abs=0.0)
+
+
+@pytest.mark.parametrize("altitude, density, temperature", [
+    (2000000.0, 2.589e-11, 900.5),  # [m], [kg/m^3], [K] at the last GRAM row
+    (2000000.001, 0.0, 0.0),        # [m], [kg/m^3], [K] one millimeter above it
+])
+def test_oblate_jupiter_table_top(altitude, density, temperature):
+    """Evaluate the top of the Jupiter profile using height above the reference ellipsoid."""
+    model = _tabular_model("JupiterGRAM")
+    model.planetRadius = 71492000.0  # [m] equatorial radius
+    polar_radius = 66854000.0  # [m]
+    model.setPlanetPolarRadius(polar_radius)
+    planet = messaging.SpicePlanetStateMsgPayload()
+    planet.J20002Pfix = np.eye(3)
+    planet_msg = messaging.SpicePlanetStateMsg().write(planet)
+    model.planetPosInMsg.subscribeTo(planet_msg)
+
+    latitude, longitude = np.deg2rad([40.0, 37.0])  # [rad]
+    eccentricity_sq = 1.0 - (polar_radius / model.planetRadius)**2
+    prime_vertical_radius = model.planetRadius / np.sqrt(1.0 - eccentricity_sq * np.sin(latitude)**2)  # [m]
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = [
+        (prime_vertical_radius + altitude) * np.cos(latitude) * np.cos(longitude),
+        (prime_vertical_radius + altitude) * np.cos(latitude) * np.sin(longitude),
+        (prime_vertical_radius * (1.0 - eccentricity_sq) + altitude) * np.sin(latitude),
+    ]  # [m]
+    model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
+    model.Reset(0)
+    model.UpdateState(0)
+    atmosphere = model.envOutMsgs[0].read()
+    assert atmosphere.neutralDensity == pytest.approx(density, rel=1e-12, abs=0.0)
+    assert atmosphere.localTemp == pytest.approx(temperature, rel=1e-12, abs=0.0)
+
+
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize(
     "altitude", [42.0, 33.33333, 10000.0, -10.0]
@@ -95,7 +236,6 @@ def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
 
 
 def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
-    testFailCount = 0  # zero unit test result counter
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.WARNING)
@@ -200,46 +340,13 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     # compute truth values
     trueDensity = tabAtmoComp(altitude * 1000, altList, rhoList)
-    print("\nmodule density: {0:.6e}".format(densData[0]))
-    print("true density: {0:.6e}".format(trueDensity))
-
     trueTemp = tabAtmoComp(altitude * 1000, altList, tempList)
-    print("\nmodule temperature: {0:.6e}".format(tempData[0]))
-    print("true temperature: {0:.6e}\n".format(trueTemp))
-
-    # compare truth values to module results
-    if trueDensity != 0:
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(
-            densData[0], trueDensity, accuracy
-        )
-    else:
-        testFailCount = not unitTestSupport.isDoubleEqual(
-            densData[0], trueDensity, accuracy
-        )
-    if testFailCount == 0:
-        testMessage = "density computed correctly"
-    else:
-        testMessage = "density computed incorrectly"
-
-    # compare truth values to module results for temperature
-    if trueTemp != 0:  # needs checking
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(
-            tempData[0], trueTemp, accuracy
-        )
-    else:
-        testFailCount = not unitTestSupport.isDoubleEqual(
-            tempData[0], trueTemp, accuracy
-        )
-    if testFailCount == 0:
-        testMessage += " and temperature computed correctly"
-    else:
-        testMessage += " and temperature computed incorrectly"
-
-    #   print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-
-    return [testFailCount, testMessage]
+    failures = []
+    for name, actual, expected in (("density", densData[0], trueDensity), ("temperature", tempData[0], trueTemp)):
+        compare = unitTestSupport.isDoubleEqual if expected == 0 else unitTestSupport.isDoubleEqualRelative
+        if not compare(actual, expected, accuracy):
+            failures.append(f"{name} expected {expected}, got {actual}")
+    return [len(failures), "\n".join(failures)]
 
 
 #
