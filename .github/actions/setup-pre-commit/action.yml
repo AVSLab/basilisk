@@ -1,0 +1,17 @@
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Distributed under the ISC License. See LICENSE for details.
+name: Set up pre-commit
+description: Install pre-commit and cache its hook environments
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v6
+      with:
+        python-version: '3.11'
+    - shell: bash
+      run: python -m pip install -c requirements_dev.txt pre-commit
+    - uses: actions/cache@v6.1.0
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
