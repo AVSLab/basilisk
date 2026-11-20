@@ -184,7 +184,8 @@ void LambertSolver::problemGeometry()
     Eigen::Vector3d i_r2_N = this->r2_N / r2;
     // check alignment of the two position vectors
     Eigen::Vector3d radialCross = i_r1_N.cross(i_r2_N);
-    double sinTheta = radialCross.norm();
+    // A scalar square root avoids FE_INVALID from an unused SIMD lane on MSVC.
+    const double sinTheta = std::sqrt(radialCross.squaredNorm());
     // Normalization can leave a nonzero cross product for collinear endpoints.
     // Bound cancellation roundoff component by component so small, resolvable
     // cross products remain usable when the configured threshold allows them.
