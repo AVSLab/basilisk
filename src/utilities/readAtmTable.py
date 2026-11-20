@@ -64,9 +64,13 @@ def readMarsGRAM(filename):
 
 
 def _read_gram_csv(filename):
-    df = pd.read_csv(filename, usecols=["Height_km", "Density_kgm3", "Temperature_K"])
-    # The nominal files start with numeric data. A units row has text in all three columns.
-    if not df.empty and pd.to_numeric(df.iloc[0], errors="coerce").isna().all():
+    units = {
+        "Height_km": ("km", "[km]"),
+        "Density_kgm3": ("kg/m3", "[kg/m3]", "kg/m^3", "[kg/m^3]", "kg/m³", "[kg/m³]"),
+        "Temperature_K": ("K", "[K]", "Kelvin", "[Kelvin]"),
+    }
+    df = pd.read_csv(filename, usecols=list(units), keep_default_na=False)
+    if not df.empty and all(str(df[column].iat[0]).strip() in labels for column, labels in units.items()):
         df = df.iloc[1:]
     df = df.astype(float).sort_values("Height_km")
     altitude = df["Height_km"] * 1000.0  # [m]
