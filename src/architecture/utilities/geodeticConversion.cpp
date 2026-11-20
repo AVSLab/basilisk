@@ -66,11 +66,12 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, doubl
         for (int i = 0; i < nr_kapp_iter; i++) {
             double cI = (p2 + (1.0 - planetEcc2) * z2 * kappa * kappa);
             cI = sqrt(cI * cI * cI) / (planetEqRad * planetEcc2);
-            double kappaNext = 1.0 + (p2 + (1.0 - planetEcc2) * z2 * kappa * kappa * kappa) / (cI - p2);
-            if (std::abs(kappaNext - kappa) < good_kappa_acc) {
+            const double kappaNext = 1.0 + (p2 + (1.0 - planetEcc2) * z2 * kappa * kappa * kappa) / (cI - p2);
+            const bool converged = std::abs(kappaNext - kappa) < good_kappa_acc;
+            kappa = kappaNext;
+            if (converged) {
                 break;
             }
-            kappa = kappaNext;
         }
         double pSingle = sqrt(p2);
         llaPosition[0] = atan2(kappa * pcpfPosition[2], pSingle);
