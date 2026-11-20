@@ -36,6 +36,40 @@ from Basilisk.simulation import simpleStorageUnit
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
+def test_waits_for_ground_access():
+    """Start downlink only after an attached station publishes access."""
+    tx = spaceToGroundTransmitter.SpaceToGroundTransmitter()
+    tx.nodeBaudRate = -1.0  # [bit/s]
+    tx.packetSize = -3.0  # [bit]
+    status = messaging.DataStorageStatusMsgPayload()
+    status.storedDataName = messaging.StringVector(["A"])
+    status.storedData = messaging.DoubleVector([10.0])  # [bit]
+    storage = messaging.DataStorageStatusMsg().write(status)
+    tx.addStorageUnitToTransmitter(storage)
+
+    tx.UpdateState(0)  # [ns]
+    assert tx.nodeDataOutMsg.read().baudRate == 0.0
+    station = messaging.AccessMsg()
+    tx.addAccessMsgToTransmitter(station)
+    tx.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().baudRate == 0.0
+    access = messaging.AccessMsgPayload()
+    access.hasAccess = 1
+    station.write(access)
+    tx.UpdateState(macros.sec2nano(2.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().baudRate == tx.nodeBaudRate
+
+    other_station = messaging.AccessMsg().write(access)
+    tx.addAccessMsgToTransmitter(other_station)
+    tx.groundLocationAccessInMsgs[0].unsubscribe()
+    tx.UpdateState(macros.sec2nano(3.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().baudRate == tx.nodeBaudRate
+    tx.groundLocationAccessInMsgs[1].unsubscribe()
+    tx.UpdateState(macros.sec2nano(4.0))  # [ns]
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("", 0.0)
+
+
 @pytest.mark.parametrize(
         "deviceStatus, accessStatus",
         [(0, 0),

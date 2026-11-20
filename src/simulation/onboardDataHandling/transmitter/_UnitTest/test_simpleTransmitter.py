@@ -28,12 +28,191 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import simpleTransmitter
+from Basilisk.architecture import messaging
+from Basilisk.simulation import simpleTransmitter, spaceToGroundTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
 from Basilisk.utilities import macros
 
-# update "module" in this function name to reflect the module name
+
+@pytest.fixture(params=[
+    simpleTransmitter.SimpleTransmitter,
+    spaceToGroundTransmitter.SpaceToGroundTransmitter,
+])
+def tx(request):
+    """Configure a transmitter that needs three one-second steps per packet."""
+    tx = request.param()
+    tx.nodeBaudRate = -1.0  # [bit/s]
+    tx.packetSize = -3.0  # [bit]
+    if isinstance(tx, spaceToGroundTransmitter.SpaceToGroundTransmitter):
+        silent_station = messaging.AccessMsg()
+        access = messaging.AccessMsgPayload()
+        access.hasAccess = 1
+        active_station = messaging.AccessMsg().write(access)
+        tx.addAccessMsgToTransmitter(silent_station)
+        tx.addAccessMsgToTransmitter(active_station)
+    return tx
+
+
+def storage_status(names, bits):
+    """Build a storage status with the given partition names and sizes in bits."""
+    status = messaging.DataStorageStatusMsgPayload()
+    status.storedDataName = messaging.StringVector(names)
+    status.storedData = messaging.DoubleVector(bits)
+    return status
+
+
+def test_transmitter_waits_for_storage(tx):
+    """Keep idle output zero and account for only the active steps of the first packet."""
+    tx.UpdateState(0)  # [ns] No storage attached.
+    assert tx.nodeDataOutMsg.read().baudRate == 0.0
+    assert tx.nodeDataOutMsg.read().dataName == ""
+
+    unused_storage = messaging.DataStorageStatusMsg()
+    storage = messaging.DataStorageStatusMsg()
+    tx.addStorageUnitToTransmitter(unused_storage)
+    tx.addStorageUnitToTransmitter(storage)
+    tx.UpdateState(macros.sec2nano(5.0))  # [ns] Storage has yet to publish.
+    assert tx.nodeDataOutMsg.read().baudRate == 0.0
+    assert tx.nodeDataOutMsg.read().dataName == ""
+
+    status = storage_status(["A", "B"], [10.0, 0.0])  # [bit]
+    storage.write(status)
+    tx.UpdateState(macros.sec2nano(6.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().dataName == "A"
+    # B becomes the largest partition after the first step of the packet from A.
+    status.storedData = messaging.DoubleVector([10.0, 20.0])  # [bit]
+    storage.write(status)
+    for second, expected_name in [(7, "A"), (8, "A"), (9, "B")]:  # [s]
+        tx.UpdateState(macros.sec2nano(second))
+        usage = tx.nodeDataOutMsg.read()
+        assert usage.baudRate == tx.nodeBaudRate
+        assert usage.dataName == expected_name
+
+    # Switching to an unwritten storage input interrupts the unfinished packet from B.
+    replacement = messaging.DataStorageStatusMsg()
+    tx.addStorageUnitToTransmitter(replacement)
+    tx.UpdateState(macros.sec2nano(10.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().baudRate == 0.0
+    assert tx.nodeDataOutMsg.read().dataName == ""
+    status.storedData = messaging.DoubleVector([30.0, 20.0])  # [bit]
+    replacement.write(status)
+    tx.UpdateState(macros.sec2nano(11.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().dataName == "A"
+
+
+@pytest.mark.parametrize("disconnected, expected_name, expected_rate", [
+    (0, "B", -1.0), (1, "", 0.0),  # [bit/s]
+], ids=["earlier", "selected"])
+def test_disconnected_storage(tx, disconnected, expected_name, expected_rate):
+    """A disconnected reader only stops transmission when it is the selected input."""
+    for name in ("A", "B"):
+        storage = messaging.DataStorageStatusMsg().write(storage_status([name], [10.0]))  # [bit]
+        tx.addStorageUnitToTransmitter(storage)
+    tx.storageUnitInMsgs[disconnected].unsubscribe()
+    tx.UpdateState(macros.sec2nano(1.0))  # [ns]
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == (expected_name, expected_rate)
+
+
+@pytest.mark.parametrize("connection", ["append", "append-same-source", "resubscribe"])
+def test_switch_to_written_storage(tx, connection):
+    """Adding a storage input or observing a different source starts a new packet."""
+    first = messaging.DataStorageStatusMsg().write(storage_status(["A"], [10.0]))  # [bit]
+    tx.addStorageUnitToTransmitter(first)
+    tx.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().dataName == "A"
+
+    replacement = first if connection == "append-same-source" else messaging.DataStorageStatusMsg()
+    replacement.write(storage_status(["A", "B"], [10.0, 20.0]))  # [bit]
+    if connection == "resubscribe":
+        tx.storageUnitInMsgs[0].subscribeTo(replacement)
+    else:
+        tx.addStorageUnitToTransmitter(replacement)
+    tx.UpdateState(macros.sec2nano(2.0))  # [ns]
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("B", tx.nodeBaudRate)
+
+
+def test_switch_to_empty_storage(tx):
+    """A written storage unit with no partitions must not inherit the previous partition."""
+    first = messaging.DataStorageStatusMsg().write(storage_status(["A"], [10.0]))  # [bit]
+    tx.addStorageUnitToTransmitter(first)
+    tx.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().dataName == "A"
+
+    empty = partitionedStorageUnit.PartitionedStorageUnit()
+    empty.storageCapacity = 100  # [bit]
+    empty.UpdateState(0)  # [ns] Publish the empty partition list.
+    tx.addStorageUnitToTransmitter(empty.storageUnitDataOutMsg)
+    empty.addDataNodeToModel(tx.nodeDataOutMsg)
+    now = macros.sec2nano(2.0)  # [ns]
+    tx.UpdateState(now)
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("", 0.0)
+    empty.UpdateState(now)
+    assert list(empty.storageUnitDataOutMsg.read().storedDataName) == []
+
+
+@pytest.mark.parametrize("observe_disconnect", [False, True], ids=["between-updates", "observed-disconnect"])
+def test_restore_same_storage_reader(tx, observe_disconnect):
+    """Restoring the same source restarts the packet only if an update observed the disconnect."""
+    storage = messaging.DataStorageStatusMsg().write(storage_status(["A", "B"], [10.0, 5.0]))  # [bit]
+    tx.addStorageUnitToTransmitter(storage)
+    tx.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert tx.nodeDataOutMsg.read().dataName == "A"
+
+    storage.write(storage_status(["A", "B"], [10.0, 20.0]))  # [bit]
+    readers = tx.storageUnitInMsgs
+    saved = messaging.DataStorageStatusMsgInMsgsVector(readers)
+    readers[0].unsubscribe()
+    if observe_disconnect:
+        tx.UpdateState(macros.sec2nano(2.0))  # [ns]
+        usage = tx.nodeDataOutMsg.read()
+        assert (usage.dataName, usage.baudRate) == ("", 0.0)
+    readers[0] = saved[0]
+    tx.UpdateState(macros.sec2nano(3.0))  # [ns]
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("B" if observe_disconnect else "A", tx.nodeBaudRate)
+
+
+@pytest.mark.parametrize("active", [False, True], ids=["idle", "partial-packet"])
+def test_reinitialize_transmitter(tx, active):
+    """Restart the packet and its clock at the reset epoch, including after an active downlink."""
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", macros.sec2nano(1.0)))  # [ns]
+    sim.AddModelToTask("task", tx)
+    storage = messaging.DataStorageStatusMsg()
+    tx.addStorageUnitToTransmitter(storage)
+    if active:
+        storage.write(storage_status(["A", "B"], [0.0, 30.0]))  # [bit]
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(5.0))  # [ns]
+    sim.ExecuteSimulation()
+    if active:
+        assert tx.nodeDataOutMsg.read().dataName == "B"
+
+    storage.write(storage_status(["A", "B"], [10.0, 5.0]))  # [bit]
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)  # [ns]
+    sim.ExecuteSimulation()
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("A", tx.nodeBaudRate)
+    sim.ConfigureStopTime(macros.sec2nano(1.0))  # [ns]
+    sim.ExecuteSimulation()
+    storage.write(storage_status(["A", "B"], [10.0, 20.0]))  # [bit]
+    for second, name in [(2, "A"), (3, "A"), (4, "B")]:  # [s]
+        sim.ConfigureStopTime(macros.sec2nano(second))
+        sim.ExecuteSimulation()
+        usage = tx.nodeDataOutMsg.read()
+        assert (usage.dataName, usage.baudRate) == (name, tx.nodeBaudRate)
+
+    storage.write(storage_status([], []))
+    tx.Reset(0)  # [ns]
+    tx.UpdateState(0)  # [ns]
+    usage = tx.nodeDataOutMsg.read()
+    assert (usage.dataName, usage.baudRate) == ("", 0.0)
+
 
 @pytest.mark.parametrize("function", ["checkDefault"
                                       , "checkStatus"

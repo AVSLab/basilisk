@@ -24,7 +24,12 @@
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include <cstdint>
+#include <vector>
 
 /*! @brief space to ground data transmitter class */
 class SpaceToGroundTransmitter : public DataNodeBase
@@ -36,8 +41,9 @@ class SpaceToGroundTransmitter : public DataNodeBase
     void addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg);
 
   private:
-    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
-    bool customReadMessages();
+    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime) override;
+    bool customReadMessages() override;
+    void customReset(uint64_t currentClock) override;
 
   public:
     double packetSize; //!< Size of packet to downklink (bytes)
@@ -51,9 +57,9 @@ class SpaceToGroundTransmitter : public DataNodeBase
     BSKLogger bskLogger;                                            //!< class variable
 
   private:
-    double packetTransmitted;                               //!< Amount of packet downlinked (bytes)
-    double currentTimestep;                                 //!< Current timestep tracked for data packet integration
-    double previousTime;                                    //!< Previous timestep tracked for data packet integration
+    std::uintptr_t lastStorageAddress = 0; //!< Address of the selected storage payload at the previous update.
+    double packetTransmitted;              //!< Amount of packet downlinked (bytes)
+    double currentTimestep;                //!< Current timestep tracked for data packet integration
     std::vector<AccessMsgPayload> groundLocationAccessMsgs; //!< local copy of ground access messages
 };
 #endif // BASILISK_SPACETOGROUNDTRANSMITTER_H

@@ -6,7 +6,13 @@ For more information on how to set up and use this module, see the simple data s
 
 Module Assumptions and Limitations
 ----------------------------------
-This module makes no additional assumptions outside of those already made in the :ref:`DataNodeBase` base class.
+The transmitter uses the last storage input added. If that input is disconnected or unwritten at an update,
+the transmitter discards any partial packet and publishes zero baud with an empty partition name.
+Calling ``Reset()`` or ``addStorageUnitToTransmitter()`` also discards a partial packet, even when adding the
+same storage message again. The next packet uses the largest available partition.
+
+When editing ``storageUnitInMsgs`` directly, the transmitter compares the selected payload address at each
+update. Disconnecting and restoring the same address between updates preserves the partial packet.
 
 
 Message Connection Descriptions
