@@ -1,0 +1,1 @@
+- Fixed :ref:`spiceInterface` orientation reconstruction across a half-turn and for knot intervals longer than 104.25 days. Ambiguous local knots use exact SPICE orientation and rate. A gap in frame coverage during that fallback raises a catchable ``BasiliskError`` (issue #1688).
