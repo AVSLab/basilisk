@@ -67,6 +67,78 @@ def test_rv2oe_singular_angle_conventions(position, velocity, angles):
     np.testing.assert_allclose(elements[2:], angles, rtol=0, atol=1e-14)
 
 
+# Columns: radial velocity [m/s], expected semimajor axis [m] for unit radius and mu.
+@pytest.mark.parametrize("speed,expected_a", [
+    (0.0, 0.5),
+    (0.5, 4/7),
+    (-2.0, -0.5),
+    (np.sqrt(2.0), 0.0),
+    (1e8, 1/(2.0-1e16)),
+], ids=["at-rest", "bound", "unbound-inward", "escape", "fast-outward"])
+def test_rv2oe_radial_energy(speed, expected_a):
+    """Radial states have unit eccentricity at every energy."""
+    mu = 1.0  # [m^3/s^2]
+    position = np.array([1.0, 0.0, 0.0])  # [m]
+    velocity = np.array([speed, 0.0, 0.0])  # [m/s]
+    with np.errstate(all="raise"):
+        a, e, *_ = astroFunctions.RV2OE(mu, position, velocity)
+    assert a == pytest.approx(expected_a, rel=1e-14, abs=0.0)
+    assert e == 1.0
+
+
+# Columns: specific energy offset [m^2/s^2], velocity [m/s].
+@pytest.mark.parametrize("energy_offset,velocity", [
+    (-2.0**-40, [1.0, 1.0, 0.0]),
+    (0.0, [1.0, 1.0, 0.0]),
+    (0.0, [0.0, np.sqrt(2.0), 0.0]),
+    (2.0**-40, [1.0, 1.0, 0.0]),
+], ids=["below-escape", "exact-escape", "rounded-escape", "above-escape"])
+def test_rv2oe_escape_boundary(energy_offset, velocity):
+    """Distinguish both sides of escape from a nonradial parabola."""
+    position = np.array([1.0, 0.0, 0.0])  # [m]
+    mu = 1.0-energy_offset  # [m^3/s^2]
+    with np.errstate(all="raise"):
+        a, e, *_ = astroFunctions.RV2OE(mu, position, np.array(velocity))
+    if energy_offset == 0.0:
+        assert (a, e) == (0.0, 1.0)
+    else:
+        assert a == pytest.approx(-0.5*mu/energy_offset, rel=1e-12)
+
+
+def test_rv2oe_int32_angular_momentum():
+    """A tangential state with angular momentum greater than int32 range is nonradial."""
+    mu = 3.986004418e14  # [m^3/s^2]
+    radius = 2**23  # [m]
+    speed = 8192  # [m/s]
+    position = np.array([radius, 0, 0], dtype=np.int32)
+    velocity = np.array([0, speed, 0], dtype=np.int32)
+    _, e, *_ = astroFunctions.RV2OE(mu, position, velocity)
+    expected_e = radius*speed**2/mu - 1.0  # [-] Tangential velocity at periapsis.
+    assert e == pytest.approx(expected_e, rel=1e-14)
+
+
+@pytest.mark.parametrize("r_dtype,v_dtype", [(np.float32, np.float64), (np.float64, np.float32)])
+@pytest.mark.parametrize("offset", [-2.0**-23, 2.0**-23])  # [m^2/s^2]
+def test_rv2oe_mixed_precision_escape(r_dtype, v_dtype, offset):
+    """Recover the signed semimajor axis on either side of escape with mixed input dtypes."""
+    position = np.array([1.0, 0.0, 0.0], dtype=r_dtype)  # [m]
+    velocity = np.array([0.0, 1.0, 0.0], dtype=v_dtype)  # [m/s]
+    mu = 0.5-offset  # [m^3/s^2], giving specific orbital energy equal to offset
+    a, *_ = astroFunctions.RV2OE(mu, position, velocity)
+    assert a == -0.5*mu/offset
+
+
+def test_rv2oe_longdouble_velocity():
+    """Resolve an escape-speed offset at the precision of the velocity input."""
+    mu = 0.5  # [m^3/s^2]
+    position = np.array([1.0, 0.0, 0.0])  # [m]
+    speed = 1.0 + 32*np.finfo(np.longdouble).eps  # [m/s], just above escape
+    velocity = np.array([speed, 0.0, 0.0], dtype=np.longdouble)  # [m/s]
+    a, *_ = astroFunctions.RV2OE(mu, position, velocity)
+    expected_a = -mu/((speed-1.0)*(speed+1.0))  # [m], factored to avoid cancellation
+    np.testing.assert_allclose(a, expected_a, rtol=1e-14, atol=0)
+
+
 # Columns: semimajor axis [m], eccentricity [-], inclination/node/periapsis/anomaly [rad].
 @pytest.mark.parametrize("expected", [
     (3.0, 0.2, 0.7, 1.1, 0.9, 0.4),

@@ -138,31 +138,36 @@ def RV2OE(mu, r_IJK, v_IJK):
     ``Omega`` and ``omega`` to zero, and zero eccentricity defaults ``omega``
     and ``nu`` to zero. Legacy quadrant adjustments can express zero as ``2*pi``.
     These placeholders can discard orientation information for singular orbits.
-    The zero tests use the computed vector magnitudes without a tolerance.
+    The angle tests use the computed vector magnitudes without a tolerance.
+
+    Radial states have unit eccentricity. Their semimajor axis is positive
+    below escape speed and negative above it. For any state whose
+    specific orbital energy is zero to roundoff, the parabolic convention
+    is ``a = 0``, ``e = 1``. ``OE2RV`` does not reconstruct unit-eccentricity states.
+    All inputs use a common working precision of at least ``float64``.
     """
-    r = r_IJK
-    v = v_IJK
+    r = np.asarray(r_IJK)
+    v = np.asarray(v_IJK)
+    dtype = np.result_type(r.dtype, v.dtype, np.asarray(mu).dtype, np.float64)
+    r = r.astype(dtype, copy=False)
+    v = v.astype(dtype, copy=False)
+    mu = dtype.type(mu)
     K = np.array([0, 0, 1])
     h = np.cross(r, v)
     n = np.cross(K, h)
     hm = np.linalg.norm(h)
     nm = np.linalg.norm(n)
-    vm = np.linalg.norm(v)
     rm = np.linalg.norm(r)
 
-    e_vec = 1./mu * ((vm*vm - mu/rm)*r - np.dot(r, v)*v)
-    e = np.linalg.norm(e_vec)
-    eta = 0.5*vm*vm - mu/rm
-    if (e != 1.0):
-        a = -0.5*mu/eta
-        p = a*(1-e*e)
-    else:
-        a = 0.
-        p = h*h/mu
-
+    mu_over_r = mu/rm
     if hm == 0:
+        e_vec = -(r/rm)
+        e = 1.0  # [-]
         i = 0.0  # [rad]
     else:
+        vm = np.linalg.norm(v)
+        e_vec = 1./mu * ((vm*vm - mu_over_r)*r - np.dot(r, v)*v)
+        e = np.linalg.norm(e_vec)
         i = np.arccos(np.clip(h[2]/hm, -1.0, 1.0))
     if nm == 0:
         Omega = 0.0  # [rad]
@@ -186,6 +191,16 @@ def RV2OE(mu, r_IJK, v_IJK):
         nu = np.arccos(np.clip(dotProd/(e*rm), -1.0, 1.0))
     if np.dot(r, v) < 0:
         nu = quadrant4(nu)
+
+    kinetic = np.dot(0.5*v, v)
+    energy = kinetic - mu_over_r
+    # Match the relative escape-energy tolerance in orbitalMotion.rv2elem.
+    roundoff = 8*np.finfo(dtype).eps
+    if abs(energy) <= roundoff*max(kinetic, mu_over_r):
+        a = 0.0  # [L] Parabolic convention.
+        e = 1.0  # [-]
+    else:
+        a = -0.5*mu/energy
     return (a, e, i, Omega, omega, nu)
 
 
