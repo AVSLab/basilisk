@@ -27,3 +27,7 @@ User Guide
 Required variables are ``altList``, ``rhoList``, and ``tempList``, each a standard vector of doubles.
 The lists must be sorted corresponding to ascending altitude, and be of the same nonzero length.
 Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvin.
+
+For the Venus, Uranus, Titan, and Jupiter GRAM CSV readers, the header may be followed by a units
+row such as ``[km],[kg/m3],[K]`` for height, density, and temperature, respectively.
+The readers convert heights from kilometers to meters and raise ``ValueError`` for unrecognized text in the data.
