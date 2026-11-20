@@ -27,6 +27,11 @@
 #include <initializer_list>
 #include <limits>
 
+#if defined(_MSC_VER)
+// These tests clear and inspect floating-point exception flags around UpdateState().
+#pragma fenv_access(on)
+#endif
+
 namespace {
 /** @brief Construct an ordinary prograde transfer for validation tests.
     @return Valid input payload using the default zero-revolution Izzo method.
