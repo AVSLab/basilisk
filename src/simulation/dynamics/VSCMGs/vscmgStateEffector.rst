@@ -64,6 +64,8 @@ smoothing ratios. Non-finite incoming torque commands raise ``BasiliskError`` be
 non-finite computed motor torques are rejected before they are applied to the dynamics.
 
 Add the effector to a task when command processing and the speed/configuration output messages are needed.
+A configured effector requires successful state registration for scheduled updates, mass-property updates,
+and direct calls to ``WriteOutputMessages()``. Attach it with ``addStateEffector()`` and schedule the spacecraft.
 Its scheduled ``UpdateState()`` requires a linked and written ``cmdsInMsg``. An attached-only effector uses the
 configured ``u_s_current`` and ``u_g_current`` torques without reading new commands or applying the scheduled
 friction and saturation logic; use zero initial torques for an uncommanded device.
