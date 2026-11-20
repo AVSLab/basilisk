@@ -30,5 +30,6 @@ Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvi
 
 For the Venus, Uranus, Titan, and Jupiter GRAM CSV readers, the header may be followed by a units
 row such as ``[km],[kg/m3],[K]`` for height, density, and temperature, respectively.
-The readers convert heights from kilometers to meters. All three fields must contain finite numbers.
+Each row must have the same number of fields as the header. Additional named columns are allowed.
+The readers convert heights from kilometers to meters. Height, density, and temperature must contain finite numbers.
 Invalid samples raise ``ValueError``.
