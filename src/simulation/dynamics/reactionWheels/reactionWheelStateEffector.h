@@ -133,14 +133,15 @@ class ReactionWheelStateEffector final
     RWSpeedMsgPayload rwSpeedMsgBuffer = {};    //!< (-) Output data from the reaction wheels
     std::string nameOfReactionWheelOmegasState; //!< class variable
     std::string nameOfReactionWheelThetasState; //!< class variable
-    size_t numRW;                               //!< number of reaction wheels
-    size_t numRWJitter;                         //!< number of RW with jitter
+    size_t numRW = 0;                           //!< number of reaction wheels
+    size_t numRWJitter = 0;                     //!< number of RW with jitter
     BSKLogger bskLogger;                        //!< BSK Logging
 
   private:
     Eigen::MatrixXd omegasDotBuffer; //!< [rad/s^2] Wheel acceleration scratch, sized during registration.
     Eigen::MatrixXd thetasDotBuffer; //!< [rad/s] Wheel angle-rate scratch, sized during registration.
     std::vector<std::shared_ptr<RWConfigPayload>> ReactionWheelData; //!< RW information
+    void requireRegisteredStates();  //!< @brief Require spacecraft state registration for configured devices.
     void validateDimensions();       //!< Validate the wheel count against command and speed message capacities
     void validateRegisteredLayout(); //!< Reject changes to the registered speed and angle state layout
     std::optional<std::vector<RWModels>> registeredWheelModels; //!< Immutable wheel models after registration
