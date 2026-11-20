@@ -30,7 +30,6 @@ SpaceToGroundTransmitter::SpaceToGroundTransmitter()
     this->packetSize = 0.0;
     this->nodeBaudRate = 0.0;
     this->packetTransmitted = 0.0;
-    this->previousTime = 0.0;
     this->numBuffers = 0;
     return;
 }
@@ -48,6 +47,7 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter()
 void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
+    this->packetTransmitted = 0.0; // [bit]
 
     return;
 }
@@ -62,46 +62,35 @@ void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayloa
     return;
 }
 
+void SpaceToGroundTransmitter::customReset(uint64_t currentClock [[maybe_unused]])
+{
+    this->packetTransmitted = 0.0; // [bit]
+    this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
+}
+
 bool SpaceToGroundTransmitter::customReadMessages()
 {
+    const auto storageAddress = readStorageMessages(this->storageUnitInMsgs, this->storageUnitMsgsBuffer);
 
-    DataStorageStatusMsgPayload nodeMsg;
-    AccessMsgPayload accessMsg;
-
-    this->storageUnitMsgsBuffer.clear();
     this->groundLocationAccessMsgs.clear();
-
-    //! - read in the data node use/supply messages
-    bool dataRead = true;
-    bool tmpDataRead;
-
-    if (this->storageUnitInMsgs.size() > 0) {
-        for (long unsigned int c = 0; c < this->storageUnitInMsgs.size(); c++) {
-            tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
-            nodeMsg = this->storageUnitInMsgs.at(c)();
-
-            dataRead = dataRead && tmpDataRead;
-
-            this->storageUnitMsgsBuffer.push_back(nodeMsg);
+    for (auto& station : this->groundLocationAccessInMsgs) {
+        if (station.isLinked() && station.isWritten()) {
+            this->groundLocationAccessMsgs.push_back(station());
         }
-    } else {
-        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
-        dataRead = false;
-    }
-    if (this->groundLocationAccessInMsgs.size() > 0) {
-        for (long unsigned int c = 0; c < this->groundLocationAccessInMsgs.size(); c++) {
-            tmpDataRead = this->groundLocationAccessInMsgs.at(c).isWritten();
-            accessMsg = this->groundLocationAccessInMsgs.at(c)();
-            dataRead = dataRead && tmpDataRead;
-
-            this->groundLocationAccessMsgs.push_back(accessMsg);
-        }
-    } else {
-        bskLogger.bskLog(BSK_INFORMATION, "SpaceToGroundTransmitter has no ground stations attached.");
-        dataRead = false;
     }
 
-    return true;
+    if (this->storageUnitInMsgs.empty()) {
+        this->bskLogger.bskLog(BSK_INFORMATION, "SpaceToGroundTransmitter has no storage unit attached.");
+    }
+    if (this->groundLocationAccessInMsgs.empty()) {
+        this->bskLogger.bskLog(BSK_INFORMATION, "SpaceToGroundTransmitter has no ground stations attached.");
+    }
+    const bool ready = storageAddress != 0 && !this->groundLocationAccessMsgs.empty();
+    if (!ready || storageAddress != this->lastStorageAddress) {
+        this->packetTransmitted = 0.0; // [bit]
+    }
+    this->lastStorageAddress = storageAddress;
+    return ready;
 }
 
 /*! Loads the nodeDataOut attribute into the dataUsageMessagePayload instance.
@@ -111,8 +100,13 @@ bool SpaceToGroundTransmitter::customReadMessages()
 void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
 {
 
-    this->currentTimestep = currentTime - this->previousTime;
+    this->currentTimestep = currentTime - this->previousUpdateTime;
 
+    *dataUsageSimMsg = this->nodeDataOutMsg.zeroMsgPayload;
+    if (this->storageUnitMsgsBuffer.empty()) {
+        this->packetTransmitted = 0.0; // [bit]
+        return;
+    }
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
     // Get the buffer with the most data
@@ -210,6 +204,5 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUs
         dataUsageSimMsg->baudRate = 0;
         this->packetTransmitted = 0;
     }
-    this->previousTime = currentTime;
     return;
 }

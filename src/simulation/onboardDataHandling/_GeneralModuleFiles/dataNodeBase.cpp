@@ -41,13 +41,12 @@ DataNodeBase::~DataNodeBase()
     return;
 }
 
-/*! This method is used to reset the module. In general, no functionality is reset.
- @param CurrentSimNanos
-
+/*! @brief Restart the update clock and reset the derived module.
+ * @param CurrentSimNanos [ns] Simulation time at reset.
  */
 void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 {
-    //! - call the custom environment module reset method
+    this->previousUpdateTime = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     customReset(CurrentSimNanos);
 
     return;
@@ -87,6 +86,23 @@ bool DataNodeBase::readMessages()
     return (dataRead && customRead);
 }
 
+/*! @brief Cache storage payloads in input order, leaving unavailable entries empty.
+ * @param readers Configured storage inputs, with the selected input last.
+ * @param messages Local copies of the storage payloads.
+ * @return The address of the selected source payload, or zero if unavailable.
+ */
+std::uintptr_t DataNodeBase::readStorageMessages(std::vector<ReadFunctor<DataStorageStatusMsgPayload>>& readers,
+                                                 std::vector<DataStorageStatusMsgPayload>& messages)
+{
+    const DataStorageStatusMsgPayload* selected = nullptr;
+    messages.clear();
+    for (auto& reader : readers) {
+        selected = reader.isLinked() && reader.isWritten() ? &reader() : nullptr;
+        messages.push_back(selected ? *selected : reader.zeroMsgPayload);
+    }
+    return selected ? reinterpret_cast<std::uintptr_t>(selected) : 0;
+}
+
 /*! This method evaluates the implementation-specific data model if the device is set to on.
  @param CurrentTime
 
@@ -98,6 +114,7 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
     } else {
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
+    this->previousUpdateTime = CurrentTime;
     return;
 }
 
@@ -108,9 +125,11 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
 void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Only update the data status if we were able to read in messages.
+    const double currentTime = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     if (this->readMessages()) {
-        this->computeDataStatus(static_cast<double>(CurrentSimNanos) * NANO2SEC);
+        this->computeDataStatus(currentTime);
     } else {
+        this->previousUpdateTime = currentTime;
         //! - If the read was not successful then zero the output message
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }

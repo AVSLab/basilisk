@@ -20,8 +20,13 @@
 #ifndef BASILISK_SIMPLETRANSMITTER_H
 #define BASILISK_SIMPLETRANSMITTER_H
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include <cstdint>
+#include <vector>
 
 /*! @brief simple data transmitter class */
 class SimpleTransmitter : public DataNodeBase
@@ -32,23 +37,24 @@ class SimpleTransmitter : public DataNodeBase
     void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
 
   private:
-    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
-    bool customReadMessages();
+    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime) override;
+    bool customReadMessages() override;
+    void customReset(uint64_t currentClock) override;
     int getMaxIndex();
 
   public:
-    double packetSize; //!< Size of packet to downklink (bytes)
-    int numBuffers;    //!< Number of buffers the transmitter can access
-    int currentIndex;  //!< Current partition that the transmitter is downlinking a packet for
+    double packetSize;     //!< Size of packet to downklink (bytes)
+    int numBuffers;        //!< Number of buffers the transmitter can access
+    int currentIndex = -1; //!< Current partition that the transmitter is downlinking a packet for
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
         storageUnitInMsgs;                                    //!< Vector of data node input message names
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgs; //!< local copies of input messages
     BSKLogger bskLogger;                                      //!< class variable
 
   private:
-    double packetTransmitted; //!< Amount of packet downlinked (bytes)
-    double currentTimestep;   //!< Current timestep tracked for data packet integration
-    double previousTime;      //!< Previous timestep tracked for data packet integration
+    std::uintptr_t lastStorageAddress = 0; //!< Address of the selected storage payload at the previous update.
+    double packetTransmitted;              //!< Amount of packet downlinked (bytes)
+    double currentTimestep;                //!< Current timestep tracked for data packet integration
 };
 
 #endif // BASILISK_SIMPLETRANSMITTER_H
