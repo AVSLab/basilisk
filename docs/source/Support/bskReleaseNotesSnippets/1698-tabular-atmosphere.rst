@@ -1,0 +1,1 @@
+- Fixed ``readAtmTable`` dropping the surface row of the nominal Venus, Uranus, Titan, and Jupiter GRAM tables and :ref:`tabularAtmosphere` returning zero density and temperature at the highest tabulated altitude (issue #1698).
