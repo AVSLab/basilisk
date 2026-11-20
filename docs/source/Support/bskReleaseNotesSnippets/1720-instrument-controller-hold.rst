@@ -1,0 +1,2 @@
+- Extend :ref:`simpleInstrumentController` with cumulative sampled acquisition holds, optional target illumination and message freshness checks, and capture readiness. Existing immediate and continuous-hold imaging remain the defaults.
+- Expose instrument-controller capture time and mean valid-hold illumination, and clear stale image commands when resetting the controller for a new acquisition.

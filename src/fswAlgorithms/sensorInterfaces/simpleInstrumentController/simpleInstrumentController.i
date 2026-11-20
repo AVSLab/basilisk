@@ -36,8 +36,12 @@ struct AccessMsg_C;
 struct DeviceCmdMsg_C;
 %include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys
+# Match the public messaging payload alias; both names expose the same fraction.
+EclipseMsgPayload.illuminationFactor = EclipseMsgPayload.shadowFactor
 protectAllClasses(sys.modules[__name__])
 %}
