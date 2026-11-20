@@ -214,6 +214,10 @@ wheel-angle states. For each fully coupled jitter wheel, it also derives the cen
 ``U_s / mass`` and sets the off-diagonal inertia ``J13`` to ``U_d``. This mandatory attachment path initializes the
 dynamics configuration even when the reaction wheel state effector is not added to a simulation task.
 
+Attach the configured effector with ``addStateEffector()`` (or the wheel factory's ``addToSpacecraft()``)
+and schedule the spacecraft so it registers the wheel states during initialization. Scheduled updates,
+mass-property updates, and output writes raise ``BasiliskError`` if those states are missing.
+
 The ``Reset()`` method refreshes these derived configuration values, initializes every wheel's command entry to zero,
 reports a warning when a Stribeck coefficient is zero, and clears the wheel-speed output buffer.
 
