@@ -28,18 +28,13 @@ How often SPICE is queried depends entirely on how the module is scheduled:
 Reconstruction breaks the tie between "how often the state is *requested*" and "how often SPICE
 is *called*". It lays down a grid of sample points ("knots") spaced ``knotStep`` nanoseconds
 apart in absolute time: knot 0 at the epoch, knot 1 at ``knotStep``, knot 2 at ``2*knotStep``, and so
-on. SPICE is called only to fill a knot, and only the first time that knot is needed; the result
-is cached. When the state is requested at some arbitrary time (say a mid-step stage time), the
-module finds the knots surrounding that time, calls SPICE for any not already cached, and
-computes the requested value by interpolating or extrapolating between them. It does **not**
-call SPICE at the requested time itself.
+on. When the state is requested at a mid-step stage time, the module queries SPICE for any
+missing knots and reuses the cached samples to interpolate or extrapolate. An unavailable knot
+or an ambiguous orientation interval triggers an exact SPICE query at the requested time.
 
-The consequence is that the cost no longer depends on the integrator. Many different requests
-fall between the same pair of knots: the four RK4 stages within one step, the extra stages of
-an adaptive method, and the re-tried stages of a rejected step all land in the same knot interval
-and reuse the same cached knots. So the number of SPICE calls is set purely by how many knots the
-run spans, ``~ horizon / knotStep`` per channel per body, regardless of how many times per step
-the integrator asks for the state.
+The four RK4 stages within one step can reuse the same cached knots, as can the extra stages
+of an adaptive method and the retried stages of a rejected step. While reconstruction uses
+cached samples, the number of SPICE calls is about ``horizon / knotStep`` per channel per body.
 
 The three per-channel states
 ----------------------------
@@ -61,7 +56,7 @@ arrays as described above, and ``J2000Current`` (message validity time), ``compu
 The reconstruction is controlled by four knobs, set per planet and per channel:
 
 * ``knotStep``: spacing of the absolute-time knot grid, in nanoseconds;
-* ``nKnots``: stencil size, i.e. the polynomial order;
+* ``nKnots``: requested number of knots in the fit;
 * ``useVelocity``: also match the SPICE-provided velocity/rate at each knot (Hermite) rather
   than fitting positions only (Lagrange);
 * ``interpolate``: bracket the current time with past *and* future knots (interpolation) or use
@@ -121,6 +116,17 @@ Choosing knobs by body type
   The orientation has genuine curvature, so linear extrapolation degrades as the knot spacing
   grows; use interpolation (``interpolate=True``) and, if needed, ``nKnots >= 2``.
 
+For multi-knot orientation fits, choose a ``knotStep`` that resolves the fastest expected rotation
+between samples. The fit uses principal rotation vectors relative to its first knot. If the
+attitudes and rates at the knots indicate an angular travel of 180 degrees or more across the
+stencil, the module uses the two knots that bracket the requested time (or the two most recent
+knots for extrapolation). A pair is also ambiguous when its angular rates favor the longer
+of the two rotation arcs. For an ambiguous local pair, the module queries SPICE at the requested
+time and warns once per orientation configuration. If the fallback query encounters a gap in
+frame coverage, the module raises a catchable ``BasiliskError`` identifying the frame and epoch.
+For Earth, six-hour knots resolve individual quarter-turns, while daily knots can hide an entire
+revolution. Motion between samples can go undetected when both the sampled attitudes and rates miss it.
+
 Tuning: match the reconstruction error to the integrator error
 --------------------------------------------------------------
 The guiding principle is that **the reconstruction error should be the same order of magnitude as
@@ -143,20 +149,15 @@ A practical workflow:
 
 Align ``knotStep`` with the task step when possible
 ---------------------------------------------------
-The reconstruction is a *piecewise* polynomial: its knot stencil switches as time crosses each
-knot, so the reconstructed state has a mild discontinuity in its curvature (a "C1 kink") at knot
-boundaries. If such a kink falls *inside* an integrator step it can locally reduce the
-integrator's order and, for adaptive steppers, provoke unnecessary step-size cuts. The
-reconstructed *value* is correct for any ``knotStep``; this is purely an integrator-efficiency
-concern.
+The fit changes at each knot boundary. For example, Hermite interpolation matches the value
+and rate at a shared knot, but the curvature can change there. A change in curvature *inside*
+an integrator step can locally reduce its order and cause an adaptive integrator to shorten the step.
 
 For a **fixed-step** integrator you can neutralize it by choosing ``knotStep`` as an integer
 multiple of the task step, ``knotStep = m * dt``. Every knot boundary then coincides with a step
-boundary (where the integrator restarts its expansion anyway) instead of landing mid-step. For
-the orientation channel, whose base knot switches at the half-interval, an **even** multiple aligns
-that boundary too. For adaptive integrators exact alignment is not possible, but keeping
-``knotStep`` large relative to the average step keeps kinks rare. This is the concrete reason the
-``knotStep >> task step`` guidance above is a soundness recommendation, not merely a tuning tip.
+boundary (where the integrator restarts its expansion anyway) instead of landing mid-step. The
+orientation fit keeps its base knot fixed throughout each interval. For adaptive integrators,
+a ``knotStep`` large relative to the average step keeps knot crossings infrequent.
 
 Worked examples
 ---------------

@@ -167,7 +167,7 @@ class SpiceInterface : public SysModel
      * ``knotStep`` nanoseconds), cutting the SPICE cost to about
      * ``horizon / knotStep`` per channel.
      *
-     * Knobs: ``nKnots`` (stencil size / polynomial order), ``useVelocity``
+     * Knobs: ``nKnots`` (requested number of knots in the fit), ``useVelocity``
      * (also match the SPICE velocity at each knot for a Hermite fit, vs a
      * position-only Lagrange fit), and ``interpolate`` (bracket the time with
      * past and future knots, vs past-only extrapolation). The enabled defaults
@@ -189,7 +189,16 @@ class SpiceInterface : public SysModel
                                          bool useVelocity = true,
                                          bool interpolate = true);
 
-    //! Reconstruct this planet's orientation from a coarse knot grid. ``knotStep`` in nanoseconds.
+    /** @brief Reconstruct the planet's orientation from cached SPICE samples.
+     * @param planetName Name of the planet added to the interface.
+     * @param knotStep Time between knots in nanoseconds.
+     * @param nKnots Requested number of knots in the fit.
+     * @param useVelocity Include the sampled angular rates in the fit.
+     * @param interpolate Bracket the requested time when true, or extrapolate from past knots when false.
+     * @note Multi-knot fits use the local pair if the estimated angular travel reaches a half-turn.
+     * If the local pair is also ambiguous, including when its rates favor the longer arc,
+     * the interface queries SPICE at the requested time. A failed fallback query raises BasiliskError.
+     */
     void setPlanetOrientationReconstruction(const std::string& planetName,
                                             uint64_t knotStep = defaultKnotStep,
                                             int nKnots = 2,

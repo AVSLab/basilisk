@@ -21,6 +21,7 @@ import datetime
 import pytest
 
 from Basilisk import __path__
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.simulation import spiceInterface
 from Basilisk.utilities import SimulationBaseClass, macros
 
@@ -151,6 +152,58 @@ def test_gps_time_crosses_gps_epoch():
         assert time_output.GPSWeek == 0
         assert time_output.GPSRollovers == 0
         assert time_output.GPSSeconds == pytest.approx(expected_seconds, rel=0.0, abs=1.0e-6)  # [s]
+
+
+def epoch_message(minute, seconds):
+    """Write UTC calendar fields directly, preserving fractional and leap seconds."""
+    epoch = messaging.EpochMsgPayload()
+    epoch.year, epoch.month, epoch.day = minute.year, minute.month, minute.day
+    epoch.hours, epoch.minutes, epoch.seconds = minute.hour, minute.minute, seconds
+    return messaging.EpochMsg().write(epoch)
+
+
+@pytest.mark.parametrize("minute, seconds", [
+    (datetime.datetime(2020, 5, 21, 18, 28), "59.9999996"),  # [s] Issue #1686
+    (datetime.datetime(2020, 5, 21, 18, 28), "59.99999999999999"),  # [s] Last double below 60
+    (datetime.datetime(2016, 12, 31, 23, 59), "60.5"),  # [s] Inserted leap second
+])
+def test_epoch_message_fractional_seconds(minute, seconds):
+    """A handwritten epoch must give the same ephemeris time as the explicit UTC string."""
+    spice = spiceInterface.SpiceInterface()
+    spice.UTCCalInit = minute.strftime("%Y-%m-%d %H:%M:") + seconds + " UTC"
+    spice.Reset(0)
+    expected_et = spice.spiceTimeOutMsg.read().J2000Current
+
+    msg = epoch_message(minute, float(seconds))
+    spice.epochInMsg.subscribeTo(msg)
+    spice.UTCCalInit = "2000 JAN 01 12:00:00 UTC"
+    spice.Reset(0)
+    assert spice.spiceTimeOutMsg.read().J2000Current == expected_et
+
+
+@pytest.mark.parametrize("linked", [False, True], ids=["utc-string", "epoch-message"])
+def test_invalid_epoch_recovery(linked):
+    """Reject an invalid epoch before publishing, then accept a valid epoch in the same process."""
+    spice = spiceInterface.SpiceInterface()
+    output = spice.spiceTimeOutMsg.addSubscriber()
+    j2000 = "2000 JAN 01 12:00:00 TDB"
+    if linked:
+        spice.UTCCalInit = j2000
+        msg = epoch_message(datetime.datetime(2020, 5, 21, 18, 28), 60.0)  # [s] Ordinary minute
+        spice.epochInMsg.subscribeTo(msg)
+    else:
+        spice.UTCCalInit = "invalid epoch"
+    with pytest.raises(bskLogging.BasiliskError, match="SPICE epoch conversion failed: .+"):
+        spice.Reset(0)
+    assert not output.isWritten()
+
+    if linked:
+        spice.epochInMsg.unsubscribe()
+    else:
+        spice.UTCCalInit = j2000
+    spice.Reset(0)
+    assert output.isWritten()
+    assert output().J2000Current == 0.0  # [s] J2000
 
 
 if __name__ == "__main__":

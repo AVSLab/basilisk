@@ -19,19 +19,23 @@
 #include "simulation/environment/spiceInterface/spiceInterface.h"
 #include "SpiceUsr.h"
 #include "architecture/messaging/ownedMessage.h"
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/simDefinitions.h"
 #include "spiceInterface.h"
+#include <Eigen/Geometry>
 #include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <limits>
+#include <optional>
 #include <sstream>
 #include <string.h>
+#include <utility>
 
 namespace {
 constexpr double julianDateJ2000 = 2451545.0; //!< [d] Julian date of the J2000 epoch
@@ -128,11 +132,11 @@ class SpiceInterface::SpiceReconstruction
         Eigen::Vector3d vel = Eigen::Vector3d::Zero(); //!< [m/s]
         bool ok = false; //!< true once a SPICE query succeeded; a false (fallback) knot is re-queried
     };
-    /*! One cached orientation knot: planet-fixed-relative-to-inertial DCM and its rate. */
+    /*! One cached orientation knot: planet-fixed-relative-to-inertial DCM and angular velocity. */
     struct OrientKnot
     {
         Eigen::Matrix3d dcm = Eigen::Matrix3d::Identity(); //!< J20002Pfix
-        Eigen::Matrix3d dcmDot = Eigen::Matrix3d::Zero();  //!< J20002Pfix_dot
+        Eigen::Vector3d omega = Eigen::Vector3d::Zero();   //!< [rad/s] Angular velocity in planet-fixed coordinates
         bool ok = false; //!< true once a SPICE query succeeded; a false (fallback) knot is re-queried
     };
 
@@ -145,6 +149,7 @@ class SpiceInterface::SpiceReconstruction
         ChannelCfg orientCfg;                   //!< orientation-channel configuration
         std::map<long, PosKnot> posKnots;       //!< cached position knots, keyed by knot index
         std::map<long, OrientKnot> orientKnots; //!< cached orientation knots, keyed by knot index
+        bool warnedOrientSpacing = false;       //!< warned about an ambiguous knot interval for this configuration
     };
 
     //! Look up (creating if absent) the entry for a planet name.
@@ -183,6 +188,7 @@ class SpiceInterface::SpiceReconstruction
             pi.posKnots.clear();
         } else {
             pi.orientKnots.clear();
+            pi.warnedOrientSpacing = false;
         }
     }
 
@@ -268,7 +274,7 @@ class SpiceInterface::SpiceReconstruction
         // SPICE query at the current time, which may still be within coverage.
         bool allOk = true;
         for (long i : idx) {
-            allOk &= ensurePosKnot(pi, planetName, i);
+            allOk &= ensurePosKnot(pi, planetName, i, kdSec);
         }
         if (!allOk) {
             return false;
@@ -332,9 +338,25 @@ class SpiceInterface::SpiceReconstruction
         // sxform query at the current time, which may still be within coverage.
         bool allOk = true;
         for (long i : idx) {
-            allOk &= ensureOrientKnot(pi, planetName, planetFrame, i);
+            allOk &= ensureOrientKnot(pi, planetName, planetFrame, i, kdSec);
         }
         if (!allOk) {
+            return false;
+        }
+
+        // A PRV fit needs a continuous branch about its first knot. Keep the local pair when
+        // the longer stencil could cross pi. If the pair itself is ambiguous, query SPICE.
+        if (idx.size() > 2 && spansHalfTurn(pi, idx, kdSec)) {
+            idx = buildStencil(kf, 2, cfg.interpolate);
+        }
+        if (idx.size() == 2 && spansHalfTurn(pi, idx, kdSec)) {
+            if (!pi.warnedOrientSpacing) {
+                owner.bskLogger.bskLog(BSK_WARNING,
+                                       "spiceInterface: '%s' may rotate half a turn or more between orientation knots. "
+                                       "Using exact SPICE for this interval. Reduce knotStep for reconstruction.",
+                                       planetName.c_str());
+                pi.warnedOrientSpacing = true;
+            }
             return false;
         }
 
@@ -368,18 +390,15 @@ class SpiceInterface::SpiceReconstruction
 
             Eigen::Vector3d dtheta_j = Eigen::Vector3d::Zero();
             if (cfg.useVelocity) {
-                // knot angular velocity from Cdot = -[w x] C -> w = unhat(-Cdot C^T); the relative
-                // rotation Rj carries the same w since Cb is constant. Map omega to the PRV rate
-                // with the exact B(theta) Jacobian (dPRV), using the B(0)=I limit at the base knot.
-                Eigen::Matrix3d W = -kn.dcmDot * kn.dcm.transpose();
-                double omega_j_c[3] = { W(2, 1), W(0, 2), W(1, 0) };
+                // Rj has the same angular velocity as the knot because Cb is constant.
+                // Map it to the PRV rate, using the B(0)=I limit at the base knot.
                 if (theta_j.norm() < 1.0e-7) {
-                    dtheta_j = Eigen::Vector3d(omega_j_c[0], omega_j_c[1], omega_j_c[2]) * kdSec;
+                    dtheta_j = kn.omega;
                 } else {
-                    double dtheta_j_c[3];
-                    dPRV(theta_j_c, omega_j_c, dtheta_j_c);
-                    dtheta_j = Eigen::Vector3d(dtheta_j_c[0], dtheta_j_c[1], dtheta_j_c[2]) * kdSec;
+                    Eigen::Vector3d omega = kn.omega;
+                    dPRV(theta_j_c, omega.data(), dtheta_j.data());
                 }
+                dtheta_j *= kdSec;
             }
 
             for (int r = 0; r < reps; ++r) {
@@ -418,17 +437,37 @@ class SpiceInterface::SpiceReconstruction
     }
 
   private:
+    //! Estimate angular travel from the attitudes and angular rates at successive knots.
+    static bool spansHalfTurn(const PlanetInterp& pi, const std::vector<long>& idx, double stepSeconds)
+    {
+        double travel = 0.0; // [rad]
+        for (size_t j = 1; j < idx.size(); ++j) {
+            const OrientKnot& a = pi.orientKnots.at(idx[j - 1]);
+            const OrientKnot& b = pi.orientKnots.at(idx[j]);
+            // Transpose the relative DCM so the short arc has the sign of physical angular velocity.
+            const Eigen::AngleAxisd arc(a.dcm * b.dcm.transpose());
+            // The rotation axis has the same components in both endpoint frames.
+            const double projected = 0.5 * stepSeconds * (a.omega.dot(arc.axis()) + b.omega.dot(arc.axis())); // [rad]
+            // Along this axis the two candidate turns are angle and angle - 2*pi.
+            // If the mean sampled rate favors the longer turn, the short arc is ambiguous.
+            if (arc.angle() - projected >= MPI) {
+                return true;
+            }
+            travel += std::max(arc.angle(), stepSeconds * std::max(a.omega.norm(), b.omega.norm()));
+        }
+        return travel >= MPI - 1.0e-12; // [rad] Allow for roundoff at a half-turn.
+    }
+
     //! Query + cache position knot k (spkezr_c, metres). Re-queries a previously-failed
     //! (fallback) knot so a transient / out-of-coverage failure does not poison the cache.
     //! Returns true if knot k holds a good (successfully queried) sample.
-    bool ensurePosKnot(PlanetInterp& pi, const std::string& planetName, long k)
+    bool ensurePosKnot(PlanetInterp& pi, const std::string& planetName, long k, double stepSeconds)
     {
         auto it = pi.posKnots.find(k);
         if (it != pi.posKnots.end() && it->second.ok) {
             return true; // already have a good knot; a stored fallback (ok==false) falls through
         }
-        // knotStep is in nanoseconds; the knot ET (seconds past J2000) is et0 + k*knotStep.
-        double et = this->et0 + static_cast<double>(k) * nanoToSec(pi.posCfg.knotStep);
+        const double et = this->et0 + static_cast<double>(k) * stepSeconds; // [s] past J2000
         double lighttime;
         double localState[6];
         // Reconstruction may request a future knot (interpolate=true); guard against a query past
@@ -463,13 +502,17 @@ class SpiceInterface::SpiceReconstruction
     //! Query + cache orientation knot k (sxform_c). Re-queries a previously-failed (fallback)
     //! knot so a transient / out-of-coverage failure does not poison the cache.
     //! Returns true if knot k holds a good (successfully queried) sample.
-    bool ensureOrientKnot(PlanetInterp& pi, const std::string& planetName, const std::string& planetFrame, long k)
+    bool ensureOrientKnot(PlanetInterp& pi,
+                          const std::string& planetName,
+                          const std::string& planetFrame,
+                          long k,
+                          double stepSeconds)
     {
         auto it = pi.orientKnots.find(k);
         if (it != pi.orientKnots.end() && it->second.ok) {
             return true; // already have a good knot; a stored fallback (ok==false) falls through
         }
-        double et = this->et0 + static_cast<double>(k) * nanoToSec(pi.orientCfg.knotStep);
+        double et = this->et0 + static_cast<double>(k) * stepSeconds; // [s]
         double aux[6][6];
         SpiceErrorModeGuard guard;
         sxform_c(owner.referenceBase.c_str(), planetFrame.c_str(), et, aux);
@@ -488,7 +531,8 @@ class SpiceInterface::SpiceReconstruction
             m66Get33Matrix(0, 0, aux, C);
             m66Get33Matrix(1, 0, aux, Cdot);
             kn.dcm = c2DArray2EigenMatrix3d(C);
-            kn.dcmDot = c2DArray2EigenMatrix3d(Cdot);
+            const Eigen::Matrix3d W = -c2DArray2EigenMatrix3d(Cdot) * kn.dcm.transpose(); // [1/s] [omega x]
+            kn.omega = Eigen::Vector3d(W(2, 1), W(0, 2), W(1, 0));
             kn.ok = true;
         }
         pi.orientKnots[k] = kn;
@@ -750,6 +794,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
  */
 void SpiceInterface::initTimeData()
 {
+    std::string utcCalInit = this->UTCCalInit;
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
@@ -760,26 +805,44 @@ void SpiceInterface::initTimeData()
                                "the input message.");
         } else {
             // Set the epoch information from the input message
-            char string[255];
+            // Keep the existing six decimal places when they represent the message exactly.
+            constexpr double microsecondsPerSecond = 1.0e6; // [us/s]
+            const double seconds = epochMsg.seconds;
+            const int precision = std::round(seconds * microsecondsPerSecond) / microsecondsPerSecond == seconds
+                                      ? 6
+                                      : std::numeric_limits<double>::max_digits10;
+            char string[charBufferSize];
             snprintf(string,
-                     255,
-                     "%4d/%02d/%02d, %02d:%02d:%04.6f (UTC)",
+                     sizeof(string),
+                     "%4d/%02d/%02d, %02d:%02d:%.*f (UTC)",
                      epochMsg.year,
                      epochMsg.month,
                      epochMsg.day,
                      epochMsg.hours,
                      epochMsg.minutes,
-                     epochMsg.seconds);
-            this->UTCCalInit = string;
+                     precision,
+                     seconds);
+            utcCalInit = string;
         }
     }
 
     //! - Get the TAI of the GPS epoch, which is fixed, so the conversion is done once here
-    double etGPSEpoch;
+    SpiceErrorModeGuard guard;
+    double etGPSEpoch{};
     str2et_c(this->GPSEpochTime.c_str(), &etGPSEpoch);
-    this->TAIGPSEpoch = unitim_c(etGPSEpoch, "TDB", "TAI"); // [s]
-    //! - Get the time value associate with the requested UTC date
-    str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
+    const double taiGPSEpoch = unitim_c(etGPSEpoch, "TDB", "TAI"); // [s]
+    //! - Get the ephemeris time for the requested UTC date
+    double etInit{};
+    str2et_c(utcCalInit.c_str(), &etInit);
+    if (failed_c()) {
+        SpiceChar cause[SPICE_ERROR_LMSGLN];
+        getmsg_c("LONG", sizeof(cause), cause);
+        reset_c();
+        bskLogger.bskError("SPICE epoch conversion failed: %s", cause);
+    }
+    this->UTCCalInit = std::move(utcCalInit);
+    this->TAIGPSEpoch = taiGPSEpoch;
+    this->J2000ETInit = etInit;
     if (this->J2000ETInit < etGPSEpoch) {
         bskLogger.bskLog(BSK_WARNING,
                          "The initial time is before the GPS epoch.  "
@@ -1060,9 +1123,10 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
                           *pi, planit->PlanetName, planetFrame, tNanos, planit->J20002Pfix, planit->J20002Pfix_dot)) {
                 // handled by reconstruction or disabled (values already written)
             } else {
-                // pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
-                //     planit->second.J20002Pfix);
-
+                std::optional<SpiceErrorModeGuard> fallbackGuard;
+                if (pi && pi->orientCfg.mode == SpiceReconstruction::ChannelMode::Reconstruct) {
+                    fallbackGuard.emplace();
+                }
                 double aux[6][6];
 
                 sxform_c(this->referenceBase.c_str(),
@@ -1071,10 +1135,20 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
                          aux); // returns attitude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF
                                // in Spice.
 
-                m66Get33Matrix(0, 0, aux, planit->J20002Pfix);
-
-                m66Get33Matrix(1, 0, aux, planit->J20002Pfix_dot);
                 this->countSpiceQuery(planit->PlanetName, false);
+                if (fallbackGuard && failed_c()) {
+                    SpiceChar cause[SPICE_ERROR_SMSGLN];
+                    getmsg_c("SHORT", sizeof(cause), cause);
+                    reset_c();
+                    bskLogger.bskError("SPICE orientation from '%s' to '%s' at ET %.17g failed: %s",
+                                       this->referenceBase.c_str(),
+                                       planetFrame.c_str(),
+                                       this->J2000Current,
+                                       cause);
+                }
+
+                m66Get33Matrix(0, 0, aux, planit->J20002Pfix);
+                m66Get33Matrix(1, 0, aux, planit->J20002Pfix_dot);
             }
         }
         c++;
