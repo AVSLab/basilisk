@@ -1,1 +1,2 @@
 - Corrected the quadratic time term in ``astroFunctions.ephemeridesMeeus`` and restored fractional equation-of-center coefficients in ``computeCOE``, correcting the affected planetary elements and states.
+- Uranus and Neptune now use the same J2000.0 mean ecliptic and equinox as the other planets in ``astroFunctions.ephemeridesMeeus``.
