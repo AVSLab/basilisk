@@ -159,7 +159,6 @@ def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
 
 
 def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
-    testFailCount = 0  # zero unit test result counter
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.WARNING)
@@ -264,46 +263,13 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     # compute truth values
     trueDensity = tabAtmoComp(altitude * 1000, altList, rhoList)
-    print("\nmodule density: {0:.6e}".format(densData[0]))
-    print("true density: {0:.6e}".format(trueDensity))
-
     trueTemp = tabAtmoComp(altitude * 1000, altList, tempList)
-    print("\nmodule temperature: {0:.6e}".format(tempData[0]))
-    print("true temperature: {0:.6e}\n".format(trueTemp))
-
-    # compare truth values to module results
-    if trueDensity != 0:
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(
-            densData[0], trueDensity, accuracy
-        )
-    else:
-        testFailCount = not unitTestSupport.isDoubleEqual(
-            densData[0], trueDensity, accuracy
-        )
-    if testFailCount == 0:
-        testMessage = "density computed correctly"
-    else:
-        testMessage = "density computed incorrectly"
-
-    # compare truth values to module results for temperature
-    if trueTemp != 0:  # needs checking
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(
-            tempData[0], trueTemp, accuracy
-        )
-    else:
-        testFailCount = not unitTestSupport.isDoubleEqual(
-            tempData[0], trueTemp, accuracy
-        )
-    if testFailCount == 0:
-        testMessage += " and temperature computed correctly"
-    else:
-        testMessage += " and temperature computed incorrectly"
-
-    #   print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
-
-    return [testFailCount, testMessage]
+    failures = []
+    for name, actual, expected in (("density", densData[0], trueDensity), ("temperature", tempData[0], trueTemp)):
+        compare = unitTestSupport.isDoubleEqual if expected == 0 else unitTestSupport.isDoubleEqualRelative
+        if not compare(actual, expected, accuracy):
+            failures.append(f"{name} expected {expected}, got {actual}")
+    return [len(failures), "\n".join(failures)]
 
 
 #
