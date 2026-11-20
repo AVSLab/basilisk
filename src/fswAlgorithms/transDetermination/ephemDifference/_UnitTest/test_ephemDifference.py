@@ -7,6 +7,8 @@
 
 import inspect
 import os
+
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -51,10 +53,13 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
     # Create the input message.
     inputEphemBase = messaging.EphemerisMsgPayload() # The clock correlation message ?
-    # Get the Earth's position and velocity
-    position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
-    inputEphemBase.r_BdyZero_N = position
-    inputEphemBase.v_BdyZero_N = velocity
+    jd = astroFunctions.JulianDate([2018, 10, 16])
+    km_to_m = 1000.0  # [m/km]
+    earth_position_km, earth_velocity_km_s = astroFunctions.Earth_RV(jd)
+    inputEphemBase.r_BdyZero_N = earth_position_km * km_to_m
+    inputEphemBase.v_BdyZero_N = earth_velocity_km_s * km_to_m
+    assert 1.4e11 < np.linalg.norm(inputEphemBase.r_BdyZero_N) < 1.6e11  # [m]
+    assert 2.8e4 < np.linalg.norm(inputEphemBase.v_BdyZero_N) < 3.2e4  # [m/s]
     inputEphemBase.timeTag = 1234.0
     ephBaseInMsg = messaging.EphemerisMsg().write(inputEphemBase)
     ephemDiff.ephBaseInMsg.subscribeTo(ephBaseInMsg)
@@ -73,14 +78,13 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
             # Create the input message to the change body config
             inputMsg = messaging.EphemerisMsgPayload()
-            position, velocity = functions[i](astroFunctions.JulianDate([2018, 10, 16]))
-            inputMsg.r_BdyZero_N = position
-            inputMsg.v_BdyZero_N = velocity
+            position_km, velocity_km_s = functions[i](jd)
+            inputMsg.r_BdyZero_N = position_km * km_to_m
+            inputMsg.v_BdyZero_N = velocity_km_s * km_to_m
             inputMsg.timeTag = 321.0
 
-            # Expected differences follow the configured input states.
-            trueRVector.append(position - inputEphemBase.r_BdyZero_N)
-            trueVVector.append(velocity - inputEphemBase.v_BdyZero_N)
+            trueRVector.append((position_km - earth_position_km) * km_to_m)
+            trueVVector.append((velocity_km_s - earth_velocity_km_s) * km_to_m)
 
             # Set this message
             ephInMsgList.append(messaging.EphemerisMsg().write(inputMsg))
@@ -104,8 +108,8 @@ def ephemDifferenceTestFunction(ephBdyCount):
     unitTestSim.ExecuteSimulation()
 
     if ephBdyCount == 3:
-        posAcc = 1e1
-        velAcc = 1e-4
+        posAcc = 1e1  # [m]
+        velAcc = 1e-4  # [m/s]
         simHelpers.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
         simHelpers.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
