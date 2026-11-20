@@ -47,6 +47,57 @@ from Basilisk.utilities.supportDataTools.dataFetcher import (
 )
 
 
+@pytest.mark.parametrize("planet, row_count, density, temperature", [
+    # Surface density [kg/m^3] and temperature [K] from the nominal GRAM files.
+    ("Venus", 401, 64.79, 735.3),
+    ("Uranus", 2001, 0.3788, 76.4),
+    ("Titan", 2001, 5.475, 93.9),
+    ("Jupiter", 2001, 0.1740, 166.1),
+])
+def test_gram_surface_row(planet, row_count, density, temperature):
+    """Read the complete nominal profile, including the surface sample."""
+    file = DataFile.AtmosphereData[f"{planet}GRAMNominal"]
+    alt, rho, temp = readAtmTable(get_path(file), f"{planet}GRAM")
+    assert len(alt) == len(rho) == len(temp) == row_count
+    assert (alt[0], rho[0], temp[0]) == (0.0, density, temperature)  # altitude [m]
+
+
+def test_gram_csv_with_units_row(tmp_path):
+    """Read a user-supplied GRAM CSV with a units row and descending altitudes."""
+    path = tmp_path / "profile.csv"
+    path.write_text(
+        "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n1,2,300\n0,3,310\n",
+        encoding="utf-8",
+    )
+    expected = ([0.0, 1000.0], [3.0, 2.0], [310.0, 300.0])  # [m], [kg/m^3], [K]
+    assert readAtmTable(path, "VenusGRAM") == expected
+
+
+@pytest.mark.parametrize("table, altitude, density, temperature", [
+    # Altitude [m], density [kg/m^3], temperature [K].
+    ("VenusGRAM", 250.0, 63.97, 733.4),
+    ("EarthGRAM", 200000.0, 4.2191e-10, 1240.60),
+    ("EarthGRAM", 200001.0, 0.0, 0.0),
+])
+def test_tabular_atmosphere_boundaries(table, altitude, density, temperature):
+    """Check both atmosphere outputs in the lowest interval, at the top, and above it."""
+    model = tabularAtmosphere.TabularAtmosphere()
+    file = DataFile.AtmosphereData[f"{table}Nominal"]
+    alt, rho, temp = readAtmTable(get_path(file), table)
+    model.altList = tabularAtmosphere.DoubleVector(alt)
+    model.rhoList = tabularAtmosphere.DoubleVector(rho)
+    model.tempList = tabularAtmosphere.DoubleVector(temp)
+    model.planetRadius = 6371000.0  # [m]
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = [model.planetRadius + altitude, 0.0, 0.0]  # [m]
+    model.addSpacecraftToModel(messaging.SCStatesMsg().write(state))
+    model.Reset(0)
+    model.UpdateState(0)
+    atmosphere = model.envOutMsgs[0].read()
+    assert atmosphere.neutralDensity == pytest.approx(density, rel=1e-12, abs=0.0)
+    assert atmosphere.localTemp == pytest.approx(temperature, rel=1e-12, abs=0.0)
+
+
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize(
     "altitude", [42.0, 33.33333, 10000.0, -10.0]
