@@ -69,7 +69,14 @@ def _read_gram_csv(filename):
         "Density_kgm3": ("kg/m3", "[kg/m3]", "kg/m^3", "[kg/m^3]", "kg/m³", "[kg/m³]"),
         "Temperature_K": ("K", "[K]", "Kelvin", "[Kelvin]"),
     }
-    df = pd.read_csv(filename, usecols=list(units), dtype=str, keep_default_na=False)
+    # Read the header as a record so it sets the width even for the first sample.
+    # The Python parser rejects long rows and pads short rows with missing fields.
+    records = pd.read_csv(filename, header=None, engine="python", dtype=str, keep_default_na=False)
+    if records.isna().any(axis=None):
+        raise ValueError("GRAM CSV row has fewer fields than the header.")
+    header = records.iloc[0].tolist()
+    columns = [header.index(name) for name in units]
+    df = records.iloc[1:, columns].set_axis(list(units), axis="columns")
     if not df.empty and all(df[column].iat[0].strip() in labels for column, labels in units.items()):
         df = df.iloc[1:]
     df = df.astype(float).sort_values("Height_km")

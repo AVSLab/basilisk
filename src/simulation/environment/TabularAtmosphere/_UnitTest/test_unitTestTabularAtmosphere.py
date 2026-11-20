@@ -74,6 +74,29 @@ def test_gram_csv_with_units_row(tmp_path, csv_rows):
     assert readAtmTable(path, "VenusGRAM") == expected
 
 
+@pytest.mark.parametrize("profile", [
+    "Height_km,Density_kgm3,Temperature_K\n0,64,79,735.3\n0.5,63,15,731.5\n",
+    "Height_km,Density_kgm3,Temperature_K\n[km],[kg/m3],[K]\n0,64.79,735.3\n0.5,63,15,731.5\n",
+    "Height_km,Density_kgm3,Temperature_K,Note\n0,64.79,735.3\n",
+], ids=["wide-first-row", "wide-later-row", "short-row"])
+def test_gram_csv_rejects_wrong_row_width(tmp_path, profile):
+    """Reject records whose field count differs from the header, including unused columns."""
+    path = tmp_path / "profile.csv"
+    path.write_text(profile, encoding="utf-8")
+    with pytest.raises(ValueError):
+        readAtmTable(path, "VenusGRAM")
+
+
+def test_gram_csv_with_extra_named_columns(tmp_path):
+    """Read the required fields by name when an unused field contains a quoted comma."""
+    path = tmp_path / "profile.csv"
+    path.write_text(
+        'Temperature_K,Note,Height_km,Density_kgm3\n735.3,"surface, nominal",0,64.79\n731.5,,0.5,63.15\n',
+        encoding="utf-8",
+    )
+    assert readAtmTable(path, "VenusGRAM") == ([0.0, 500.0], [64.79, 63.15], [735.3, 731.5])  # [m], [kg/m^3], [K]
+
+
 @pytest.mark.parametrize("first_row", ["bad_height,bad_density,bad_temp", "km,g/cm3,K", "NA,NA,NA"])
 def test_gram_csv_rejects_invalid_first_row(tmp_path, first_row):
     """Reject malformed samples and incompatible units even when a valid data row follows."""
