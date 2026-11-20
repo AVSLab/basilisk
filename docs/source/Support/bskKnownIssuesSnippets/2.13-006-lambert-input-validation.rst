@@ -9,3 +9,5 @@
   configured angular threshold would otherwise allow it. Alignment rejection
   occurs before computing ``lambda`` and the scaled flight time, avoiding
   invalid square roots or division by zero for rejected collinear geometry.
+  On Windows with MSVC, the cross-product norm could itself raise ``FE_INVALID``
+  through an unused SIMD lane. The alignment check now uses a scalar square root.
