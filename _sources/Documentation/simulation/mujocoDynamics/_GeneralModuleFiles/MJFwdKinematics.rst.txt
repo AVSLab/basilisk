@@ -1,0 +1,10 @@
+.. _MJFwdKinematics:
+
+MJFwdKinematics
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJFwdKinematics.h
+   :project: _GeneralModuleFiles6
+

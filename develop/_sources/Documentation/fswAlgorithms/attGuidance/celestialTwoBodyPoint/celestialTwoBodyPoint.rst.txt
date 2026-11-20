@@ -1,0 +1,127 @@
+.. _celestialTwoBodyPoint:
+
+:module-type:`C` Module: celestialTwoBodyPoint
+==============================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+This module points one reference-frame axis towards a primary celestial object.
+The secondary goal is to point a second reference-frame axis as closely as possible
+towards another celestial object while maintaining the primary alignment.
+
+For example, the reference can guide a sensor towards a planet while keeping a
+solar panel normal as close as possible to the Sun direction. The module
+:download:`PDF Description </../../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/Basilisk-celestialTwoBodyPoint-20190311.pdf>`
+contains further information on this module's function, how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: celestialTwoBodyPoint
+    :caption: Module I/O Messages
+
+    output attRefOutMsg AttRefMsgPayload
+        attitude reference output message
+    input transNavInMsg NavTransMsgPayload
+        spacecraft translation motion input message
+    input celBodyInMsg EphemerisMsgPayload
+        primary celestial body information input message
+    input secCelBodyInMsg EphemerisMsgPayload
+        (optional) secondary celestial body information
+
+Module Assumptions and Limitations
+----------------------------------
+
+The module sets the accelerations of both bodies relative to the spacecraft to
+zero. Its rate and acceleration outputs therefore describe the instantaneous
+reference motion under that assumption. Nonzero relative accelerations are not
+available in the input messages.
+
+If the secondary message is absent, or its direction is within
+``singularityThresh`` of parallel or antiparallel to the primary direction, the
+module uses the primary relative position crossed with its relative velocity
+as the secondary direction. This fallback requires a nonzero cross product;
+the primary relative position must also be nonzero.
+
+Angular Velocity and Acceleration
+---------------------------------
+
+The arrays ``r1_hat_N``, ``r2_hat_N``, and ``r3_hat_N`` contain the reference
+basis vectors in inertial N-frame components. Their first and second derivatives
+are inertial time derivatives, also expressed in N. The rows of ``dcm_RN`` are
+these basis vectors, so this matrix maps N-frame components to R-frame components.
+
+Writing these component arrays as :math:`\boldsymbol q_i`, the reference-frame
+components of angular velocity and angular acceleration are
+
+.. math::
+
+    {}^R\boldsymbol\omega_{R/N} =
+    \begin{bmatrix}
+    \boldsymbol q_3 \cdot \dot{\boldsymbol q}_2 \\
+    \boldsymbol q_1 \cdot \dot{\boldsymbol q}_3 \\
+    \boldsymbol q_2 \cdot \dot{\boldsymbol q}_1
+    \end{bmatrix},
+    \qquad
+    {}^R\dot{\boldsymbol\omega}_{R/N} =
+    \begin{bmatrix}
+    \dot{\boldsymbol q}_3 \cdot \dot{\boldsymbol q}_2
+        + \boldsymbol q_3 \cdot \ddot{\boldsymbol q}_2 \\
+    \dot{\boldsymbol q}_1 \cdot \dot{\boldsymbol q}_3
+        + \boldsymbol q_1 \cdot \ddot{\boldsymbol q}_3 \\
+    \dot{\boldsymbol q}_2 \cdot \dot{\boldsymbol q}_1
+        + \boldsymbol q_2 \cdot \ddot{\boldsymbol q}_1
+    \end{bmatrix}.
+
+Differentiating a projection onto a rotating basis also introduces
+:math:`\boldsymbol\omega_{R/N}\cdot\dot{\hat{\boldsymbol r}}_i`.
+This term vanishes because
+:math:`\dot{\hat{\boldsymbol r}}_i =
+\boldsymbol\omega_{R/N}\times\hat{\boldsymbol r}_i`.
+It must not be evaluated by dotting R-frame rate components with N-frame
+basis-vector derivatives.
+
+Both outputs are transformed to N-frame components with the transpose:
+
+.. math::
+
+    {}^N\boldsymbol\omega_{R/N} = [RN]^T\,{}^R\boldsymbol\omega_{R/N},
+    \qquad
+    {}^N\dot{\boldsymbol\omega}_{R/N} = [RN]^T\,{}^R\dot{\boldsymbol\omega}_{R/N}.
+
+These are the ``omega_RN_N`` and ``domega_RN_N`` fields of ``attRefOutMsg``.
+
+Validation
+----------
+
+In addition to the single-body and two-body reference checks, the unit tests
+use central finite differences along straight-line body trajectories. They
+differentiate the published attitude basis to check the angular rate and the
+published rate to check angular acceleration. The cases cover a moving secondary
+body and the absent, parallel, and antiparallel secondary-direction fallbacks at
+two sample times. A 0.1 s difference step is used with absolute tolerances of
+:math:`10^{-11}` rad/s for rate and :math:`10^{-13}` rad/s\ :sup:`2` for acceleration.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: celestialTwoBodyPoint.h
+   :project: celestialTwoBodyPoint
+

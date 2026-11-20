@@ -1,0 +1,15 @@
+.. _test_bore_ang_calc:
+
+test_bore_ang_calc
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_bore_ang_calc
+   :members:
+   :show-inheritance:
+

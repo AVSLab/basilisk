@@ -1,0 +1,15 @@
+:orphan:
+
+.. _Folder_gravityEffector:
+
+gravityEffector
+===============
+
+:doc:`Module documentation <polyhedralGravityModel>`
+
+:doc:`Unit tests <_UnitTest/index>`
+
+:doc:`gravCoeffOps <gravCoeffOps>`
+
+:doc:`sphericalHarmonicsGravityModel <sphericalHarmonicsGravityModel>`
+

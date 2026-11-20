@@ -1,0 +1,10 @@
+.. _DeviceStatusMsgPayload:
+
+DeviceStatusMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DeviceStatusMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,15 @@
+.. _test_unitSimplePowerSink:
+
+test_unitSimplePowerSink
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_unitSimplePowerSink
+   :members:
+   :show-inheritance:
+

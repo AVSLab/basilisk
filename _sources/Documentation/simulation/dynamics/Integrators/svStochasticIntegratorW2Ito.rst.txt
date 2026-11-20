@@ -1,0 +1,10 @@
+.. _svStochasticIntegratorW2Ito:
+
+svStochasticIntegratorW2Ito
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svStochasticIntegratorW2Ito.h
+   :project: Integrators
+

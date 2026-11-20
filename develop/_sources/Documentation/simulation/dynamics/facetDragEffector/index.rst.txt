@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_facetDragEffector:
+
+facetDragEffector
+=================
+
+:doc:`Module documentation <facetDragDynamicEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

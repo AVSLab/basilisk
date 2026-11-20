@@ -1,0 +1,10 @@
+.. _DesiredVelocityMsgPayload:
+
+DesiredVelocityMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DesiredVelocityMsgPayload.h
+   :project: msgPayloadDefC
+

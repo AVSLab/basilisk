@@ -1,0 +1,10 @@
+.. _EclipseMsgPayload:
+
+EclipseMsgPayload
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: EclipseMsgPayload.h
+   :project: msgPayloadDefC
+

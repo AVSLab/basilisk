@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_imuSensor:
+
+imuSensor
+=========
+
+:doc:`Module documentation <imuSensor>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,15 @@
+.. _scenarioAttitudePointing:
+
+scenarioAttitudePointing
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioAttitudePointing
+   :members:
+   :show-inheritance:
+

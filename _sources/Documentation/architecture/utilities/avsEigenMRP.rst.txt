@@ -1,0 +1,10 @@
+.. _avsEigenMRP:
+
+avsEigenMRP
+===========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: avsEigenMRP.h
+   :project: utilities
+

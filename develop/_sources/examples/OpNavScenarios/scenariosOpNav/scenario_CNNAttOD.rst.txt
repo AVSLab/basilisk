@@ -1,0 +1,15 @@
+.. _scenario_CNNAttOD:
+
+scenario_CNNAttOD
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenario_CNNAttOD
+   :members:
+   :show-inheritance:
+

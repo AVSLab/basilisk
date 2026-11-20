@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_sensorThermal:
+
+sensorThermal
+=============
+
+:doc:`Module documentation <sensorThermal>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

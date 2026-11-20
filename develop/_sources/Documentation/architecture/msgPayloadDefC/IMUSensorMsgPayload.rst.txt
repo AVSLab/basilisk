@@ -1,0 +1,10 @@
+.. _IMUSensorMsgPayload:
+
+IMUSensorMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: IMUSensorMsgPayload.h
+   :project: msgPayloadDefC
+

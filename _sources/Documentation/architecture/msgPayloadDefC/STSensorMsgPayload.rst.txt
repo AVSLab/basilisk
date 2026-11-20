@@ -1,0 +1,10 @@
+.. _STSensorMsgPayload:
+
+STSensorMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: STSensorMsgPayload.h
+   :project: msgPayloadDefC
+

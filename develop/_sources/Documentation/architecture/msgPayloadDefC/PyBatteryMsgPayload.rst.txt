@@ -1,0 +1,10 @@
+.. _PyBatteryMsgPayload:
+
+PyBatteryMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PyBatteryMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,782 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-01",
+  "base_commit": "b355572568fd1d53e42f8d1da51659ebf63eb66c",
+  "source_state": "Core FSW binding prototype applied to base commit",
+  "environment": {
+    "os": "macOS 27.2",
+    "architecture": "arm64",
+    "python": "3.14.6",
+    "cmake": "4.3.2",
+    "generator": "Ninja",
+    "compiler": "AppleClang 21",
+    "configuration": "Release",
+    "strict_warnings": true,
+    "optional_features": [
+      "OpenCV",
+      "MuJoCo",
+      "visualization",
+      "Rust"
+    ],
+    "build_parallelism": 12,
+    "pytest_workers": 16
+  },
+  "units": {
+    "time": "seconds",
+    "native_size": "bytes"
+  },
+  "cold_definition": "Freshly built or relinked native outputs; no reboot or disk-cache flush",
+  "modules": [
+    "attRefCorrection",
+    "attTrackingError",
+    "celestialTwoBodyPoint",
+    "chebyPosEphem",
+    "constrainedAttitudeManeuver",
+    "cssComm",
+    "cssWlsEst",
+    "dipoleMapping",
+    "dvAccumulation",
+    "dvAttEffect",
+    "dvExecuteGuidance",
+    "dvGuidance",
+    "ephemDifference",
+    "ephemNavConverter",
+    "etSphericalControl",
+    "eulerRotation",
+    "faultDetection",
+    "forceTorqueThrForceMapping",
+    "formationBarycenter",
+    "headingSuKF",
+    "hillFrameRelativeControl",
+    "hillPoint",
+    "hillStateConverter",
+    "hillToAttRef",
+    "hingedJointArrayMotor",
+    "hingedRigidBodyPIDMotor",
+    "horizonOpNav",
+    "imuComm",
+    "inertial3D",
+    "inertial3DSpin",
+    "inertialCartFeedback",
+    "inertialUKF",
+    "jointMotionCompensator",
+    "lambertPlanner",
+    "lambertSecondDV",
+    "lambertSolver",
+    "lambertSurfaceRelativeVelocity",
+    "lambertValidator",
+    "locationPointing",
+    "lowPassFilterTorqueCommand",
+    "meanOEFeedback",
+    "mrpFeedback",
+    "mrpPD",
+    "mrpRotation",
+    "mrpSteering",
+    "mtbFeedforward",
+    "mtbMomentumManagement",
+    "mtbMomentumManagementSimple",
+    "navAggregate",
+    "oeStateEphem",
+    "okeefeEKF",
+    "oneAxisSolarArrayPoint",
+    "opNavPoint",
+    "orbElemOffset",
+    "pixelLineBiasUKF",
+    "pixelLineConverter",
+    "prescribedRot2DOF",
+    "prvSteering",
+    "rasterManager",
+    "rateMsgConverter",
+    "rateServoFullNonlinear",
+    "relativeODuKF",
+    "rwConfigData",
+    "rwMotorTorque",
+    "rwMotorVoltage",
+    "rwNullSpace",
+    "scanningInstrumentController",
+    "simpleDeadband",
+    "simpleInstrumentController",
+    "smallBodyNavEKF",
+    "smallBodyNavUKF",
+    "smallBodyWaypointFeedback",
+    "solarArrayReference",
+    "spacecraftPointing",
+    "spacecraftReconfig",
+    "stComm",
+    "sunSafeACS",
+    "sunSafePoint",
+    "sunlineEKF",
+    "sunlineEphem",
+    "sunlineSEKF",
+    "sunlineSuKF",
+    "sunlineUKF",
+    "tamComm",
+    "thrFiringRemainder",
+    "thrFiringSchmitt",
+    "thrForceMapping",
+    "thrJointCompensation",
+    "thrMomentumDumping",
+    "thrMomentumManagement",
+    "thrustCMEstimation",
+    "thrustRWDesat",
+    "thrusterPlatformReference",
+    "thrusterPlatformState",
+    "torque2Dipole",
+    "torqueScheduler",
+    "vehicleConfigData",
+    "velocityPoint",
+    "vscmgGimbalRateServo",
+    "vscmgVelocitySteering",
+    "waypointReference"
+  ],
+  "full_core": {
+    "separate": {
+      "mode": "separate",
+      "modules": 101,
+      "parallel": 12,
+      "measurements": [
+        {
+          "label": "settle",
+          "seconds": 2.0007583330152556,
+          "cpu_seconds": 1.1816580000000005,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "label": "full-core-0",
+          "seconds": 30.837668958003633,
+          "cpu_seconds": 306.188944,
+          "compiles": 201,
+          "swig": 101,
+          "links": 101
+        },
+        {
+          "label": "all-fsw-0-0",
+          "seconds": 12.544168874970637
+        },
+        {
+          "label": "all-fsw-0-1",
+          "seconds": 0.2604561250191182
+        },
+        {
+          "label": "full-core-1",
+          "seconds": 30.669575957930647,
+          "cpu_seconds": 300.381232,
+          "compiles": 201,
+          "swig": 101,
+          "links": 101
+        },
+        {
+          "label": "all-fsw-1-0",
+          "seconds": 10.439232041942887
+        },
+        {
+          "label": "all-fsw-1-1",
+          "seconds": 0.28895808302331716
+        },
+        {
+          "label": "full-core-2",
+          "seconds": 29.140211957972497,
+          "cpu_seconds": 285.8715030000001,
+          "compiles": 201,
+          "swig": 101,
+          "links": 101
+        },
+        {
+          "label": "all-fsw-2-0",
+          "seconds": 13.411425124970265
+        },
+        {
+          "label": "all-fsw-2-1",
+          "seconds": 0.24899545905645937
+        },
+        {
+          "label": "no-change",
+          "seconds": 2.5526023749262094,
+          "cpu_seconds": 1.3282330000000826,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        }
+      ],
+      "native_bytes": 34237888
+    },
+    "combined": {
+      "mode": "combined",
+      "modules": 101,
+      "parallel": 12,
+      "measurements": [
+        {
+          "label": "settle",
+          "seconds": 24.835138999973424,
+          "cpu_seconds": 233.23526299999992,
+          "compiles": 101,
+          "swig": 101,
+          "links": 1
+        },
+        {
+          "label": "full-core-0",
+          "seconds": 28.874506167019717,
+          "cpu_seconds": 271.83278999999993,
+          "compiles": 201,
+          "swig": 101,
+          "links": 1
+        },
+        {
+          "label": "all-fsw-0-0",
+          "seconds": 0.95330183301121
+        },
+        {
+          "label": "all-fsw-0-1",
+          "seconds": 0.09316624992061406
+        },
+        {
+          "label": "full-core-1",
+          "seconds": 29.383486000006087,
+          "cpu_seconds": 274.4362510000001,
+          "compiles": 201,
+          "swig": 101,
+          "links": 1
+        },
+        {
+          "label": "all-fsw-1-0",
+          "seconds": 0.7360734998947009
+        },
+        {
+          "label": "all-fsw-1-1",
+          "seconds": 0.12865816697012633
+        },
+        {
+          "label": "full-core-2",
+          "seconds": 31.56791995896492,
+          "cpu_seconds": 292.7268020000001,
+          "compiles": 201,
+          "swig": 101,
+          "links": 1
+        },
+        {
+          "label": "all-fsw-2-0",
+          "seconds": 0.7702465410111472
+        },
+        {
+          "label": "all-fsw-2-1",
+          "seconds": 0.13073483295738697
+        },
+        {
+          "label": "no-change",
+          "seconds": 2.2769994999980554,
+          "cpu_seconds": 1.224788999999987,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        }
+      ],
+      "native_bytes": 17441872
+    }
+  },
+  "representative_edits_and_imports": {
+    "separate": [
+      {
+        "label": "one-fsw-after-link-0",
+        "seconds": 0.13300549995619804
+      },
+      {
+        "label": "one-fsw-after-link-1",
+        "seconds": 0.005422041984274983
+      },
+      {
+        "label": "change-c-0",
+        "seconds": 2.3422531249234453,
+        "cpu_seconds": 1.4768009999999592,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-c-1",
+        "seconds": 2.4003415000624955,
+        "cpu_seconds": 1.4768180000000228,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-c-2",
+        "seconds": 2.3428743749391288,
+        "cpu_seconds": 1.4855269999999337,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-i-0",
+        "seconds": 4.175112541997805,
+        "cpu_seconds": 3.274405000000037,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      },
+      {
+        "label": "change-i-1",
+        "seconds": 4.412642291979864,
+        "cpu_seconds": 3.324204000000009,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      },
+      {
+        "label": "change-i-2",
+        "seconds": 4.220546459080651,
+        "cpu_seconds": 3.233866999999975,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      }
+    ],
+    "combined": [
+      {
+        "label": "one-fsw-after-link-0",
+        "seconds": 0.17261104192584753
+      },
+      {
+        "label": "one-fsw-after-link-1",
+        "seconds": 0.007891125045716763
+      },
+      {
+        "label": "change-c-0",
+        "seconds": 2.883739916025661,
+        "cpu_seconds": 1.7254409999999822,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-c-1",
+        "seconds": 3.16395829198882,
+        "cpu_seconds": 1.8967580000000197,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-c-2",
+        "seconds": 2.5354454589542,
+        "cpu_seconds": 1.814407999999986,
+        "compiles": 1,
+        "swig": 0,
+        "links": 1
+      },
+      {
+        "label": "change-i-0",
+        "seconds": 4.27997212507762,
+        "cpu_seconds": 3.4315550000000172,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      },
+      {
+        "label": "change-i-1",
+        "seconds": 4.286706542014144,
+        "cpu_seconds": 3.295378999999947,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      },
+      {
+        "label": "change-i-2",
+        "seconds": 4.579222833039239,
+        "cpu_seconds": 3.29813400000004,
+        "compiles": 1,
+        "swig": 1,
+        "links": 1
+      }
+    ]
+  },
+  "pytest_collection": [
+    {
+      "layout": "separate",
+      "temperature": "cold",
+      "exit_code": 5,
+      "wall_seconds": 43.356160625000484,
+      "ready_seconds": 41.24435783305671,
+      "workers": [
+        {
+          "worker": "gw0",
+          "ready_seconds": 41.231810458004475,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw1",
+          "ready_seconds": 41.229059542063624,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw10",
+          "ready_seconds": 41.23895229201298,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw11",
+          "ready_seconds": 41.224768458050676,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw12",
+          "ready_seconds": 41.23262124997564,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw13",
+          "ready_seconds": 41.23374270799104,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw14",
+          "ready_seconds": 41.23574466700666,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw15",
+          "ready_seconds": 41.2276645420352,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw2",
+          "ready_seconds": 41.22190949996002,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw3",
+          "ready_seconds": 41.2280730829807,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw4",
+          "ready_seconds": 41.24435783305671,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw5",
+          "ready_seconds": 41.2371334170457,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw6",
+          "ready_seconds": 41.23996862501372,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw7",
+          "ready_seconds": 41.22230354195926,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw8",
+          "ready_seconds": 41.22526533296332,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw9",
+          "ready_seconds": 41.23372691706754,
+          "selected_items": 8398
+        }
+      ],
+      "gw0": {
+        "fsw_modules": 98,
+        "distinct_fsw_files": 98,
+        "distinct_basilisk_files": 248,
+        "fsw_native_seconds": 6.680788291501813,
+        "simulation_native_seconds": 14.048979919054545
+      }
+    },
+    {
+      "layout": "separate",
+      "temperature": "warm",
+      "exit_code": 5,
+      "wall_seconds": 25.155796541948803,
+      "ready_seconds": 18.65421399998013,
+      "workers": [
+        {
+          "worker": "gw0",
+          "ready_seconds": 17.428645959007554,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw1",
+          "ready_seconds": 17.431312249973416,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw10",
+          "ready_seconds": 17.42157187499106,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw11",
+          "ready_seconds": 17.41915933403652,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw12",
+          "ready_seconds": 17.733674874994904,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw13",
+          "ready_seconds": 17.430589042021893,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw14",
+          "ready_seconds": 18.65421399998013,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw15",
+          "ready_seconds": 18.65368774998933,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw2",
+          "ready_seconds": 17.42998749995604,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw3",
+          "ready_seconds": 17.44323691702448,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw4",
+          "ready_seconds": 17.43315762502607,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw5",
+          "ready_seconds": 17.42802491702605,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw6",
+          "ready_seconds": 17.427142999949865,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw7",
+          "ready_seconds": 17.422913459013216,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw8",
+          "ready_seconds": 17.438009166973643,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw9",
+          "ready_seconds": 17.423144249944016,
+          "selected_items": 8398
+        }
+      ],
+      "gw0": {
+        "fsw_modules": 98,
+        "distinct_fsw_files": 98,
+        "distinct_basilisk_files": 248,
+        "fsw_native_seconds": 0.36247770802583545,
+        "simulation_native_seconds": 0.8597259152447805
+      }
+    },
+    {
+      "layout": "combined",
+      "temperature": "cold",
+      "exit_code": 5,
+      "wall_seconds": 29.957580749993213,
+      "ready_seconds": 27.963349916040897,
+      "workers": [
+        {
+          "worker": "gw0",
+          "ready_seconds": 27.947418291005306,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw1",
+          "ready_seconds": 27.948502750019543,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw10",
+          "ready_seconds": 27.957529333070852,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw11",
+          "ready_seconds": 27.956519708037376,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw12",
+          "ready_seconds": 27.9541961660143,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw13",
+          "ready_seconds": 27.949767249985598,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw14",
+          "ready_seconds": 27.95073224999942,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw15",
+          "ready_seconds": 27.947367375018075,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw2",
+          "ready_seconds": 27.952040083007887,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw3",
+          "ready_seconds": 27.952748083043844,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw4",
+          "ready_seconds": 27.9496526659932,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw5",
+          "ready_seconds": 27.962191957980394,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw6",
+          "ready_seconds": 27.949636165983975,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw7",
+          "ready_seconds": 27.945228124968708,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw8",
+          "ready_seconds": 27.961985666071996,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw9",
+          "ready_seconds": 27.963349916040897,
+          "selected_items": 8398
+        }
+      ],
+      "gw0": {
+        "fsw_modules": 98,
+        "distinct_fsw_files": 5,
+        "distinct_basilisk_files": 155,
+        "fsw_native_seconds": 0.6804928751662374,
+        "simulation_native_seconds": 8.391506380983628
+      }
+    },
+    {
+      "layout": "combined",
+      "temperature": "warm",
+      "exit_code": 5,
+      "wall_seconds": 19.521042834036052,
+      "ready_seconds": 17.505883916979656,
+      "workers": [
+        {
+          "worker": "gw0",
+          "ready_seconds": 16.684906666981988,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw1",
+          "ready_seconds": 16.68122883408796,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw10",
+          "ready_seconds": 16.796559084090404,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw11",
+          "ready_seconds": 16.797202792018652,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw12",
+          "ready_seconds": 17.097346125054173,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw13",
+          "ready_seconds": 17.099171124980785,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw14",
+          "ready_seconds": 17.504039750085212,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw15",
+          "ready_seconds": 17.505883916979656,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw2",
+          "ready_seconds": 16.675224374979734,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw3",
+          "ready_seconds": 16.684862542082556,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw4",
+          "ready_seconds": 16.682094375020824,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw5",
+          "ready_seconds": 16.681778167025186,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw6",
+          "ready_seconds": 16.67874504206702,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw7",
+          "ready_seconds": 16.9235850420082,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw8",
+          "ready_seconds": 16.79652025003452,
+          "selected_items": 8398
+        },
+        {
+          "worker": "gw9",
+          "ready_seconds": 16.92345120909158,
+          "selected_items": 8398
+        }
+      ],
+      "gw0": {
+        "fsw_modules": 98,
+        "distinct_fsw_files": 5,
+        "distinct_basilisk_files": 155,
+        "fsw_native_seconds": 0.05042074935045093,
+        "simulation_native_seconds": 0.675615374580957
+      }
+    }
+  ]
+}

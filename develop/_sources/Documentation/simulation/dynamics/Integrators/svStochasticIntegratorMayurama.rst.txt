@@ -1,0 +1,10 @@
+.. _svStochasticIntegratorMayurama:
+
+svStochasticIntegratorMayurama
+==============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svStochasticIntegratorMayurama.h
+   :project: Integrators
+

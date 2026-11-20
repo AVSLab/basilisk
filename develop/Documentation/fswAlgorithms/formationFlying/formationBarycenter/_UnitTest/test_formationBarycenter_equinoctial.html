@@ -1,0 +1,441 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_formationBarycenter_equinoctial &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="C++ Module: hillFrameRelativeControl" href="../../hillFrameRelativeControl/hillFrameRelativeControl.html" />
+    <link rel="prev" title="test_formationBarycenter" href="test_formationBarycenter.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../etSphericalControl/etSphericalControl.html">etSphericalControl</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../formationBarycenter.html">formationBarycenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillFrameRelativeControl/hillFrameRelativeControl.html">hillFrameRelativeControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillStateConverter/hillStateConverter.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillToAttRef/hillToAttRef.html">hillToAttRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertialCartFeedback/inertialCartFeedback.html">inertialCartFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../meanOEFeedback/meanOEFeedback.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftPointing/spacecraftPointing.html">spacecraftPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftReconfig/spacecraftReconfig.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transGuidance/index.html">transGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="../formationBarycenter.html"><span class="module-type-label module-type-cpp">C++</span> Module: formationBarycenter</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_formationBarycenter_equinoctial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/fswAlgorithms/formationFlying/formationBarycenter/_UnitTest/test_formationBarycenter_equinoctial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-formationbarycenter-equinoctial">
+<span id="id1"></span><h1>test_formationBarycenter_equinoctial<a class="headerlink" href="#test-formationbarycenter-equinoctial" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_formationBarycenter_equinoctial">Validate opt-in equinoctial averaging without changing the legacy modes.</p>
+<p>The reference recovers classical elements and solves Kepler’s equation by
+bisection, independently of the module’s direct equinoctial reconstruction.
+The compact formation construction follows carlo98’s example in issue 1656.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.assert_state">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">assert_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2e-11</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#assert_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.assert_state" title="Link to this definition"></a></dt>
+<dd><p>Use position and velocity tolerances with their respective physical units.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.classical_state">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">classical_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eccentricity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inclination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periapsis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_anomaly</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#classical_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.classical_state" title="Link to this definition"></a></dt>
+<dd><p>Construct an independent Cartesian state from an elliptic orbit.</p>
+<p>Distances are in meters, angles in radians and eccentricity dimensionless.
+The returned position and velocity have units of meters and meters/second.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.make_simulation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">make_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_orbital</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#make_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.make_simulation" title="Link to this definition"></a></dt>
+<dd><p>Initialize one module and retain writable inputs and both output recorders.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.recorded_state">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">recorded_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorder_c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#recorded_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.recorded_state" title="Link to this definition"></a></dt>
+<dd><p>Read the latest finite state and require identical C/C++ output payloads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.run_module">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">run_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_orbital</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after_reset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#run_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.run_module" title="Link to this definition"></a></dt>
+<dd><p>Execute the compiled module once, optionally changing settings after Reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_binding_energy_cutoff">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_binding_energy_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binding_eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accepted</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_binding_energy_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_binding_energy_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Bracket the resolvable elliptic-energy cutoff without an accuracy claim.</p>
+<p>With unit radius and gravity, binding is <code class="docutils literal notranslate"><span class="pre">2-speed**2</span></code> and the cutoff
+is <code class="docutils literal notranslate"><span class="pre">16*epsilon</span></code>. The separated samples allow for square-root rounding.
+Passing the guard at this extreme ellipse only promises finite output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_cartesian_ignores_element_selector">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_cartesian_ignores_element_selector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_cartesian_ignores_element_selector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_cartesian_ignores_element_selector" title="Link to this definition"></a></dt>
+<dd><p>Keep Cartesian selection exact while allowing reference roundoff.</p>
+<p>The C++ weighted sum can use fused multiply-add, whereas NumPy may round
+multiplication and addition separately.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_classical_compatibility">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_classical_compatibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_classical_compatibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_classical_compatibility" title="Link to this definition"></a></dt>
+<dd><p>Preserve pre-PR classical position and velocity on both output interfaces.</p>
+<p>Fixed reference states were captured using the unmodified C++ module and
+header from PR 1668’s base commit <code class="docutils literal notranslate"><span class="pre">d0f9832f3b0a40923329c23c2f9255c6c2f1b08b</span></code>.
+Input tuples specify semimajor axis, eccentricity, inclination, ascending
+node, argument of periapsis and mean anomaly. The cases cover unequal
+weights, angular wrapping, eccentric retrograde motion and low eccentricity.
+They avoid classical singularities so tight absolute tolerances remain
+portable: 2 micrometers in position and 2e-8 meters/second in velocity.</p>
+<p>Check the omitted selector, explicit <code class="docutils literal notranslate"><span class="pre">CLASSICAL</span></code>, and the legacy pattern
+of enabling orbital averaging after a Cartesian update using only
+<code class="docutils literal notranslate"><span class="pre">useOrbitalElements</span></code> and <code class="docutils literal notranslate"><span class="pre">mu</span></code>. Expected outputs are never recomputed
+with the current module during the test.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_default_and_named_choices">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_default_and_named_choices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_default_and_named_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_default_and_named_choices" title="Link to this definition"></a></dt>
+<dd><p>Existing scripts retain Cartesian/default-classical selection semantics.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_equal_axis_preserves_orbital_clock">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_equal_axis_preserves_orbital_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_equal_axis_preserves_orbital_clock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_equal_axis_preserves_orbital_clock" title="Link to this definition"></a></dt>
+<dd><p>On one ellipse, equal-mass symmetric phases retain their time midpoint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_equatorial_formation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_equatorial_formation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equator_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eccentricity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_equatorial_formation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_equatorial_formation" title="Link to this definition"></a></dt>
+<dd><p>Average unequal members at or near the selected representation’s equator.</p>
+<p>Widely separated ascending nodes accompany nearby periapsis longitudes.
+Each member has a different axis, phase and mass; eccentric members also
+have different eccentricities. The reference uses the prescribed classical
+elements, avoiding recovery of undefined angles from Cartesian states.
+Both output interfaces must match the reference in position and velocity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_equinoctial_component_cancellation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_equinoctial_component_cancellation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cancelled_components</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_equinoctial_component_cancellation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_equinoctial_component_cancellation" title="Link to this definition"></a></dt>
+<dd><p>Recover a circular or equatorial mean from nonsingular member orbits.</p>
+<p>The masses have ratio 1:3. For each cancelled component pair, the first
+member has three times the magnitude and the opposite direction to the
+second. Uncancelled components are identical, and both mean longitudes
+are equal. Thus the expected averaged orbit is known analytically without
+using <code class="docutils literal notranslate"><span class="pre">weighted_reference</span></code> or recovering singular classical angles.
+Test eccentricity and inclination cancellation separately and together,
+including both position and velocity on both output interfaces.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_excluded_pole_cutoff">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_excluded_pole_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accepted</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_excluded_pole_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_excluded_pole_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Reject at/below the pole cutoff and recover a state just outside it.</p>
+<p>Cartesian construction avoids subtracting a tiny tilt from pi. Its unit
+angular momentum has transverse magnitude <code class="docutils literal notranslate"><span class="pre">tilt_eps*epsilon</span></code> to floating
+precision and points toward the selected representation’s excluded pole.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_invalid_gravity">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_invalid_gravity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_invalid_gravity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_invalid_gravity" title="Link to this definition"></a></dt>
+<dd><p>New orbital modes require a finite positive gravitational parameter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_invalid_mass">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_invalid_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">masses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_invalid_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_invalid_mass" title="Link to this definition"></a></dt>
+<dd><p>Undefined weights cannot produce a fabricated formation reference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_invalid_navigation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_invalid_navigation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bad_state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_invalid_navigation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_invalid_navigation" title="Link to this definition"></a></dt>
+<dd><p>New modes stop on invalid navigation instead of writing nonfinite output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_invalid_selector">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_invalid_selector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_invalid_selector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_invalid_selector" title="Link to this definition"></a></dt>
+<dd><p>Unknown orbital choices fail explicitly instead of selecting another method.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_longitude_cancellation_cutoff">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_longitude_cancellation_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accepted</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_longitude_cancellation_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_longitude_cancellation_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Bracket the 64-epsilon circular-resultant cutoff with equal near-opposites.</p>
+<p>The resultant is approximately half the phase offset. Samples at 32 and
+128 epsilons avoid depending on libm’s exact rounding at the boundary.
+The accepted symmetric configuration has its reference along positive y.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_multiple_updates_refresh_navigation_and_mass">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_multiple_updates_refresh_navigation_and_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_multiple_updates_refresh_navigation_and_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_multiple_updates_refresh_navigation_and_mass" title="Link to this definition"></a></dt>
+<dd><p>Check six scheduler updates with changing navigation and mass messages.</p>
+<p>Three unequal ellipses share one semimajor axis and advance analytically
+at the common two-body mean motion. Both output forms and sample times
+must match a fresh independent reference at every step. The masses change
+halfway through to expose stale inputs or uncleared averaging sums.
+This tests scheduled message integration, not a numerical dynamics integrator.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_near_radial_cutoff">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_near_radial_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transverse_eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guard</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_near_radial_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_near_radial_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Above the radial guard, an unrepresentable ellipse must still be rejected.</p>
+<p>These almost-radial unit states have eccentricity rounding to one even
+just above the angular-momentum cutoff. The first guard rejects values
+at/below its cutoff; the later elliptic-elements guard rejects the rest.
+Crossing this guard alone must not turn an unresolved ellipse into a valid one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_nonelliptic_input_is_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_nonelliptic_input_is_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_nonelliptic_input_is_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_nonelliptic_input_is_rejected" title="Link to this definition"></a></dt>
+<dd><p>Exact unit-scale parabolic and hyperbolic inputs are outside the new modes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_opposite_chart_pole_is_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_opposite_chart_pole_is_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inclination</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_opposite_chart_pole_is_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_opposite_chart_pole_is_rejected" title="Link to this definition"></a></dt>
+<dd><p>A representation’s excluded pole is an explicit error, not silent fallback.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_reported_compact_formation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_reported_compact_formation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_reported_compact_formation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_reported_compact_formation" title="Link to this definition"></a></dt>
+<dd><p>Require an independent state reference and a 1 cm locality budget.</p>
+<p>Each member has nonzero eccentricity and non-equatorial inclination, so
+its classical elements can be recovered without a singular-angle choice.
+The reference then averages known elements and reconstructs through the
+separate bisection/rotation path, not the module’s plane equations.
+The centimetre budget applies only to these reported 100 m formations;
+it is not an equality requirement for arbitrary orbital and Cartesian means.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_runtime_selection">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_runtime_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_runtime_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_runtime_selection" title="Link to this definition"></a></dt>
+<dd><p>Observe every orbital-selector transition before and after an update.</p>
+<p>Two equal-mass members share axis, eccentricity, inclination and mean
+anomaly, with symmetric offsets in ascending node and periapsis. Thus
+the classical reference uses the midpoint angles exactly. Equinoctial
+references use the independent element-average and classical-rotation
+helper. All three references differ in both position and velocity.</p>
+<p>Initialize with one choice, select another before the first update, then
+switch back after that update. Each C and C++ output must match its own
+reference without another Reset, detecting a choice cached at either
+initialization or the first update.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_runtime_validation">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_runtime_validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">changes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_runtime_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_runtime_validation" title="Link to this definition"></a></dt>
+<dd><p>Invalid changes after Reset are rejected again before new-mode computation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_single_spacecraft_identity">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_single_spacecraft_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eccentricity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_anomaly</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_single_spacecraft_identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_single_spacecraft_identity" title="Link to this definition"></a></dt>
+<dd><p>Each representation recovers a single input, including its nonsingular pole.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_undefined_longitude_is_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_undefined_longitude_is_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_undefined_longitude_is_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_undefined_longitude_is_rejected" title="Link to this definition"></a></dt>
+<dd><p>Equal opposite phases have no unique circular average longitude.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_weighting_wrap_and_reordering">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_weighting_wrap_and_reordering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_weighting_wrap_and_reordering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_weighting_wrap_and_reordering" title="Link to this definition"></a></dt>
+<dd><p>Check unequal shapes/tilts/masses, wraparound and mass/permutation invariance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.test_zero_mass_member_does_not_contribute">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">test_zero_mass_member_does_not_contribute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#test_zero_mass_member_does_not_contribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.test_zero_mass_member_does_not_contribute" title="Link to this definition"></a></dt>
+<dd><p>A zero-weight spacecraft cannot move an otherwise defined reference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_formationBarycenter_equinoctial.weighted_reference">
+<span class="sig-prename descclassname"><span class="pre">test_formationBarycenter_equinoctial.</span></span><span class="sig-name descname"><span class="pre">weighted_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_formationBarycenter_equinoctial.html#weighted_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_formationBarycenter_equinoctial.weighted_reference" title="Link to this definition"></a></dt>
+<dd><p>Average known elements, then invert through a separate classical rotation.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_formationBarycenter.html" class="btn btn-neutral float-left" title="test_formationBarycenter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../hillFrameRelativeControl/hillFrameRelativeControl.html" class="btn btn-neutral float-right" title="C++ Module: hillFrameRelativeControl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

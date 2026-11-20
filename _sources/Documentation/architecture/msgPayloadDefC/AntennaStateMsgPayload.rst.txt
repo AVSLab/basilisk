@@ -1,0 +1,10 @@
+.. _AntennaStateMsgPayload:
+
+AntennaStateMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AntennaStateMsgPayload.h
+   :project: msgPayloadDefC
+

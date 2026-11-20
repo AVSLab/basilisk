@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_lambertSolverValidation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="test_lambertTransferDirection" href="test_lambertTransferDirection.html" />
+    <link rel="prev" title="test_lambertSolverMultiRev" href="test_lambertSolverMultiRev.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">orbitControl</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../lambertPlanner/lambertPlanner.html">lambertPlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../lambertSecondDV/lambertSecondDV.html">lambertSecondDV</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../lambertSolver.html">lambertSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../lambertSurfaceRelativeVelocity/lambertSurfaceRelativeVelocity.html">lambertSurfaceRelativeVelocity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../lambertValidator/lambertValidator.html">lambertValidator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../orbElemOffset/orbElemOffset.html">orbElemOffset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../smallBodyWaypointFeedback/smallBodyWaypointFeedback.html">smallBodyWaypointFeedback</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transGuidance/index.html">transGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">orbitControl</a></li>
+          <li class="breadcrumb-item"><a href="../lambertSolver.html"><span class="module-type-label module-type-cpp">C++</span> Module: lambertSolver</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_lambertSolverValidation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/fswAlgorithms/orbitControl/lambertSolver/_UnitTest/test_lambertSolverValidation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-lambertsolvervalidation">
+<span id="id1"></span><h1>test_lambertSolverValidation<a class="headerlink" href="#test-lambertsolvervalidation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_lambertSolverValidation">Validate Lambert numeric inputs and alignment configuration before solving.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.invalid_input_and_recovery">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">invalid_input_and_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#invalid_input_and_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.invalid_input_and_recovery" title="Link to this definition"></a></dt>
+<dd><p>Reject a malformed update, then solve a corrected request without a reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_invalid_alignment_threshold">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_invalid_alignment_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_invalid_alignment_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_invalid_alignment_threshold" title="Link to this definition"></a></dt>
+<dd><p>Reject invalid thresholds without changing the previous valid configuration.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_invalid_scalar_input">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_invalid_scalar_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_invalid_scalar_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_invalid_scalar_input" title="Link to this definition"></a></dt>
+<dd><p>Require finite, positive gravity and flight time on every update.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_invalid_solver_method">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_invalid_solver_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_invalid_solver_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_invalid_solver_method" title="Link to this definition"></a></dt>
+<dd><p>Reject unknown method integers, then recover with either supported algorithm.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_negative_revolution_count">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_negative_revolution_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_negative_revolution_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_negative_revolution_count" title="Link to this definition"></a></dt>
+<dd><p>Retain the existing rejection of negative revolution counts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_non_axis_aligned_collinearity">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_non_axis_aligned_collinearity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_non_axis_aligned_collinearity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_non_axis_aligned_collinearity" title="Link to this definition"></a></dt>
+<dd><p>Reject parallel and antiparallel endpoints despite normalization roundoff.</p>
+<p>A rejected update must clear both previously populated solution slots, then
+allow a corrected request to recover on the same module without a reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_nonfinite_position_input">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_nonfinite_position_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_nonfinite_position_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_nonfinite_position_input" title="Link to this definition"></a></dt>
+<dd><p>Reject a nonfinite component in either endpoint before geometry calculations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_resolvable_near_collinear_plane">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_resolvable_near_collinear_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_resolvable_near_collinear_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_resolvable_near_collinear_plane" title="Link to this definition"></a></dt>
+<dd><p>Preserve small cross products that are resolvable above cancellation roundoff.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_unusable_position_norm">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_unusable_position_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_unusable_position_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_unusable_position_norm" title="Link to this definition"></a></dt>
+<dd><p>Reject zero, underflowed, or overflowed norms before dividing by them.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_lambertSolverValidation.test_valid_alignment_threshold_boundaries">
+<span class="sig-prename descclassname"><span class="pre">test_lambertSolverValidation.</span></span><span class="sig-name descname"><span class="pre">test_valid_alignment_threshold_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_lambertSolverValidation.html#test_valid_alignment_threshold_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_lambertSolverValidation.test_valid_alignment_threshold_boundaries" title="Link to this definition"></a></dt>
+<dd><p>Accept finite thresholds strictly between zero and ninety degrees.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_lambertSolverMultiRev.html" class="btn btn-neutral float-left" title="test_lambertSolverMultiRev" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_lambertTransferDirection.html" class="btn btn-neutral float-right" title="test_lambertTransferDirection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

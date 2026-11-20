@@ -1,0 +1,15 @@
+:orphan:
+
+.. _Folder_magneticFieldWMM:
+
+magneticFieldWMM
+================
+
+:doc:`Module documentation <magneticFieldWMM>`
+
+:doc:`Unit tests <_UnitTest/index>`
+
+:doc:`GeomagnetismHeader <GeomagnetismHeader>`
+
+:doc:`GeomagnetismLibrary <GeomagnetismLibrary>`
+

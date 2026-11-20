@@ -1,0 +1,586 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_cppMessageRedirection &mdash; Basilisk 2.12.2
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=17b890f7"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_cppMessageRedirection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_cppMessageRedirection</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1"># Distributed under the ISC license; see LICENSE.</span>
+
+<span class="sd">"""Exercise the documented Python assignment used for C++ output gateways."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.moduleTemplates</span><span class="w"> </span><span class="kn">import</span> <span class="n">cppModuleTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">twoHingeDamper</span>
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"subscribe_to_output"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection</span><span class="p">(</span><span class="n">subscribe_to_output</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Two native producers publish through one gateway to C/C++ readers and recorders."""</span>
+    <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">gateway</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">())</span>
+    <span class="n">gateway_recorder</span> <span class="o">=</span> <span class="n">gateway</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">producers</span> <span class="o">=</span> <span class="p">[</span><span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">producer</span><span class="p">,</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">producers</span><span class="p">,</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">]):</span>  <span class="c1"># [-]</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">setDummy</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="c1"># Assigning an output to itself must preserve its existing redirection.</span>
+    <span class="n">producers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">producers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">producers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">output_recorder</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">output</span> <span class="k">if</span> <span class="n">subscribe_to_output</span> <span class="k">else</span> <span class="n">gateway</span>
+    <span class="n">cpp_reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgReader</span><span class="p">()</span>
+    <span class="n">c_reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C</span><span class="p">()</span>
+    <span class="n">cpp_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">c_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="n">timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>  <span class="c1"># [ns]</span>
+    <span class="n">expected_values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">11.0</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">timestamps</span><span class="p">,</span> <span class="n">expected_values</span><span class="p">):</span>
+        <span class="n">producer</span> <span class="o">=</span> <span class="n">producers</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="p">(</span><span class="n">gateway</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">output</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">cpp_reader</span><span class="p">(),</span> <span class="n">c_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="n">expected</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">cpp_reader</span><span class="o">.</span><span class="n">timeWritten</span><span class="p">()</span> <span class="o">==</span> <span class="n">timestamp</span>
+        <span class="k">assert</span> <span class="n">cpp_reader</span><span class="o">.</span><span class="n">moduleID</span><span class="p">()</span> <span class="o">==</span> <span class="n">producer</span><span class="o">.</span><span class="n">moduleID</span>
+        <span class="k">assert</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C_timeWritten</span><span class="p">(</span><span class="n">c_reader</span><span class="p">)</span> <span class="o">==</span> <span class="n">timestamp</span>
+        <span class="n">gateway_recorder</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">output_recorder</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="p">(</span><span class="n">gateway_recorder</span><span class="p">,</span> <span class="n">output_recorder</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">expected_values</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">timesWritten</span><span class="p">(),</span> <span class="n">timestamps</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">output</span><span class="o">.</span><span class="n">getHeaderAddress</span><span class="p">()</span> <span class="o">==</span> <span class="n">gateway</span><span class="o">.</span><span class="n">getHeaderAddress</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">output</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span> <span class="o">==</span> <span class="n">gateway</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">GetPointers</span><span class="p">()</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span> <span class="o">==</span> <span class="n">gateway</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_reredirection">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_reredirection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_reredirection</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Replacing a gateway redirects future writes and updates borrowed pointer views."""</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">gateways</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">pointers</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">GetPointers</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">gateway</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gateways</span><span class="p">):</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">index</span> <span class="o">*</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">gateway</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">pointers</span><span class="o">.</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="n">gateway</span><span class="o">.</span><span class="n">getHeaderAddress</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">pointers</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span> <span class="o">==</span> <span class="n">gateway</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">gateways</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_retains_gateway">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_retains_gateway">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_retains_gateway</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A producer retains a temporary gateway and releases it on reassignment."""</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">gateway</span><span class="p">)</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="k">del</span> <span class="n">gateway</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">reference</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_consumers_retain_original_gateway">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_consumers_retain_original_gateway">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"consumer_kind"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"subscriber"</span><span class="p">,</span> <span class="s2">"cpp_reader"</span><span class="p">,</span> <span class="s2">"c_reader"</span><span class="p">,</span>
+                                          <span class="s2">"recorder"</span><span class="p">,</span> <span class="s2">"direct_recorder"</span><span class="p">,</span> <span class="s2">"payload"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"replace_gateway"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"embedded_gateway"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_consumers_retain_original_gateway</span><span class="p">(</span><span class="n">consumer_kind</span><span class="p">,</span> <span class="n">replace_gateway</span><span class="p">,</span> <span class="n">embedded_gateway</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Consumers retain their original storage after producer deletion or redirection."""</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">embedded_gateway</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+        <span class="n">gateway</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dataOutMsg</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">gateway</span><span class="p">)</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"subscriber"</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"cpp_reader"</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgReader</span><span class="p">()</span>
+        <span class="n">consumer</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"c_reader"</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C</span><span class="p">()</span>
+        <span class="n">consumer</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"recorder"</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"direct_recorder"</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgRecorder</span><span class="p">(</span><span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">gateway</span><span class="p">,</span> <span class="n">source</span>
+    <span class="k">if</span> <span class="n">replace_gateway</span><span class="p">:</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+        <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">producer</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="c1"># Assert ownership before accessing the payload, so failures cannot read freed memory.</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">consumer_kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"recorder"</span><span class="p">,</span> <span class="s2">"direct_recorder"</span><span class="p">):</span>
+        <span class="n">consumer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">timesWritten</span><span class="p">(),</span> <span class="p">[</span><span class="n">timestamp</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"c_reader"</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C_timeWritten</span><span class="p">(</span><span class="n">consumer</span><span class="p">)</span> <span class="o">==</span> <span class="n">timestamp</span>
+    <span class="k">elif</span> <span class="n">consumer_kind</span> <span class="o">==</span> <span class="s2">"payload"</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">consumer</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">consumer</span><span class="o">.</span><span class="n">timeWritten</span><span class="p">()</span> <span class="o">==</span> <span class="n">timestamp</span>
+    <span class="k">del</span> <span class="n">consumer</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection_retains_source_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection_retains_source_module">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"replace_gateway"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection_retains_source_module</span><span class="p">(</span><span class="n">replace_gateway</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""An embedded gateway keeps its module alive until the destination releases it."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="c1"># Check lifetime before writing, so a regression cannot access freed storage.</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">unrelated</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">unrelated</span><span class="o">.</span><span class="n">setDummy</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">unrelated</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">reference</span><span class="p">()</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">unrelated</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">101.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">replace_gateway</span><span class="p">:</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">destination</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection_keeps_original_embedded_storage">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection_keeps_original_embedded_storage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection_keeps_original_embedded_storage</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Rerouting the source output does not change the destination's storage owner."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">reader</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">gateway</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">destination</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">del</span> <span class="n">reader</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection_rejects_deleted_source_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection_rejects_deleted_source_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection_rejects_deleted_source_module</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A saved non-owning output proxy cannot redirect into a deleted module."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"module owning this message has been deleted"</span><span class="p">):</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection_does_not_retain_its_own_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection_does_not_retain_its_own_module">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_another_module"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection_does_not_retain_its_own_module</span><span class="p">(</span><span class="n">through_another_module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Redirecting co-owned outputs must not make their module retain itself."""</span>
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">twoHingeDamper</span><span class="o">.</span><span class="n">TwoHingeDamper</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">owner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">through_another_module</span><span class="p">:</span>
+        <span class="n">intermediate</span> <span class="o">=</span> <span class="n">twoHingeDamper</span><span class="o">.</span><span class="n">TwoHingeDamper</span><span class="p">()</span>
+        <span class="n">intermediate</span><span class="o">.</span><span class="n">phiTorqueOutMsg</span> <span class="o">=</span> <span class="n">owner</span><span class="o">.</span><span class="n">thetaTorqueOutMsg</span>
+        <span class="n">owner</span><span class="o">.</span><span class="n">phiTorqueOutMsg</span> <span class="o">=</span> <span class="n">intermediate</span><span class="o">.</span><span class="n">phiTorqueOutMsg</span>
+        <span class="k">del</span> <span class="n">intermediate</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">owner</span><span class="o">.</span><span class="n">phiTorqueOutMsg</span> <span class="o">=</span> <span class="n">owner</span><span class="o">.</span><span class="n">thetaTorqueOutMsg</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># [N*m]</span>
+    <span class="n">owner</span><span class="o">.</span><span class="n">phiTorqueOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">owner</span><span class="o">.</span><span class="n">thetaTorqueOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">input</span> <span class="o">==</span> <span class="n">payload</span><span class="o">.</span><span class="n">input</span>
+    <span class="k">del</span> <span class="n">owner</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_redirection_chain_retains_gateway">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_redirection_chain_retains_gateway">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_redirection_chain_retains_gateway</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Assigning a redirected output retains the terminal gateway independently."""</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">gateway</span><span class="p">)</span>
+    <span class="n">first</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="n">second</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="k">del</span> <span class="n">first</span><span class="p">,</span> <span class="n">gateway</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">second</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">reference</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">second</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_vector_redirection">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_vector_redirection">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"accessor"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"index"</span><span class="p">,</span> <span class="s2">"front"</span><span class="p">,</span> <span class="s2">"back"</span><span class="p">,</span> <span class="s2">"list_slice"</span><span class="p">,</span> <span class="s2">"iter"</span><span class="p">,</span> <span class="s2">"list"</span><span class="p">,</span>
+                                      <span class="s2">"iterator_value"</span><span class="p">,</span> <span class="s2">"iterator_copy"</span><span class="p">,</span> <span class="s2">"iterator_advance"</span><span class="p">,</span>
+                                      <span class="s2">"reverse_iterator"</span><span class="p">,</span> <span class="s2">"iterator_previous"</span><span class="p">,</span> <span class="s2">"slice_iter"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_vector_redirection</span><span class="p">(</span><span class="n">accessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Temporary vector views resolve to the module that owns their messages."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">accessors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"index"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"front"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">front</span><span class="p">(),</span>
+        <span class="s2">"back"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">back</span><span class="p">(),</span>
+        <span class="s2">"list_slice"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">vector</span><span class="p">)[:][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"iter"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">vector</span><span class="p">)),</span>
+        <span class="s2">"list"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">vector</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"iterator_value"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">iterator</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
+        <span class="s2">"iterator_copy"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">iterator</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()),</span>
+        <span class="s2">"iterator_advance"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
+        <span class="s2">"reverse_iterator"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">rbegin</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
+        <span class="s2">"iterator_previous"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">end</span><span class="p">()</span><span class="o">.</span><span class="n">previous</span><span class="p">(),</span>
+        <span class="s2">"slice_iter"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">vector</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">vector</span><span class="p">)[:])),</span>
+    <span class="p">}</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">accessors</span><span class="p">[</span><span class="n">accessor</span><span class="p">](</span><span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">accessor</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"back"</span><span class="p">,</span> <span class="s2">"iterator_advance"</span><span class="p">,</span> <span class="s2">"reverse_iterator"</span><span class="p">,</span> <span class="s2">"iterator_previous"</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span>
+        <span class="n">reference</span><span class="p">()</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">del</span> <span class="n">destination</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_vector_rejects_deleted_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_vector_rejects_deleted_module">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"iterate"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_vector_rejects_deleted_module</span><span class="p">(</span><span class="n">iterate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Keeping a vector view does not hide deletion of the owning module."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">vector</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">vector</span><span class="p">))</span> <span class="k">if</span> <span class="n">iterate</span> <span class="k">else</span> <span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"_bskMessageOwner"</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)()</span> <span class="ow">is</span> <span class="n">source</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"module owning this message has been deleted"</span><span class="p">):</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_output_iterator_rejects_deleted_module">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_output_iterator_rejects_deleted_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_output_iterator_rejects_deleted_module</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""An iterator checks its weak module owner before accessing native storage."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">)</span>
+    <span class="c1"># Check tagging before deleting storage so regressions cannot dereference it.</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="s2">"_bskMessageOwner"</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)()</span> <span class="ow">is</span> <span class="n">source</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"module owning this message has been deleted"</span><span class="p">):</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_pointer_iterator_preserves_other_vector_semantics">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_pointer_iterator_preserves_other_vector_semantics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_pointer_iterator_preserves_other_vector_semantics</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""The shared iterator still returns numeric values and owning reader copies."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">))</span>
+    <span class="n">numbers</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>  <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">==</span> <span class="mf">2.0</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span>
+    <span class="n">readers</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgInMsgsVector</span><span class="p">([</span><span class="n">message</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()])</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">readers</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">thisown</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="s2">"_bskMessageOwner"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">readers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_feedback_using_standalone_gateway_is_supported">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_feedback_using_standalone_gateway_is_supported">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_feedback_using_standalone_gateway_is_supported</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A standalone gateway permits feedback without retaining the source module."""</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cppModuleTemplate</span><span class="o">.</span><span class="n">CppModuleTemplate</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer</span><span class="p">)</span>
+    <span class="n">gateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">gateway</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gateway</span><span class="p">)</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [ns]</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">producer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">producer</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_unowned_pointer_vector_redirection_is_rejected">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_unowned_pointer_vector_redirection_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"iterate"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"delete_source"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"copy_kind"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"constructor"</span><span class="p">,</span> <span class="s2">"slice"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_unowned_pointer_vector_redirection_is_rejected</span><span class="p">(</span><span class="n">iterate</span><span class="p">,</span> <span class="n">delete_source</span><span class="p">,</span> <span class="n">copy_kind</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A raw pointer-vector copy cannot establish ownership of its pointees."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">vector</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span>
+    <span class="n">copied</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgOutMsgsPtrVector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> <span class="k">if</span> <span class="n">copy_kind</span> <span class="o">==</span> <span class="s2">"constructor"</span> <span class="k">else</span> <span class="n">vector</span><span class="p">[:]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">copied</span><span class="p">))</span> <span class="k">if</span> <span class="n">iterate</span> <span class="k">else</span> <span class="n">copied</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">original_address</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"storage owner is unknown"</span><span class="p">):</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">output</span>
+    <span class="k">if</span> <span class="n">delete_source</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">source</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"storage owner is unknown"</span><span class="p">):</span>
+            <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">output</span>
+    <span class="k">assert</span> <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span> <span class="o">==</span> <span class="n">original_address</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_mutated_pointer_vector_slice_has_no_owner">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cppMessageRedirection.html#test_cppMessageRedirection.test_cpp_mutated_pointer_vector_slice_has_no_owner">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"iterate"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_mutated_pointer_vector_slice_has_no_owner</span><span class="p">(</span><span class="n">iterate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Replacing a raw slice element cannot attribute its storage to the original module."""</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">copied</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">[:]</span>
+    <span class="n">foreign</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
+    <span class="n">copied</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">foreign</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">copied</span><span class="p">))</span> <span class="k">if</span> <span class="n">iterate</span> <span class="k">else</span> <span class="n">copied</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">original_address</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span>
+    <span class="c1"># Check rejection while storage is live so older builds fail safely.</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"storage owner is unknown"</span><span class="p">):</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">output</span>
+    <span class="k">del</span> <span class="n">foreign</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reference</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ReferenceError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"storage owner is unknown"</span><span class="p">):</span>
+        <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span> <span class="o">=</span> <span class="n">output</span>
+    <span class="k">assert</span> <span class="n">destination</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">getPayloadAddress</span><span class="p">()</span> <span class="o">==</span> <span class="n">original_address</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

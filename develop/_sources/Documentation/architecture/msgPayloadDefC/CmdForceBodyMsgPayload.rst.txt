@@ -1,0 +1,10 @@
+.. _CmdForceBodyMsgPayload:
+
+CmdForceBodyMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CmdForceBodyMsgPayload.h
+   :project: msgPayloadDefC
+

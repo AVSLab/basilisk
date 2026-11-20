@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_hingedJointArrayMotor:
+
+hingedJointArrayMotor
+=====================
+
+:doc:`Module documentation <hingedJointArrayMotor>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

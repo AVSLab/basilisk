@@ -1,0 +1,15 @@
+.. _test_dynamicObjectProxyIdentity:
+
+test_dynamicObjectProxyIdentity
+===============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_dynamicObjectProxyIdentity
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _BodyHeadingMsgPayload:
+
+BodyHeadingMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: BodyHeadingMsgPayload.h
+   :project: msgPayloadDefC
+

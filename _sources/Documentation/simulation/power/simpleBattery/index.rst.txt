@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_simpleBattery:
+
+simpleBattery
+=============
+
+:doc:`Module documentation <simpleBattery>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,15 @@
+.. _test_polyhedralGravityModel:
+
+test_polyhedralGravityModel
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_polyhedralGravityModel
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,15 @@
+.. _scenario_BasicOrbitFormation:
+
+scenario_BasicOrbitFormation
+============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenario_BasicOrbitFormation
+   :members:
+   :show-inheritance:
+

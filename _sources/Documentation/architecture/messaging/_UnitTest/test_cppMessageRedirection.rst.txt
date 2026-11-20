@@ -1,0 +1,15 @@
+.. _test_cppMessageRedirection:
+
+test_cppMessageRedirection
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_cppMessageRedirection
+   :members:
+   :show-inheritance:
+

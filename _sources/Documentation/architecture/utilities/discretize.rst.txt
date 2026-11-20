@@ -1,0 +1,10 @@
+.. _discretize:
+
+discretize
+==========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: discretize.h
+   :project: utilities
+

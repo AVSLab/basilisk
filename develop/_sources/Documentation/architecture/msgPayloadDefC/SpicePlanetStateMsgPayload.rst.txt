@@ -1,0 +1,10 @@
+.. _SpicePlanetStateMsgPayload:
+
+SpicePlanetStateMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SpicePlanetStateMsgPayload.h
+   :project: msgPayloadDefC
+

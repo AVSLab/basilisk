@@ -1,0 +1,15 @@
+.. _scenarioDeployingSolarArrays:
+
+scenarioDeployingSolarArrays
+============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioDeployingSolarArrays
+   :members:
+   :show-inheritance:
+

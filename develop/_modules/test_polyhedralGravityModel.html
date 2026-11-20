@@ -1,0 +1,703 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_polyhedralGravityModel &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_polyhedralGravityModel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_polyhedralGravityModel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Validate polyhedral gravity normalization, initialization, and energy.</span>
+
+<span class="sd">A closed C-shaped body contains fourteen equal cubes. Its signed volume is</span>
+<span class="sd">14 km^3, whereas summing the absolute tetrahedral volumes gives 18 km^3.</span>
+<span class="sd">Acceleration and potential are checked against the superposition of separate</span>
+<span class="sd">cube models and their point-mass limits. Stored Eros results check compatibility</span>
+<span class="sd">with a mesh whose tetrahedral contributions are all positive (issue 1681).</span>
+<span class="sd">Potential gradients, inertial-frame evaluations, and spacecraft energy checks</span>
+<span class="sd">cover the sign and reference-frame corrections in issue 1689.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">stateArchitecture</span><span class="p">,</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.gravityModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">GravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.polyhedralGravityModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolyhedralGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.pointMassGravityModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointMassGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.sphericalHarmonicsGravityModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphericalHarmonicsGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pythonVariableLogger</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonVariableLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">get_path</span>
+
+
+<span class="n">SIDE_LENGTH</span> <span class="o">=</span> <span class="mf">1000.0</span>  <span class="c1"># [m]</span>
+<span class="n">MU</span> <span class="o">=</span> <span class="mf">4.46e5</span>  <span class="c1"># [m^3/s^2]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_mesh</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Triangulate the boundary of occupied grid cells about their center of mass.</span>
+
+<span class="sd">    :param cells: Set of integer grid coordinates for equal, uniform cubes.</span>
+<span class="sd">    :return: Vertices in meters, zero-based facets, and cube centers in meters.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Outward-oriented cube faces in unit grid coordinates.</span>
+    <span class="n">quads</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+    <span class="p">}</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">facets</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{},</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">direction</span><span class="p">,</span> <span class="n">quad</span> <span class="ow">in</span> <span class="n">quads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">direction</span><span class="p">))</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">facet</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">quad</span><span class="p">:</span>
+                <span class="n">point</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">vertex</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">point</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                    <span class="n">indices</span><span class="p">[</span><span class="n">point</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+                    <span class="n">vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+                <span class="n">facet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">point</span><span class="p">])</span>
+            <span class="n">facets</span><span class="o">.</span><span class="n">extend</span><span class="p">([[</span><span class="n">facet</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">facet</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">facet</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">facet</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">facet</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">facet</span><span class="p">[</span><span class="mi">3</span><span class="p">]]])</span>
+
+    <span class="c1"># Every edge must be shared by two triangles traversing it in opposite directions.</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">facet</span> <span class="ow">in</span> <span class="n">facets</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">facet</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">facet</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">count</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">edges</span><span class="p">[(</span><span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">edges</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">cells</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
+    <span class="n">center_of_mass</span> <span class="o">=</span> <span class="n">centers</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">center_of_mass</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIDE_LENGTH</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">facets</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">centers</span> <span class="o">-</span> <span class="n">center_of_mass</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIDE_LENGTH</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">MU</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure a model without initializing it.</span>
+
+<span class="sd">    :param vertices: Vertex positions in meters.</span>
+<span class="sd">    :param facets: Zero-based vertex indices for each triangular facet.</span>
+<span class="sd">    :param mu: Gravitational parameter in m^3/s^2.</span>
+<span class="sd">    :return: Configured polyhedral gravity model.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">PolyhedralGravityModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">xyzVertex</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">orderFacet</span> <span class="o">=</span> <span class="p">(</span><span class="n">facets</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_invalid_mesh</span><span class="p">(</span><span class="n">invalid_volume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a closed mesh with an invalid signed volume.</span>
+
+<span class="sd">    :param invalid_volume: Mesh modification producing a non-positive or non-finite volume.</span>
+<span class="sd">    :return: Vertices in meters and zero-based triangular facets.</span>
+<span class="sd">    """</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_make_mesh</span><span class="p">({(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
+    <span class="k">if</span> <span class="n">invalid_volume</span> <span class="o">==</span> <span class="s2">"reversed"</span><span class="p">:</span>
+        <span class="n">facets</span> <span class="o">=</span> <span class="n">facets</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">invalid_volume</span> <span class="o">==</span> <span class="s2">"zero"</span><span class="p">:</span>
+        <span class="c1"># A flat tetrahedral surface has zero volume but no zero-area triangles.</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">SIDE_LENGTH</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]])</span>
+        <span class="n">facets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"nan"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s2">"infinite"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">"negative_infinite"</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">}[</span><span class="n">invalid_volume</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span>
+
+
+<div class="viewcode-block" id="c_shape">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.c_shape">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">"module"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">c_shape</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return an initialized C-shaped body and its constituent cube centers."""</span>
+    <span class="n">cells</span> <span class="o">=</span> <span class="p">{(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)}</span>
+    <span class="n">cells</span><span class="o">.</span><span class="n">update</span><span class="p">({(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">centers</span> <span class="o">=</span> <span class="n">_make_mesh</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+    <span class="n">tetrahedra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
+        <span class="s2">"ij,ij-&gt;i"</span><span class="p">,</span> <span class="n">vertices</span><span class="p">[</span><span class="n">facets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]],</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">vertices</span><span class="p">[</span><span class="n">facets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">vertices</span><span class="p">[</span><span class="n">facets</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]]),</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="mf">6.0</span>
+    <span class="k">assert</span> <span class="n">tetrahedra</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mi">14</span> <span class="o">*</span> <span class="n">SIDE_LENGTH</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tetrahedra</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mi">18</span> <span class="o">*</span> <span class="n">SIDE_LENGTH</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">tetrahedra</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">centers</span></div>
+
+
+
+<div class="viewcode-block" id="test_concave_body_matches_cube_superposition">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_concave_body_matches_cube_superposition">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"position"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1200.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3000.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_concave_body_matches_cube_superposition</span><span class="p">(</span><span class="n">c_shape</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check acceleration and potential against fourteen correctly normalized cubes.</span>
+
+<span class="sd">    The second evaluation point lies in the opening of the C-shaped body.</span>
+
+<span class="sd">    :param c_shape: Initialized C-shaped model and its cube centers.</span>
+<span class="sd">    :param position: Evaluation point in meters relative to the center of mass.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">centers</span> <span class="o">=</span> <span class="n">c_shape</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_make_mesh</span><span class="p">({(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
+    <span class="n">cube</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">MU</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">centers</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">cube</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">expected_acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_potential</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m^2/s^2]</span>
+    <span class="k">for</span> <span class="n">center</span> <span class="ow">in</span> <span class="n">centers</span><span class="p">:</span>
+        <span class="n">relative_position</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">expected_acceleration</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">relative_position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">expected_potential</span> <span class="o">+=</span> <span class="n">cube</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">relative_position</span><span class="p">)</span>
+
+    <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="c1"># Compare vector norms because symmetry makes one component vanish in the opening.</span>
+    <span class="n">relative_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">acceleration</span> <span class="o">-</span> <span class="n">expected_acceleration</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expected_acceleration</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">relative_error</span> <span class="o">&lt;</span> <span class="mf">1e-11</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_potential</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-11</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_concave_body_far_field">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_concave_body_far_field">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"direction"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_concave_body_far_field</span><span class="p">(</span><span class="n">c_shape</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check the vector acceleration and potential against the point-mass limits.</span>
+
+<span class="sd">    :param c_shape: Initialized C-shaped model and its cube centers.</span>
+<span class="sd">    :param direction: Dimensionless direction of the evaluation point.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">c_shape</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="mf">5.0e6</span>  <span class="c1"># [m]</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span> <span class="o">*</span> <span class="n">distance</span>
+    <span class="n">expected_acceleration</span> <span class="o">=</span> <span class="o">-</span><span class="n">MU</span> <span class="o">*</span> <span class="n">position</span> <span class="o">/</span> <span class="n">distance</span><span class="o">**</span><span class="mi">3</span>
+    <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="c1"># Allow finite-size corrections and cancellation in the distant polyhedral field.</span>
+    <span class="n">relative_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">acceleration</span> <span class="o">-</span> <span class="n">expected_acceleration</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expected_acceleration</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">relative_error</span> <span class="o">&lt;</span> <span class="mf">2e-5</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="n">MU</span> <span class="o">/</span> <span class="n">distance</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">2e-5</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_volume_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_invalid_volume_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"invalid_volume"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reversed"</span><span class="p">,</span> <span class="s2">"zero"</span><span class="p">,</span> <span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"infinite"</span><span class="p">,</span> <span class="s2">"negative_infinite"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_volume_is_rejected</span><span class="p">(</span><span class="n">invalid_volume</span><span class="p">,</span> <span class="n">through_body</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject invalid volume directly and through the body initialization error path.</span>
+
+<span class="sd">    :param invalid_volume: Mesh modification producing a non-positive or non-finite volume.</span>
+<span class="sd">    :param through_body: Whether to initialize through ``GravBodyData``.</span>
+<span class="sd">    """</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span> <span class="o">=</span> <span class="n">_make_invalid_mesh</span><span class="p">(</span><span class="n">invalid_volume</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">"signed volume must be finite and positive"</span>
+    <span class="k">if</span> <span class="n">through_body</span><span class="p">:</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"invalid_polyhedron"</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">message</span><span class="p">):</span>
+            <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">error</span></div>
+
+
+
+<div class="viewcode-block" id="test_initialization_retry_matches_fresh_model">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_initialization_retry_matches_fresh_model">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"invalid_volume"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reversed"</span><span class="p">,</span> <span class="s2">"zero"</span><span class="p">,</span> <span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"infinite"</span><span class="p">,</span> <span class="s2">"negative_infinite"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"previously_initialized"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"new"</span><span class="p">,</span> <span class="s2">"initialized"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_initialization_retry_matches_fresh_model</span><span class="p">(</span><span class="n">invalid_volume</span><span class="p">,</span> <span class="n">through_body</span><span class="p">,</span> <span class="n">previously_initialized</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Recover from a rejected mesh without retaining facet or edge dyads.</span>
+
+<span class="sd">    After rejection, replace the mesh with a valid cube and compare acceleration</span>
+<span class="sd">    and potential against a fresh model. An optional earlier successful</span>
+<span class="sd">    initialization also populates the edge cache, which a rejected mesh does not</span>
+<span class="sd">    rebuild. Cyclically permuting the earlier vertices changes the cached dyads</span>
+<span class="sd">    associated with each index while preserving a valid, outward-oriented cube.</span>
+
+<span class="sd">    :param invalid_volume: Rejected mesh configuration.</span>
+<span class="sd">    :param through_body: Whether all initialization attempts use ``GravBodyData``.</span>
+<span class="sd">    :param previously_initialized: Whether to initialize a valid mesh before rejection.</span>
+<span class="sd">    """</span>
+    <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_make_mesh</span><span class="p">({(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">facets</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">through_body</span><span class="p">:</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"retry_polyhedron"</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">():</span>
+<span class="w">            </span><span class="sd">"""Initialize the same gravity body on every attempt."""</span>
+            <span class="k">return</span> <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">initialize</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span>
+
+    <span class="k">if</span> <span class="n">previously_initialized</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">initialize</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="n">invalid_vertices</span><span class="p">,</span> <span class="n">invalid_facets</span> <span class="o">=</span> <span class="n">_make_invalid_mesh</span><span class="p">(</span><span class="n">invalid_volume</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">xyzVertex</span> <span class="o">=</span> <span class="n">invalid_vertices</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">orderFacet</span> <span class="o">=</span> <span class="p">(</span><span class="n">invalid_facets</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">"signed volume must be finite and positive"</span>
+    <span class="k">if</span> <span class="n">through_body</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">message</span><span class="p">):</span>
+            <span class="n">initialize</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">error</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">xyzVertex</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">orderFacet</span> <span class="o">=</span> <span class="p">(</span><span class="n">facets</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">initialize</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">fresh_model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">fresh_model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3000.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">potential</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">acceleration</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">potential</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">acceleration</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fresh_model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">potential</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">fresh_model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="p">),</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_eros_field_and_potential_magnitude_are_unchanged">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_eros_field_and_potential_magnitude_are_unchanged">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_eros_field_and_potential_magnitude_are_unchanged</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Preserve the Eros field and potential magnitude while correcting its sign."""</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">PolyhedralGravityModel</span><span class="p">()</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">eros007790</span><span class="p">)))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="mf">4.46275472004e5</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">40000.0</span><span class="p">,</span> <span class="mf">30000.0</span><span class="p">,</span> <span class="mf">10000.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">30000.0</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">15000.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="c1"># Reference outputs from develop e5eddcb99d; negate the old positive potentials.</span>
+    <span class="n">accelerations</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.0001326573167994466</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0001060227211785598</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.476412823086498e-5</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0002260472476788</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00016664929978675686</span><span class="p">,</span> <span class="mf">0.00012864272573401533</span><span class="p">],</span>
+    <span class="p">]</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">potentials</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">8.782543599089866</span><span class="p">,</span> <span class="o">-</span><span class="mf">11.646507538262664</span><span class="p">]</span>  <span class="c1"># [m^2/s^2]</span>
+    <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">,</span> <span class="n">potential</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">accelerations</span><span class="p">,</span> <span class="n">potentials</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">acceleration</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-11</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">potential</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-11</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_base_potential_api_preserves_position_keyword">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_base_potential_api_preserves_position_keyword">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_base_potential_api_preserves_position_keyword</span><span class="p">(</span><span class="n">c_shape</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve base-class positional and keyword calls for a polyhedral model.</span>
+
+<span class="sd">    :param c_shape: Initialized concave model and its cube centers.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">c_shape</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">]</span>  <span class="c1"># [m] Body-fixed position despite the historical keyword suffix.</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">GravityModel</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">GravityModel</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">positionWrtPlanet_N</span><span class="o">=</span><span class="n">position</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_acceleration_is_negative_potential_gradient">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_acceleration_is_negative_potential_gradient">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"position"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1200.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3000.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_acceleration_is_negative_potential_gradient</span><span class="p">(</span><span class="n">c_shape</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check the energy sign independently of another polyhedral potential call.</span>
+
+<span class="sd">    :param c_shape: Initialized concave model and its cube centers.</span>
+<span class="sd">    :param position: Exterior evaluation point in body-fixed coordinates [m].</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">c_shape</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m]</span>
+    <span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)[</span><span class="n">axis</span><span class="p">]</span> <span class="o">*</span> <span class="n">step</span>
+        <span class="n">gradient</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">position</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">relative_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">acceleration</span> <span class="o">+</span> <span class="n">gradient</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">acceleration</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">relative_error</span> <span class="o">&lt;</span> <span class="mf">1e-7</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_body_rotation</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the inertial-to-body rotation for a spin about the inertial z axis.</span>
+
+<span class="sd">    :param angle: Body rotation angle [rad].</span>
+<span class="sd">    :return: Direction cosine matrix [-].</span>
+<span class="sd">    """</span>
+    <span class="n">cosine</span><span class="p">,</span> <span class="n">sine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cosine</span><span class="p">,</span> <span class="n">sine</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">sine</span><span class="p">,</span> <span class="n">cosine</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+
+
+<div class="viewcode-block" id="test_inertial_potential_uses_requested_orientation">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_inertial_potential_uses_requested_orientation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"orientation"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"rotating"</span><span class="p">,</span> <span class="s2">"zero"</span><span class="p">,</span> <span class="s2">"unlinked"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"offset"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">70.0</span><span class="p">])</span>  <span class="c1"># [s]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_inertial_potential_uses_requested_orientation</span><span class="p">(</span><span class="n">c_shape</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Use the message epoch and identity fallback independently of cached field properties.</span>
+
+<span class="sd">    :param c_shape: Initialized concave model and its cube centers.</span>
+<span class="sd">    :param orientation: Rotating message, zero DCM, or unlinked message.</span>
+<span class="sd">    :param offset: Signed evaluation offset from the message epoch [s].</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">c_shape</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"energy_test"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [rad]</span>
+    <span class="n">spin_rate</span> <span class="o">=</span> <span class="mf">0.002</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [s]</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">"rotating"</span><span class="p">:</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">spin_tilde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">spin_rate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">spin_rate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [1/s]</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix_dot</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">spin_tilde</span> <span class="o">@</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">epoch</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">orientation</span> <span class="o">!=</span> <span class="s2">"unlinked"</span><span class="p">:</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">loadEphemeris</span><span class="p">()</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_PN</span> <span class="o">=</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">spin_rate</span> <span class="o">*</span> <span class="n">offset</span><span class="p">)</span> <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">"rotating"</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">((</span><span class="n">dcm_PN</span> <span class="o">@</span> <span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">evaluation_time</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="c1"># Potential evaluation must also work before state-engine properties are registered.</span>
+    <span class="k">assert</span> <span class="n">body</span><span class="o">.</span><span class="n">computePotentialEnergyInertial</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">evaluation_time</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">expected</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-13</span>
+    <span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">registerProperties</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">computeGravityInertial</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">epoch</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">body</span><span class="o">.</span><span class="n">computePotentialEnergyInertial</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">evaluation_time</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">expected</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-13</span>
+    <span class="p">)</span>
+    <span class="n">expected_acceleration</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">((</span><span class="n">dcm_PN</span> <span class="o">@</span> <span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">computeGravityInertial</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">evaluation_time</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+        <span class="n">expected_acceleration</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_energy_simulation</span><span class="p">(</span><span class="n">model_kind</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">integrator_name</span><span class="p">,</span> <span class="n">spin_rate</span><span class="p">,</span> <span class="n">moving_body</span><span class="p">,</span> <span class="n">time_step</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure a spacecraft and an analytic, once-written planet ephemeris.</span>
+
+<span class="sd">    :param model_kind: Polyhedral, point-mass, or degree-zero spherical-harmonic model.</span>
+<span class="sd">    :param frame: Central-body, inertial, or secondary-body configuration.</span>
+<span class="sd">    :param integrator_name: Name of the integrator class.</span>
+<span class="sd">    :param spin_rate: Constant planet spin about the inertial z axis [rad/s].</span>
+<span class="sd">    :param moving_body: Whether to translate the planet with a constant velocity.</span>
+<span class="sd">    :param time_step: Simulation task period [s].</span>
+<span class="sd">    :return: Simulation, model, ephemeris, and logger handles.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">model_kind</span> <span class="o">==</span> <span class="s2">"polyhedral"</span><span class="p">:</span>
+        <span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_make_mesh</span><span class="p">({(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">model_kind</span> <span class="o">==</span> <span class="s2">"point_mass"</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SphericalHarmonicsGravityModel</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">sBar</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">SIDE_LENGTH</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"energy_body"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="n">frame</span> <span class="o">==</span> <span class="s2">"central"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [rad]</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">spin_tilde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">spin_rate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">spin_rate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [1/s]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix_dot</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">spin_tilde</span> <span class="o">@</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">moving_body</span> <span class="ow">or</span> <span class="n">frame</span> <span class="o">==</span> <span class="s2">"secondary"</span><span class="p">:</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8000.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">moving_body</span><span class="p">:</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">VelocityVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">bodies</span> <span class="o">=</span> <span class="p">[</span><span class="n">body</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s2">"secondary"</span><span class="p">:</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">central</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"central"</span>
+        <span class="n">central</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">central</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">1e5</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="n">bodies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">central</span><span class="p">)</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">time_step</span><span class="p">)))</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"energy_spacecraft"</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">75.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="k">if</span> <span class="n">frame</span> <span class="o">!=</span> <span class="s2">"central"</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+        <span class="n">velocity</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">VelocityVector</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="n">bodies</span><span class="p">)</span>
+    <span class="n">integrator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">svIntegrators</span><span class="p">,</span> <span class="n">integrator_name</span><span class="p">)(</span><span class="n">sc</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="c1"># Record the integrated coordinates directly; message coordinates also include</span>
+    <span class="c1"># extrapolation of a moving central body's ephemeris.</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">PythonVariableLogger</span><span class="p">({</span>
+        <span class="s2">"position"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">sc</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">(),</span>
+        <span class="s2">"velocity"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">sc</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">(),</span>
+        <span class="s2">"energy"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">sc</span><span class="o">.</span><span class="n">totOrbEnergy</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
+        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">sc</span><span class="o">=</span><span class="n">sc</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">bodies</span><span class="o">=</span><span class="n">bodies</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">spin_rate</span><span class="o">=</span><span class="n">spin_rate</span><span class="p">,</span> <span class="n">integrator</span><span class="o">=</span><span class="n">integrator</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_reported_energy_uses_body_frame_and_output_epoch">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_reported_energy_uses_body_frame_and_output_epoch">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"model_kind"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"polyhedral"</span><span class="p">,</span> <span class="s2">"point_mass"</span><span class="p">,</span> <span class="s2">"spherical_harmonics"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"central"</span><span class="p">,</span> <span class="s2">"inertial"</span><span class="p">,</span> <span class="s2">"secondary"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"integrator_name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="s2">"svIntegratorRKF45"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reported_energy_uses_body_frame_and_output_epoch</span><span class="p">(</span><span class="n">model_kind</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">integrator_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check energy at the output epoch for moving, rotating gravity bodies.</span>
+
+<span class="sd">    RKF45 evaluates its last stage before the step endpoint. Energy must use the</span>
+<span class="sd">    output time for both planet translation and orientation, rather than that stage.</span>
+<span class="sd">    The secondary-body case exercises both existing potential contribution terms.</span>
+
+<span class="sd">    :param model_kind: Gravity model whose energy contribution is checked.</span>
+<span class="sd">    :param frame: Integration origin and role of the tested body.</span>
+<span class="sd">    :param integrator_name: Fixed-step or adaptive integrator.</span>
+<span class="sd">    """</span>
+    <span class="n">spin_rate</span> <span class="o">=</span> <span class="mf">0.002</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [s]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_make_energy_simulation</span><span class="p">(</span><span class="n">model_kind</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">integrator_name</span><span class="p">,</span> <span class="n">spin_rate</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="mf">120.0</span>  <span class="c1"># [s]</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">energy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">energy</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+    <span class="p">):</span>
+        <span class="n">body_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span> <span class="o">+</span> <span class="n">time</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">VelocityVector</span><span class="p">)</span>
+        <span class="n">relative_position</span> <span class="o">=</span> <span class="n">position</span> <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s2">"central"</span> <span class="k">else</span> <span class="n">position</span> <span class="o">-</span> <span class="n">body_position</span>
+        <span class="n">dcm_PN</span> <span class="o">=</span> <span class="n">_body_rotation</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">angle</span> <span class="o">+</span> <span class="n">spin_rate</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span>
+        <span class="n">potential</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">((</span><span class="n">dcm_PN</span> <span class="o">@</span> <span class="n">relative_position</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s2">"secondary"</span><span class="p">:</span>
+            <span class="n">potential</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">((</span><span class="n">dcm_PN</span> <span class="o">@</span> <span class="n">body_position</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="n">potential</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">bodies</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gravityModel</span><span class="o">.</span><span class="n">computePotentialEnergy</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">expected_energy</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">velocity</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span> <span class="o">+</span> <span class="n">potential</span><span class="p">)</span>
+        <span class="n">absolute_tolerance</span> <span class="o">=</span> <span class="mf">1e-8</span>  <span class="c1"># [J]</span>
+        <span class="k">assert</span> <span class="n">energy</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_energy</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="n">absolute_tolerance</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_polyhedral_energy_or_jacobi_is_conserved">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.html#test_polyhedralGravityModel.test_polyhedral_energy_or_jacobi_is_conserved">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"spin_rate"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0004</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_polyhedral_energy_or_jacobi_is_conserved</span><span class="p">(</span><span class="n">spin_rate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Conserve energy for a static body and the Jacobi integral for uniform rotation.</span>
+
+<span class="sd">    :param spin_rate: Constant planet rotation rate [rad/s].</span>
+<span class="sd">    """</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_make_energy_simulation</span><span class="p">(</span><span class="s2">"polyhedral"</span><span class="p">,</span> <span class="s2">"central"</span><span class="p">,</span> <span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="n">spin_rate</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">specific_energy</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">energy</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">result</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+    <span class="n">angular_momentum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">1</span><span class="p">:])[:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">jacobi</span> <span class="o">=</span> <span class="n">specific_energy</span> <span class="o">-</span> <span class="n">spin_rate</span> <span class="o">*</span> <span class="n">angular_momentum</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">jacobi</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">jacobi</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-9</span>
+    <span class="k">if</span> <span class="n">spin_rate</span><span class="p">:</span>
+        <span class="n">minimum_energy_variation</span> <span class="o">=</span> <span class="mf">1e-3</span>  <span class="c1"># [m^2/s^2]</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">specific_energy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">minimum_energy_variation</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+.. _test_unitSimpleSolarPanel:
+
+test_unitSimpleSolarPanel
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_unitSimpleSolarPanel
+   :members:
+   :show-inheritance:
+

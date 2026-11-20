@@ -1,0 +1,7 @@
+.. _test_flatStochasticTableaux:
+
+test_flatStochasticTableaux
+===========================
+
+.. bsk-module-guide-end::
+

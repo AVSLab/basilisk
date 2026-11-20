@@ -1,0 +1,10 @@
+.. _DvBurnCmdMsgPayload:
+
+DvBurnCmdMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DvBurnCmdMsgPayload.h
+   :project: msgPayloadDefC
+

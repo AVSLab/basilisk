@@ -1,0 +1,10 @@
+.. _RWConfigElementMsgPayload:
+
+RWConfigElementMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWConfigElementMsgPayload.h
+   :project: msgPayloadDefC
+

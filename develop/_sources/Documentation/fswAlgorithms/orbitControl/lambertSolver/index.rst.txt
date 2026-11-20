@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_lambertSolver:
+
+lambertSolver
+=============
+
+:doc:`Module documentation <lambertSolver>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

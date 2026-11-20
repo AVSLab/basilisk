@@ -1,0 +1,10 @@
+.. _svd:
+
+svd
+===
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svd.h
+   :project: utilities
+

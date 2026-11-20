@@ -1,0 +1,10 @@
+.. _AccessMsgPayload:
+
+AccessMsgPayload
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AccessMsgPayload.h
+   :project: msgPayloadDefC
+

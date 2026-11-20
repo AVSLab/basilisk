@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_jointMotionCompensator:
+
+jointMotionCompensator
+======================
+
+:doc:`Module documentation <jointMotionCompensator>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

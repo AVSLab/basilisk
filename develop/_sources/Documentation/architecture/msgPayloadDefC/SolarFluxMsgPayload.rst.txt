@@ -1,0 +1,10 @@
+.. _SolarFluxMsgPayload:
+
+SolarFluxMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SolarFluxMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_sphericalPendulum:
+
+sphericalPendulum
+=================
+
+:doc:`Module documentation <sphericalPendulum>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_opNavPoint &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="C Module: rasterManager" href="../../rasterManager/rasterManager.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../attRefCorrection/attRefCorrection.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../attTrackingError/attTrackingError.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../celestialTwoBodyPoint/celestialTwoBodyPoint.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constrainedAttitudeManeuver/constrainedAttitudeManeuver.html">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eulerRotation/eulerRotation.html">eulerRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillPoint/hillPoint.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3D/inertial3D.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3DSpin/inertial3DSpin.html">inertial3DSpin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../locationPointing/locationPointing.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mrpRotation/mrpRotation.html">mrpRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../oneAxisSolarArrayPoint/oneAxisSolarArrayPoint.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../opNavPoint.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../rasterManager/rasterManager.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../simpleDeadband/simpleDeadband.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sunSafePoint/sunSafePoint.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../velocityPoint/velocityPoint.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../waypointReference/waypointReference.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transGuidance/index.html">transGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">attGuidance</a></li>
+          <li class="breadcrumb-item"><a href="../opNavPoint.html"><span class="module-type-label module-type-c">C</span> Module: opNavPoint</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_opNavPoint</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/fswAlgorithms/attGuidance/opNavPoint/_UnitTest/test_opNavPoint.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-opnavpoint">
+<span id="id1"></span><h1>test_opNavPoint<a class="headerlink" href="#test-opnavpoint" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_opNavPoint">
+<dt class="sig sig-object py" id="test_opNavPoint.runReferenceBoresightCheck">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">runReferenceBoresightCheck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma_CB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_BN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_BN_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignAxis_C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropMeasurement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_BN_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#runReferenceBoresightCheck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.runReferenceBoresightCheck" title="Link to this definition"></a></dt>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">opNavPoint</span></code> and return the boresight-to-target angles of the reference attitude.</p>
+<p>The reference attitude implied by the output is <span class="math notranslate nohighlight">\([RN] = [BR]^T [BN]\)</span>, with
+<span class="math notranslate nohighlight">\([BR]\)</span> built from <code class="docutils literal notranslate"><span class="pre">sigma_BR</span></code>.  In that attitude the camera axis <code class="docutils literal notranslate"><span class="pre">alignAxis_C</span></code>
+should point along the target heading <span class="math notranslate nohighlight">\(-\boldsymbol{r}_{B/N}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigma_CB</strong> (<em>list</em>) – camera MRP attitude relative to the body frame</p></li>
+<li><p><strong>sigma_BN</strong> (<em>list</em>) – body MRP attitude relative to the inertial frame</p></li>
+<li><p><strong>r_BN_N</strong> (<em>list</em>) – target-to-spacecraft position vector in inertial components</p></li>
+<li><p><strong>alignAxis_C</strong> (<em>list</em>) – camera axis to point at the target, in camera components</p></li>
+<li><p><strong>dropMeasurement</strong> (<em>bool</em>) – if True, the update after the measurement at 0 s receives an invalid
+measurement so the stored inertial heading is used instead</p></li>
+<li><p><strong>sigma_BN_drop</strong> (<em>list</em>) – body MRP attitude relative to the inertial frame used for the update after
+the measurement at 0 s.  If None, <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code> is kept.  A different attitude makes the
+stored heading depend on the inertial frame storage, since a heading stored in camera
+components would no longer point at the target after the rotation.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Each angle is evaluated with the body attitude in effect at the corresponding update.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>angle between the reference camera axis and the target heading for each update [rad]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_antiparallelHeading">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_antiparallelHeading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alignAxis_C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_CB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_antiparallelHeading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_antiparallelHeading" title="Link to this definition"></a></dt>
+<dd><p>Verify the 180 degree fallback axis for a target directly behind the camera axis.</p>
+<p>The fallback eigen axis is computed in camera components at reset and must be mapped to body
+components like the regular axis.  The <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0,</span> <span class="pre">0]</span></code> camera axis exercises the secondary cross
+product used when <code class="docutils literal notranslate"><span class="pre">alignAxis_C</span></code> is parallel to the first camera axis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_defaultTimeOut">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_defaultTimeOut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_defaultTimeOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_defaultTimeOut" title="Link to this definition"></a></dt>
+<dd><p>Verify valid images are used when <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> is left at its default value of zero.</p>
+<p>Valid and invalid images alternate, starting with a valid image at 0 s and including consecutive
+valid and consecutive invalid images.  With <code class="docutils literal notranslate"><span class="pre">timeOut</span> <span class="pre">=</span> <span class="pre">0</span></code> each valid image is used once, on the
+update where it arrives, and the saved heading is discarded on the next update without a valid
+image, so it is never reused.  Every valid update must therefore produce the tracking error of the
+image with a zero <code class="docutils literal notranslate"><span class="pre">omega_RN_B</span></code>, and every invalid update must produce a zero <code class="docutils literal notranslate"><span class="pre">sigma_BR</span></code> with the
+search rate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_module">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_module" title="Link to this definition"></a></dt>
+<dd><p>Module Unit Test</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_nonZeroCameraMounting">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_nonZeroCameraMounting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma_CB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_BN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropMeasurement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_nonZeroCameraMounting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_nonZeroCameraMounting" title="Link to this definition"></a></dt>
+<dd><p>Verify the reference attitude points the camera axis at the target for a non-zero <code class="docutils literal notranslate"><span class="pre">sigma_CB</span></code>.</p>
+<p>The principal rotation axis is computed in camera components and must be mapped to body
+components before it is written to <code class="docutils literal notranslate"><span class="pre">sigma_BR</span></code>.  The check is performed both with a fresh
+measurement and with the stored inertial heading after a dropped measurement.  In the dropped
+measurement case the body attitude is rotated to <code class="docutils literal notranslate"><span class="pre">sigma_BN_drop</span></code> between the measurement and
+the dropped update, so a heading that is not stored in inertial components, or that is not
+mapped back with the current <code class="docutils literal notranslate"><span class="pre">[CN]</span></code>, would no longer point the camera axis at the target.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_retainedMeasurement">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_retainedMeasurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeOut</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_retainedMeasurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_retainedMeasurement" title="Link to this definition"></a></dt>
+<dd><p>Consume each valid message once, retain its inertial heading, and expire it.</p>
+<p>Write valid images at 0 s and 4 s, leaving the payload untouched between writes.
+Rotate the body after the first image and require the reference camera axis to
+keep pointing at the saved target until timeout.  After expiry, search must
+continue until the second image supplies a new target.  With zero timeout,
+only the updates receiving new images may track.  Reset must allow a new
+measurement at time zero again, and a delayed first read must still expire
+relative to the message write time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_opNavPoint.test_savedHeadingTimeout">
+<span class="sig-prename descclassname"><span class="pre">test_opNavPoint.</span></span><span class="sig-name descname"><span class="pre">test_savedHeadingTimeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">firstMeasurementTime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_opNavPoint.html#test_savedHeadingTimeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_opNavPoint.test_savedHeadingTimeout" title="Link to this definition"></a></dt>
+<dd><p>Verify the saved heading is reused until <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> and a new image is used as soon as it arrives.</p>
+<p>Valid images are separated by invalid ones.  The saved heading must keep producing the tracking error of
+the last image for less than <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> seconds after it, also when the image arrives at 0 s, and the
+module must switch to the search rate once <code class="docutils literal notranslate"><span class="pre">timeOut</span></code> is reached.  A valid image that arrives exactly
+<code class="docutils literal notranslate"><span class="pre">timeOut</span></code> seconds after the previous one must be used on that update instead of being ignored.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../rasterManager/rasterManager.html" class="btn btn-neutral float-right" title="C Module: rasterManager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

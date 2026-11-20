@@ -1,0 +1,10 @@
+.. _ScSunlitFacetAreaMsgPayload:
+
+ScSunlitFacetAreaMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ScSunlitFacetAreaMsgPayload.h
+   :project: msgPayloadDefC
+

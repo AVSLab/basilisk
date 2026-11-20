@@ -1,0 +1,15 @@
+.. _scenarioExtendingBoom:
+
+scenarioExtendingBoom
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioExtendingBoom
+   :members:
+   :show-inheritance:
+

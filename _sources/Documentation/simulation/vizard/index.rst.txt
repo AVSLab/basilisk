@@ -1,0 +1,12 @@
+.. _Folder_vizard:
+
+vizard
+======
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+
+   _GeneralModuleFiles/index
+   dataFileToViz <dataFileToViz/dataFileToViz>
+   vizInterface <vizInterface/vizInterface>

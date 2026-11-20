@@ -1,0 +1,12 @@
+.. _Folder_spinningBodies:
+
+spinningBodies
+==============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   spinningBodyNDOFStateEffector <spinningBodiesNDOF/spinningBodyNDOFStateEffector>
+   spinningBodyOneDOFStateEffector <spinningBodiesOneDOF/spinningBodyOneDOFStateEffector>
+   spinningBodyTwoDOFStateEffector <spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector>

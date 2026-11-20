@@ -1,0 +1,368 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_polyhedralGravityModel &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=f77d0d59" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="test_sphericalHarmonicsGravityModel" href="test_sphericalHarmonicsGravityModel.html" />
+    <link rel="prev" title="test_gravitySpacecraft" href="test_gravitySpacecraft.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="../polyhedralGravityModel.html"><span class="module-type-label module-type-cpp">C++</span> Module: polyhedralGravityModel</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_polyhedralGravityModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_polyhedralGravityModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-polyhedralgravitymodel">
+<span id="id1"></span><h1>test_polyhedralGravityModel<a class="headerlink" href="#test-polyhedralgravitymodel" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_polyhedralGravityModel">Validate polyhedral gravity normalization, initialization, and energy.</p>
+<p>A closed C-shaped body contains fourteen equal cubes. Its signed volume is
+14 km^3, whereas summing the absolute tetrahedral volumes gives 18 km^3.
+Acceleration and potential are checked against the superposition of separate
+cube models and their point-mass limits. Stored Eros results check compatibility
+with a mesh whose tetrahedral contributions are all positive (issue 1681).
+Potential gradients, inertial-frame evaluations, and spacecraft energy checks
+cover the sign and reference-frame corrections in issue 1689.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.c_shape">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">c_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#c_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.c_shape" title="Link to this definition"></a></dt>
+<dd><p>Return an initialized C-shaped body and its constituent cube centers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_acceleration_is_negative_potential_gradient">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_acceleration_is_negative_potential_gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_acceleration_is_negative_potential_gradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_acceleration_is_negative_potential_gradient" title="Link to this definition"></a></dt>
+<dd><p>Check the energy sign independently of another polyhedral potential call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c_shape</strong> – Initialized concave model and its cube centers.</p></li>
+<li><p><strong>position</strong> – Exterior evaluation point in body-fixed coordinates [m].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_base_potential_api_preserves_position_keyword">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_base_potential_api_preserves_position_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_base_potential_api_preserves_position_keyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_base_potential_api_preserves_position_keyword" title="Link to this definition"></a></dt>
+<dd><p>Preserve base-class positional and keyword calls for a polyhedral model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>c_shape</strong> – Initialized concave model and its cube centers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_concave_body_far_field">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_concave_body_far_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_concave_body_far_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_concave_body_far_field" title="Link to this definition"></a></dt>
+<dd><p>Check the vector acceleration and potential against the point-mass limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c_shape</strong> – Initialized C-shaped model and its cube centers.</p></li>
+<li><p><strong>direction</strong> – Dimensionless direction of the evaluation point.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_concave_body_matches_cube_superposition">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_concave_body_matches_cube_superposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_concave_body_matches_cube_superposition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_concave_body_matches_cube_superposition" title="Link to this definition"></a></dt>
+<dd><p>Check acceleration and potential against fourteen correctly normalized cubes.</p>
+<p>The second evaluation point lies in the opening of the C-shaped body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c_shape</strong> – Initialized C-shaped model and its cube centers.</p></li>
+<li><p><strong>position</strong> – Evaluation point in meters relative to the center of mass.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_eros_field_and_potential_magnitude_are_unchanged">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_eros_field_and_potential_magnitude_are_unchanged</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_eros_field_and_potential_magnitude_are_unchanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_eros_field_and_potential_magnitude_are_unchanged" title="Link to this definition"></a></dt>
+<dd><p>Preserve the Eros field and potential magnitude while correcting its sign.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_inertial_potential_uses_requested_orientation">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_inertial_potential_uses_requested_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_inertial_potential_uses_requested_orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_inertial_potential_uses_requested_orientation" title="Link to this definition"></a></dt>
+<dd><p>Use the message epoch and identity fallback independently of cached field properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c_shape</strong> – Initialized concave model and its cube centers.</p></li>
+<li><p><strong>orientation</strong> – Rotating message, zero DCM, or unlinked message.</p></li>
+<li><p><strong>offset</strong> – Signed evaluation offset from the message epoch [s].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_initialization_retry_matches_fresh_model">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_initialization_retry_matches_fresh_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invalid_volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previously_initialized</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_initialization_retry_matches_fresh_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_initialization_retry_matches_fresh_model" title="Link to this definition"></a></dt>
+<dd><p>Recover from a rejected mesh without retaining facet or edge dyads.</p>
+<p>After rejection, replace the mesh with a valid cube and compare acceleration
+and potential against a fresh model. An optional earlier successful
+initialization also populates the edge cache, which a rejected mesh does not
+rebuild. Cyclically permuting the earlier vertices changes the cached dyads
+associated with each index while preserving a valid, outward-oriented cube.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>invalid_volume</strong> – Rejected mesh configuration.</p></li>
+<li><p><strong>through_body</strong> – Whether all initialization attempts use <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p></li>
+<li><p><strong>previously_initialized</strong> – Whether to initialize a valid mesh before rejection.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_invalid_volume_is_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_invalid_volume_is_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invalid_volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_invalid_volume_is_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_invalid_volume_is_rejected" title="Link to this definition"></a></dt>
+<dd><p>Reject invalid volume directly and through the body initialization error path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>invalid_volume</strong> – Mesh modification producing a non-positive or non-finite volume.</p></li>
+<li><p><strong>through_body</strong> – Whether to initialize through <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_polyhedral_energy_or_jacobi_is_conserved">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_polyhedral_energy_or_jacobi_is_conserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spin_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_polyhedral_energy_or_jacobi_is_conserved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_polyhedral_energy_or_jacobi_is_conserved" title="Link to this definition"></a></dt>
+<dd><p>Conserve energy for a static body and the Jacobi integral for uniform rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>spin_rate</strong> – Constant planet rotation rate [rad/s].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_polyhedralGravityModel.test_reported_energy_uses_body_frame_and_output_epoch">
+<span class="sig-prename descclassname"><span class="pre">test_polyhedralGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_reported_energy_uses_body_frame_and_output_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_polyhedralGravityModel.html#test_reported_energy_uses_body_frame_and_output_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_polyhedralGravityModel.test_reported_energy_uses_body_frame_and_output_epoch" title="Link to this definition"></a></dt>
+<dd><p>Check energy at the output epoch for moving, rotating gravity bodies.</p>
+<p>RKF45 evaluates its last stage before the step endpoint. Energy must use the
+output time for both planet translation and orientation, rather than that stage.
+The secondary-body case exercises both existing potential contribution terms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_kind</strong> – Gravity model whose energy contribution is checked.</p></li>
+<li><p><strong>frame</strong> – Integration origin and role of the tested body.</p></li>
+<li><p><strong>integrator_name</strong> – Fixed-step or adaptive integrator.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_gravitySpacecraft.html" class="btn btn-neutral float-left" title="test_gravitySpacecraft" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_sphericalHarmonicsGravityModel.html" class="btn btn-neutral float-right" title="test_sphericalHarmonicsGravityModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>
