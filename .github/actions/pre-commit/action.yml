@@ -4,9 +4,7 @@ description: Run pre-commit on changed files with Python 3.11
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v6
-      with:
-        python-version: 3.11
+    - uses: ./.github/actions/setup-pre-commit
 
     - name: Set up Rust formatter
       shell: bash
@@ -15,7 +13,16 @@ runs:
         rustup default stable
 
     - id: file_changes
-      uses: tj-actions/changed-files@v44
-    - uses: pre-commit/action@v3.0.1
+      uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
       with:
-        extra_args: --files ${{ steps.file_changes.outputs.all_changed_files }}
+        json: true
+        escape_json: false
+        safe_output: false
+        quotepath: false
+    - name: Check changed files
+      shell: bash
+      env:
+        CHANGED_FILES: ${{ steps.file_changes.outputs.all_changed_files }}
+      run: |
+        jq --raw-output0 '.[] | "./" + .' <<< "$CHANGED_FILES" |
+          xargs -0 -r pre-commit run --show-diff-on-failure --color=always --files

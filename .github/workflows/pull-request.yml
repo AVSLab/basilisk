@@ -23,11 +23,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-      - name: Select formatting scope
-        id: formatting-scope
+      - uses: ./.github/actions/setup-pre-commit
+      - name: Check C/C++ formatting
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -36,13 +33,11 @@ jobs:
         run: |
           if [[ "$EVENT_NAME" == "pull_request" ]] && git diff --quiet "$BASE_SHA...$HEAD_SHA" -- \
             .clang-format .pre-commit-config.yaml ':(glob)**/.clang-format'; then
-            echo "args=--from-ref $BASE_SHA --to-ref $HEAD_SHA" >> "$GITHUB_OUTPUT"
+            scope=(--from-ref "$BASE_SHA" --to-ref "$HEAD_SHA")
           else
-            echo "args=--all-files" >> "$GITHUB_OUTPUT"
+            scope=(--all-files)
           fi
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: clang-format ${{ steps.formatting-scope.outputs.args }} --show-diff-on-failure
+          pre-commit run clang-format --show-diff-on-failure --color=always "${scope[@]}"
 
   build-linux:
     runs-on: ubuntu-24.04
