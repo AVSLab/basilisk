@@ -340,6 +340,14 @@ reconstructs the epoch on each reset and retains precedence over <code class="do
 <li><p>In Basilisk 2.12.2 and earlier, malformed WMM coefficient records could reuse values from a preceding line and silently change the computed magnetic field; negative degree/order indices could write outside coefficient arrays, and oversized integers could wrap into valid indices (issue #1691). The WMM reader now validates integer conversions, parsed fields, and index bounds, and failed loads release the partial model and stop initialization. On affected releases, use an unmodified official WMM coefficient file and validate any custom file before loading it.</p></li>
 <li><p><a class="reference internal" href="../../Documentation/simulation/environment/dentonFluxModel/dentonFluxModel.html#dentonfluxmodel"><span class="std std-ref">C++ Module: dentonFluxModel</span></a> in Basilisk 2.12.2 reads beyond its local-time table between 23 h and 24 h, producing incorrect electron and ion fluxes and a discontinuity at midnight (#1692). At whole-hour local times, it also selects the lower energy bin instead of interpolating in energy (#1693). The fixes wrap local time and table lookups at midnight and restore whole-hour energy interpolation. Recompute affected flux histories with the corrected module; the model data files and configuration are unchanged.</p></li>
 <li><p>In Basilisk 2.12.2, <a class="reference internal" href="../../Documentation/simulation/environment/dentonFluxModel/dentonFluxModel.html#dentonfluxmodel"><span class="std std-ref">C++ Module: dentonFluxModel</span></a> does not check numeric reads from its electron and ion data files. Truncated or malformed files can leave table entries uninitialized or retain values from an earlier load, producing incorrect fluxes without an error (#1694). Initialization now checks every required value, including unused statistics, and raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> with the file path and value number on failure. On affected versions, use complete, unmodified Denton data files and replace any damaged copies.</p></li>
+<li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <code class="docutils literal notranslate"><span class="pre">astroFunctions.RV2OE</span></code> can return zero inclination for
+polar orbits, or zero/360-degree node, periapsis, or anomaly angles when a
+defining component or dot product is exactly zero (#1695). Roundoff in
+inverse-cosine arguments can also produce nonfinite angles. The function now
+tests the relevant vector magnitudes for undefined angles and clamps each
+inverse-cosine argument to <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>. Its existing zero placeholders for
+singular angles are retained; these placeholders can discard orientation
+information for circular, equatorial, or radial states.</p></li>
 <li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <a class="reference internal" href="../../Documentation/simulation/vizard/dataFileToViz/dataFileToViz.html#datafiletoviz"><span class="std std-ref">C++ Module: dataFileToViz</span></a> can crash when a spacecraft with an
 empty thruster cluster map precedes one with thrusters (#1696). Empty count
 vectors now retain their spacecraft index. Cluster and count vectors must
@@ -352,6 +360,12 @@ even though the recorded thrust, wheel speed, and motor torque are read
 correctly. Each spacecraft now uses its own configuration entries. Regenerate
 affected Vizard files with the corrected module.</p></li>
 <li><p>In Basilisk 2.12.2 and earlier, assigning malformed or oversized nested sequences to two-dimensional C arrays from Python could crash or corrupt memory; smaller inputs could copy uninitialized values, and failed element conversions could still overwrite the destination (issue #1699). The shared SWIG conversion now validates both dimensions and row consistency, propagates errors before assignment, and zero-pads smaller rectangular inputs. On affected releases, supply fully populated rectangular arrays matching the declared dimensions, with every element convertible to the destination type.</p></li>
+<li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <code class="docutils literal notranslate"><span class="pre">astroFunctions.JulianDate</span></code> rounds calendar dates up
+to noon, and <code class="docutils literal notranslate"><span class="pre">GregorianDate</span></code> can return day zero or month 13 near month ends
+(#1702). Both <code class="docutils literal notranslate"><span class="pre">GregorianDate</span></code> and <code class="docutils literal notranslate"><span class="pre">exactGregorianDate</span></code> also count 1900
+and 2100 as leap years. All three helpers now use
+Gregorian leap-year rules and count fractional calendar days from midnight.
+Callers that intended noon should pass <code class="docutils literal notranslate"><span class="pre">day</span> <span class="pre">+</span> <span class="pre">0.5</span></code> to <code class="docutils literal notranslate"><span class="pre">JulianDate</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pixelLineBiasUKF</span></code> in Basilisk 2.12.2 and earlier releases stores six post-fit
 residuals in a three-element array, overwriting the navigation output timestamp,
 <code class="docutils literal notranslate"><span class="pre">maxTimeJump</span></code>, and the cached circle timestamp after a measurement update
@@ -760,6 +774,11 @@ NaN <code class="docutils literal notranslate"><span class="pre">glareThreshold<
 regardless of the device status message, which gated only the load filtering and the output
 message write. Commanding the effector off left its logged force at zero whereas the constraint
 kept acting on the dynamics. This is fixed in the current version.</p></li>
+<li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <code class="docutils literal notranslate"><span class="pre">astroFunctions.rotationMatrix</span></code> overwrites an
+off-diagonal element and leaves a diagonal element at one. This can distort
+rotated vectors and produces a nonidentity matrix at zero angle. The helper
+now fills the correct diagonal element. The existing <code class="docutils literal notranslate"><span class="pre">TisserandPlot</span></code> caller
+uses only the unaffected first column, so its curves are unchanged.</p></li>
 <li><p>Container release builds now free runner disk space and support recovery from
 an existing release tag without moving it.</p></li>
 <li><p>In Basilisk 2.12.1, importing the support-data loader checks GitHub for a release
@@ -769,8 +788,24 @@ needs downloading. Local files, valid cached files, and explicit external
 download URLs avoid the lookup; release-tag selection and the fallback to
 <code class="docutils literal notranslate"><span class="pre">develop</span></code> are preserved when a download is required.</p></li>
 <li><p>In Basilisk 2.12.2, <a class="reference internal" href="../../Documentation/simulation/environment/dentonFluxModel/dentonFluxModel.html#dentonfluxmodel"><span class="std std-ref">C++ Module: dentonFluxModel</span></a> accepts 41 through 50 output energies despite having space for only 40 in its internal energy array. These counts cause out-of-bounds accesses and incorrect output energies and fluxes. A count of zero also reaches an integer division by zero. The internal output-energy array now matches the flux message capacity, and initialization rejects counts outside 1 through 50. On affected versions, use 1 through 40 output energies.</p></li>
+<li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <code class="docutils literal notranslate"><span class="pre">astroFunctions.ephemeridesMeeus</span></code> evaluates the
+quadratic time coefficients for Saturn, Uranus, and Neptune as linear terms.
+Uranus and Neptune also use angular elements referred to the equinox of date,
+which introduces a frame mismatch with the other planets away from J2000.0.
+Both now use the mean ecliptic and equinox of J2000.0. The quadratic terms
+are corrected, and <code class="docutils literal notranslate"><span class="pre">computeCOE</span></code> now uses the fractional coefficients of
+the fifth-order equation of center in computing true anomaly.</p></li>
 <li><p>Windows optional-wheel packaging in Basilisk 2.11.x and 2.12.x can reject core and opNav wheels built with different compatible MSVC versions during GitHub runner-image updates. The packager now distinguishes MSVC compiler provenance from ABI compatibility while retaining checks for architecture, runtime settings, type layouts, and shared runtime DLLs. A differing shared runtime is accepted when the core provides an equal or newer release DLL of the same architecture. Previously, rebuilding both inputs with a matching toolchain was the workaround; rerunning packaging with the same mismatched inputs did not help.</p></li>
 <li><p>In Basilisk 2.12.1, direct <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> and CMake builds could accept Python versions outside the range declared in package metadata, even though package installation rejected them. Both build paths now enforce <code class="docutils literal notranslate"><span class="pre">project.requires-python</span></code> from <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>. For affected releases, create a virtual environment with a supported Python version before building and installing Basilisk.</p></li>
+<li><p>In Basilisk <code class="docutils literal notranslate"><span class="pre">2.12.2</span></code>, <code class="docutils literal notranslate"><span class="pre">astroFunctions.RV2OE</span></code> can return a zero semimajor
+axis for bound or unbound radial motion because radial orbits have unit
+eccentricity at every energy. It now uses specific orbital energy to
+compute the semimajor axis. Radial motion in any direction returns unit
+eccentricity even when the cross product is nonzero from roundoff.
+Angular momentum and energy are evaluated with at least double precision,
+including for integer and mixed-precision inputs.
+Both radial and nonradial states at escape energy within roundoff return
+<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1</span></code>.</p></li>
 <li><p>In Basilisk 2.12.2 and earlier, failed Python numeric conversions or sequence operations during one-dimensional C-array assignment could overwrite the destination, mask the original exception, or leak references. Sequences that grew while being read could also exceed the checked array bound, including in arrays of wrapped structs. The converters now stop on errors before assignment, release acquired references, bound iteration by the validated length, and reject null pointer elements. On affected releases, use ordinary lists or tuples within the declared capacity, validate numeric elements before assignment, and supply valid wrapped objects for struct arrays.</p></li>
 </ul>
 </section>
