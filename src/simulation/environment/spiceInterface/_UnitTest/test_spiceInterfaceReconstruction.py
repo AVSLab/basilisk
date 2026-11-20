@@ -149,6 +149,32 @@ def test_positionReconstructionAccurateAndCheaper():
     assert nOrient > nPos, f"exact orientation channel should query every step, got {nOrient}"
 
 
+@pytest.mark.parametrize("planet", ["venus", "neptune barycenter"])
+def test_long_position_knot_interval(planet):
+    """Check the cubic Hermite midpoint and its velocity using exact SPICE states 120 days apart."""
+    step_seconds = 120.0 * 86400.0  # [s] More than 2**53 ns
+    knot_step = macros.sec2nano(step_seconds)
+    model = spiceInterface.SpiceInterface()
+    model.addPlanetNames([planet])
+    model.UTCCalInit = DATE
+    model.Reset(0)
+    start = model.planetStateOutMsgs[0].read()
+    p0, v0 = np.array(start.PositionVector), np.array(start.VelocityVector)
+    model.UpdateState(knot_step)
+    end = model.planetStateOutMsgs[0].read()
+    p1, v1 = np.array(end.PositionVector), np.array(end.VelocityVector)
+
+    model.setPlanetPositionReconstruction(planet, knot_step)
+    model.Reset(0)
+    model.UpdateState(knot_step // 2)
+    midpoint = model.planetStateOutMsgs[0].read()
+    expected_pos = (p0 + p1) / 2 + step_seconds * (v0 - v1) / 8  # [m]
+    expected_vel = 1.5 * (p1 - p0) / step_seconds - (v0 + v1) / 4  # [m/s]
+    np.testing.assert_allclose(midpoint.PositionVector, expected_pos, rtol=0, atol=1e-2, equal_nan=False)  # [m]
+    np.testing.assert_allclose(midpoint.VelocityVector, expected_vel, rtol=0, atol=1e-8, equal_nan=False)  # [m/s]
+    assert model.getPlanetSpiceQueryCount(planet)[0] == 2
+
+
 def test_singleKnotOrientationExtrapolationExactForConstantSpinner():
     """Earth's IAU frame is a constant-rate spinner, so extrapolating orientation from a SINGLE
     knot (nKnots=1, interpolate=False) reproduces the exact per-call sxform orientation, using
