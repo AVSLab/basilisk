@@ -1,0 +1,1 @@
+- Fixed :ref:`spiceInterface` position reconstruction returning nonfinite position and velocity for knot intervals longer than about 104.25 days.
