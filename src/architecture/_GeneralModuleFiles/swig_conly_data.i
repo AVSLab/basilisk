@@ -152,8 +152,9 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
     Py_DECREF(storageOwner);
 }
 
-%define ARRAYASLIST(type, fromfunc, asfunc)
-%typemap(in) type [ANY] (type temp[$1_dim0]) {
+// Use > for zero-padded arrays and != for fields that require every component.
+%define BSK_ARRAY_INPUT(type, asfunc, array, sizeMismatchOp)
+%typemap(in) type array (type temp[$1_dim0]) {
     Py_ssize_t i;
     void *blankPtr = 0 ;
     int resOut = 0 ;
@@ -165,7 +166,7 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
     if (length < 0) {
         SWIG_fail;
     }
-    if (length > $1_dim0) {
+    if (length sizeMismatchOp $1_dim0) {
         PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
         SWIG_fail;
     }
@@ -192,7 +193,10 @@ static int _bsk_remember_message_parent(PyObject* proxy, PyObject* parent) {
     }
     $1 = temp;
 }
+%enddef
 
+%define ARRAYASLIST(type, fromfunc, asfunc)
+BSK_ARRAY_INPUT(type, asfunc, [ANY], >)
 %typemap(memberin) type [ANY] {
     int i;
     for (i = 0; i < $1_dim0; i++) {

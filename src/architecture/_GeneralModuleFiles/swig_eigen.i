@@ -199,8 +199,8 @@ struct RotationCoversion<Eigen::Vector4d, Eigen::Quaterniond>
 This function returns the size of the input.
 If the input is not a sequence, then an empty optional is returned.
 Otherwise, the number of rows and columns are returned in the pair.
-The number of columns are obtained from the first element of the input sequence.
-(i.e. ragged nested sequences are not checked)
+Empty arrays use their declared shape. A flat sequence is a column vector.
+The caller checks the lengths of individual rows.
 */
 static std::optional<std::pair<Py_ssize_t, Py_ssize_t>> getInputSize(PyObject *input)
 {
@@ -210,10 +210,31 @@ static std::optional<std::pair<Py_ssize_t, Py_ssize_t>> getInputSize(PyObject *i
     }
 
     Py_ssize_t numberRows = PySequence_Length(input);
-
-    PyObject *firstItem = PySequence_GetItem(input, 0);
-    Py_ssize_t numberColumns = PySequence_Check(firstItem) ? PySequence_Length(firstItem) : 1;
-    Py_DECREF(firstItem);
+    if (numberRows < 0) return {};
+    Py_ssize_t numberColumns = 1;
+    if (numberRows > 0) {
+        PyObject *firstItem = PySequence_GetItem(input, 0);
+        if (!firstItem) return {};
+        numberColumns = PySequence_Check(firstItem) ? PySequence_Length(firstItem) : 1;
+        Py_DECREF(firstItem);
+        if (numberColumns < 0) return {};
+    }
+    if (numberRows == 0 || numberColumns == 0) {
+        PyObject *shape = PyObject_GetAttrString(input, "shape");
+        if (shape) {
+            Py_ssize_t rows, columns = 1;
+            int parsed = PyArg_ParseTuple(shape, "n|n", &rows, &columns);
+            Py_DECREF(shape);
+            if (!parsed || rows != numberRows || columns < 0 || (rows > 0 && columns != numberColumns)) {
+                PyErr_Clear();
+                return {};
+            }
+            numberColumns = columns;
+        } else {
+            if (!PyErr_ExceptionMatches(PyExc_AttributeError)) return {};
+            PyErr_Clear();
+        }
+    }
     return {{numberRows, numberColumns}};
 }
 }
@@ -228,17 +249,8 @@ sized matrix T allow any number of rows/columns). Moreover, an error is raised f
 ragged nested sequences (rows with different numbers of elements).
 */
 template<class T>
-std::optional<std::string> checkPyObjectIsMatrixLike(PyObject *input)
+std::optional<std::string> checkPyObjectIsMatrixLike(PyObject *input, Py_ssize_t numberRows, Py_ssize_t numberColumns)
 {
-    auto maybeSize = getInputSize(input);
-
-    if (!maybeSize)
-    {
-        return "Input is not a sequence";
-    }
-
-    auto [numberRows, numberColumns] = maybeSize.value();
-
     if (T::RowsAtCompileTime != -1 && T::RowsAtCompileTime != numberRows)
     {
         std::string errorMsg = "Input does not have the correct number of rows. Expected "
@@ -285,7 +297,13 @@ T pyObjToEigenMatrix(PyObject *input)
 {
     using ScalarType = typename T::Scalar;
 
-    auto errorMsg = checkPyObjectIsMatrixLike<T>(input);
+    auto size = getInputSize(input);
+    if (!size) {
+        if (!PyErr_Occurred()) PyErr_SetString(PyExc_ValueError, "Input is not a sequence with one or two dimensions");
+        return {};
+    }
+    auto [numberRows, numberColumns] = *size;
+    auto errorMsg = checkPyObjectIsMatrixLike<T>(input, numberRows, numberColumns);
     if (errorMsg)
     {
         PyErr_SetString(PyExc_ValueError,errorMsg.value().c_str());
@@ -295,8 +313,6 @@ T pyObjToEigenMatrix(PyObject *input)
     // that has correct size.
 
     T result;
-
-    auto [numberRows, numberColumns] = getInputSize(input).value();
 
     // Resize can be called even for non-dynamic matrices as long as the
     // fixed-sizes do not change.

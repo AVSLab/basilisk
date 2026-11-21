@@ -124,10 +124,30 @@ def test_simpleInputOutput(attr: str, useNumpy: bool):
     assert outputData == retrieved, f"{attr} {retrieved}"
 
 
+@pytest.mark.parametrize("value, columns", [
+    ([], 1), (np.empty(0), 1), (np.empty((0, 1)), 1),
+    (np.empty((0, 3)), 3), (np.empty((0, 0)), 0), (np.empty((2, 0)), 0),
+])
+def test_empty_array_shape(value, columns):
+    """Preserve empty matrix dimensions when assigning members and selecting overloads."""
+    target = SwigEigenTestClass()
+    target.matrixXd = value
+    assert len(target.matrixXd) == len(value)
+    assert target.matrixXdColumns() == columns
+    assert target.testVectorXdPrecedence(value) == (columns == 1)
+    if columns == 3:
+        target.matrixX3d = value
+        with pytest.raises(ValueError, match="number of columns"):
+            target.vectorXd = value
+
+
 @pytest.mark.parametrize(
     "keyword,attr,data",
     [
         ("not a sequence", "vector3d", 1),
+        ("number of rows", "vector3d", []),
+        ("one or two dimensions", "matrixXd", np.empty((0, 3, 2))),
+        ("one or two dimensions", "matrixXd", np.empty((2, 0, 3))),
         ("number of rows", "vector3d", [1, 2]),
         ("number of rows", "vector3d", [1, 2, 3, 4]),
         ("number of columns", "vector3d", [[1, 2], [1, 2], [1, 2]]),

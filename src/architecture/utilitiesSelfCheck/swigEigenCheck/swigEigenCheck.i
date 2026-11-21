@@ -64,6 +64,7 @@ struct SwigEigenTestClass
     Eigen::MatrixX3d matrixX3d;
     Eigen::MatrixXi matrixXi;
     Eigen::MatrixXd matrixXd;
+    int matrixXdColumns() const { return static_cast<int>(matrixXd.cols()); }
 
     Eigen::MRPd mrpd;
     Eigen::Quaterniond quaterniond;
