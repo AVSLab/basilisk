@@ -176,11 +176,13 @@ class ConstrainedAttitudeManeuver : public SysModel
     void backtrack(Node* p);
     void validateManeuverRate();
     const char* prepareWaypoints();
+    bool fitSpline();
     void computeTorqueUnchecked(int n, double I[9], double L[3]) const;
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;
     SpicePlanetStateMsgPayload keepInCelBodyMsgBuffer;
+    uint64_t resetTimeNanos = 0; //!< [ns] Simulation time at the start of the planned maneuver
     bool referenceReady = false; //!< True once Reset has completed planning the attitude reference
     bool inputsReady = false;    //!< True after the most recent ReadInputs() completes successfully
 };

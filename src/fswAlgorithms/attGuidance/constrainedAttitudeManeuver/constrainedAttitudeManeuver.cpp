@@ -101,6 +101,84 @@ double interiorPeakNorm(const Eigen::Vector4d& from, const Eigen::Vector4d& to)
     }
     return (1.0 + std::sqrt(std::max(0.0, 1.0 - sine * sine))) / sine;
 }
+
+struct SplineSample
+{
+    Eigen::MRPd attitude;
+    Eigen::Vector3d rate;         // [1/s] MRP derivative
+    Eigen::Vector3d acceleration; // [1/s^2] MRP second derivative
+};
+
+SplineSample sampleFit(OutputDataSet& fit, double time)
+{
+    SplineSample point;
+    fit.getData(time, point.attitude.coeffs().data(), point.rate.data(), point.acceleration.data());
+    return point;
+}
+
+// On one knot span the fit has degree at most five. Its endpoint values and first two derivatives
+// determine its six quintic Bezier control points, whose polygon bounds the curve's MRP length.
+double angularTravelBound(const SplineSample& a, const SplineSample& b, double dt)
+{
+    const Eigen::Vector3d v0 = dt / 5 * a.rate;
+    const Eigen::Vector3d v1 = dt / 5 * b.rate;
+    const Eigen::Vector3d a0 = dt * dt / 20 * a.acceleration;
+    const Eigen::Vector3d a1 = dt * dt / 20 * b.acceleration;
+    const Eigen::Vector3d middle = b.attitude.coeffs() - a.attitude.coeffs() - 2 * (v0 + v1) + a1 - a0;
+    const double length = v0.norm() + (v0 + a0).norm() + middle.norm() + (v1 - a1).norm() + v1.norm();
+    // ||omega|| = 4 ||sigmaDot|| / (1 + ||sigma||^2). The triangle inequality gives a lower
+    // bound for ||sigma|| at any point between the two endpoint attitudes in MRP coordinates.
+    const double minNorm = std::max(0.0, (a.attitude.norm() + b.attitude.norm() - length) / 2);
+    return 4 * length / (1 + minNorm * minNorm);
+}
+
+bool withinTurnLimit(const InputDataSet& input, OutputDataSet& fit)
+{
+    const auto waypoint = [&input](Eigen::Index i) { return Eigen::MRPd(input.X1[i], input.X2[i], input.X3[i]); };
+    Eigen::VectorXd times = input.T;
+    if (!input.T_flag) {
+        // Without timestamps the fitter spaces waypoints by MRP chord length. Only the fractions matter here.
+        times.resize(input.X1.size());
+        times[0] = 0.0;
+        for (Eigen::Index i = 1; i < times.size(); ++i) {
+            times[i] = times[i - 1] + (waypoint(i).coeffs() - waypoint(i - 1).coeffs()).norm();
+        }
+    }
+    const double duration = fit.T[fit.T.size() - 1]; // [s]
+    if (!std::isfinite(duration) || duration <= 0 || times.size() != input.X1.size() || times[0] != 0.0 ||
+        !times.allFinite() || (times.tail(times.size() - 1).array() <= times.head(times.size() - 1).array()).any()) {
+        return false;
+    }
+    times /= times[times.size() - 1];
+    for (Eigen::Index i = 1; i < times.size(); ++i) {
+        const Eigen::Quaterniond from(waypoint(i - 1).toRotationMatrix());
+        const Eigen::Quaterniond to(waypoint(i).toRotationMatrix());
+        const double limit = from.angularDistance(to) + 2 * MPI; // [rad] One extra revolution.
+        const auto first = std::upper_bound(fit.U.data(), fit.U.data() + fit.U.size(), times[i - 1]) - fit.U.data() - 1;
+        // Most fits pass on their original knot spans. Subdivide only to tighten a conservative bound.
+        bool accepted = false;
+        for (int parts = 1; !accepted && parts <= 64; parts *= 4) {
+            double travel = 0.0; // [rad]
+            double start = times[i - 1] * duration;
+            SplineSample left = sampleFit(fit, start);
+            for (auto span = first; fit.U[span] < times[i] && travel < limit; ++span) {
+                const double end = std::min(times[i], fit.U[span + 1]) * duration;
+                const double step = (end - start) / parts; // [s]
+                for (int k = 1; k <= parts && travel < limit; ++k) {
+                    const SplineSample right = sampleFit(fit, k == parts ? end : start + k * step);
+                    travel += angularTravelBound(left, right, step);
+                    left = right;
+                }
+                start = end;
+            }
+            accepted = travel < limit;
+        }
+        if (!accepted) {
+            return false;
+        }
+    }
+    return true;
+}
 } // namespace
 
 /*! @brief Construct an unclassified grid node. */
@@ -363,7 +441,7 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 
 /*! This method is used to reset the module. The input messages are read here,
 the grid is generated and the graph search is performed. */
-void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 {
     ReadInputs();
 
@@ -385,6 +463,7 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]
         invalidateFit();
         bskLogger.bskError("ConstrainedAttitudeManeuver: the fitted trajectory has nonfinite control effort.");
     }
+    this->resetTimeNanos = CurrentSimNanos;
     this->referenceReady = true;
     return;
 }
@@ -399,7 +478,8 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
     if (!this->referenceReady) {
         bskLogger.bskError("ConstrainedAttitudeManeuver: UpdateState requires a successful reset.");
     }
-    double t = static_cast<double>(CurrentSimNanos) * NANO2SEC;
+    const uint64_t elapsed = CurrentSimNanos > resetTimeNanos ? CurrentSimNanos - resetTimeNanos : 0;
+    const double t = static_cast<double>(elapsed) * NANO2SEC;
     double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
     this->Output.getData(t, sigma_RN, sigmaDot_RN, sigmaDDot_RN);
 
@@ -958,11 +1038,10 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
                     if (key != goal) {
                         this->path.append(goal);
                     }
-                    if (prepareWaypoints() != nullptr) {
+                    if (prepareWaypoints() != nullptr || !fitSpline()) {
                         clearPath();
                         continue;
                     }
-                    spline();
                     p = effortEvaluation();
                 } catch (...) {
                     clearPath();
@@ -1100,6 +1179,14 @@ const char* ConstrainedAttitudeManeuver::prepareWaypoints()
  */
 void ConstrainedAttitudeManeuver::spline()
 {
+    if (!fitSpline()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: the spline has nonfinite motion or may add a full turn "
+                           "within a waypoint interval. Split the maneuver.");
+    }
+}
+
+bool ConstrainedAttitudeManeuver::fitSpline()
+{
     invalidateFit();
     const int numWaypoints = static_cast<int>(this->Input.X1.size());
     if (numWaypoints < 2) {
@@ -1120,15 +1207,19 @@ void ConstrainedAttitudeManeuver::spline()
         bskLogger.bskError("ConstrainedAttitudeManeuver: BSplineType has not been specified.");
     }
     try {
-        if (numWaypoints == 2) {
-            // Two attitudes and their endpoint rates uniquely determine a cubic in either fitting mode.
-            interpolate(this->Input, 100, 3, &this->Output);
-        } else if (this->BSplineType == 0) {
-            interpolate(this->Input, 100, 4, &this->Output);
+        // Two attitudes and rates determine a cubic. Each prescribed MRP acceleration adds one condition.
+        const int degree = numWaypoints == 2 ? 3 + this->Input.XDDot_0_flag + this->Input.XDDot_N_flag : 4;
+        if (this->BSplineType == 0) {
+            interpolate(this->Input, 100, degree, &this->Output);
         } else {
-            // A quartic needs at least five control points. The argument is the final control-point index.
-            approximate(this->Input, 100, std::max(4, numWaypoints), 4, &this->Output);
+            // The last control-point index must be at least the polynomial degree.
+            approximate(this->Input, 100, std::max(degree, numWaypoints), degree, &this->Output);
         }
+        if (!withinTurnLimit(this->Input, this->Output)) {
+            invalidateFit();
+            return false;
+        }
+        return true;
     } catch (...) {
         invalidateFit();
         throw;
@@ -1174,13 +1265,15 @@ void ConstrainedAttitudeManeuver::computeTorqueUnchecked(int n, double I[9], dou
     v3Add(L1, L2, L);
 }
 
-/*! This method computes the torque vector required at time step with index n
-
+/*! @brief Compute the torque norm at a fitted sample using the supplied inertia.
+ @param n Fitted sample index.
+ @param I Body-frame inertia tensor in row-major order [kg m^2].
+ @return Torque norm [N m].
  */
-double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_unused]][9])
+double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
 {
     double L[3];
-    computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
+    computeTorque(n, I, L);
 
     return v3Norm(L);
 }
