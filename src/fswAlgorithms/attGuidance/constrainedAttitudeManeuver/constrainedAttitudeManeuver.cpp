@@ -204,18 +204,14 @@ void NodeList::swap(int m, int n)
 /*! This method sorts the nodes in the list according to their priority. */
 void NodeList::sort()
 {
-    int M;
-    double p;
-    for (int n = 0; n < this->N; n++) {
-        p = 1e5;
-        M = this->N;
-        for (int m = n; m < this->N; m++) {
-            if (this->list[m]->priority < p) {
-                p = this->list[m]->priority;
-                M = m;
+    for (int n = 0; n + 1 < this->N; n++) {
+        int best = n;
+        for (int m = n + 1; m < this->N; m++) {
+            if (this->list[m]->priority < this->list[best]->priority) {
+                best = m;
             }
         }
-        swap(n, M);
+        swap(n, best);
     }
 }
 
@@ -307,6 +303,11 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]
     pathHandle();
     spline();
     this->pathCost = effortEvaluation();
+    if (!std::isfinite(this->pathCost)) {
+        invalidateFit();
+        bskLogger.bskError("ConstrainedAttitudeManeuver: the fitted trajectory has nonfinite control effort.");
+    }
+    this->referenceReady = true;
     return;
 }
 
@@ -317,6 +318,9 @@ trajectory and writes the output message.
  */
 void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 {
+    if (!this->referenceReady) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: UpdateState requires a successful reset.");
+    }
     double t = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
     this->Output.getData(t, sigma_RN, sigmaDot_RN, sigmaDDot_RN);
@@ -352,6 +356,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
  */
 void ConstrainedAttitudeManeuver::ReadInputs()
 {
+    this->inputsReady = false;
     clearGrid();
     this->constraints = {};
 
@@ -392,11 +397,40 @@ void ConstrainedAttitudeManeuver::ReadInputs()
     if (!useOut && !useIn) {
         bskLogger.bskLog(BSK_WARNING, "ConstrainedAttitudeManeuver: no pointing constraints are active.");
     }
+    this->inputsReady = true;
+}
+
+void ConstrainedAttitudeManeuver::requireInputs()
+{
+    if (!this->inputsReady) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: a successful ReadInputs() is required.");
+    }
+}
+
+void ConstrainedAttitudeManeuver::invalidateFit()
+{
+    static const OutputDataSet emptyOutput;
+    this->Output = emptyOutput;
+    this->pathCost = std::numeric_limits<double>::quiet_NaN();
+    this->referenceReady = false;
+}
+
+void ConstrainedAttitudeManeuver::invalidateWaypoints()
+{
+    static const InputDataSet emptyInput;
+    this->Input = emptyInput;
+    invalidateFit();
+}
+
+void ConstrainedAttitudeManeuver::clearPath()
+{
+    invalidateWaypoints();
+    this->path.clear();
 }
 
 void ConstrainedAttitudeManeuver::clearGrid()
 {
-    this->path.clear();
+    clearPath();
     this->NodesMap.clear();
     std::fill(std::begin(this->keyS), std::end(this->keyS), invalidGridIndex);
     std::fill(std::begin(this->keyG), std::end(this->keyG), invalidGridIndex);
@@ -744,11 +778,14 @@ Node* ConstrainedAttitudeManeuver::gridEndpoint(const int key[3])
  */
 void ConstrainedAttitudeManeuver::AStar()
 {
+    clearPath();
+    Node* const start = gridEndpoint(this->keyS);
+    Node* const goal = gridEndpoint(this->keyG);
     for (std::map<int, std::map<int, std::map<int, Node>>>::iterator it1 = NodesMap.begin(); it1 != NodesMap.end();
          it1++) {
         for (std::map<int, std::map<int, Node>>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++) {
             for (std::map<int, Node>::iterator it3 = it2->second.begin(); it3 != it2->second.end(); it3++) {
-                it3->second.heuristic = distance(it3->second, NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]);
+                it3->second.heuristic = distance(it3->second, *goal);
             }
         }
     }
@@ -757,9 +794,9 @@ void ConstrainedAttitudeManeuver::AStar()
     double p;
     Node* key;
     NodeList O, C;
-    O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
+    O.append(start);
 
-    while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < Nmax) {
+    while (O.N > 0 && O.list[0] != goal && n < Nmax) {
         n += 1;
         C.append(O.list[0]);
 
@@ -785,7 +822,11 @@ void ConstrainedAttitudeManeuver::AStar()
         O.sort();
     }
 
-    backtrack(O.list[0]);
+    if (O.N == 0 || O.list[0] != goal) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: distance-based A* did not reach the goal (%s).",
+                           O.N == 0 ? "open list exhausted" : "iteration limit reached");
+    }
+    backtrack(goal);
 
     // Uncomment to print path node coordinates
     /*
@@ -795,19 +836,32 @@ void ConstrainedAttitudeManeuver::AStar()
     }*/
 }
 
+/*! @brief Require a finite, positive rate for maneuver timing. */
+void ConstrainedAttitudeManeuver::validateManeuverRate()
+{
+    if (!std::isfinite(this->avgOmega) || this->avgOmega <= 0.0) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: avgOmega must be finite and positive.");
+    }
+}
+
 /*! This method applies the effort-based A* to find a valid path
 
  */
 void ConstrainedAttitudeManeuver::effortBasedAStar()
 {
+    clearPath();
+    Node* const start = gridEndpoint(this->keyS);
+    Node* const goal = gridEndpoint(this->keyG);
+    requireInputs();
+    validateManeuverRate();
     int Nmax = 100;
     int n = 0;
     double p;
     Node* key;
     NodeList O, C;
-    O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
+    O.append(start);
 
-    while (O.list[0] != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]] && n < Nmax) {
+    while (O.N > 0 && O.list[0] != goal && n < Nmax) {
         n += 1;
         // std::cout << "N = " << n << "\n"; // uncomment to show the number of nodes explored
         C.append(O.list[0]);
@@ -817,15 +871,26 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
             key = O.list[0]->neighbors[k];
 
             if (C.contains(key) == false) {
-                backtrack(O.list[0]);
-                this->path.append(key);
-                if (key != &NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]) {
-                    this->path.append(&NodesMap[this->keyG[0]][this->keyG[1]][this->keyG[2]]);
+                try {
+                    backtrack(O.list[0]);
+                    this->path.append(key);
+                    if (key != goal) {
+                        this->path.append(goal);
+                    }
+                    if (prepareWaypoints() != nullptr) {
+                        clearPath();
+                        continue;
+                    }
+                    spline();
+                    p = effortEvaluation();
+                } catch (...) {
+                    clearPath();
+                    throw;
                 }
-                pathHandle();
-                spline();
-                p = effortEvaluation();
-                this->path.clear();
+                clearPath();
+                if (!std::isfinite(p)) {
+                    continue;
+                }
                 if (O.contains(key)) {
                     if (p < key->priority) {
                         key->priority = p;
@@ -843,7 +908,11 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
         O.sort();
     }
 
-    backtrack(O.list[0]);
+    if (O.N == 0 || O.list[0] != goal) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: effort-based A* did not reach the goal (%s).",
+                           O.N == 0 ? "open list exhausted" : "iteration limit reached");
+    }
+    backtrack(goal);
 
     // Uncomment to print path node coordinates
     /*
@@ -854,19 +923,33 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
     } */
 }
 
-/*! This method takes a path of waypoints and returns an Input structure suitable for BSpline
-   interpolation/approximation
-
- */
+/*! @brief Prepare the current path for spline fitting. */
 void ConstrainedAttitudeManeuver::pathHandle()
 {
-    double S = 0;
+    if (const char* error = prepareWaypoints()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: %s", error);
+    }
+}
+
+/*! @brief Convert the path to time-tagged MRP waypoints.
+ *  @return Null on success, or a description of why the path cannot be fitted.
+ */
+const char* ConstrainedAttitudeManeuver::prepareWaypoints()
+{
+    invalidateWaypoints();
+    validateManeuverRate();
+    if (this->path.N < 2) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: a trajectory requires at least two waypoints.");
+    }
     Eigen::VectorXd T(this->path.N);
     T[0] = 0;
     for (int n = 0; n < this->path.N - 1; n++) {
-        T[n + 1] = T[n] + distance(*path.list[n], *path.list[n + 1]);
-        S += T[n + 1] - T[n];
+        T[n + 1] = T[n] + 4.0 * distance(*path.list[n], *path.list[n + 1]) / this->avgOmega;
+        if (!std::isfinite(T[n + 1]) || T[n + 1] <= T[n]) {
+            return "path waypoint times must be finite and strictly increasing.";
+        }
     }
+
     Eigen::VectorXd X1(this->path.N);
     Eigen::VectorXd X2(this->path.N);
     Eigen::VectorXd X3(this->path.N);
@@ -909,7 +992,8 @@ void ConstrainedAttitudeManeuver::pathHandle()
     X3[path.N - 1] = sigma[2];
 
     this->Input = InputDataSet(X1, X2, X3);
-    this->Input.setT(T * 4 * S / (T[this->path.N - 1] * this->avgOmega));
+    this->Input.setT(T);
+    return nullptr;
 }
 
 /*! This method performs the BSpline interpolation/approximation and outputs an Output structure
@@ -917,23 +1001,38 @@ void ConstrainedAttitudeManeuver::pathHandle()
  */
 void ConstrainedAttitudeManeuver::spline()
 {
-    double sigmaDot_start[3], sigmaDot_goal[3];
-    dMRP(this->scStateMsgBuffer.sigma_BN, this->scStateMsgBuffer.omega_BN_B, sigmaDot_start);
-    dMRP(this->sigma_BN_goal, this->omega_BN_B_goal, sigmaDot_goal);
-    Eigen::Vector3d sDot_s, sDot_g;
-    for (int i = 0; i < 3; i++) {
-        sDot_s[i] = sigmaDot_start[i];
-        sDot_g[i] = sigmaDot_goal[i];
+    invalidateFit();
+    const int numWaypoints = static_cast<int>(this->Input.X1.size());
+    if (numWaypoints < 2) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: a spline requires at least two prepared waypoints. "
+                           "Call pathHandle() after computing the path.");
     }
-
-    this->Input.setXDot_0(sDot_s);
-    this->Input.setXDot_N(sDot_g);
-    if (this->BSplineType == 0) {
-        interpolate(this->Input, 100, 4, &this->Output);
-    } else if (this->BSplineType == 1) {
-        approximate(this->Input, 100, (int)this->Input.X1.size(), 4, &this->Output); // review
-    } else {
-        bskLogger.bskError("ConstraintAttitudeManeuver: BSplineType has not been specified.");
+    requireInputs();
+    if (this->Input.X2.size() != numWaypoints || this->Input.X3.size() != numWaypoints) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: spline coordinates must have one entry per waypoint.");
+    }
+    // pathHandle may have selected the shadow MRP set for either endpoint.
+    const int last = numWaypoints - 1;
+    const Eigen::MRPd start(this->Input.X1[0], this->Input.X2[0], this->Input.X3[0]);
+    const Eigen::MRPd goal(this->Input.X1[last], this->Input.X2[last], this->Input.X3[last]);
+    this->Input.setXDot_0(0.25 * start.Bmat() * cArray2EigenVector3d(this->scStateMsgBuffer.omega_BN_B));
+    this->Input.setXDot_N(0.25 * goal.Bmat() * cArray2EigenVector3d(this->omega_BN_B_goal));
+    if (this->BSplineType != 0 && this->BSplineType != 1) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: BSplineType has not been specified.");
+    }
+    try {
+        if (numWaypoints == 2) {
+            // Two attitudes and their endpoint rates uniquely determine a cubic in either fitting mode.
+            interpolate(this->Input, 100, 3, &this->Output);
+        } else if (this->BSplineType == 0) {
+            interpolate(this->Input, 100, 4, &this->Output);
+        } else {
+            // A quartic needs at least five control points. The argument is the final control-point index.
+            approximate(this->Input, 100, std::max(4, numWaypoints), 4, &this->Output);
+        }
+    } catch (...) {
+        invalidateFit();
+        throw;
     }
 }
 
@@ -941,6 +1040,21 @@ void ConstrainedAttitudeManeuver::spline()
 
  */
 void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
+{
+    const auto& output = this->Output;
+    const auto numSamples = output.T.size();
+    if (n < 0 || n >= numSamples) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: torque sample index %d is outside the fitted samples.", n);
+    }
+    if (output.X1.size() != numSamples || output.X2.size() != numSamples || output.X3.size() != numSamples ||
+        output.XD1.size() != numSamples || output.XD2.size() != numSamples || output.XD3.size() != numSamples ||
+        output.XDD1.size() != numSamples || output.XDD2.size() != numSamples || output.XDD3.size() != numSamples) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: fitted sample array lengths must match the time array.");
+    }
+    computeTorqueUnchecked(n, I, L);
+}
+
+void ConstrainedAttitudeManeuver::computeTorqueUnchecked(int n, double I[9], double L[3]) const
 {
     double sigma[3], sigmaDot[3], sigmaDDot[3], omega[3], omegaDot[3], L1[3], L2[3], H[3];
 
@@ -977,14 +1091,22 @@ double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_un
  */
 double ConstrainedAttitudeManeuver::effortEvaluation()
 {
+    const auto numSamples = this->Output.T.size();
+    if (numSamples < 2) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: effort evaluation requires at least two fitted samples.");
+    }
+    requireInputs();
+    if (numSamples - 1 > std::numeric_limits<int>::max()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: fitted sample index exceeds the range of computeTorque().");
+    }
     double effort = 0;
     double l_a, l_b;
     double L_a[3], L_b[3];
+    // The first query validates all component lengths for the integration loop.
     computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
 
-    const int N = (int)this->Output.T.size();
-    for (int n = 0; n < N - 1; n++) {
-        computeTorque(n + 1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
+    for (int n = 0; n < numSamples - 1; n++) {
+        computeTorqueUnchecked(n + 1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
         l_a = v3Norm(L_a);
         l_b = v3Norm(L_b);
         effort += (l_a + l_b) * (Output.T[n + 1] - Output.T[n]) / 2;

@@ -575,6 +575,8 @@ def test_blocked_goal(cost_type):
             plan()
         assert model.path.N == 0
         assert model.keyS == model.keyG == [model.invalidGridIndex] * 3
+        with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+            model.UpdateState(0)
 
     state = messages[0].read()
     state.sigma_BN = blocked
@@ -603,10 +605,10 @@ def test_half_turn_endpoint_with_free_interior_sample(cost_type, at_start, sign)
     state.sigma_BN = start
     messages[0].write(state)
     model.sigma_BN_goal = goal
-    _generate_test_grid(model)
+    model.Reset(0)
 
-    for key, expected in ((model.keyS, start), (model.keyG, goal)):
-        np.testing.assert_allclose([model.returnNodeCoord(key, axis) for axis in range(3)], expected)
+    for index, expected in ((0, start), (model.path.N - 1, goal)):
+        np.testing.assert_allclose([model.returnPathCoord(index, axis) for axis in range(3)], expected)
 
 
 def test_half_turn_goal_with_both_interior_cells_free():
@@ -617,7 +619,7 @@ def test_half_turn_goal_with_both_interior_cells_free():
     keys = []
     for goal in (half_turn, -half_turn):
         model.sigma_BN_goal = goal
-        _generate_test_grid(model)
+        model.Reset(0)
         keys.append(tuple(model.keyG))
 
     assert keys[0] == keys[1]
@@ -670,10 +672,282 @@ def test_equivalent_shadow_endpoints(cost_type, start):
     assert model.keyS == model.keyG == [model.invalidGridIndex] * 3
 
 
+@pytest.mark.parametrize("cost_type", [0, 1], ids=["distance", "effort"])
+@pytest.mark.parametrize("refinement, reason", [(5, "open list exhausted"), (16, "iteration limit reached")])
+@pytest.mark.parametrize("entry_point", ["reset", "direct"])
+def test_disconnected_grid(refinement, reason, cost_type, entry_point):
+    """Reject a disconnected grid and resume publishing only after a successful reset."""
+    model, messages = _configured_grid_module(5, cost_type)
+    model.SelfInit()
+    cpp_output = model.attRefOutMsg.addSubscriber()
+    c_output = messaging.AttRefMsgReader()
+    c_output.subscribeTo(model.attRefOutMsgC)
+    state = messages[0].read()
+    state.sigma_BN = [0.0, 0.0, 0.0]  # MRPs [-]
+    messages[0].write(state)
+    model.sigma_BN_goal = [0.0, 0.0, 1.0]  # MRPs [-], half-turn about z
+
+    model.boresights.keepOutBoresightCount = 0
+    model.boresights.keepInBoresightCount = 0
+    for boresight in ([1.0, 0.0, 0.0], [-1.0, 0.0, 0.0]):
+        model.appendKeepInDirection(boresight, np.pi)  # [rad]
+    model.Reset(0)
+    step = macros.sec2nano(1)  # [ns]
+    model.UpdateState(step)
+    assert cpp_output.timeWritten() == c_output.timeWritten() == step
+
+    # The start satisfies the +x cone and the goal satisfies the disjoint -x cone.
+    model.N = refinement
+    model.boresights.keepInFov = [40.0 * macros.D2R] * 10  # [rad]
+    with pytest.raises(bskLogging.BasiliskError, match=reason):
+        if entry_point == "reset":
+            model.Reset(step)
+        else:
+            _generate_test_grid(model)
+            if cost_type == 0:
+                model.AStar()
+            else:
+                model.effortBasedAStar()
+    assert model.keyS != model.keyG
+    assert model.returnNodeState(model.keyS) and model.returnNodeState(model.keyG)
+    assert model.path.N == 0
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(2 * step)
+    assert cpp_output.timeWritten() == c_output.timeWritten() == step
+
+    model.N = 5
+    model.boresights.keepInFov = [np.pi] * 10  # [rad]
+    model.Reset(2 * step)
+    model.UpdateState(3 * step)
+    assert cpp_output.timeWritten() == c_output.timeWritten() == 3 * step
+
+
+def test_repeated_path_waypoint():
+    """A repeated node cannot supply a time interval. Removing it restores the fit."""
+    model, messages = _configured_grid_module(5)
+    model.ReadInputs()
+    start, goal = constrainedAttitudeManeuver.Node(), constrainedAttitudeManeuver.Node()
+    goal.sigma_BN = [0.0, 0.0, 0.25]  # MRPs [-]
+    for node in (start, start, goal):
+        model.path.append(node)
+    with pytest.raises(bskLogging.BasiliskError, match="strictly increasing"):
+        model.pathHandle()
+    assert np.size(model.Input.T) == 0
+    model.path.pop(1)
+    model.pathHandle()
+    model.spline()
+    assert np.isfinite(model.effortEvaluation())
+
+
+def test_effort_requires_fitted_samples():
+    """Reject effort evaluation before a fit and accept samples from a completed fit."""
+    model, messages = _configured_grid_module(5)
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    model.Output.T = [0.0]  # [s], one sample provides no integration interval.
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    model.Reset(0)
+    assert model.effortEvaluation() == pytest.approx(model.pathCost)
+
+
+@pytest.mark.parametrize("component", ["X1", "X2", "X3", "XD1", "XD2", "XD3", "XDD1", "XDD2", "XDD3"])
+def test_torque_and_effort_reject_mismatched_sample_lengths(component):
+    """Require every fitted component to have exactly one value per time sample."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    inertia = messages[1].read().ISCPntB_B
+    samples = np.ravel(getattr(model.Output, component))
+    for mismatched in (samples[:-1], np.append(samples, samples[-1])):
+        setattr(model.Output, component, mismatched)
+        with pytest.raises(bskLogging.BasiliskError, match="sample array lengths must match the time array"):
+            model.computeTorqueNorm(len(samples) - 1, inertia)
+        with pytest.raises(bskLogging.BasiliskError, match="sample array lengths must match the time array"):
+            model.effortEvaluation()
+    setattr(model.Output, component, samples)
+    assert model.effortEvaluation() == pytest.approx(model.pathCost)
+
+
+@pytest.mark.parametrize("search", ["AStar", "effortBasedAStar"])
+def test_spline_requires_current_waypoints(search):
+    """Fit the new goal only after the waypoints for the rebuilt path have been prepared."""
+    model, messages = _configured_grid_module(6)
+    model.SelfInit()
+    cpp_output = model.attRefOutMsg.addSubscriber()
+    c_output = messaging.AttRefMsgReader()
+    c_output.subscribeTo(model.attRefOutMsgC)
+    model.Reset(0)
+    step = macros.sec2nano(1)  # [ns]
+    model.UpdateState(step)
+    start, goal = constrainedAttitudeManeuver.Node(), constrainedAttitudeManeuver.Node()
+    start.sigma_BN = messages[0].read().sigma_BN
+    goal.sigma_BN = [0.0, 0.0, -0.8]  # MRPs [-]
+    model.GenerateGrid(start, goal)
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(2 * step)
+    assert cpp_output.timeWritten() == c_output.timeWritten() == step
+    assert np.isnan(model.pathCost)
+    assert np.size(model.Output.T) == 0
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    with pytest.raises(bskLogging.BasiliskError, match="prepared waypoints"):
+        model.spline()
+    getattr(model, search)()
+    assert np.size(model.Output.T) == 0
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    with pytest.raises(bskLogging.BasiliskError, match="prepared waypoints"):
+        model.spline()
+    model.pathHandle()
+    model.spline()
+    fitted_goal = [np.ravel(axis)[-1] for axis in (model.Output.X1, model.Output.X2, model.Output.X3)]
+    np.testing.assert_allclose(fitted_goal, goal.sigma_BN, rtol=0, atol=1e-12)
+    assert np.isfinite(model.effortEvaluation())
+
+
+def test_failed_refit_discards_previous_output():
+    """A failed refit clears the old spline while preserving the waypoints for a retry."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    inertia = messages[1].read().ISCPntB_B
+    expected_cost = model.pathCost
+    expected_torque = model.computeTorqueNorm(0, inertia)
+    expected_start_z = model.Output.getStates(0.0, 0, 2)
+    model.BSplineType = 2
+    with pytest.raises(bskLogging.BasiliskError, match="BSplineType"):
+        model.spline()
+    # The planner's getData wrapper accepts Python lists for the three output buffers.
+    with pytest.raises(bskLogging.BasiliskError, match="spline query requires fitted samples"):
+        constrainedAttitudeManeuver.OutputDataSet.getData(model.Output, 0.0, [0.0] * 3, [0.0] * 3, [0.0] * 3)
+    with pytest.raises(bskLogging.BasiliskError, match="spline query requires fitted samples"):
+        model.Output.getStates(0.0, 0, 2)
+    with pytest.raises(bskLogging.BasiliskError, match="torque sample index"):
+        model.computeTorque(0, inertia, [0.0] * 3)
+    with pytest.raises(bskLogging.BasiliskError, match="torque sample index"):
+        model.computeTorqueNorm(0, inertia)
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    model.BSplineType = 0
+    model.spline()
+    assert model.Output.getStates(0.0, 0, 2) == pytest.approx(expected_start_z)
+    assert model.computeTorqueNorm(0, inertia) == pytest.approx(expected_torque)
+    assert model.effortEvaluation() == pytest.approx(expected_cost)
+
+
+def test_torque_sample_index_bounds():
+    """Accept the last fitted torque sample and reject indices outside the time array."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    inertia = messages[1].read().ISCPntB_B
+    count = len(model.Output.T)
+    assert np.isfinite(model.computeTorqueNorm(count - 1, inertia))
+    for index in (-1, count):
+        with pytest.raises(bskLogging.BasiliskError, match="torque sample index"):
+            model.computeTorqueNorm(index, inertia)
+
+
+@pytest.mark.parametrize("method", ["ReadInputs", "AStar", "effortBasedAStar", "pathHandle", "spline"])
+def test_direct_replanning_invalidates_reference(method):
+    """Each public replanning step blocks publication of the previously accepted reference."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    original_path_length = model.path.N
+    getattr(model, method)()
+    if method == "AStar":
+        assert model.path.N == original_path_length
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
+    if method in ("AStar", "effortBasedAStar"):
+        with pytest.raises(bskLogging.BasiliskError, match="prepared waypoints"):
+            model.spline()
+
+
+@pytest.mark.parametrize("method", ["AStar", "effortBasedAStar"])
+@pytest.mark.parametrize("failed_rebuild", [False, True], ids=["fresh", "failed-rebuild"])
+def test_search_requires_generated_grid(method, failed_rebuild):
+    """A direct search requires a successful grid build and can recover after a failed build."""
+    model, messages = _configured_grid_module(5)
+    if failed_rebuild:
+        model.Reset(0)
+        model.N = 1
+        with pytest.raises(bskLogging.BasiliskError, match="grid refinement"):
+            _generate_test_grid(model)
+    search = getattr(model, method)
+    with pytest.raises(bskLogging.BasiliskError, match="requires a generated grid"):
+        search()
+    assert model.path.N == 0
+    model.N = 5
+    _generate_test_grid(model)
+    search()
+    goal = [model.returnPathCoord(model.path.N - 1, axis) for axis in range(3)]
+    np.testing.assert_array_equal(goal, model.sigma_BN_goal)
+
+
+@pytest.mark.parametrize("avg_omega", [-0.03, 0.0, np.inf, -np.inf, np.nan])  # [rad/s]
+@pytest.mark.parametrize("entry_point", ["distance", "effort", "effortBasedAStar", "pathHandle"])
+def test_invalid_maneuver_rate(avg_omega, entry_point):
+    """Reject invalid timing without exposing a trial path or publishing a reference."""
+    effort_search = entry_point in ("effort", "effortBasedAStar")
+    model, messages = _configured_grid_module(5, cost_type=int(effort_search))
+    model.Reset(0)
+    model.avgOmega = avg_omega
+    with pytest.raises(bskLogging.BasiliskError, match="avgOmega must be finite and positive"):
+        if entry_point in ("distance", "effort"):
+            model.Reset(0)
+        else:
+            getattr(model, entry_point)()
+    if effort_search:
+        assert model.path.N == 0
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
+    if entry_point == "pathHandle":
+        with pytest.raises(bskLogging.BasiliskError, match="prepared waypoints"):
+            model.spline()
+
+
 def test_unset_maneuver_rate():
     """Both constructors leave the maneuver rate at the invalid zero default."""
     for args in ((), (5,)):
         assert constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(*args).avgOmega == 0.0  # [rad/s]
+
+
+def test_nonfinite_fit_rejects_publication():
+    """Keep a fit with a nonfinite endpoint rate from becoming publishable."""
+    model, messages = _configured_grid_module(5)
+    model.SelfInit()
+    model.Reset(0)
+    model.omega_BN_B_goal = [0.0, 0.0, np.nan]  # [rad/s]
+    with pytest.raises(bskLogging.BasiliskError, match="nonfinite"):
+        model.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match="at least two fitted samples"):
+        model.effortEvaluation()
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
+
+
+@pytest.mark.parametrize("method, args", [("Reset", (0,)), ("effortBasedAStar", ())], ids=["reset", "direct"])
+def test_spline_error_clears_trial_path(method, args):
+    """Discard the effort-search candidate on a spline error and allow a retry."""
+    model, messages = _configured_grid_module(5, cost_type=1)
+    model.SelfInit()
+    model.Reset(0)
+    expected_length = model.path.N
+    plan = getattr(model, method)
+
+    model.BSplineType = 2
+    with pytest.raises(bskLogging.BasiliskError, match="BSplineType has not been specified"):
+        plan(*args)
+    assert model.path.N == 0
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
+
+    model.BSplineType = 0
+    with pytest.raises(bskLogging.BasiliskError, match="prepared waypoints"):
+        model.spline()
+    plan(*args)
+    assert model.path.N == expected_length
+    goal = [model.returnPathCoord(model.path.N - 1, axis) for axis in range(3)]
+    np.testing.assert_array_equal(goal, model.sigma_BN_goal)
 
 
 @pytest.mark.parametrize("input_name, message_type, index", [
@@ -692,6 +966,8 @@ def test_required_input_must_be_written(input_name, message_type, index, previou
     with pytest.raises(bskLogging.BasiliskError, match=input_name):
         model.Reset(0)
     assert model.path.N == 0
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
 
     reader.unsubscribe()
     with pytest.raises(bskLogging.BasiliskError, match=input_name):
@@ -700,6 +976,43 @@ def test_required_input_must_be_written(input_name, message_type, index, previou
     replacement.write(messages[index].read())
     model.Reset(0)
     assert model.path.N >= 2
+
+
+@pytest.mark.parametrize("failed_source", [None, "vehicleConfigInMsg", "keepOutCelBodyInMsg"],
+                         ids=["before-first-read", "missing-inertia", "failed-cone-read"])
+def test_direct_planning_requires_successful_input_read(failed_source):
+    """Only a complete input read makes cached rates and inertia available to direct calls."""
+    model, messages = _configured_grid_module(5, cost_type=1)
+    if failed_source:
+        model.ReadInputs()
+        reader = getattr(model, failed_source)
+        original = messages[1] if failed_source == "vehicleConfigInMsg" else messages[2]
+        unwritten = type(original)()
+        reader.subscribeTo(unwritten)
+        with pytest.raises(bskLogging.BasiliskError, match=failed_source):
+            model.ReadInputs()
+        reader.subscribeTo(original)
+
+    model.boresights.keepInBoresightCount = model.boresights.keepOutBoresightCount = 0
+    start, goal = constrainedAttitudeManeuver.Node(), constrainedAttitudeManeuver.Node()
+    start.sigma_BN = messages[0].read().sigma_BN
+    goal.sigma_BN = model.sigma_BN_goal
+    model.GenerateGrid(start, goal)
+    with pytest.raises(bskLogging.BasiliskError, match="successful ReadInputs"):
+        model.effortBasedAStar()
+    model.AStar()
+    model.pathHandle()
+    with pytest.raises(bskLogging.BasiliskError, match="successful ReadInputs"):
+        model.spline()
+
+    # Supply a complete fit so the effort query must check its own cached inertia.
+    fitted, owners = _configured_grid_module(5)
+    fitted.Reset(0)
+    model.Output = fitted.Output
+    with pytest.raises(bskLogging.BasiliskError, match="successful ReadInputs"):
+        model.effortEvaluation()
+    model.Reset(0)
+    assert np.isfinite(model.effortEvaluation())
 
 
 def test_recovery_uses_replacement_inertia():
@@ -737,6 +1050,8 @@ def test_undefined_constraint_direction(kind, offset):
     with pytest.raises(bskLogging.BasiliskError, match=f"keep{kind}CelBodyInMsg.*line of sight"):
         model.Reset(0)
     assert not model.constraints.keepOut and not model.constraints.keepIn
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
     source.write(messages[2].read())
     model.Reset(0)
     assert model.constraints.keepOut and model.constraints.keepIn
@@ -760,6 +1075,8 @@ def test_optional_constraint_source(kind, other):
     assert not model.constraints.keepIn and not model.constraints.keepOut
     assert model.path.N == 0
     assert model.keyS == model.keyG == [model.invalidGridIndex] * 3
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
     reader.subscribeTo(messages[2])
     model.Reset(0)
     assert model.constraints.keepIn and model.constraints.keepOut
@@ -779,6 +1096,8 @@ def test_unset_spline_type(cost_type):
     assert model.BSplineType == -1
     with pytest.raises(bskLogging.BasiliskError, match="BSplineType has not been specified"):
         model.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
 
 
 def test_unset_cost_function():
@@ -934,6 +1253,8 @@ def test_invalid_boresight_cone(kind, axis, angle, error):
     with pytest.raises(bskLogging.BasiliskError, match=diagnostic):
         model.Reset(0)
     assert not model.constraints.keepIn and not model.constraints.keepOut
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
 
 
 @pytest.mark.parametrize("kind", ["In", "Out"])
@@ -1100,6 +1421,20 @@ def test_boresight_capacity(kind):
             model.Reset(0)
 
 
+def test_node_list_sorts_large_priorities():
+    """Sort nodes on both sides of the former 100,000 priority cutoff."""
+    queue = constrainedAttitudeManeuver.NodeList()
+    nodes = [constrainedAttitudeManeuver.Node() for _ in range(3)]
+    for node, priority in zip(nodes, (2e5, 1e5, 1.0)):
+        node.priority = priority
+        queue.append(node)
+    queue.sort()
+    for node in reversed(nodes):
+        assert queue.contains(node)
+        queue.pop(0)
+        assert not queue.contains(node)
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("N", [5,6])
@@ -1121,7 +1456,7 @@ def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costF
         N (int) : grid coarseness;
         keepOutFov (float) : Field of View (in radiants) of the keep-out boresight;
         keepInFov (float) : Field of View (in radiants) of the keep-in boresight;
-        costFcnType (int) : 0 for the minimum MRP cartesian distance graph search, 1 for the effort-based graph search.
+        costFcnType (int) : 0 for the MRP distance-based graph search, 1 for the effort-based graph search.
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
