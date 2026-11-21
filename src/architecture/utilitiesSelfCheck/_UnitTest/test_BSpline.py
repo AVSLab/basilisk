@@ -29,7 +29,7 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import BSpline
+from Basilisk.architecture import BSpline, bskLogging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -210,6 +210,190 @@ def test_approximate_endpoint_constraints(start_derivative_order, end_derivative
             )
 
 
+@pytest.mark.parametrize("fit, args", [
+    (BSpline.interpolate, (11, 3)),
+    (BSpline.approximate, (11, 3, 3)),
+], ids=["interpolate", "approximate"])
+def test_public_fit_waypoint_lengths(fit, args):
+    """Reject invalid lengths before changing the output and fit again after correction."""
+    data = BSpline.InputDataSet()
+    output = BSpline.OutputDataSet()
+    output.P = 1
+    for count in (0, 1):
+        data.X1 = data.X2 = data.X3 = np.zeros(count)  # [m]
+        with pytest.raises(bskLogging.BasiliskError, match="at least two waypoints"):
+            fit(data, *args, output)
+    data.X1 = np.arange(6.0)  # [m]
+    data.X2 = data.X3 = np.zeros(6)  # [m]
+    data.setT(np.arange(6.0))  # [s]
+    for field in ("X1", "X2", "X3", "T"):
+        original = np.ravel(getattr(data, field))
+        for values in ([], original[:-1], np.append(original, original[-1])):
+            setattr(data, field, values)
+            with pytest.raises(bskLogging.BasiliskError, match="waypoint"):
+                fit(data, *args, output)
+            assert output.P == 1
+        setattr(data, field, original)
+    fit(data, *args, output)
+    expected = np.linspace(0.0, 5.0, 11)  # [m]
+    np.testing.assert_allclose(np.ravel(output.X1), expected, atol=1e-12)
+
+
+@pytest.mark.parametrize("fit, args", [
+    (BSpline.interpolate, (11, 3)),
+    (BSpline.approximate, (11, 3, 3)),
+], ids=["interpolate", "approximate"])
+def test_public_fit_waypoint_times(fit, args):
+    """Reject invalid explicit and distance-based times before modifying the output."""
+    x = np.arange(4.0)  # [m]
+    data = BSpline.InputDataSet(x, np.zeros(4), np.zeros(4))
+    output = BSpline.OutputDataSet()
+    output.P = 1
+    for times in ([0, 0, 0, 0], [0, 1, 1, 3], [0, 2, 1, 3], [-1, 0, 1, 2], [1, 2, 3, 4],
+                  [0, 1, np.nan, 3], [0, 1, 2, np.inf]):  # [s]
+        data.setT(times)
+        with pytest.raises(bskLogging.BasiliskError, match="strictly increasing"):
+            fit(data, *args, output)
+        assert output.P == 1
+
+    for speed in (0.0, -1.0, np.nan, np.inf):  # [m/s]
+        data.setAvgXDot(speed)
+        with pytest.raises(bskLogging.BasiliskError, match="speed must be finite and positive"):
+            fit(data, *args, output)
+        assert output.P == 1
+
+    data.setAvgXDot(2.0)  # [m/s]
+    data.X1 = [0.0, 1.0, 1.0, 3.0]  # [m]
+    with pytest.raises(bskLogging.BasiliskError, match="strictly increasing"):
+        fit(data, *args, output)
+    assert output.P == 1
+    data.X1 = x
+    fit(data, *args, output)
+    np.testing.assert_allclose(np.ravel(output.T), np.linspace(0, 1.5, 11))  # [s]
+    np.testing.assert_allclose(np.ravel(output.X1), np.linspace(0, 3, 11), atol=1e-12)  # [m]
+
+
+def test_approximate_free_control_point_limit():
+    """One interior waypoint can determine one free control point."""
+    data = BSpline.InputDataSet([0, 1, 2], [0, 0, 0], [0, 0, 0])  # [m]
+    data.setT([0, 1, 2])  # [s]
+    output = BSpline.OutputDataSet()
+    output.P = 1
+    with pytest.raises(bskLogging.BasiliskError, match="more free control points than interior waypoints"):
+        BSpline.approximate(data, 3, 3, 3, output)
+    assert output.P == 1
+    data.setXDot_0([0, 0, 0])  # [m/s]
+    BSpline.approximate(data, 3, 3, 3, output)
+    np.testing.assert_allclose(np.ravel(output.X1), [0, 1, 2])  # [m]
+    assert output.getStates(0, 1, 0) == pytest.approx(0.0)  # [m/s]
+
+
+@pytest.mark.parametrize("offset", [[8.0, -4.0, 2.0], [np.nan, np.inf, -np.inf]], ids=["finite", "nonfinite"])  # [m]
+def test_approximate_zero_weight_waypoints(offset):
+    """Ignore a zero-weight outlier and reject weights that leave a control point undetermined."""
+    times = np.arange(10.0)  # [s]
+    velocity = np.array([1.0, -2.0, 0.5])  # [m/s]
+    expected = times[:, None] * velocity  # [m]
+    waypoints = expected.copy()
+    waypoints[4] += offset
+    data = BSpline.InputDataSet(*waypoints.T)
+    data.setT(times)
+    weights = np.ones(10)
+    weights[4] = 0
+    data.setW(weights)
+    output = BSpline.OutputDataSet()
+    BSpline.approximate(data, 10, 3, 1, output)
+    np.testing.assert_allclose(np.column_stack((output.X1, output.X2, output.X3)), expected, atol=1e-12)
+
+    # Both retained interior waypoints precede the first interior knot and constrain the same free control point.
+    weights[3:-1] = 0
+    data.setW(weights)
+    with pytest.raises(bskLogging.BasiliskError, match="rank deficient"):
+        BSpline.approximate(data, 10, 3, 1, output)
+    np.testing.assert_allclose(np.column_stack((output.X1, output.X2, output.X3)), expected, atol=1e-12)
+
+
+def test_approximate_interior_weights():
+    """A symmetric quadratic gives both interior samples their weighted mean."""
+    data = BSpline.InputDataSet([0, 1, 3, 0], np.zeros(4), np.zeros(4))  # [m]
+    data.setT([0, 1, 2, 3])  # [s]
+    output = BSpline.OutputDataSet()
+    for weight in (-1.0, np.nan, np.inf):
+        data.setW([1, 1, weight, 1])
+        with pytest.raises(bskLogging.BasiliskError, match="weights must be finite and nonnegative"):
+            BSpline.approximate(data, 4, 2, 2, output)
+    data.setW([1, 1, 4, 1])
+    BSpline.approximate(data, 4, 2, 2, output)
+    np.testing.assert_allclose(np.ravel(output.X1), [0, 2.6, 2.6, 0], atol=1e-12)  # [m]
+
+
+def test_approximate_interior_knots():
+    """Reject a knot at the clamped start or without bracketing times, then fit a valid layout."""
+    data = BSpline.InputDataSet([0, 1, 2], [0, 0, 0], [0, 0, 0])  # [m]
+    data.setT([0, 1, 2])  # [s]
+    data.setXDot_0([0, 0, 0])  # [m/s]
+    data.setXDot_N([0, 0, 0])  # [m/s]
+    data.setXDDot_0([0.25, 0, 0])  # [m/s^2]
+    data.setXDDot_N([-0.5, 0, 0])  # [m/s^2]
+    output = BSpline.OutputDataSet()
+    output.P = 1
+    for degree, reason in ((3, "increase strictly"), (2, "bracketed by waypoint times")):
+        with pytest.raises(bskLogging.BasiliskError, match=reason):
+            BSpline.approximate(data, 3, 5, degree, output)
+        assert output.P == 1
+    data.setW([0, 0, 0])  # The six endpoint conditions determine all six control points.
+    BSpline.approximate(data, 3, 5, 4, output)
+    np.testing.assert_allclose(np.ravel(output.U), [0] * 5 + [0.25] + [1] * 5)
+    np.testing.assert_allclose(np.ravel(output.X1)[[0, -1]], [0, 2], atol=1e-12)  # [m]
+    np.testing.assert_allclose(np.ravel(output.XDD1)[[0, -1]], [0.25, -0.5])  # [m/s^2]
+
+
+@pytest.mark.parametrize("endpoint", ["0", "N"], ids=["start", "end"])
+def test_approximate_acceleration_requires_velocity_at_same_endpoint(endpoint):
+    """Require velocity at the accelerated endpoint even if the other velocity is set."""
+    data = BSpline.InputDataSet([0, 2, 1, 3, 6, 4], np.zeros(6), np.zeros(6))  # [m]
+    data.setT(np.arange(6.0))  # [s]
+    other = "N" if endpoint == "0" else "0"
+    getattr(data, f"setXDot_{other}")([0, 0, 0])  # [m/s]
+    getattr(data, f"setXDDot_{endpoint}")([0.25, 0, 0])  # [m/s^2]
+    output = BSpline.OutputDataSet()
+    output.P = 1
+    with pytest.raises(bskLogging.BasiliskError, match="requires velocity at each endpoint"):
+        BSpline.approximate(data, 21, 4, 3, output)
+    assert output.P == 1
+    getattr(data, f"setXDot_{endpoint}")([0.5, 0, 0])  # [m/s]
+    with pytest.raises(bskLogging.BasiliskError, match="support the endpoint derivatives"):
+        BSpline.approximate(data, 21, 4, 1, output)
+    BSpline.approximate(data, 21, 4, 3, output)
+    sample = 0 if endpoint == "0" else -1
+    assert np.ravel(output.XD1)[sample] == pytest.approx(0.5)  # [m/s]
+    assert np.ravel(output.XDD1)[sample] == pytest.approx(0.25)  # [m/s^2]
+
+
+def test_default_input_flags_and_weight_lengths():
+    """Fit manually supplied coordinates with optional inputs disabled and validate active weights."""
+    data = BSpline.InputDataSet()
+    flags = ("T_flag", "AvgXDot_flag", "W_flag", "XDot_0_flag", "XDot_N_flag", "XDDot_0_flag", "XDDot_N_flag")
+    assert not any(getattr(data, flag) for flag in flags)
+    data.X1 = np.arange(6.0)  # [m]
+    data.X2 = data.X3 = np.zeros(6)  # [m]
+    output = BSpline.OutputDataSet()
+    with pytest.raises(bskLogging.BasiliskError, match="degree must be less than the number of control points"):
+        BSpline.approximate(data, 11, 2, 3, output)
+    BSpline.approximate(data, 11, 3, 3, output)
+    expected = np.linspace(0.0, 5.0, 11)  # [m]
+    np.testing.assert_allclose(np.ravel(output.X1), expected, atol=1e-12)
+    for count in (0, 5, 7):
+        data.setW(np.ones(count))
+        with pytest.raises(bskLogging.BasiliskError, match="weights must have one entry per waypoint"):
+            BSpline.approximate(data, 11, 3, 3, output)
+    BSpline.interpolate(data, 11, 3, output)
+    np.testing.assert_allclose(np.ravel(output.X1), expected, atol=1e-12)
+    data.setW(np.ones(6))
+    BSpline.approximate(data, 11, 3, 3, output)
+    np.testing.assert_allclose(np.ravel(output.X1), expected, atol=1e-12)
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
@@ -220,3 +404,15 @@ if __name__ == "__main__":
         True,    # XDot_flag
         False,    # XDDot_flag
         1e-6)
+
+
+def test_short_final_knot_span_preserves_constant():
+    """The last basis function must only contribute inside its knot support."""
+    fit = BSpline.OutputDataSet()
+    fit.P = 3
+    fit.T = [0, 1]  # [s]
+    fit.U = [0, 0, 0, 0, 0.999999, 1, 1, 1, 1]
+    fit.C1 = np.ones(5)
+    fit.C2 = fit.C3 = np.zeros(5)
+    for t in (0.999995, 0.999999, 0.9999999, 1.0):  # [s]
+        assert fit.getStates(t, 0, 0) == pytest.approx(1.0, rel=0, abs=1e-12)

@@ -571,7 +571,8 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
         startNode.appendNeighbor(this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighbors[n]);
     }
     for (int n = 0; n < this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighborCount; n++) {
-        this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(&goalNode);
+        this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(
+            &this->NodesMap[keyG[0]][keyG[1]][keyG[2]]);
     }
     this->NodesMap[keyS[0]][keyS[1]][keyS[2]] = startNode;
     this->NodesMap[keyG[0]][keyG[1]][keyG[2]] = goalNode;

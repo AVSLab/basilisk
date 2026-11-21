@@ -439,6 +439,27 @@ def test_python_goal_requires_three_components():
     np.testing.assert_array_equal(model.omega_BN_B_goal, [0.001, 0.0, 0.0])  # [rad/s]
 
 
+@pytest.mark.parametrize("args", [(), ([0.0, 1.0], [0.0, 0.0], [0.0, 0.0])])  # MRPs [-]
+def test_optional_spline_values_survive_input_copy(args):
+    """Both constructors zero optional values and copying a partial input preserves its settings."""
+    data = BSpline.InputDataSet(*args)
+    derivatives = ("XDot_0", "XDot_N", "XDDot_0", "XDDot_N")
+    for field in derivatives:
+        np.testing.assert_array_equal(np.ravel(getattr(data, field)), np.zeros(3))
+    rate = [0.1, 0.2, 0.3]  # MRP rate [1/s]
+    data.setXDot_0(rate)
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
+    model.Input = data
+    data.setXDot_0(np.zeros(3))
+    copied = model.Input
+    assert copied.AvgXDot == 0.0 and not copied.AvgXDot_flag
+    np.testing.assert_array_equal(np.ravel(copied.XDot_0), rate)
+    assert copied.XDot_0_flag
+    for field in derivatives[1:]:
+        np.testing.assert_array_equal(np.ravel(getattr(copied, field)), np.zeros(3))
+        assert not getattr(copied, field + "_flag")
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("N", [5,6])
