@@ -137,7 +137,7 @@ class ConstrainedAttitudeManeuver : public SysModel
     int keyS[3] = { invalidGridIndex, invalidGridIndex, invalidGridIndex }; //!< Start node key in NodesMap
     int keyG[3] = { invalidGridIndex, invalidGridIndex, invalidGridIndex }; //!< Goal node key in NodesMap
     NodeList path;                                                          //!< Path of nodes from start to goal
-    double pathCost;      //!< Cost of the path above, according to the cost function used
+    double pathCost = std::numeric_limits<double>::quiet_NaN(); //!< [N m s] Effort of the reference accepted by Reset
     InputDataSet Input;   //!< Input structure for the BSpline interpolation/approximation
     OutputDataSet Output; //!< Output structure of the BSpline interpolation/approximation
 
@@ -153,12 +153,21 @@ class ConstrainedAttitudeManeuver : public SysModel
   private:
     bool keepOutConfigured() { return boresights.keepOutBoresightCount != 0 && keepOutCelBodyInMsg.isLinked(); }
     bool keepInConfigured() { return boresights.keepInBoresightCount != 0 && keepInCelBodyInMsg.isLinked(); }
+    void requireInputs();
+    void invalidateFit();
+    void invalidateWaypoints();
+    void clearPath();
     void clearGrid();
     Node* gridEndpoint(const int key[3]);
+    void validateManeuverRate();
+    const char* prepareWaypoints();
+    void computeTorqueUnchecked(int n, double I[9], double L[3]) const;
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;
     SpicePlanetStateMsgPayload keepInCelBodyMsgBuffer;
+    bool referenceReady = false; //!< True once Reset has completed planning the attitude reference
+    bool inputsReady = false;    //!< True after the most recent ReadInputs() completes successfully
 };
 
 void mirrorFunction(int indices[3], int mirrorIndices[8][3]);
