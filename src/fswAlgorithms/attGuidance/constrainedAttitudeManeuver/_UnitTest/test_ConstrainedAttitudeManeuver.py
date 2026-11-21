@@ -426,6 +426,19 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
     return path
 
+def test_python_goal_requires_three_components():
+    """Reject incomplete or oversized Python goals and preserve the previous attitude."""
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
+    goal = np.array([0.0, 0.25, -0.5])  # MRPs [-]
+    model.sigma_BN_goal = goal
+    for size in (0, 1, 2, 4):
+        with pytest.raises(ValueError):
+            model.sigma_BN_goal = [0.0] * size
+        np.testing.assert_array_equal(model.sigma_BN_goal, goal)
+    model.omega_BN_B_goal = [0.001]  # [rad/s]
+    np.testing.assert_array_equal(model.omega_BN_B_goal, [0.001, 0.0, 0.0])  # [rad/s]
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("N", [5,6])

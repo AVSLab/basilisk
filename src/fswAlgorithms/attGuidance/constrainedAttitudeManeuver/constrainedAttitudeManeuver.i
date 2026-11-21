@@ -37,6 +37,7 @@ from Basilisk.architecture.swig_common_model import *
 // access (memory leak, issue #422).
 %include "swig_eigen.i"
 %include "architecture/utilities/BSpline.h"
+BSK_ARRAY_INPUT(double, PyFloat_AsDouble, sigma_BN_goal[3], !=)
 %include "constrainedAttitudeManeuver.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
