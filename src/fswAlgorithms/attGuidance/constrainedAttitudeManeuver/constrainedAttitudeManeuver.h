@@ -31,9 +31,11 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include <climits>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <limits>
 #include <map>
+#include <memory>
 #include <stdint.h>
 
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
@@ -83,16 +85,29 @@ class NodeList
 {
   public:
     NodeList();
+    //! @brief Copy a list whose active nodes all have retained owners.
+    //! @param source List to copy.
+    NodeList(const NodeList& source);
+    //! @brief Replace the list after checking ownership of all source entries.
+    //! @param source List to copy.
+    //! @return The destination list.
+    NodeList& operator=(const NodeList& source);
     ~NodeList();
 
-    Node* list[10000]; //!< Container of pointers to the nodes in the list
-    int N;             //!< Number of nodes in the list
-    void append(Node* node);
+    Node* list[10000]{}; //!< Container of pointers to the nodes in the list
+    int N;               //!< Number of nodes in the list
+    void append(Node* node, std::shared_ptr<void> owner = nullptr);
     void pop(int M);
     void clear();
     void swap(int m, int n);
     void sort();
     bool contains(Node* node);
+
+  private:
+    friend class ConstrainedAttitudeManeuver;
+    void notifyChange() const;
+    std::function<void()> onChange;                //!< Invalidates waypoints when this list is the planner's path
+    std::map<Node*, std::shared_ptr<void>> owners; //!< Storage owners for nodes appended from Python
 };
 
 /*! @brief waypoint reference module class */
@@ -111,7 +126,6 @@ class ConstrainedAttitudeManeuver : public SysModel
     void appendKeepInDirection(double direction[3], double Fov);
     void AStar();
     void effortBasedAStar();
-    void backtrack(Node* p);
     void pathHandle();
     void spline();
     void computeTorque(int n, double I[9], double L[3]);
@@ -159,6 +173,7 @@ class ConstrainedAttitudeManeuver : public SysModel
     void clearPath();
     void clearGrid();
     Node* gridEndpoint(const int key[3]);
+    void backtrack(Node* p);
     void validateManeuverRate();
     const char* prepareWaypoints();
     void computeTorqueUnchecked(int n, double I[9], double L[3]) const;

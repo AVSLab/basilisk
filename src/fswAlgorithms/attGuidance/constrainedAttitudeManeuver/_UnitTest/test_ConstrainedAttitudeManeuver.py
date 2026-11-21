@@ -25,7 +25,10 @@
 #
 
 
+import gc
 import os
+import sys
+import weakref
 
 import numpy as np
 import pytest
@@ -1173,6 +1176,8 @@ def test_node_list_index_bounds():
     queue = constrainedAttitudeManeuver.NodeList()
     with pytest.raises(AttributeError):
         queue.N = 1
+    with pytest.raises(TypeError):
+        queue.append(None)
     with pytest.raises(bskLogging.BasiliskError, match="out of range"):
         queue.pop(0)
     assert queue.N == 0
@@ -1190,6 +1195,174 @@ def test_node_list_index_bounds():
     queue.swap(0, 1)
     queue.pop(0)
     assert queue.N == 1 and queue.contains(first) and not queue.contains(second)
+
+
+def test_node_list_retains_python_nodes():
+    """Retain duplicate entries across a path copy and release each node after its final removal."""
+    queue = constrainedAttitudeManeuver.NodeList()
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
+    first, second = constrainedAttitudeManeuver.Node(), constrainedAttitudeManeuver.Node()
+    first.sigma_BN = [0.125, 0.0, 0.0]  # MRPs [-]
+    first.priority = 2
+    second.priority = 1
+    first_handle, second_handle = first.this, second.this
+    queue.append(node=first)
+    queue.append(second)
+    queue.append(first)
+    model.path = queue
+    with pytest.raises(AttributeError):
+        model.path.list = queue.list
+    queue.clear()
+    del first, second, queue
+    gc.collect()
+    first_count, second_count = sys.getrefcount(first_handle), sys.getrefcount(second_handle)
+    model.path.sort()
+    model.path.pop(0)
+    assert sys.getrefcount(second_handle) == second_count - 1
+    model.path.pop(0)
+    assert sys.getrefcount(first_handle) == first_count
+    del first_handle
+    assert model.returnPathCoord(0, 0) == 0.125
+    model.path.pop(0)
+    assert model.path.N == 0
+
+
+def test_backtrack_is_private():
+    """Only the planner's searches can follow predecessor pointers."""
+    assert not hasattr(constrainedAttitudeManeuver.ConstrainedAttitudeManeuver, "backtrack")
+
+
+def test_node_back_pointer_is_read_only():
+    """A failed predecessor assignment preserves ownership and leaves both nodes usable."""
+    node, predecessor = constrainedAttitudeManeuver.Node(), constrainedAttitudeManeuver.Node()
+    with pytest.raises(AttributeError):
+        node.backPointer = predecessor
+    assert node.backPointer is None
+    assert predecessor.thisown
+    path = constrainedAttitudeManeuver.NodeList()
+    path.append(predecessor)
+    assert path.contains(predecessor)
+
+
+def test_node_list_rejects_borrowed_node(monkeypatch):
+    """Reject a non-owning proxy before changing the path or its fitted cost."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    count, cost = model.path.N, model.pathCost
+    node = constrainedAttitudeManeuver.Node()
+    monkeypatch.setattr(node, "thisown", False)  # Present a live, non-owning SWIG handle for this test.
+    with pytest.raises(TypeError, match="Python-owned Node"):
+        model.path.append(node)
+    assert model.path.N == count and model.pathCost == cost
+
+
+def test_grid_backed_path_copy():
+    """Reject borrowed and mixed paths before replacing the destination, while allowing self-assignment."""
+    source, messages = _configured_grid_module(5)
+    source.Reset(0)
+    count = source.path.N
+    source.path = source.path
+    assert source.path.N == count > 0
+    destination = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
+    marker = constrainedAttitudeManeuver.Node()
+    destination.path.append(marker)
+    for mixed in (False, True):
+        if mixed:
+            source.path.append(marker)
+            source.path.swap(0, count)
+        with pytest.raises(bskLogging.BasiliskError, match="grid-backed or borrowed"):
+            destination.path = source.path
+        with pytest.raises(bskLogging.BasiliskError, match="grid-backed or borrowed"):
+            constrainedAttitudeManeuver.NodeList(source.path)
+        assert destination.path.N == 1 and destination.path.contains(marker)
+    _generate_test_grid(source)
+    assert destination.path.N == 1 and destination.path.contains(marker)
+    destination.path = source.path
+    assert destination.path.N == 0
+
+
+@pytest.mark.parametrize("edit", ["replace", "replace_same_length", "append", "pop", "swap", "clear"])
+def test_path_edit_invalidates_reference(edit):
+    """Editing an accepted path discards its waypoints, fit, and publishable reference."""
+    model, messages = _configured_grid_module(5)
+    model.SelfInit()
+    model.Reset(0)
+    output = model.attRefOutMsg.addSubscriber()
+    step = macros.sec2nano(1)  # [ns]
+    model.UpdateState(step)
+    path = model.path
+    if edit == "replace":
+        model.path = constrainedAttitudeManeuver.NodeList()
+    elif edit == "replace_same_length":
+        replacement = constrainedAttitudeManeuver.NodeList()
+        for index in reversed(range(path.N)):
+            node = constrainedAttitudeManeuver.Node()
+            node.sigma_BN = [model.returnPathCoord(index, axis) for axis in range(3)]
+            replacement.append(node)
+        assert replacement.N == path.N
+        model.path = replacement
+        np.testing.assert_array_equal([model.returnPathCoord(0, axis) for axis in range(3)], model.sigma_BN_goal)
+    elif edit == "append":
+        path.append(constrainedAttitudeManeuver.Node())
+    elif edit == "pop":
+        path.pop(0)
+    elif edit == "swap":
+        path.swap(0, 1)
+    else:
+        path.clear()
+    assert np.size(model.Input.X1) == np.size(model.Output.T) == 0
+    assert np.isnan(model.pathCost)
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(2 * step)
+    assert output.timeWritten() == step
+    model.Reset(2 * step)
+    model.UpdateState(2 * step)
+    assert output.timeWritten() == 2 * step
+
+
+def test_unchanged_path_preserves_reference():
+    """Self-assignment, an unchanged ordering, and rejected edits preserve an accepted fit."""
+    model, messages = _configured_grid_module(5)
+    model.SelfInit()
+    model.Reset(0)
+    cost = model.pathCost
+    model.path = model.path
+    model.path.swap(0, 0)
+    with pytest.raises(bskLogging.BasiliskError, match="out of range"):
+        model.path.pop(model.path.N)
+    other, other_messages = _configured_grid_module(5)
+    other.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match="grid-backed or borrowed"):
+        model.path = other.path
+    assert model.effortEvaluation() == pytest.approx(cost)
+    assert model.pathCost == cost
+    model.UpdateState(0)
+
+
+def test_sort_only_invalidates_reordered_planner_path():
+    """Sorting a copy preserves the fit, while reordering the planner's own path clears it."""
+    model, messages = _configured_grid_module(5)
+    model.ReadInputs()
+    nodes = constrainedAttitudeManeuver.NodeList()
+    for index in range(2):
+        node = constrainedAttitudeManeuver.Node()
+        node.sigma_BN = [0.0, 0.25 * index, 0.0]  # MRPs [-]
+        node.priority = 1 - index
+        nodes.append(node)
+    model.path = nodes
+    model.pathHandle()
+    model.spline()
+    copied = constrainedAttitudeManeuver.NodeList(model.path)
+    copied.sort()
+    model.path = nodes
+    assert np.isfinite(model.effortEvaluation())
+    model.path.sort()
+    assert model.returnPathCoord(0, 1) == 0.25
+    assert np.size(model.Input.X1) == np.size(model.Output.T) == 0
+    model.pathHandle()
+    model.spline()
+    model.path.sort()
+    assert np.isfinite(model.effortEvaluation())
 
 
 @pytest.mark.parametrize("args", [(), ([0.0, 1.0], [0.0, 0.0], [0.0, 0.0])])  # MRPs [-]
@@ -1211,6 +1384,27 @@ def test_optional_spline_values_survive_input_copy(args):
     for field in derivatives[1:]:
         np.testing.assert_array_equal(np.ravel(getattr(copied, field)), np.zeros(3))
         assert not getattr(copied, field + "_flag")
+
+
+def test_model_path_node_lifetime():
+    """A path view keeps its model alive and native grid cleanup releases the appended node."""
+    model, messages = _configured_grid_module(5)
+    path_view = model.path
+    model_ref = weakref.ref(model)
+    node = constrainedAttitudeManeuver.Node()
+    node.sigma_BN = [0.25, 0.0, 0.0]  # MRPs [-]
+    handle = node.this
+    count = sys.getrefcount(handle)
+    model.path.append(weakref.proxy(node))
+    del node, model
+    gc.collect()
+    assert model_ref() is not None and sys.getrefcount(handle) == count
+    assert model_ref().returnPathCoord(0, 0) == 0.25
+    _generate_test_grid(model_ref())
+    assert path_view.N == 0 and sys.getrefcount(handle) == count - 1
+    del path_view
+    gc.collect()
+    assert model_ref() is None
 
 
 def test_path_coordinate_index_bounds():

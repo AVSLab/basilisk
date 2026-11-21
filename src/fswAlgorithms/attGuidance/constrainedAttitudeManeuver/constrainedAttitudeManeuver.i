@@ -37,7 +37,32 @@ from Basilisk.architecture.swig_common_model import *
 // access (memory leak, issue #422).
 %include "swig_eigen.i"
 %include "architecture/utilities/BSpline.h"
+// Retain the handle that owns the C++ node. The Python wrapper can then be collected,
+// even if it refers back to the list. Native list copies share the handle.
+%ignore NodeList::append(Node*);
+%typemap(in, fragment="bsk_python_source_owner_init") (Node* node, std::shared_ptr<void> owner) {
+    void* pointer = nullptr;
+    int ownership = 0;
+    PyObject* handle = reinterpret_cast<PyObject*>(SWIG_Python_GetSwigThis($input));
+    int result = SWIG_ConvertPtrAndOwn(handle, &pointer, $descriptor(Node*), 0, &ownership);
+    if (!SWIG_IsOK(result) || !pointer) {
+        SWIG_exception_fail(SWIG_TypeError, "NodeList.append() requires a Node");
+    }
+    if (!(ownership & SWIG_POINTER_OWN)) {
+        SWIG_exception_fail(SWIG_TypeError, "NodeList.append() requires a Python-owned Node");
+    }
+    $1 = static_cast<Node*>(pointer);
+    _bsk_readfunctor_acquire(handle);
+    $2 = std::shared_ptr<void>(handle, _bsk_readfunctor_release);
+}
+%immutable Node::backPointer;
+%immutable NodeList::list;
 %immutable NodeList::N;
+%ignore NodeList::operator=;
+%immutable ConstrainedAttitudeManeuver::path;
+%extend ConstrainedAttitudeManeuver {
+    void _set_path(const NodeList& path) { $self->path = path; }
+}
 BSK_ARRAY_INPUT(double, PyFloat_AsDouble, sigma_BN_goal[3], !=)
 %include "constrainedAttitudeManeuver.h"
 
@@ -53,5 +78,12 @@ struct AttRefMsg_C;
 
 %pythoncode %{
 import sys
+
+def _get_path(self):
+    path = _constrainedAttitudeManeuver.ConstrainedAttitudeManeuver_path_get(self)
+    path._swig_bsk_owner = self
+    return path
+
+ConstrainedAttitudeManeuver.path = property(_get_path, ConstrainedAttitudeManeuver._set_path)
 protectAllClasses(sys.modules[__name__])
 %}
