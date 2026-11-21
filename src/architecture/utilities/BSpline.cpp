@@ -19,8 +19,53 @@
 
 #include "BSpline.h"
 #include <architecture/utilities/avsEigenSupport.h>
+#include <architecture/utilities/bskLogging.h>
+#include <cmath>
 #include <iostream>
-#include <math.h>
+
+namespace {
+Eigen::VectorXd waypointTimes(const InputDataSet& input)
+{
+    const auto count = input.X1.size();
+    if (count < 2) {
+        BSKLogger().bskError("BSpline: a fit requires at least two waypoints.");
+    }
+    if (input.X2.size() != count || input.X3.size() != count || (input.T_flag && input.T.size() != count)) {
+        BSKLogger().bskError("BSpline: coordinates and supplied times must have one entry per waypoint.");
+    }
+
+    Eigen::VectorXd times(count);
+    if (input.T_flag) {
+        times = input.T;
+    } else {
+        times[0] = 0.0; // [s]
+        for (Eigen::Index i = 1; i < count; ++i) {
+            const Eigen::Vector3d step(
+                input.X1[i] - input.X1[i - 1], input.X2[i] - input.X2[i - 1], input.X3[i] - input.X3[i - 1]);
+            times[i] = times[i - 1] + step.norm();
+        }
+        if (input.AvgXDot_flag) {
+            if (!std::isfinite(input.AvgXDot) || input.AvgXDot <= 0.0) {
+                BSKLogger().bskError("BSpline: average waypoint speed must be finite and positive.");
+            }
+            times /= input.AvgXDot;
+        }
+    }
+    if (!times.allFinite() || times[0] != 0.0 ||
+        (times.tail(count - 1).array() <= times.head(count - 1).array()).any()) {
+        BSKLogger().bskError("BSpline: waypoint times must start at zero and be finite and strictly increasing.");
+    }
+    return times;
+}
+
+Eigen::Index lastSampleIndex(const Eigen::VectorXd& times)
+{
+    if (times.size() == 0) {
+        BSKLogger().bskError("BSpline: a spline query requires fitted samples.");
+    }
+    return times.size() - 1;
+}
+} // namespace
 
 /*! This constructor initializes an Input structure for BSpline interpolation */
 InputDataSet::InputDataSet()
@@ -34,13 +79,6 @@ InputDataSet::InputDataSet(const Eigen::VectorXd& X1, const Eigen::VectorXd& X2,
     this->X1 = X1;
     this->X2 = X2;
     this->X3 = X3;
-    this->XDot_0_flag = false;
-    this->XDot_N_flag = false;
-    this->XDDot_0_flag = false;
-    this->XDDot_N_flag = false;
-    this->T_flag = false;
-    this->AvgXDot_flag = false;
-    this->W_flag = false;
 
     uint64_t N1 = (uint64_t)X1.size();
     uint64_t N2 = (uint64_t)X2.size();
@@ -133,7 +171,7 @@ OutputDataSet::~OutputDataSet()
 /*! This method returns x, xDot and xDDot at the desired input time T */
 void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3])
 {
-    int N = (int)this->T.size() - 1;
+    const auto N = lastSampleIndex(this->T);
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
@@ -170,7 +208,7 @@ void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[
 /*! It is designed to be accessible from Python */
 double OutputDataSet::getStates(double T, int derivative, int index)
 {
-    int N = (int)this->T.size() - 1;
+    const auto N = lastSampleIndex(this->T);
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
@@ -272,39 +310,14 @@ double OutputDataSet::getStates(double T, int derivative, int index)
  * structure */
 void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output)
 {
+    const Eigen::VectorXd T = waypointTimes(Input);
     Output->P = P;
 
     // N = number of waypoints - 1
     int N = (int)Input.X1.size() - 1;
 
-    // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on
-    // average
-    Eigen::VectorXd T(N + 1);
-    double S = 0;
-    if (Input.T_flag == true) {
-        T = Input.T;
-    } else {
-        T[0] = 0;
-        for (int n = 1; n < N + 1; n++) {
-            T[n] = T[n - 1] + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2) +
-                                   pow(Input.X3[n] - Input.X3[n - 1], 2)),
-                                  0.5);
-            S += T[n] - T[n - 1];
-        }
-    }
-    if (Input.AvgXDot_flag == true) {
-        for (int n = 0; n < N + 1; n++) {
-            T[n] = T[n] / T[N] * S / Input.AvgXDot;
-        }
-    }
-
-    double Ttot = T[N];
-
-    // build uk vector: normalized waypoint time tags
-    Eigen::VectorXd uk(N + 1);
-    for (int n = 0; n < N + 1; n++) {
-        uk[n] = T[n] / Ttot;
-    }
+    const double Ttot = T[N];
+    const Eigen::VectorXd uk = T / Ttot;
 
     // K = number of endpoint derivatives
     int K = 0;
@@ -462,76 +475,54 @@ void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Outpu
  * structure */
 void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output)
 {
-    Output->P = P;
-
-    // N = number of waypoints - 1
-    int N = (int)Input.X1.size() - 1;
-
-    // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on
-    // average
-    Eigen::VectorXd T(N + 1);
-    double S = 0;
-    if (Input.T_flag == true) {
-        T = Input.T;
-    } else {
-        T[0] = 0;
-        for (int n = 1; n < N + 1; n++) {
-            T[n] = T[n - 1] + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2) +
-                                   pow(Input.X3[n] - Input.X3[n - 1], 2)),
-                                  0.5);
-            S += T[n] - T[n - 1];
-        }
+    const Eigen::VectorXd T = waypointTimes(Input);
+    if (Input.W_flag && Input.W.size() != Input.X1.size()) {
+        BSKLogger().bskError("BSpline: supplied spline weights must have one entry per waypoint.");
     }
-    if (Input.AvgXDot_flag == true) {
-        for (int n = 0; n < N + 1; n++) {
-            T[n] = T[n] / T[N] * S / Input.AvgXDot;
-        }
+    if ((Input.XDDot_0_flag && !Input.XDot_0_flag) || (Input.XDDot_N_flag && !Input.XDot_N_flag)) {
+        BSKLogger().bskError(
+            "BSpline: approximation requires velocity at each endpoint with a prescribed acceleration.");
     }
-
-    double Ttot = T[N];
-
-    // build uk vector: normalized waypoint time tags
-    Eigen::VectorXd uk(N + 1);
-    for (int n = 0; n < N + 1; n++) {
-        uk[n] = T[n] / Ttot;
+    const int startDerivatives = Input.XDot_0_flag + Input.XDDot_0_flag;
+    const int endDerivatives = Input.XDot_N_flag + Input.XDDot_N_flag;
+    const int K = startDerivatives + endDerivatives;
+    const int N = static_cast<int>(T.size()) - 1;
+    // Q is the last control-point index. Reserve one point for each endpoint position and derivative.
+    if (Q < K + 1) {
+        BSKLogger().bskError("BSpline: approximation needs at least %d control points for the endpoint constraints.",
+                             K + 2);
     }
-
-    // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
+    if (Q - K > N) {
+        BSKLogger().bskError("BSpline: approximation has more free control points than interior waypoints.");
+    }
     if (P > Q) {
-        std::cout << "Error in BSpline.approximate: \n the desired polynomial order P can't be higher than the number "
-                     "of control points Q. \n";
+        BSKLogger().bskError("BSpline: approximation degree must be less than the number of control points.");
     }
+    if (P < startDerivatives || P < endDerivatives) {
+        BSKLogger().bskError("BSpline: approximation degree must be nonnegative and support the endpoint derivatives.");
+    }
+    const double Ttot = T[N];
+    const Eigen::VectorXd uk = T / Ttot;
 
     // build knot vector U of size Q + P + 2
     Eigen::VectorXd U(Q + P + 2);
-    double d, alpha;
-    int knotIndex;
-    d = ((double)(N + 1)) / ((double)abs(Q - P + 1));
+    const double d = static_cast<double>(N + 1) / (Q - P + 1);
     for (int p = 0; p < P + 1; p++) {
         U[p] = 0;
     }
     for (int j = 1; j < Q - P + 1; j++) {
-        knotIndex = int(j * d);
-        alpha = j * d - knotIndex;
+        const int knotIndex = static_cast<int>(j * d);
+        if (knotIndex < 1 || knotIndex > N) {
+            BSKLogger().bskError("BSpline: approximation interior knots must be bracketed by waypoint times.");
+        }
+        const double alpha = j * d - knotIndex;
         U[P + j] = (1 - alpha) * uk[knotIndex - 1] + alpha * uk[knotIndex];
+        if (!(U[P + j - 1] < U[P + j] && U[P + j] < 1.0)) {
+            BSKLogger().bskError("BSpline: approximation interior knots must increase strictly between zero and one.");
+        }
     }
     for (int p = 0; p < P + 1; p++) {
         U[Q + p + 1] = 1;
-    }
-
-    // K = number of endpoint derivatives
-    int K = 0;
-    if (Input.XDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDot_N_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_N_flag == true) {
-        K += 1;
     }
 
     // build stiffness matrix MD of size (K+2)x(K+2)
@@ -603,8 +594,13 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
     Eigen::VectorXd C3_1 = B * T3;
 
     // populate Rk vectors with the base points for LS minimization
-    Eigen::VectorXd Rk1(N - 1), Rk2(N - 1), Rk3(N - 1);
+    Eigen::MatrixXd residuals(N - 1, 3);
+    auto Rk1 = residuals.col(0), Rk2 = residuals.col(1), Rk3 = residuals.col(2);
     for (int n = 1; n < N; n++) {
+        if (Input.W_flag && Input.W[n] == 0.0) {
+            residuals.row(n - 1).setZero();
+            continue;
+        }
         basisFunction(uk[n], U, Q + 1, P, &NN[0], &NN1[0], &NN2[0]);
         Rk1[n - 1] = Input.X1[n] - NN[0] * C1_1[0] - NN[Q] * C1_1[K + 1];
         Rk2[n - 1] = Input.X2[n] - NN[0] * C2_1[0] - NN[Q] * C2_1[K + 1];
@@ -645,37 +641,26 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
         for (int b = 0; b < Q - K - 1; b++) {
             ND(n, b) = NN[k + b];
         }
-    }
-
-    // populate weight matrix W
-    Eigen::MatrixXd W(N - 1, N - 1);
-    for (int n = 0; n < N - 1; n++) {
-        for (int m = 0; m < N - 1; m++) {
-            if (n == m) {
-                if (Input.W_flag) {
-                    W(n, m) = Input.W[n + 1];
-                } else {
-                    W(n, m) = 1;
-                }
-            } else {
-                W(n, m) = 0;
+        if (Input.W_flag) {
+            const double weight = Input.W[n + 1];
+            if (!std::isfinite(weight) || weight < 0.0) {
+                BSKLogger().bskError("BSpline: interior waypoint weights must be finite and nonnegative.");
             }
+            const double scale = std::sqrt(weight);
+            ND.row(n) *= scale;
+            residuals.row(n) *= scale;
         }
     }
 
-    Eigen::VectorXd R1(Q - K - 1), R2(Q - K - 1), R3(Q - K - 1);
-    B = ND.transpose() * W;
-    R1 = B * Rk1;
-    R2 = B * Rk2;
-    R3 = B * Rk3;
-
-    // compute LS values R for the control points
-    Eigen::MatrixXd NWN(Q - K - 1, Q - K - 1), NWN_inv(Q - K - 1, Q - K - 1);
-    NWN = B * ND;
-    NWN_inv = NWN.inverse();
-    Eigen::VectorXd C1_2 = NWN_inv * R1;
-    Eigen::VectorXd C2_2 = NWN_inv * R2;
-    Eigen::VectorXd C3_2 = NWN_inv * R3;
+    Eigen::MatrixXd freeControlPoints(ND.cols(), 3);
+    if (ND.cols() > 0) {
+        const auto qr = ND.colPivHouseholderQr();
+        if (qr.rank() < ND.cols()) {
+            BSKLogger().bskError(
+                "BSpline: the waypoint fit is rank deficient and cannot determine all free control points.");
+        }
+        freeControlPoints = qr.solve(residuals);
+    }
 
     // build control point vectors C
     Eigen::VectorXd C1(Q + 1), C2(Q + 1), C3(Q + 1);
@@ -696,9 +681,9 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
         C3[constraintIndex] = C3_1[constraintIndex];
     }
     for (int q = 0; q < Q - K - 1; q++) {
-        C1[constraintIndex + q + 1] = C1_2[q];
-        C2[constraintIndex + q + 1] = C2_2[q];
-        C3[constraintIndex + q + 1] = C3_2[q];
+        C1[constraintIndex + q + 1] = freeControlPoints(q, 0);
+        C2[constraintIndex + q + 1] = freeControlPoints(q, 1);
+        C3[constraintIndex + q + 1] = freeControlPoints(q, 2);
     }
     if (Input.XDDot_N_flag == true) {
         constraintIndex += 1;
@@ -717,6 +702,7 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
     C2[Q - K - 1 + constraintIndex] = C2_1[constraintIndex];
     C3[Q - K - 1 + constraintIndex] = C3_1[constraintIndex];
 
+    Output->P = P;
     Output->U = U;
     Output->C1 = C1;
     Output->C2 = C2;
@@ -774,7 +760,8 @@ void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN,
             N(i, 0) = 1;
         }
     }
-    if (abs(t - 1.0) < 1e-5) {
+    // Close the right endpoint, including accumulated sampling roundoff above one.
+    if (t >= 1.0 && abs(t - 1.0) < 1e-5) {
         N(I - 1, 0) = 1;
     }
     /* higher order - De Boor formula */

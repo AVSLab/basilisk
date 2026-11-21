@@ -39,23 +39,24 @@ class InputDataSet
     void setW(const Eigen::VectorXd& W);
     void setAvgXDot(double AvgXDot);
 
-    double AvgXDot;          //!< desired average velocity norm
-    Eigen::VectorXd T;       //!< time tags: specifies at what time each waypoint is hit
-    Eigen::VectorXd W;       //!< weight vector for the LS approximation
-    Eigen::VectorXd X1;      //!< coordinate #1 of the waypoints
-    Eigen::VectorXd X2;      //!< coordinate #2 of the waypoints
-    Eigen::VectorXd X3;      //!< coordinate #3 of the waypoints
-    Eigen::Vector3d XDot_0;  //!< 3D vector containing the first derivative at starting point
-    Eigen::Vector3d XDot_N;  //!< 3D vector containing the first derivative at final point
-    Eigen::Vector3d XDDot_0; //!< 3D vector containing the second derivative at starting point
-    Eigen::Vector3d XDDot_N; //!< 3D vector containing the second derivative at final point
-    bool T_flag;             //!< indicates that time tags have been specified; if true, AvgXDot_flag is false
-    bool AvgXDot_flag;       //!< indicates that avg velocity norm has been specified; if true, T_flag is false
-    bool W_flag;             //!< indicates that weight vector has been specified
-    bool XDot_0_flag;        //!< indicates that first derivative at starting point has been specified
-    bool XDot_N_flag;        //!< indicates that first derivative at final point has been specified
-    bool XDDot_0_flag;       //!< indicates that second derivative at starting point has been specified
-    bool XDDot_N_flag;       //!< indicates that second derivative at final point has been specified
+    double AvgXDot = 0.0;                              //!< [coordinate units/s] desired average velocity norm
+    Eigen::VectorXd T;                                 //!< [s] Waypoint times, finite and strictly increasing from zero
+    Eigen::VectorXd W;                                 //!< Waypoint weights, finite and nonnegative for interior points
+    Eigen::VectorXd X1;                                //!< coordinate #1 of the waypoints
+    Eigen::VectorXd X2;                                //!< coordinate #2 of the waypoints
+    Eigen::VectorXd X3;                                //!< coordinate #3 of the waypoints
+    Eigen::Vector3d XDot_0 = Eigen::Vector3d::Zero();  //!< First derivative at the starting point
+    Eigen::Vector3d XDot_N = Eigen::Vector3d::Zero();  //!< First derivative at the final point
+    Eigen::Vector3d XDDot_0 = Eigen::Vector3d::Zero(); //!< Second derivative at the starting point
+    Eigen::Vector3d XDDot_N = Eigen::Vector3d::Zero(); //!< Second derivative at the final point
+
+    bool T_flag = false;       //!< indicates that time tags have been specified; if true, AvgXDot_flag is false
+    bool AvgXDot_flag = false; //!< indicates that avg velocity norm has been specified; if true, T_flag is false
+    bool W_flag = false;       //!< indicates that weight vector has been specified
+    bool XDot_0_flag = false;  //!< indicates that first derivative at starting point has been specified
+    bool XDot_N_flag = false;  //!< indicates that first derivative at final point has been specified
+    bool XDDot_0_flag = false; //!< indicates that second derivative at starting point has been specified
+    bool XDDot_N_flag = false; //!< indicates that second derivative at final point has been specified
 };
 
 //! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and
@@ -88,6 +89,13 @@ class OutputDataSet
 
 void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output);
 
+/*! @brief Fit a least-squares spline to the supplied waypoints.
+ * @param Input Waypoints and optional constraints. Each endpoint acceleration requires velocity at the same endpoint.
+ * @param Num Number of output samples.
+ * @param Q Last control-point index. Each free control point requires at least one interior waypoint.
+ * @param P Polynomial degree. The resulting Q - P interior knots must lie strictly between the endpoints.
+ * @param Output Fitted spline and sampled states.
+ */
 void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output);
 
 void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN, double* NN1, double* NN2);
