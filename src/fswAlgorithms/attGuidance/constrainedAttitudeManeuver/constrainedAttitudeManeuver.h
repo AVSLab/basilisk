@@ -22,6 +22,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
@@ -30,7 +31,9 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <map>
+#include <stdint.h>
 
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct
@@ -63,14 +66,14 @@ class Node
     Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights);
     ~Node();
 
-    double sigma_BN[3];  //!< MRP set corresponding to the node
-    bool isBoundary;     //!< If true, the node lies on the |sigma| = 1 boundary surface
-    bool isFree;         //!< If true, the node is constraint-compliant
-    double heuristic;    //!< Heuristic value used by cartesian distance A*
-    double priority;     //!< Priority of the node in A*
-    Node* neighbors[52]; //!< Container of pointers to neighboring nodes
-    int neighborCount;   //!< Number of neighboring nodes
-    Node* backPointer;   //!< Pointer to the previous node in the path computer by A*
+    double sigma_BN[3]{};        //!< MRP set corresponding to the node
+    bool isBoundary = false;     //!< If true, the node lies on the |sigma| = 1 boundary surface
+    bool isFree = false;         //!< True once the attitude is classified as constraint-compliant
+    double heuristic = 0.0;      //!< Heuristic value used by Cartesian distance A*
+    double priority = 0.0;       //!< Priority of the node in A*
+    Node* neighbors[52]{};       //!< Container of pointers to neighboring nodes
+    int neighborCount = 0;       //!< Number of neighboring nodes
+    Node* backPointer = nullptr; //!< Pointer to the previous node in the path computed by A*
     void appendNeighbor(Node* node);
 };
 
@@ -118,17 +121,16 @@ class ConstrainedAttitudeManeuver : public SysModel
     double returnPathCoord(int index, int nodeCoord);
 
   public:
-    int N;                        //!< Fineness level of discretization
-    int BSplineType;              //!< 0 for interpolation; 1 for LS approximation
-    int costFcnType;              //!< 0 for minimum distance path; 1 for minimum control effort path
-    double sigma_BN_goal[3];      //!< Initial S/C attitude
-    double omega_BN_B_goal[3];    //!< Initial S/C angular rate
-    double avgOmega;              //!< Average angular rate norm during the maneuver
-    double keepOutFov;            //!< Field of view of the sensitive instrument
-    double keepOutBore_B[3];      //!< Body-frame direction of the boresight of the sensitive instrument
-    constraintStruct constraints; //!< Structure containing the constraint directions in inertial coordinates
-    scBoresightStruct
-        boresights; //!< Structure containing the instrument boresight directions in body frame coordinates
+    int N;                       //!< Fineness level of discretization
+    int BSplineType = -1;        //!< Unset until configured to 0 for interpolation or 1 for least-squares approximation
+    int costFcnType = -1;        //!< Unset until configured to 0 for distance-based search or 1 for effort-based search
+    double sigma_BN_goal[3];     //!< [-] Required goal attitude in MRPs, initially NaN
+    double omega_BN_B_goal[3]{}; //!< [rad/s] Desired body-frame angular rate at the goal, initially zero
+    double avgOmega = 0.0;       //!< [rad/s] Positive rate used to set waypoint intervals from MRP distance
+    double keepOutFov;           //!< Field of view of the sensitive instrument
+    double keepOutBore_B[3];     //!< Body-frame direction of the boresight of the sensitive instrument
+    constraintStruct constraints{}; //!< Constraint directions in inertial coordinates
+    scBoresightStruct boresights{}; //!< Instrument boresight directions in body-frame coordinates
     std::map<int, std::map<int, std::map<int, Node>>> NodesMap; //!< C++ map from node indices to Node class
     int keyS[3];                                                //!< Key to Start node in NodesMap
     int keyG[3];                                                //!< Key to Goal node in NodesMap
@@ -147,6 +149,8 @@ class ConstrainedAttitudeManeuver : public SysModel
     BSKLogger bskLogger; //!< BSK Logging
 
   private:
+    bool keepOutConfigured() { return boresights.keepOutBoresightCount != 0 && keepOutCelBodyInMsg.isLinked(); }
+    bool keepInConfigured() { return boresights.keepInBoresightCount != 0 && keepInCelBodyInMsg.isLinked(); }
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;
