@@ -114,8 +114,8 @@ void PlanetGrid::initialize(BSKLogger bskLogger)
     // Compute angular spacing between grid points in radians
     this->latDiff = (180.0 / this->nLat) * M_PI / 180.0; // [rad]
     this->lonDiff = (360.0 / this->nLon) * M_PI / 180.0; // [rad]
-    const int halfLat = this->nLat / 2;
-    const int halfLon = this->nLon / 2;
+    const double halfLat = this->nLat / 2.0;
+    const double halfLon = this->nLon / 2.0;
 
     // Create grid point coordinates: centered at origin, spanning -180 to 180 deg lon, -90 to 90 deg lat
     const size_t latitudeCount = static_cast<size_t>(this->nLat);
