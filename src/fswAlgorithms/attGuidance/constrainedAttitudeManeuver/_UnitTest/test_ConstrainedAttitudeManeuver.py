@@ -738,6 +738,86 @@ def test_disconnected_grid(refinement, reason, cost_type, entry_point):
     assert cpp_output.timeWritten() == c_output.timeWritten() == 3 * step
 
 
+@pytest.mark.parametrize("spline_type", [0, 1], ids=["interpolation", "approximation"])
+@pytest.mark.parametrize("start_z, goal_z, fitted_start_z, fitted_goal_z",
+                         [(-0.5, -0.55, -0.5, -0.55), (1.0, -0.8, -1.0, -0.8), (0.8, -1.0, 0.8, 1.0)],
+                         ids=["principal", "from-shadow-boundary", "to-shadow-boundary"])
+def test_two_waypoint_reference(spline_type, start_z, goal_z, fitted_start_z, fitted_goal_z):
+    """Fit both endpoint attitudes and rates and publish finite references."""
+    model, messages = _configured_grid_module(6)
+    model.SelfInit()
+    model.boresights.keepInBoresightCount = model.boresights.keepOutBoresightCount = 0
+    model.appendKeepInDirection([1.0, 0.0, 0.0], np.pi)  # [rad]
+    model.BSplineType = spline_type
+    state = messages[0].read()
+    state.sigma_BN = [0.0, 0.0, start_z]  # MRPs [-]
+    state.omega_BN_B = [0.001, 0.0, 0.0]  # [rad/s]
+    messages[0].write(state)
+    model.sigma_BN_goal = [0.0, 0.0, goal_z]  # MRPs [-]
+    model.omega_BN_B_goal = [0.0, 0.002, 0.003]  # [rad/s]
+    model.Reset(0)
+    assert model.path.N == 2
+    assert np.isfinite(model.pathCost)
+
+    start = np.array([0.0, 0.0, fitted_start_z])  # MRPs [-]
+    goal = np.array([0.0, 0.0, fitted_goal_z])  # MRPs [-]
+    start_dot = rbk.dMRP(start, state.omega_BN_B)
+    goal_dot = rbk.dMRP(goal, model.omega_BN_B_goal)
+    duration = np.ravel(model.Output.T)[-1]  # [s]
+    for u in (0.0, 0.25, 1.0):
+        # Round down so the final sample stays inside the maneuver.
+        model.UpdateState(int(u * duration * 1e9))  # [ns]
+        expected = (start + u**2 * (3 - 2 * u) * (goal - start)
+                    + duration * (u * (1 - u)**2 * start_dot + u**2 * (u - 1) * goal_dot))
+        for output in (model.attRefOutMsg, model.attRefOutMsgC):
+            ref = output.read()
+            np.testing.assert_allclose(ref.sigma_RN, expected, rtol=0, atol=1e-10)
+            assert np.isfinite(ref.omega_RN_N).all() and np.isfinite(ref.domega_RN_N).all()
+            if u in (0.0, 1.0):
+                omega_body = state.omega_BN_B if u == 0 else model.omega_BN_B_goal
+                np.testing.assert_allclose(ref.omega_RN_N, rbk.MRP2C(expected).T @ omega_body,
+                                           rtol=0, atol=1e-10)  # [rad/s]
+
+
+@pytest.mark.parametrize("spline_type", [0, 1], ids=["interpolation", "approximation"])
+@pytest.mark.parametrize("at_start, at_goal", [(True, False), (False, True), (True, True)],
+                         ids=["start", "goal", "both"])
+def test_two_waypoint_endpoint_accelerations(spline_type, at_start, at_goal):
+    """Refit a two-waypoint path with the prescribed MRP derivatives at either or both endpoints."""
+    model, messages = _configured_grid_module(6, spline_type=spline_type)
+    model.boresights.keepInBoresightCount = model.boresights.keepOutBoresightCount = 0
+    state = messages[0].read()
+    state.omega_BN_B = [0.001, 0.002, 0.0]  # [rad/s]
+    messages[0].write(state)
+    model.sigma_BN_goal = [0.0, 0.0, -0.55]  # MRPs [-]
+    model.omega_BN_B_goal = [0.0, -0.002, 0.003]  # [rad/s]
+    model.Reset(0)
+    assert model.path.N == 2
+
+    start_accel = [0.001, -0.002, 0.003]  # [1/s^2]
+    goal_accel = [-0.004, 0.005, 0.002]  # [1/s^2]
+    if at_start:
+        model.Input.setXDDot_0(start_accel)
+    if at_goal:
+        model.Input.setXDDot_N(goal_accel)
+    model.spline()
+
+    output = model.Output
+    positions = np.column_stack((output.X1, output.X2, output.X3))
+    rates = np.column_stack((output.XD1, output.XD2, output.XD3))
+    accelerations = np.column_stack((output.XDD1, output.XDD2, output.XDD3))
+    np.testing.assert_allclose(positions[[0, -1]], [state.sigma_BN, model.sigma_BN_goal], rtol=0, atol=1e-12)
+    expected_rates = [rbk.dMRP(state.sigma_BN, state.omega_BN_B),
+                      rbk.dMRP(model.sigma_BN_goal, model.omega_BN_B_goal)]
+    np.testing.assert_allclose(rates[[0, -1]], expected_rates, rtol=0, atol=1e-12)
+    if at_start:
+        np.testing.assert_allclose(accelerations[0], start_accel, rtol=0, atol=1e-12)
+    if at_goal:
+        np.testing.assert_allclose(accelerations[-1], goal_accel, rtol=0, atol=1e-12)
+    assert output.P == 3 + at_start + at_goal
+    assert np.isfinite(model.effortEvaluation())
+
+
 @pytest.mark.parametrize("refinement, cost_type, goal_z", [
     (2, 0, 0.0), (5, 0, 0.0), (5, 1, 0.0), (8, 0, -0.15),
 ], ids=["direct", "multi-waypoint", "effort", "interior-identity"])  # goal MRPs [-]
@@ -892,6 +972,44 @@ def test_signed_roll_through_mrp_pole(reverse, tilt):
 
 
 @pytest.mark.parametrize("tilt", [0.0, 1.0])  # [deg]
+@pytest.mark.parametrize("spline_type", [0, 1], ids=["interpolation", "approximation"])
+def test_extra_revolutions_reject_fit(tilt, spline_type):
+    """A finite spline that adds a full turn inside a leg must be discarded."""
+    model, messages = _configured_grid_module(5, spline_type=spline_type)
+    model.ReadInputs()
+    _set_test_path(model, _roll_waypoints([10, 100, 190, 280, 375], tilt))
+    model.pathHandle()
+    with pytest.raises(bskLogging.BasiliskError, match="full turn.*Split"):
+        model.spline()
+    assert np.size(model.Output.T) == 0
+    with pytest.raises(bskLogging.BasiliskError, match="successful reset"):
+        model.UpdateState(0)
+
+
+@pytest.mark.parametrize("cost_type, reason", [(0, "full turn"), (1, "open list exhausted")])
+def test_reset_rejects_extra_turn_and_recovers(cost_type, reason):
+    """Both searches discard excessive fits and a subsequent feasible reset publishes again."""
+    model, messages = _configured_grid_module(5, cost_type=cost_type)
+    model.SelfInit()
+    reader = model.attRefOutMsg.addSubscriber()
+    model.boresights.keepInBoresightCount = model.boresights.keepOutBoresightCount = 0
+    model.sigma_BN_goal = [0, 0, -0.25]  # MRPs [-]
+    model.Reset(0)
+    model.UpdateState(0)
+    model.omega_BN_B_goal = [0, 0, 2.0]  # [rad/s]
+    with pytest.raises(bskLogging.BasiliskError, match=reason):
+        model.Reset(1)
+    assert np.size(model.Output.T) == 0
+    with pytest.raises(bskLogging.BasiliskError, match="successful reset"):
+        model.UpdateState(1)
+    assert reader.timeWritten() == 0  # [ns]
+    model.omega_BN_B_goal = [0, 0, 0]  # [rad/s]
+    model.Reset(2)
+    model.UpdateState(2)
+    assert reader.timeWritten() == 2  # [ns]
+
+
+@pytest.mark.parametrize("tilt", [0.0, 1.0])  # [deg]
 def test_chart_selection_near_mrp_pole(tilt):
     """Score the closest approach between waypoints even when the final axis is tilted."""
     waypoints = _roll_waypoints([10, 100, 190, 280, 375], tilt)
@@ -935,6 +1053,55 @@ def test_path_crossing_both_mrp_poles():
     assert np.size(model.Input.T) == 0
 
 
+def test_reset_restarts_reference_clock():
+    """Sample the same trajectory relative to two reset epochs on both outputs."""
+    model, messages = _configured_grid_module(5)
+    model.SelfInit()
+    readers = [model.attRefOutMsg.addSubscriber(), messaging.AttRefMsgReader()]
+    readers[1].subscribeTo(model.attRefOutMsgC)
+    step = macros.sec2nano(5)  # [ns]
+    epoch = macros.sec2nano(600)  # [ns], later than the duration of the first maneuver
+    model.Reset(0)
+    model.UpdateState(step)
+    expected = readers[0]().sigma_RN
+    start = messages[0].read().sigma_BN
+    assert not np.allclose(expected, start)
+    model.Reset(epoch)
+    for now, attitude in ((epoch - 1, start), (epoch, start), (epoch + step, expected)):
+        model.UpdateState(now)
+        for reader in readers:
+            assert reader.timeWritten() == now
+            np.testing.assert_allclose(reader().sigma_RN, attitude, rtol=0, atol=1e-12)
+
+
+def test_three_waypoint_approximation():
+    """Use a valid quartic approximation when there is one interior waypoint."""
+    model, messages = _configured_grid_module(6)
+    model.BSplineType = 1
+    model.sigma_BN_goal = [0.0, 0.0, -0.8]  # MRPs [-]
+    model.Reset(0)
+    assert model.path.N == 3
+    assert model.Output.P == 4
+    assert np.isfinite(model.pathCost)
+
+
+def test_three_waypoint_approximation_control_point_limit():
+    """Reject six endpoint conditions on five control points and accept exactly five."""
+    model, messages = _configured_grid_module(6, spline_type=1)
+    model.sigma_BN_goal = [0.0, 0.0, -0.8]  # MRPs [-]
+    model.Reset(0)
+    assert model.path.N == 3
+    model.Input.setXDDot_0([0.0, 0.0, 0.0])  # [1/s^2]
+    model.Input.setXDDot_N([0.0, 0.0, 0.0])  # [1/s^2]
+    with pytest.raises(bskLogging.BasiliskError, match="at least 6 control points"):
+        model.spline()
+    assert np.size(model.Output.T) == 0
+    model.Input.XDDot_N_flag = False
+    model.spline()
+    assert np.isfinite(model.effortEvaluation())
+    np.testing.assert_allclose(np.ravel(model.Output.X3)[[0, -1]], np.ravel(model.Input.X3)[[0, -1]])
+
+
 def test_repeated_path_waypoint():
     """A repeated node cannot supply a time interval. Removing it restores the fit."""
     model, messages = _configured_grid_module(5)
@@ -948,6 +1115,66 @@ def test_repeated_path_waypoint():
     assert np.size(model.Input.T) == 0
     model.path.pop(1)
     model.pathHandle()
+    model.spline()
+    assert np.isfinite(model.effortEvaluation())
+
+
+@pytest.mark.parametrize("component", ["X1", "X2", "X3", "T"])
+@pytest.mark.parametrize("spline_type", [0, 1])
+def test_spline_waypoint_array_lengths(spline_type, component):
+    """Reject short and long waypoint arrays and recover after the original values are restored."""
+    model, messages = _configured_grid_module(6, spline_type=spline_type)
+    model.sigma_BN_goal = [0.0, 0.0, -0.8]  # MRPs [-]
+    model.Reset(0)
+    original = np.ravel(getattr(model.Input, component))
+    assert original.size == 3
+    expected = model.pathCost
+    for values in ([], original[:-1], np.append(original, original[-1])):
+        setattr(model.Input, component, values)
+        with pytest.raises(bskLogging.BasiliskError, match="waypoint"):
+            model.spline()
+        assert np.size(model.Output.T) == 0
+    setattr(model.Input, component, original)
+    model.spline()
+    assert model.effortEvaluation() == pytest.approx(expected)
+
+
+def test_two_waypoint_approximation_weight_lengths():
+    """Require two supplied weights even though both endpoints are fixed."""
+    model, messages = _configured_grid_module(6, spline_type=1)
+    model.boresights.keepInBoresightCount = model.boresights.keepOutBoresightCount = 0
+    model.sigma_BN_goal = [0.0, 0.0, -0.55]  # MRPs [-]
+    model.Reset(0)
+    assert model.path.N == 2
+    expected = np.ravel(model.Output.X3)
+    for weights in ([], [1], [1, 1, 1]):
+        model.Input.setW(weights)
+        with pytest.raises(bskLogging.BasiliskError, match="weights must have one entry per waypoint"):
+            model.spline()
+        assert np.size(model.Output.T) == 0
+    model.Input.setW([0, 0])
+    model.spline()
+    np.testing.assert_allclose(np.ravel(model.Output.X3), expected, atol=1e-12, rtol=0)
+
+
+def test_spline_optional_waypoint_arrays():
+    """Use generated times when requested and require one weight per waypoint for approximation."""
+    model, messages = _configured_grid_module(6, spline_type=1)
+    model.sigma_BN_goal = [0.0, 0.0, -0.8]  # MRPs [-]
+    model.Reset(0)
+    count = model.path.N
+    model.Input.setT([])
+    model.Input.setAvgXDot(0.1)  # [1/s] Average MRP coordinate speed
+    for length in (count - 1, count + 1):
+        model.Input.setW(np.ones(length))
+        with pytest.raises(bskLogging.BasiliskError, match="weights must have one entry per waypoint"):
+            model.spline()
+    assert count == 3
+    model.Input.setW([1, 0, 1])
+    with pytest.raises(bskLogging.BasiliskError, match="rank deficient"):
+        model.spline()
+    assert np.size(model.Output.T) == 0
+    model.Input.setW(np.ones(count))
     model.spline()
     assert np.isfinite(model.effortEvaluation())
 
@@ -1057,6 +1284,17 @@ def test_torque_sample_index_bounds():
     for index in (-1, count):
         with pytest.raises(bskLogging.BasiliskError, match="torque sample index"):
             model.computeTorqueNorm(index, inertia)
+
+
+def test_torque_norm_uses_supplied_inertia():
+    """Check torque scaling at the midpoint, where the gyroscopic term is nonzero."""
+    model, messages = _configured_grid_module(5)
+    model.Reset(0)
+    inertia = np.asarray(messages[1].read().ISCPntB_B)  # [kg*m^2]
+    midpoint = len(model.Output.T) // 2
+    torque = model.computeTorqueNorm(midpoint, inertia)
+    assert torque > 0.0  # [N*m]
+    assert model.computeTorqueNorm(midpoint, 2 * inertia) == pytest.approx(2 * torque, rel=1e-12, abs=0.0)
 
 
 @pytest.mark.parametrize("method", ["ReadInputs", "AStar", "effortBasedAStar", "pathHandle", "spline"])
