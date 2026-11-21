@@ -29,6 +29,7 @@
 #include "architecture/utilities/BSpline.h"
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
+#include <climits>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -121,7 +122,7 @@ class ConstrainedAttitudeManeuver : public SysModel
     double returnPathCoord(int index, int nodeCoord);
 
   public:
-    int N;                       //!< Fineness level of discretization
+    int N = 0;                   //!< Grid refinement level, zero until configured
     int BSplineType = -1;        //!< Unset until configured to 0 for interpolation or 1 for least-squares approximation
     int costFcnType = -1;        //!< Unset until configured to 0 for distance-based search or 1 for effort-based search
     double sigma_BN_goal[3];     //!< [-] Required goal attitude in MRPs, initially NaN
@@ -132,9 +133,10 @@ class ConstrainedAttitudeManeuver : public SysModel
     constraintStruct constraints{}; //!< Constraint directions in inertial coordinates
     scBoresightStruct boresights{}; //!< Instrument boresight directions in body-frame coordinates
     std::map<int, std::map<int, std::map<int, Node>>> NodesMap; //!< C++ map from node indices to Node class
-    int keyS[3];                                                //!< Key to Start node in NodesMap
-    int keyG[3];                                                //!< Key to Goal node in NodesMap
-    NodeList path;                                              //!< Path of nodes from start to goal
+    static constexpr int invalidGridIndex = INT_MAX; //!< Grid index used when an endpoint has not been selected
+    int keyS[3] = { invalidGridIndex, invalidGridIndex, invalidGridIndex }; //!< Start node key in NodesMap
+    int keyG[3] = { invalidGridIndex, invalidGridIndex, invalidGridIndex }; //!< Goal node key in NodesMap
+    NodeList path;                                                          //!< Path of nodes from start to goal
     double pathCost;      //!< Cost of the path above, according to the cost function used
     InputDataSet Input;   //!< Input structure for the BSpline interpolation/approximation
     OutputDataSet Output; //!< Output structure of the BSpline interpolation/approximation
@@ -151,6 +153,8 @@ class ConstrainedAttitudeManeuver : public SysModel
   private:
     bool keepOutConfigured() { return boresights.keepOutBoresightCount != 0 && keepOutCelBodyInMsg.isLinked(); }
     bool keepInConfigured() { return boresights.keepInBoresightCount != 0 && keepInCelBodyInMsg.isLinked(); }
+    void clearGrid();
+    Node* gridEndpoint(const int key[3]);
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;
