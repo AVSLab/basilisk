@@ -29,6 +29,7 @@ import gc
 import os
 import sys
 import weakref
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -276,38 +277,48 @@ def pathHandle(path, avgOmega):
         T.append(T[n] + distanceCart(path[n], path[n+1]))
         S += T[n+1] - T[n]
 
-    X1 = []
-    X2 = []
-    X3 = []
+    raw_waypoints = np.array([point.sigma_BN for point in path])
+    quaternions = np.array([rbk.MRP2EP(sigma) for sigma in raw_waypoints])
+    # Score the original MRP norms so quaternion projection cannot break a peak tie.
+    norms = np.linalg.norm(raw_waypoints, axis=1)
+    shadow_norms = np.divide(1.0, norms, where=norms != 0, out=np.full_like(norms, np.inf))
+    tolerance = 4 * np.finfo(float).eps
+    def arc_peak(start, end):
+        # Parameterize the great circle as start*cos(t) + tangent*sin(t).
+        dot = np.dot(start, end)
+        tangent = end - dot * start
+        sine = np.linalg.norm(tangent)
+        if sine > tolerance:
+            tangent /= sine
+            minimum = (np.arctan2(tangent[0], start[0]) + np.pi) % (2 * np.pi)
+            if 0 < minimum < np.arctan2(sine, dot):
+                extreme = np.cos(minimum) * start + np.sin(minimum) * tangent
+                radius = np.linalg.norm(extreme[1:])
+                return (1 - extreme[0]) / radius if radius > tolerance else np.inf
+        return 0.0
 
-    shadowSet = False
-    for n in range(len(path)-1):
-        if not shadowSet:
-            sigma = path[n].sigma_BN
-        else:
-            if unitTestSupport.isVectorEqual(path[n].sigma_BN, [0,0,0], 1e-6):
-                for m in range(0,n):
-                    s2 = (X1[m]**2 + X2[m]**2 + X3[m]**2)**0.5
-                    X1[m] = -X1[m] / s2
-                    X2[m] = -X2[m] / s2
-                    X3[m] = -X3[m] / s2
-                shadowSet = not shadowSet
-            sigma = rbk.MRPswitch(path[n].sigma_BN, 0)
-        delSigma = path[n+1].sigma_BN - path[n].sigma_BN
-        if (np.linalg.norm(delSigma) > 1):
-            shadowSet = not shadowSet
-        X1.append(sigma[0])
-        X2.append(sigma[1])
-        X3.append(sigma[2])
-    if shadowSet:
-        sigma = rbk.MRPswitch(path[-1].sigma_BN, 0)
-    else:
-        sigma = path[-1].sigma_BN
-    X1.append(sigma[0])
-    X2.append(sigma[1])
-    X3.append(sigma[2])
+    # Enumerate the two directions only at a half-turn. Visit the principal start first on a tie.
+    first = quaternions[0]
+    start_sign = first[0] if abs(first[0]) > tolerance else first[np.argmax(np.abs(first))]
+    candidates = [([sign], norms[0] if sign == 1 else shadow_norms[0])
+                  for sign in (np.sign(start_sign), -np.sign(start_sign))]
+    for i in range(1, len(path)):
+        candidates = [(signs + [sign], max(peak, norm, arc_peak(signs[-1] * quaternions[i-1], sign * quaternions[i])))
+                      for signs, peak in candidates
+                      for sign, norm in ((1, norms[i]), (-1, shadow_norms[i]))
+                      if np.dot(signs[-1] * quaternions[i-1], sign * quaternions[i]) >= -tolerance]
+    best = min(peak for _, peak in candidates)
+    if np.isinf(best):
+        return None
+    signs = next(signs for signs, peak in candidates if peak <= best * (1 + tolerance))
+    quaternions *= np.array(signs)[:, None]
 
-    Input = BSpline.InputDataSet(X1, X2, X3)
+    # For unit quaternions, ||q + identity||² = 2(1 + q0), even near the shadow pole.
+    denominator = np.sum((quaternions + [1, 0, 0, 0])**2, axis=1, keepdims=True)
+    waypoints = np.divide(2 * quaternions[:, 1:], denominator, where=denominator != 0,
+                          out=np.full(raw_waypoints.shape, np.inf))
+
+    Input = BSpline.InputDataSet(*waypoints.T)
     Input.setT( np.array(T) * 4 * S / (T[-1] * avgOmega) )
 
     return Input
@@ -409,6 +420,8 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
                 if nodes[key] != n_goal:
                     path.append(n_goal)
                 Input = pathHandle(path, avgOmega)
+                if Input is None:
+                    continue
                 Output = spline(Input, omegaS, omegaG)
                 p = effortEvaluation(Output, I)
                 if nodes[key] in O:
@@ -723,6 +736,203 @@ def test_disconnected_grid(refinement, reason, cost_type, entry_point):
     model.Reset(2 * step)
     model.UpdateState(3 * step)
     assert cpp_output.timeWritten() == c_output.timeWritten() == 3 * step
+
+
+@pytest.mark.parametrize("refinement, cost_type, goal_z", [
+    (2, 0, 0.0), (5, 0, 0.0), (5, 1, 0.0), (8, 0, -0.15),
+], ids=["direct", "multi-waypoint", "effort", "interior-identity"])  # goal MRPs [-]
+def test_shadow_start_with_identity_waypoint(refinement, cost_type, goal_z):
+    """Equivalent starts must yield the same finite reference at and around identity."""
+    model, messages = _configured_grid_module(refinement, cost_type)
+    model.boresights.keepOutBoresightCount = model.boresights.keepInBoresightCount = 0
+    model.sigma_BN_goal = [0.0, 0.0, goal_z]  # MRPs [-]
+    state = messages[0].read()
+    state.omega_BN_B = [0.001, 0.0, 0.0]  # [rad/s]
+
+    def plan(start_z):
+        state.sigma_BN = [0.0, 0.0, start_z]  # MRPs [-]
+        messages[0].write(state)
+        model.Reset(0)
+        return np.column_stack((model.Output.T, model.Output.X1, model.Output.X2, model.Output.X3))
+
+    principal = plan(0.8)  # MRPs [-]
+    shadow = plan(-1.25)  # MRPs [-], shadow of 0.8 about z
+    waypoints = [[model.returnPathCoord(n, axis) for axis in range(3)] for n in range(model.path.N)]
+    assert [0.0, 0.0, 0.0] in waypoints
+    assert np.isfinite(model.pathCost)
+    np.testing.assert_allclose(shadow, principal, rtol=1e-11, atol=1e-12)
+    np.testing.assert_allclose(shadow[0, 1:], [0.0, 0.0, 0.8], atol=1e-12)
+    np.testing.assert_allclose(shadow[-1, 1:], model.sigma_BN_goal, atol=1e-12)
+
+
+@pytest.mark.parametrize("refinement, start_z, shadow_z, goal", [
+    (5, 0.8, -1.25, [0.0, 0.0, 0.01]),
+    (5, 1.0, -1.0, [0.0, 0.0, 0.01]),
+    (2, 1.0, -1.0, [0.05, 0.0, 0.001]),
+], ids=["shadow-start", "half-turn", "off-axis"])  # MRPs [-]
+@pytest.mark.parametrize("cost_type", [0, 1], ids=["distance", "effort"])
+def test_near_identity_reference_from_equivalent_starts(refinement, start_z, shadow_z, goal, cost_type):
+    """Fit the smaller-norm waypoint sequence and publish the same maneuver from either MRP set."""
+    model, messages = _configured_grid_module(refinement, cost_type)
+    model.SelfInit()
+    model.boresights.keepOutBoresightCount = model.boresights.keepInBoresightCount = 0
+    model.sigma_BN_goal = goal
+    state = messages[0].read()
+
+    def sample(z):
+        state.sigma_BN = [0.0, 0.0, z]  # MRPs [-]
+        messages[0].write(state)
+        model.Reset(0)
+        waypoints = np.column_stack((model.Input.X1, model.Input.X2, model.Input.X3))
+        assert np.max(np.linalg.norm(waypoints, axis=1)) <= 1.0 + 1e-12
+        quaternions = np.array([rbk.MRP2EP(sigma) for sigma in waypoints])
+        adjacent_dots = np.sum(quaternions[:-1] * quaternions[1:], axis=1)
+        assert np.all(adjacent_dots >= -4 * np.finfo(float).eps)
+        duration = np.ravel(model.Input.T)[-1]  # [s]
+        samples = []
+        for t in np.linspace(0.0, duration, 9):
+            model.UpdateState(macros.sec2nano(t))
+            ref = model.attRefOutMsg.read()
+            samples.append(np.r_[rbk.MRP2C(ref.sigma_RN).ravel(), ref.omega_RN_N, ref.domega_RN_N])
+        return duration, samples
+
+    duration, reference = sample(start_z)
+    shadow_duration, shadow_reference = sample(shadow_z)
+    assert shadow_duration == pytest.approx(duration, abs=1e-10, rel=0)
+    np.testing.assert_allclose(shadow_reference, reference, atol=1e-10, rtol=0)
+
+
+@pytest.mark.parametrize("sign", [1, -1])
+def test_tied_peak_waypoint_norms(sign):
+    """Keep the same fitted waypoints when equivalent starts round tied peak norms differently."""
+    model, messages = _configured_grid_module(5)
+    model.boresights.keepOutBoresightCount = model.boresights.keepInBoresightCount = 0
+    start = sign * np.array([0.0, 0.0, 0.58])  # MRPs [-]
+    model.sigma_BN_goal = -start
+    state = messages[0].read()
+    # The two continuous sequences have the same peak norm at opposite endpoints.
+    expected_z = sign * np.array([0.58, 0.75, 1.0, 1.0 / 0.75, 1.0 / 0.58])  # MRPs [-]
+    for attitude in (start, rbk.MRPshadow(start)):
+        state.sigma_BN = attitude
+        messages[0].write(state)
+        model.Reset(0)
+        np.testing.assert_allclose(np.ravel(model.Input.X3), expected_z, rtol=0, atol=1e-14)
+
+
+@pytest.mark.parametrize("raw_z, expected_z", [
+    ([-1.25, 0.5, 0.25, 0.01], [0.8, 0.5, 0.25, 0.01]),
+    ([0.8, 1.0, -0.5, -0.25], [-1.25, -1.0, -0.5, -0.25]),
+], ids=["principal-sequence-start", "shadow-sequence-start"])  # MRPs [-]
+def test_reference_path_waypoints(raw_z, expected_z):
+    """Check both choices of the continuous MRP sequence against known waypoints."""
+    path = [SimpleNamespace(sigma_BN=np.array([0.0, 0.0, z])) for z in raw_z]
+    reference = pathHandle(path, 0.03)  # [rad/s]
+    np.testing.assert_allclose(np.ravel(reference.X3), expected_z, rtol=0, atol=1e-14)
+
+
+def _set_test_path(model, waypoints):
+    """Replace the planner path with nodes at the supplied MRP attitudes."""
+    model.path.clear()
+    for sigma in waypoints:
+        waypoint = constrainedAttitudeManeuver.Node()
+        waypoint.sigma_BN = sigma
+        model.path.append(waypoint)
+
+
+def test_off_axis_peak_tie():
+    """Keep the principal start for a symmetric off-axis path in either goal representation."""
+    # With this attitude, projecting the shadow goal through a quaternion used to break the tie.
+    start = np.array([0.2090301766069771, -0.5572751623347386, 0.1653204732428118])  # MRPs [-]
+    half_turn = start / np.linalg.norm(start)
+    fitted_goal = rbk.MRPshadow(-start)
+    model, messages = _configured_grid_module(5)
+    for goal in (-start, fitted_goal):
+        waypoints = [start, half_turn, goal]
+        _set_test_path(model, waypoints)
+        model.pathHandle()
+        reference = pathHandle([SimpleNamespace(sigma_BN=sigma) for sigma in waypoints], model.avgOmega)
+        for data in (model.Input, reference):
+            fitted = np.column_stack((data.X1, data.X2, data.X3))
+            np.testing.assert_allclose(fitted, [start, half_turn, fitted_goal], rtol=0, atol=1e-14)
+
+
+def _roll_waypoints(rolls, tilt):
+    """Return principal MRPs, tilting the final rotation axis toward x by the given degrees."""
+    rolls = np.asarray(rolls)  # [deg]
+    z = np.tan(np.deg2rad((rolls + 180) % 360 - 180) / 4)
+    waypoints = np.column_stack((np.zeros_like(z), np.zeros_like(z), z))
+    angle = np.deg2rad(tilt)  # [rad]
+    waypoints[-1] = z[-1] * np.array([np.sin(angle), 0, np.cos(angle)])
+    return waypoints
+
+
+@pytest.mark.parametrize("tilt", [0.0, 1.0])  # [deg]
+@pytest.mark.parametrize("reverse", [False, True], ids=["forward", "reverse"])
+def test_signed_roll_through_mrp_pole(reverse, tilt):
+    """Verify signed and cumulative rotation on every fitted leg of the split maneuver."""
+    waypoints = _roll_waypoints([100, 190, 280, 375], tilt)
+    if reverse:
+        waypoints = waypoints[::-1]
+    model, messages = _configured_grid_module(5)
+    model.ReadInputs()
+    _set_test_path(model, waypoints)
+    model.pathHandle()
+    model.spline()
+    times = np.ravel(model.Input.T)  # [s]
+    for i, (a, b) in enumerate(zip(times, times[1:])):
+        fitted = [[model.Output.getStates(t, 0, axis) for axis in range(3)] for t in np.linspace(a, b, 257)]
+        body_x = np.array([rbk.MRP2C(s)[0] for s in fitted])
+        headings = np.unwrap(np.arctan2(body_x[:, 1], body_x[:, 0]))
+        expected_x = np.array([rbk.MRP2C(s)[0] for s in waypoints[i:i+2]])
+        expected = np.diff(np.unwrap(np.arctan2(expected_x[:, 1], expected_x[:, 0])))[0]
+        assert headings[-1] - headings[0] == pytest.approx(expected, abs=1e-10)  # [rad]
+        q = np.array([rbk.MRP2EP(s) for s in fitted])
+        travel = 4 * np.arctan2(np.linalg.norm(q[1:] - q[:-1], axis=1), np.linalg.norm(q[1:] + q[:-1], axis=1)).sum()
+        assert travel < abs(expected) + np.deg2rad(5)  # [rad] Allow minor off-axis curvature.
+
+
+@pytest.mark.parametrize("tilt", [0.0, 1.0])  # [deg]
+def test_chart_selection_near_mrp_pole(tilt):
+    """Score the closest approach between waypoints even when the final axis is tilted."""
+    waypoints = _roll_waypoints([10, 100, 190, 280, 375], tilt)
+    model, messages = _configured_grid_module(5)
+    _set_test_path(model, waypoints)
+    model.pathHandle()
+    reference = pathHandle([SimpleNamespace(sigma_BN=s) for s in waypoints], model.avgOmega)
+    for data in (model.Input, reference):
+        # The continuous set that passes through the identity on the axial final leg.
+        expected = [rbk.MRPshadow(waypoints[0]), rbk.MRPshadow(waypoints[1]), *waypoints[2:]]
+        np.testing.assert_allclose(np.column_stack((data.X1, data.X2, data.X3)), expected, atol=1e-12)
+
+
+@pytest.mark.parametrize("reverse", [False, True], ids=["forward", "reverse"])
+def test_feasible_half_turn_direction(reverse):
+    """Take the finite short arc at a half-turn when the other choice runs into a pole."""
+    rolls = np.array([0, 50, -130, 15])  # [deg]
+    if reverse:
+        rolls = rolls[::-1]
+    z = np.tan(np.deg2rad(rolls) / 4)
+    waypoints = np.column_stack((np.zeros_like(z), np.zeros_like(z), z))
+    model, messages = _configured_grid_module(5)
+    model.ReadInputs()
+    _set_test_path(model, waypoints)
+    model.pathHandle()
+    reference = pathHandle([SimpleNamespace(sigma_BN=s) for s in waypoints], model.avgOmega)
+    for data in (model.Input, reference):
+        np.testing.assert_allclose(np.column_stack((data.X1, data.X2, data.X3)), waypoints, atol=1e-14)
+    model.spline()
+    assert np.isfinite(model.effortEvaluation())
+
+
+def test_path_crossing_both_mrp_poles():
+    """Reject a path that crosses both poles between successive waypoints."""
+    rolls = np.array([10, 100, 190, 280, 375, 460, 550, 640, 735])  # [deg]
+    z = np.tan(np.deg2rad((rolls + 180) % 360 - 180) / 4)  # principal MRPs [-]
+    model, messages = _configured_grid_module(5)
+    _set_test_path(model, ([0, 0, value] for value in z))
+    with pytest.raises(bskLogging.BasiliskError, match="MRP"):
+        model.pathHandle()
+    assert np.size(model.Input.T) == 0
 
 
 def test_repeated_path_waypoint():

@@ -82,6 +82,25 @@ void validateActiveCones(const scBoresightStruct& boresights, bool keepOut, bool
         check(boresights.keepInBoresight_B, boresights.keepInFov, boresights.keepInBoresightCount, "keep-in");
     }
 }
+
+// Peak MRP norm at an interior closest approach to the pole (Euler parameters [-1, 0, 0, 0]).
+// The caller scores both endpoints using the supplied MRP norms.
+double interiorPeakNorm(const Eigen::Vector4d& from, const Eigen::Vector4d& to)
+{
+    const auto a = from.tail<3>();
+    const auto b = to.tail<3>();
+    const Eigen::Vector3d tangent = from[0] * b - to[0] * a;
+    if (a.dot(tangent) <= 0.0 || b.dot(tangent) >= 0.0) {
+        return 0.0; // The scalar Euler parameter has no interior minimum on this short arc.
+    }
+    // Distance of the pole from the plane of the unit quaternion great circle.
+    const double cross = a.cross(b).norm();
+    const double sine = cross / std::hypot(cross, tangent.norm());
+    if (sine <= 4 * std::numeric_limits<double>::epsilon()) {
+        return std::numeric_limits<double>::infinity();
+    }
+    return (1.0 + std::sqrt(std::max(0.0, 1.0 - sine * sine))) / sine;
+}
 } // namespace
 
 /*! @brief Construct an unclassified grid node. */
@@ -1012,46 +1031,64 @@ const char* ConstrainedAttitudeManeuver::prepareWaypoints()
         }
     }
 
+    // For each of the two MRP sets, retain the smallest possible peak over the remaining path.
+    // Ordinarily only one successor follows the short arc. At 180 degrees both signs are feasible.
+    constexpr double roundoff = 4 * std::numeric_limits<double>::epsilon();
+    Eigen::Array<bool, Eigen::Dynamic, 2> nextShadow(this->path.N, 2);
+    Eigen::Vector2d peaks;
+    Eigen::Vector4d nextEP;
+    for (int n = this->path.N - 1; n >= 0; --n) {
+        Eigen::Vector4d ep;
+        MRP2EP(path.list[n]->sigma_BN, ep.data());
+        const double norm = v3Norm(path.list[n]->sigma_BN);
+        Eigen::Vector2d scores(norm, norm == 0.0 ? std::numeric_limits<double>::infinity() : 1.0 / norm);
+        if (n + 1 < this->path.N) {
+            for (int set = 0; set < 2; ++set) {
+                const Eigen::Vector4d from = set ? -ep : ep;
+                double best = std::numeric_limits<double>::infinity();
+                for (int next = 0; next < 2; ++next) {
+                    const Eigen::Vector4d to = next ? -nextEP : nextEP;
+                    if (from.dot(to) < -roundoff) {
+                        continue;
+                    }
+                    const double score = std::max({ scores[set], interiorPeakNorm(from, to), peaks[next] });
+                    if (score < best) {
+                        best = score;
+                        nextShadow(n, set) = next != 0;
+                    }
+                }
+                scores[set] = best;
+            }
+        }
+        nextEP = ep;
+        peaks = scores;
+    }
+    if (std::isinf(peaks.minCoeff())) {
+        return "the path crosses the singularities of both MRP sets. Split the maneuver.";
+    }
+    // Favor a principal start on tied peaks, including equivalent inputs on the unit sphere.
+    Eigen::Index largest;
+    nextEP.cwiseAbs().maxCoeff(&largest);
+    bool shadow = (std::abs(nextEP[0]) <= roundoff ? nextEP[largest] : nextEP[0]) < 0.0;
+    if (peaks[!shadow] * (1.0 + roundoff) < peaks[shadow]) {
+        shadow = !shadow;
+    }
     Eigen::VectorXd X1(this->path.N);
     Eigen::VectorXd X2(this->path.N);
     Eigen::VectorXd X3(this->path.N);
 
-    bool shadowSet = false;
-    double sigma[3], delSigma[3];
-
-    for (int n = 0; n < this->path.N - 1; n++) {
-        if (!shadowSet) {
-            v3Copy(path.list[n]->sigma_BN, sigma);
-        } else {
-            if (path.list[n] == &NodesMap[0][0][0]) {
-                for (int m = n - 1; m > -1; m--) {
-                    sigma[0] = X1[m];
-                    sigma[1] = X2[m];
-                    sigma[2] = X3[m];
-                    X1[m] = -X1[m] / v3Dot(sigma, sigma);
-                    X2[m] = -X2[m] / v3Dot(sigma, sigma);
-                    X3[m] = -X3[m] / v3Dot(sigma, sigma);
-                }
-                shadowSet = !shadowSet;
-            }
-            MRPshadow(path.list[n]->sigma_BN, sigma);
+    for (int n = 0; n < this->path.N; ++n) {
+        Eigen::MRPd attitude = cArray2EigenMRPd(path.list[n]->sigma_BN);
+        if (shadow) {
+            attitude = attitude.shadow();
         }
-        v3Subtract(path.list[n]->sigma_BN, path.list[n + 1]->sigma_BN, delSigma);
-        if (v3Norm(delSigma) > 1) {
-            shadowSet = !shadowSet;
+        X1[n] = attitude.x();
+        X2[n] = attitude.y();
+        X3[n] = attitude.z();
+        if (n + 1 < this->path.N) {
+            shadow = nextShadow(n, shadow);
         }
-        X1[n] = sigma[0];
-        X2[n] = sigma[1];
-        X3[n] = sigma[2];
     }
-    if (!shadowSet) {
-        v3Copy(path.list[path.N - 1]->sigma_BN, sigma);
-    } else {
-        MRPshadow(path.list[path.N - 1]->sigma_BN, sigma);
-    }
-    X1[path.N - 1] = sigma[0];
-    X2[path.N - 1] = sigma[1];
-    X3[path.N - 1] = sigma[2];
 
     this->Input = InputDataSet(X1, X2, X3);
     this->Input.setT(T);
