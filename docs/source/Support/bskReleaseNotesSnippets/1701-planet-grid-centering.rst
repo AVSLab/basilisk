@@ -1,0 +1,1 @@
+- Fixed grid centering in :ref:`albedo` and :ref:`earthRadiationModel`. Grids with an odd number of latitude rows now cover both polar caps, and maps with an odd number of longitude columns place each column at its intended longitude.
