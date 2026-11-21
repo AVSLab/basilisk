@@ -62,7 +62,7 @@ NLON_DEFAULT   = 360
 
 
 def _run_sim(useAlbedoData: bool = False, nLat: int = 0, nLon: int = 0,
-             eclipseCase: bool = False, sunPos_N=None, scPos_N=None):
+             eclipseCase: bool = False, sunPos_N=None, scPos_N=None, spherical: bool = False):
     """
     Create and step the earthRadiationModel module once.
 
@@ -75,6 +75,8 @@ def _run_sim(useAlbedoData: bool = False, nLat: int = 0, nLon: int = 0,
     erm = earthRadiationModel.EarthRadiationModel()
     erm.ModelTag = "earthRadiation"
 
+    if spherical:
+        erm.REQ_m = erm.RP_m = REQ_EARTH_M
     if nLat > 0:
         erm.defaultNumLat = nLat
     if nLon > 0:
@@ -305,12 +307,12 @@ def _python_lambertian(r_sat_N, r_sun_N, r_planet_N, J20002Pfix,
                     - t_aut[1] * math.sin(4.0 * x)
                     + t_aut[2] * math.sin(6.0 * x))
 
-    # ---- lat/lon grid [cpp:130-138] ----------------------------------
-    latDiff = (180.0 / nLat) * math.pi / 180.0
-    lonDiff = (360.0 / nLon) * math.pi / 180.0
-    halfLat, halfLon = nLat // 2, nLon // 2
-    gdlat = np.array([(i - halfLat + 0.5) * latDiff for i in range(nLat)])
-    gdlon = np.array([(j - halfLon + 0.5) * lonDiff for j in range(nLon)])
+    # Construct cell centers from the geographic edges of the map.
+    lat_edges = np.linspace(-np.pi / 2, np.pi / 2, nLat + 1)  # [rad]
+    lon_edges = np.linspace(-np.pi, np.pi, nLon + 1)  # [rad]
+    gdlat = (lat_edges[:-1] + lat_edges[1:]) / 2
+    gdlon = (lon_edges[:-1] + lon_edges[1:]) / 2
+    lonDiff = 2 * np.pi / nLon  # [rad]
 
     # ---- DCM [avsEigenSupport.cpp:111] -------------------------------
     dcm_NP = np.asarray(J20002Pfix, dtype=float).T
@@ -330,8 +332,8 @@ def _python_lambertian(r_sat_N, r_sun_N, r_planet_N, J20002Pfix,
 
     for ilat in range(nLat):
         lat  = gdlat[ilat]
-        lat1 = _aut(lat + 0.5 * latDiff)
-        lat2 = _aut(lat - 0.5 * latDiff)
+        lat1 = _aut(lat_edges[ilat + 1])
+        lat2 = _aut(lat_edges[ilat])
         normArea  = lonDiff * abs(math.sin(lat1) - math.sin(lat2))
         dA        = normArea * R2
         cosLat, sinLat = math.cos(lat), math.sin(lat)
@@ -410,6 +412,27 @@ def test_earthRadiation_analytical_ir():
     )
 
 
+@pytest.mark.parametrize("pole", [-1, 1], ids=["south", "north"])
+def test_odd_grid_polar_ir(pole):
+    """Check polar IR flux against both the continuous sphere and its 181 latitude bands."""
+    n_lat = 181
+    altitude = 400e3  # [m]
+    distance = REQ_EARTH_M + altitude  # [m]
+    log = _run_sim(nLat=n_lat, nLon=360, scPos_N=[0.0, 0.0, pole * distance], spherical=True)
+    expected = 2 * OLR_DEFAULT * (1 - math.sqrt(1 - (REQ_EARTH_M / distance) ** 2))  # [W/m^2]
+    # A one-degree midpoint grid has about 0.5% quadrature error over a pole at this altitude.
+    assert log.irFlux[0] == pytest.approx(expected, rel=0.006)
+
+    # From a pole, every longitude in a band has the same range and emission angle.
+    edges = np.linspace(-np.pi / 2, np.pi / 2, n_lat + 1)  # [rad]
+    band_area = 2 * np.pi * REQ_EARTH_M ** 2 * np.diff(np.sin(edges))  # [m^2]
+    cos_separation = pole * np.sin((edges[:-1] + edges[1:]) / 2)
+    slant_range = np.sqrt(altitude ** 2 + 2 * distance * REQ_EARTH_M * (1 - cos_separation))  # [m]
+    cos_emission = np.maximum((distance * cos_separation - REQ_EARTH_M) / slant_range, 0.0)
+    band_flux = OLR_DEFAULT / np.pi * np.sum(band_area * cos_emission / slant_range ** 2)  # [W/m^2]
+    assert log.irFlux[0] == pytest.approx(band_flux, rel=1e-8)
+
+
 # ================================================================= #
 # Test 7: Pure-NumPy independent reference (avg and CERES data)      #
 # ================================================================= #
@@ -422,8 +445,8 @@ def test_earthRadiation_numpy_reference(useAlbedoData):
 
     **What this test validates (and does not validate)**
 
-    `_python_lambertian` mirrors ``planetRadiationBase.cpp`` and
-    ``earthRadiationModel.cpp`` line-by-line in a different language.
+    ``_python_lambertian`` evaluates the same patch model as
+    ``planetRadiationBase.cpp`` and ``earthRadiationModel.cpp`` using NumPy.
     Because it replicates the *same model*, it cannot catch physics errors
     shared by both implementations.  Its value is:
 

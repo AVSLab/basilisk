@@ -700,6 +700,69 @@ def test_ir_flux_conservation():
     assert rel_error < 1e-4, f"Relative error: {rel_error:.4e} >= 1e-4"
 
 
+def test_odd_grid_covers_sphere():
+    """All 15 cells have positive area and together cover the sphere."""
+    model = albedo.Albedo()
+    grid = albedo.PlanetGrid()
+    grid.nLat, grid.nLon = 3, 5
+    radius = 1000.0  # [m]
+    altitude = 50.0  # [m] only the target cell's center is above the horizon
+    grid.REQ_m = grid.RP_m = radius
+    grid.initialize(model.bskLogger)
+
+    solid_angle = 0.0  # [sr] at the planet center
+    for lat in np.deg2rad([-60, 0, 60]):
+        for lon in np.deg2rad([-144, -72, 0, 72, 144]):
+            normal = np.array([np.cos(lat) * np.cos(lon), np.cos(lat) * np.sin(lon), np.sin(lat)])
+            observer = (radius + altitude) * normal
+            patches = grid.computePatches(observer, observer, np.zeros(3), np.eye(3), radius, 0.0)
+            assert len(patches) == 1
+            patch = patches[0]
+            np.testing.assert_allclose(patch.r_dAP_N, radius * normal, rtol=0, atol=1e-10)
+            assert patch.solidAngle > 0.0
+            # At normal incidence the observed solid angle is the patch area divided by altitude squared.
+            solid_angle += patch.solidAngle * (altitude / radius) ** 2
+    assert solid_angle == pytest.approx(4 * np.pi, rel=1e-12)
+
+
+@pytest.mark.parametrize("rows, south_deg, north_deg", [(3, 30, 90), (4, 0, 45)])
+def test_odd_csv_cell_placement(tmp_path, rows, south_deg, north_deg):
+    """Measure the reflected flux of a single bright cell with the Sun and observer overhead."""
+    values = np.zeros((rows, 5))
+    values[2, 1] = 1.0  # unit albedo
+    path = tmp_path / "albedo.csv"
+    np.savetxt(path, values, delimiter=",")
+
+    south, north = np.deg2rad([south_deg, north_deg])  # [rad] edges of row 2
+    lat = (south + north) / 2  # [rad]
+    lon = np.deg2rad(-72.0)  # [rad] center of column 1
+    normal = np.array([np.cos(lat) * np.cos(lon), np.cos(lat) * np.sin(lon), np.sin(lat)])
+    radius = om.REQ_VENUS * 1000.0  # [m] spherical in Albedo
+    planet = messaging.SpicePlanetStateMsgPayload()
+    planet.PlanetName = "venus"
+    planet.J20002Pfix = np.eye(3)
+    planet_msg = messaging.SpicePlanetStateMsg().write(planet)
+    sun = messaging.SpicePlanetStateMsgPayload()
+    sun.PositionVector = om.AU * 1000.0 * normal  # [m]
+    sun_msg = messaging.SpicePlanetStateMsg().write(sun)
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = 3 * radius * normal  # [m]
+    state_msg = messaging.SCStatesMsg().write(state)
+
+    model = albedo.Albedo()
+    model.addPlanetandAlbedoDataModel(planet_msg, str(tmp_path), path.name)
+    model.sunPositionInMsg.subscribeTo(sun_msg)
+    model.spacecraftStateInMsg.subscribeTo(state_msg)
+    model.addInstrumentConfig(np.pi / 2, -normal, np.zeros(3))
+    model.Reset(0)
+    model.UpdateState(0)
+
+    # At a range of 2R the reflected fraction is the cell area divided by pi * (2R)^2.
+    cell_area = radius ** 2 * (2 * np.pi / 5) * (np.sin(north) - np.sin(south))  # [m^2]
+    expected = cell_area / (np.pi * (2 * radius) ** 2)
+    assert model.albOutMsgs[0].read().albedoAtInstrumentMax == pytest.approx(expected, rel=1e-12)
+
+
 def test_planet_grid_compute_patches_requires_initialize():
     """Verify direct PlanetGrid calls raise a Python exception before initialization."""
     grid = albedo.PlanetGrid()
