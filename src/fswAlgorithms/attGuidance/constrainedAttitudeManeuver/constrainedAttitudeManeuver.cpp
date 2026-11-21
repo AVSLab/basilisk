@@ -28,8 +28,14 @@
 #include <limits>
 #include <map>
 #include <math.h>
+#include <stdexcept>
 
 namespace {
+bool validListIndex(const NodeList& nodes, int index)
+{
+    return index >= 0 && index < nodes.N && nodes.N <= static_cast<int>(std::size(nodes.list));
+}
+
 void validateCone(const Eigen::Vector3d& boresight, double halfAngle, const char* category)
 {
     if (!(std::abs(boresight.squaredNorm() - 1.0) <= 1e-12)) { // [-] Allow roundoff in a unit vector.
@@ -137,6 +143,9 @@ Node::~Node()
 /*! This method appends a pointer to neighboring node to the neighbors class variable */
 void Node::appendNeighbor(Node* node)
 {
+    if (this->neighborCount < 0 || this->neighborCount >= static_cast<int>(std::size(this->neighbors))) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node neighbor capacity exceeded.");
+    }
     this->neighbors[this->neighborCount] = node;
     this->neighborCount += 1;
     return;
@@ -158,6 +167,9 @@ NodeList::~NodeList()
 /*! This method appends a pointer to the node list. */
 void NodeList::append(Node* node)
 {
+    if (this->N < 0 || this->N >= static_cast<int>(std::size(this->list))) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node list capacity exceeded.");
+    }
     this->list[this->N] = node;
     this->N += 1;
 }
@@ -165,6 +177,9 @@ void NodeList::append(Node* node)
 /*! This method removes the pointer at index M from the node list. */
 void NodeList::pop(int M)
 {
+    if (!validListIndex(*this, M)) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node list index %d is out of range.", M);
+    }
     for (int m = M; m < this->N - 1; m++) {
         this->list[m] = this->list[m + 1];
     }
@@ -180,10 +195,10 @@ void NodeList::clear()
 /*! This method swaps the two pointers at indices m and n. */
 void NodeList::swap(int m, int n)
 {
-    Node* p1 = this->list[m];
-    Node* p2 = this->list[n];
-    this->list[m] = p2;
-    this->list[n] = p1;
+    if (!validListIndex(*this, m) || !validListIndex(*this, n)) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: node list swap indices (%d, %d) are out of range.", m, n);
+    }
+    std::swap(this->list[m], this->list[n]);
 }
 
 /*! This method sorts the nodes in the list according to their priority. */
@@ -277,20 +292,10 @@ the grid is generated and the graph search is performed. */
 void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     ReadInputs();
-    if (!cArray2EigenMRPd(this->sigma_BN_goal).coeffs().allFinite()) {
-        bskLogger.bskError("ConstrainedAttitudeManeuver: a finite goal attitude is required (sigma_BN_goal at reset).");
-    }
 
-    Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
-    Node goalNode = Node(this->sigma_BN_goal, this->constraints, this->boresights);
-    if (!startNode.isFree) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "ConstraintAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant.");
-    }
-    if (!goalNode.isFree) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant.");
-    }
+    Node startNode, goalNode;
+    v3Copy(this->scStateMsgBuffer.sigma_BN, startNode.sigma_BN);
+    v3Copy(this->sigma_BN_goal, goalNode.sigma_BN);
     GenerateGrid(startNode, goalNode);
     if (this->costFcnType == 0) {
         AStar();
@@ -347,6 +352,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
  */
 void ConstrainedAttitudeManeuver::ReadInputs()
 {
+    clearGrid();
     this->constraints = {};
 
     if (!this->scStateInMsg.isLinked() || !this->scStateInMsg.isWritten()) {
@@ -388,13 +394,42 @@ void ConstrainedAttitudeManeuver::ReadInputs()
     }
 }
 
-/*! This method generates the MRP grid and connects the free neighboring nodes
+void ConstrainedAttitudeManeuver::clearGrid()
+{
+    this->path.clear();
+    this->NodesMap.clear();
+    std::fill(std::begin(this->keyS), std::end(this->keyS), invalidGridIndex);
+    std::fill(std::begin(this->keyG), std::end(this->keyG), invalidGridIndex);
+}
 
+/*! @brief Rebuild the MRP grid and connect the free neighboring nodes.
+ @param startNode Node supplying the initial attitude.
+ @param goalNode Node supplying the target attitude.
+ @note Requires a refinement level from 2 through 20, distinct endpoint nodes and a constraint-compliant goal.
  */
 void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
+    clearGrid();
+    if (this->constraints.keepOut != this->keepOutConfigured() ||
+        this->constraints.keepIn != this->keepInConfigured()) {
+        bskLogger.bskError(
+            "ConstrainedAttitudeManeuver: constraint activation changed. Call ReadInputs() before GenerateGrid().");
+    }
     int N = this->N;
     double u[20];
+    if (N < 2 || N > static_cast<int>(std::size(u))) {
+        bskLogger.bskError(
+            "ConstrainedAttitudeManeuver: grid refinement N must be between 2 and %zu (received %d).", std::size(u), N);
+    }
+    if (!cArray2EigenMRPd(goalNode.sigma_BN).coeffs().allFinite()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: a finite goal attitude is required (sigma_BN_goal at reset).");
+    }
+    Node start(startNode.sigma_BN, this->constraints, this->boresights);
+    Node goal(goalNode.sigma_BN, this->constraints, this->boresights);
+    if (!start.isFree) {
+        bskLogger.bskLog(BSK_WARNING,
+                         "ConstrainedAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant.");
+    }
     for (int n = 0; n < N; n++) {
         u[n] = n / ((double)N - 1);
     }
@@ -568,19 +603,21 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
     }
 
     // add start and goal node to grid and connecting them to the neighboring nodes:
-    double ds = 10;
-    double dg = 10;
+    double ds = std::numeric_limits<double>::infinity(); // [-] MRP distance
+    double dg = std::numeric_limits<double>::infinity(); // [-] MRP distance
     double d1, d2;
-    int keyS[3];
-    int keyG[3];
+    int keyS[3] = {};
+    int keyG[3] = {};
+    bool foundStart = false;
+    bool foundGoal = false;
     for (std::map<int, std::map<int, std::map<int, Node>>>::iterator it1 = this->NodesMap.begin();
          it1 != this->NodesMap.end();
          it1++) {
         for (std::map<int, std::map<int, Node>>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++) {
             for (std::map<int, Node>::iterator it3 = it2->second.begin(); it3 != it2->second.end(); it3++) {
                 if (it3->second.isFree) {
-                    d1 = distance(startNode, it3->second);
-                    if (abs(d1 - ds) < 1e-6) {
+                    d1 = distance(start, it3->second);
+                    if (foundStart && abs(d1 - ds) < 1e-6) {
                         if (v3Norm(it3->second.sigma_BN) < v3Norm(NodesMap[keyS[0]][keyS[1]][keyS[2]].sigma_BN)) {
                             ds = d1;
                             keyS[0] = it1->first;
@@ -589,14 +626,15 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         }
                     } else {
                         if (d1 < ds) {
+                            foundStart = true;
                             ds = d1;
                             keyS[0] = it1->first;
                             keyS[1] = it2->first;
                             keyS[2] = it3->first;
                         }
                     }
-                    d2 = distance(goalNode, it3->second);
-                    if (abs(d2 - dg) < 1e-6) {
+                    d2 = distance(goal, it3->second);
+                    if (foundGoal && abs(d2 - dg) < 1e-6) {
                         if (v3Norm(it3->second.sigma_BN) < v3Norm(NodesMap[keyG[0]][keyG[1]][keyG[2]].sigma_BN)) {
                             dg = d2;
                             keyG[0] = it1->first;
@@ -605,6 +643,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         }
                     } else {
                         if (d2 < dg) {
+                            foundGoal = true;
                             dg = d2;
                             keyG[0] = it1->first;
                             keyG[1] = it2->first;
@@ -615,29 +654,53 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
             }
         }
     }
-    if (startNode.isBoundary) {
-        for (int n = 0; n < 3; n++) {
-            if (keyS[n] * startNode.sigma_BN[n] < 0) {
-                keyS[n] = -keyS[n];
+    if (!foundStart || !foundGoal) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: no constraint-free grid node could be selected for the start "
+                           "and goal attitudes.");
+    }
+    if (!goal.isFree) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: the target attitude violates a pointing constraint.");
+    }
+    // Only antipodal boundary samples represent the same grid attitude.
+    const auto alignBoundaryKey = [this](Node& endpoint, int (&key)[3]) {
+        if (!endpoint.isBoundary) {
+            return;
+        }
+        Node* sample = gridEndpoint(key);
+        if (sample->isBoundary && v3Dot(sample->sigma_BN, endpoint.sigma_BN) < 0.0) {
+            const int oppositeKey[3] = { -key[0], -key[1], -key[2] };
+            const Node* opposite = gridEndpoint(oppositeKey);
+            if (opposite->isBoundary && opposite->isFree) {
+                std::copy(std::begin(oppositeKey), std::end(oppositeKey), key);
             }
         }
+    };
+    alignBoundaryKey(start, keyS);
+    alignBoundaryKey(goal, keyG);
+    Node& gridStart = *gridEndpoint(keyS);
+    Node& gridGoal = *gridEndpoint(keyG);
+    const bool sameNode = &gridStart == &gridGoal;
+    if (!sameNode && distance(start, goal) <= 4 * std::numeric_limits<double>::epsilon()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: start and goal represent the same attitude.");
     }
-    if (goalNode.isBoundary) {
-        for (int n = 0; n < 3; n++) {
-            if (keyG[n] * goalNode.sigma_BN[n] < 0) {
-                keyG[n] = -keyG[n];
-            }
+    const bool antipodalBoundary = gridStart.isBoundary && gridGoal.isBoundary && keyS[0] == -keyG[0] &&
+                                   keyS[1] == -keyG[1] && keyS[2] == -keyG[2];
+    if (sameNode || antipodalBoundary) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: start and goal attitudes map to the same grid node. "
+                           "For distinct attitudes, try a finer grid.");
+    }
+    for (int n = 0; n < gridStart.neighborCount; n++) {
+        start.appendNeighbor(gridStart.neighbors[n]);
+    }
+    gridStart = start;
+    for (int n = 0; n < gridGoal.neighborCount; n++) {
+        Node* neighbor = gridGoal.neighbors[n];
+        auto end = neighbor->neighbors + neighbor->neighborCount;
+        if (std::find(neighbor->neighbors, end, &gridGoal) == end) {
+            neighbor->appendNeighbor(&gridGoal);
         }
     }
-    for (int n = 0; n < this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighborCount; n++) {
-        startNode.appendNeighbor(this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighbors[n]);
-    }
-    for (int n = 0; n < this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighborCount; n++) {
-        this->NodesMap[keyG[0]][keyG[1]][keyG[2]].neighbors[n]->appendNeighbor(
-            &this->NodesMap[keyG[0]][keyG[1]][keyG[2]]);
-    }
-    this->NodesMap[keyS[0]][keyS[1]][keyS[2]] = startNode;
-    this->NodesMap[keyG[0]][keyG[1]][keyG[2]] = goalNode;
+    gridGoal = goal;
     this->keyS[0] = keyS[0];
     this->keyS[1] = keyS[1];
     this->keyS[2] = keyS[2];
@@ -659,6 +722,20 @@ void ConstrainedAttitudeManeuver::backtrack(Node* p)
         backtrack(p->backPointer);
         this->path.append(p);
         return;
+    }
+}
+
+/*! @brief Look up an endpoint in the generated grid.
+ @param key Three grid indices identifying the endpoint.
+ @return Pointer to the stored endpoint node.
+ */
+Node* ConstrainedAttitudeManeuver::gridEndpoint(const int key[3])
+{
+    try {
+        return &this->NodesMap.at(key[0]).at(key[1]).at(key[2]);
+    } catch (const std::out_of_range&) {
+        bskLogger.bskError(
+            "ConstrainedAttitudeManeuver: A* requires a generated grid with valid start and goal nodes.");
     }
 }
 
@@ -905,7 +982,7 @@ double ConstrainedAttitudeManeuver::effortEvaluation()
     double L_a[3], L_b[3];
     computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
 
-    N = (int)this->Output.T.size();
+    const int N = (int)this->Output.T.size();
     for (int n = 0; n < N - 1; n++) {
         computeTorque(n + 1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
         l_a = v3Norm(L_a);
@@ -950,7 +1027,7 @@ bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
  */
 double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 {
-    if (index < 0 || index > this->path.N - 1) {
+    if (!validListIndex(this->path, index) || nodeCoord < 0 || nodeCoord > 2) {
         return 1000; // random large number that will cause the UnitTest comparison to fail
     } else {
         return this->path.list[index]->sigma_BN[nodeCoord];
