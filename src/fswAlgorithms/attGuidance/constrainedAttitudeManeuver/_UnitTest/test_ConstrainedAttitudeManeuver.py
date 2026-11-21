@@ -30,6 +30,7 @@ import os
 import numpy as np
 import pytest
 from Basilisk.architecture import BSpline
+from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -426,6 +427,68 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 
     return path
 
+def _configured_grid_module(refinement, cost_type=0, spline_type=0):
+    """Return a configured planner and its input-message owners for grid tests."""
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(refinement)
+    model.sigma_BN_goal = [0.0, 0.5, 0.0]  # MRPs [-]
+    model.omega_BN_B_goal = [0.0, 0.0, 0.0]  # [rad/s]
+    model.avgOmega = 0.03  # [rad/s]
+    if spline_type is not None:
+        model.BSplineType = spline_type
+    if cost_type is not None:
+        model.costFcnType = cost_type
+    model.appendKeepOutDirection([1.0, 0.0, 0.0], 20.0*macros.D2R)  # [-], [rad]
+    model.appendKeepInDirection([0.0, 1.0, 0.0], 70.0*macros.D2R)  # [-], [rad]
+    model.appendKeepInDirection([0.0, 0.0, 1.0], 70.0*macros.D2R)  # [-], [rad]
+
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = [1.0, 0.0, 0.0]  # [m]
+    state.sigma_BN = [0.0, 0.0, -0.5]  # MRPs [-]
+    vehicle = messaging.VehicleConfigMsgPayload()
+    vehicle.ISCPntB_B = [0.02/3, 0.0, 0.0, 0.0, 0.1256/3, 0.0, 0.0, 0.0, 0.1256/3]  # [kg*m^2]
+    planet = messaging.SpicePlanetStateMsgPayload()
+    planet.PositionVector = [10.0, 0.0, 0.0]  # [m]
+    messages = (messaging.SCStatesMsg().write(state), messaging.VehicleConfigMsg().write(vehicle),
+                messaging.SpicePlanetStateMsg().write(planet))
+    model.scStateInMsg.subscribeTo(messages[0])
+    model.vehicleConfigInMsg.subscribeTo(messages[1])
+    model.keepOutCelBodyInMsg.subscribeTo(messages[2])
+    model.keepInCelBodyInMsg.subscribeTo(messages[2])
+    return model, messages
+
+
+def _generate_test_grid(model):
+    """Generate only the grid, without running the graph search or spline."""
+    model.ReadInputs()
+    nodes = []
+    for attitude in (model.scStateInMsg().sigma_BN, model.sigma_BN_goal):  # MRPs [-]
+        endpoint = constrainedAttitudeManeuver.Node()
+        endpoint.sigma_BN = attitude
+        nodes.append(endpoint)
+    model.GenerateGrid(*nodes)
+    return nodes
+
+
+@pytest.mark.parametrize("args", [(), (5,)], ids=["default", "with-refinement"])
+def test_goal_defaults(args):
+    """Require a finite goal, accept an explicit identity, and default to rest at the goal."""
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(*args)
+    configured, messages = _configured_grid_module(5)
+    model.N = configured.N
+    model.avgOmega = configured.avgOmega
+    model.costFcnType = model.BSplineType = 0
+    model.scStateInMsg.subscribeTo(messages[0])
+    model.vehicleConfigInMsg.subscribeTo(messages[1])
+
+    assert np.isnan(model.sigma_BN_goal).all()
+    np.testing.assert_array_equal(model.omega_BN_B_goal, np.zeros(3))  # [rad/s]
+    with pytest.raises(bskLogging.BasiliskError, match="finite goal attitude"):
+        model.Reset(0)
+    model.sigma_BN_goal = [0.0, np.inf, 0.0]  # MRPs [-]
+    with pytest.raises(bskLogging.BasiliskError, match="finite goal attitude"):
+        model.Reset(0)
+
+
 def test_python_goal_requires_three_components():
     """Reject incomplete or oversized Python goals and preserve the previous attitude."""
     model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
@@ -437,6 +500,99 @@ def test_python_goal_requires_three_components():
         np.testing.assert_array_equal(model.sigma_BN_goal, goal)
     model.omega_BN_B_goal = [0.001]  # [rad/s]
     np.testing.assert_array_equal(model.omega_BN_B_goal, [0.001, 0.0, 0.0])  # [rad/s]
+
+
+def test_unset_maneuver_rate():
+    """Both constructors leave the maneuver rate at the invalid zero default."""
+    for args in ((), (5,)):
+        assert constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(*args).avgOmega == 0.0  # [rad/s]
+
+
+@pytest.mark.parametrize("input_name, message_type, index", [
+    ("scStateInMsg", messaging.SCStatesMsg, 0),
+    ("vehicleConfigInMsg", messaging.VehicleConfigMsg, 1),
+])
+@pytest.mark.parametrize("previous_plan", [False, True], ids=["first-reset", "replan"])
+def test_required_input_must_be_written(input_name, message_type, index, previous_plan):
+    """Reject a missing state or inertia before using any previously buffered value."""
+    model, messages = _configured_grid_module(5)
+    if previous_plan:
+        model.ReadInputs()
+    reader = getattr(model, input_name)
+    replacement = message_type()
+    reader.subscribeTo(replacement)
+    with pytest.raises(bskLogging.BasiliskError, match=input_name):
+        model.ReadInputs()
+
+    reader.unsubscribe()
+    with pytest.raises(bskLogging.BasiliskError, match=input_name):
+        model.ReadInputs()
+    reader.subscribeTo(replacement)
+    replacement.write(messages[index].read())
+    model.ReadInputs()
+
+
+@pytest.mark.parametrize("kind", ["In", "Out"])
+@pytest.mark.parametrize("offset", [0.0, np.nan, np.inf], ids=["coincident", "nan", "infinite"])  # [m]
+def test_undefined_constraint_direction(kind, offset):
+    """Require a finite line of sight for each active celestial-body constraint."""
+    model, messages = _configured_grid_module(5)
+    model.ReadInputs()
+    planet = messaging.SpicePlanetStateMsgPayload()
+    position = np.array(messages[0].read().r_BN_N)  # [m]
+    position[0] += offset
+    planet.PositionVector = position
+    source = messaging.SpicePlanetStateMsg().write(planet)
+    getattr(model, f"keep{kind}CelBodyInMsg").subscribeTo(source)
+    with pytest.raises(bskLogging.BasiliskError, match=f"keep{kind}CelBodyInMsg.*line of sight"):
+        model.ReadInputs()
+    assert not model.constraints.keepOut and not model.constraints.keepIn
+    source.write(messages[2].read())
+    model.ReadInputs()
+    assert model.constraints.keepOut and model.constraints.keepIn
+
+
+@pytest.mark.parametrize("kind, other", [("In", "Out"), ("Out", "In")])
+def test_optional_constraint_source(kind, other):
+    """Recompute active cones after disconnecting, replacing, and restoring a source."""
+    model, messages = _configured_grid_module(5)
+    reader = getattr(model, f"keep{kind}CelBodyInMsg")
+    model.ReadInputs()
+    reader.unsubscribe()
+    model.ReadInputs()
+    assert not getattr(model.constraints, f"keep{kind}")
+    assert getattr(model.constraints, f"keep{other}")
+
+    unwritten = messaging.SpicePlanetStateMsg()
+    reader.subscribeTo(unwritten)
+    with pytest.raises(bskLogging.BasiliskError, match=f"keep{kind}CelBodyInMsg has not been written"):
+        model.ReadInputs()
+    assert not model.constraints.keepIn and not model.constraints.keepOut
+    reader.subscribeTo(messages[2])
+    model.ReadInputs()
+    assert model.constraints.keepIn and model.constraints.keepOut
+
+    setattr(model.boresights, f"keep{kind}BoresightCount", 0)
+    reader.subscribeTo(unwritten)
+    getattr(model, f"keep{other}CelBodyInMsg").unsubscribe()
+    model.ReadInputs()
+    assert not model.constraints.keepIn and not model.constraints.keepOut
+
+
+@pytest.mark.parametrize("cost_type", [0, 1])
+def test_unset_spline_type(cost_type):
+    """Require an explicit spline selection for either search method."""
+    assert constrainedAttitudeManeuver.ConstrainedAttitudeManeuver().BSplineType == -1
+    model, messages = _configured_grid_module(5, cost_type, spline_type=None)
+    assert model.BSplineType == -1
+
+
+def test_unset_cost_function():
+    """Require an explicit cost function before searching a valid grid."""
+    model, messages = _configured_grid_module(5, cost_type=None)
+    assert model.costFcnType == -1
+    with pytest.raises(bskLogging.BasiliskError, match="costFcnType has not been specified"):
+        model.Reset(0)
 
 
 @pytest.mark.parametrize("args", [(), ([0.0, 1.0], [0.0, 0.0], [0.0, 0.0])])  # MRPs [-]
@@ -458,6 +614,77 @@ def test_optional_spline_values_survive_input_copy(args):
     for field in derivatives[1:]:
         np.testing.assert_array_equal(np.ravel(getattr(copied, field)), np.zeros(3))
         assert not getattr(copied, field + "_flag")
+
+
+@pytest.mark.parametrize("kind", ["In", "Out"])
+@pytest.mark.parametrize("axis, angle, error", [  # [-], [rad]
+    ([0.0, 0.0, 0.0], 0.4, "boresight"),
+    ([1.0, np.nan, 0.0], 0.4, "boresight"),
+    ([np.inf, 0.0, 0.0], 0.4, "boresight"),
+    ([1.0, 0.0, 0.0], np.nan, "half-angle"),
+    ([1.0, 0.0, 0.0], np.inf, "half-angle"),
+    ([1.0, 0.0, 0.0], -0.1, "half-angle"),
+    ([1.0, 0.0, 0.0], np.pi + 0.1, "half-angle"),
+])
+def test_invalid_boresight_cone(kind, axis, angle, error):
+    """Reject an invalid append and detect the same cone when set through the public arrays."""
+    model, messages = _configured_grid_module(5)
+    count = f"keep{kind}BoresightCount"
+    slot = getattr(model.boresights, count)
+    diagnostic = f"keep-{kind.lower()}.*{error}"
+    with pytest.raises(bskLogging.BasiliskError, match=diagnostic):
+        getattr(model, f"appendKeep{kind}Direction")(axis, angle)
+    assert getattr(model.boresights, count) == slot
+
+    model.ReadInputs()
+    axes = [[1.0, 0.0, 0.0] for _ in range(10)]  # [-]
+    angles = [0.4] * 10  # [rad]
+    axes[slot], angles[slot] = axis, angle
+    setattr(model.boresights, f"keep{kind}Boresight_B", axes)
+    setattr(model.boresights, f"keep{kind}Fov", angles)
+    setattr(model.boresights, count, slot + 1)
+    with pytest.raises(bskLogging.BasiliskError, match=diagnostic):
+        model.ReadInputs()
+    assert not model.constraints.keepIn and not model.constraints.keepOut
+
+
+@pytest.mark.parametrize("separation, half_angle, blocked", [  # [rad], [rad]
+    (0.0, 5e-7, True), (0.0, 0.0, True), (1e-9, 0.0, False),
+])
+def test_narrow_keep_out_cone(separation, half_angle, blocked):
+    """An accepted public boresight length must not change the angular separation."""
+    model, messages = _configured_grid_module(5)
+    model.boresights.keepInBoresightCount = 0
+    axis = (1.0 - 4e-13) * np.array([np.cos(separation), np.sin(separation), 0.0])  # [-]
+    model.boresights.keepOutBoresight_B = [axis.tolist()] * 10
+    model.boresights.keepOutFov = [half_angle] * 10
+    _generate_test_grid(model)
+    assert model.returnNodeState([0, 0, 0]) == (not blocked)
+
+
+@pytest.mark.parametrize("kind", ["In", "Out"])
+def test_boresight_capacity(kind):
+    """Accept the final boresight slot and reject invalid counts before array access."""
+    model, messages = _configured_grid_module(5)
+    count = f"keep{kind}BoresightCount"
+    fov = f"keep{kind}Fov"
+    append = getattr(model, f"appendKeep{kind}Direction")
+    setattr(model.boresights, count, 0)
+    angles = np.linspace(0.0, np.pi, 10)  # [rad], including both valid endpoints
+    for angle in angles:
+        append([3.0, 4.0, 0.0], angle)  # [-]
+    with pytest.raises(bskLogging.BasiliskError, match="cannot append"):
+        append([0.0, 1.0, 0.0], np.pi)
+    assert getattr(model.boresights, count) == len(angles)
+    np.testing.assert_array_equal(getattr(model.boresights, fov), angles)
+    np.testing.assert_allclose(getattr(model.boresights, f"keep{kind}Boresight_B"), [[0.6, 0.8, 0.0]] * 10)
+
+    for invalid in (-1, len(angles) + 1):
+        setattr(model.boresights, count, invalid)
+        with pytest.raises(bskLogging.BasiliskError, match="cannot append"):
+            append([0.0, 1.0, 0.0], np.pi)
+        with pytest.raises(bskLogging.BasiliskError, match="invalid keep-.* boresight count"):
+            model.Reset(0)
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each

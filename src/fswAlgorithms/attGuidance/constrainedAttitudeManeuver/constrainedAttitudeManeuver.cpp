@@ -17,48 +17,99 @@
 
  */
 #include "fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.h"
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <limits>
 #include <map>
 #include <math.h>
 
-/*! This is the constructor for the Node class.  It sets default variable
-    values and initializes the various parts of the model */
-Node::Node()
+namespace {
+void validateCone(const Eigen::Vector3d& boresight, double halfAngle, const char* category)
 {
-    return;
+    if (!(std::abs(boresight.squaredNorm() - 1.0) <= 1e-12)) { // [-] Allow roundoff in a unit vector.
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: %s boresight must be a finite unit vector.", category);
+    }
+    if (!(halfAngle >= 0.0 && halfAngle <= MPI)) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: %s cone half-angle must be in [0, pi] radians.", category);
+    }
 }
+
+void normalizeDirection(double direction[3], const char* source, const char* quantity)
+{
+    Eigen::Map<Eigen::Vector3d> axis(direction);
+    const double scale = axis.cwiseAbs().maxCoeff();
+    if (!axis.allFinite() || scale == 0.0) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: %s %s must be finite and nonzero.", source, quantity);
+    }
+    axis = (axis / scale).normalized();
+}
+
+void setBoresight(double direction[3], double halfAngle, const char* category, double output[3])
+{
+    Eigen::Vector3d axis = cArray2EigenVector3d(direction);
+    normalizeDirection(axis.data(), category, "boresight");
+    validateCone(axis, halfAngle, category);
+    eigenVector3d2CArray(axis, output);
+}
+
+void validateActiveCones(const scBoresightStruct& boresights, bool keepOut, bool keepIn)
+{
+    const auto check = [](const auto& axes, const auto& angles, int count, const char* category) {
+        if (count < 0 || count > static_cast<int>(std::size(angles))) {
+            BSKLogger().bskError("ConstrainedAttitudeManeuver: invalid %s boresight count.", category);
+        }
+        for (int i = 0; i < count; ++i) {
+            validateCone(Eigen::Map<const Eigen::Vector3d>(axes[i]), angles[i], category);
+        }
+    };
+    if (keepOut) {
+        check(boresights.keepOutBoresight_B, boresights.keepOutFov, boresights.keepOutBoresightCount, "keep-out");
+    }
+    if (keepIn) {
+        check(boresights.keepInBoresight_B, boresights.keepInFov, boresights.keepInBoresightCount, "keep-in");
+    }
+}
+} // namespace
+
+/*! @brief Construct an unclassified grid node. */
+Node::Node() = default;
 
 /*! The constructor requires the MRP set, the constraint structure and the sc boresight structure */
 Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights)
 {
+    validateActiveCones(boresights, constraints.keepOut, constraints.keepIn);
+    if (constraints.keepOut) {
+        normalizeDirection(constraints.keepOutDir_N, "keep-out", "inertial axis");
+    }
+    if (constraints.keepIn) {
+        normalizeDirection(constraints.keepInDir_N, "keep-in", "inertial axis");
+    }
     // MRPswitch(sigma_BN, 1, this->sigma_BN);
     v3Copy(sigma_BN, this->sigma_BN);
-    this->isBoundary = false;
-    if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) {
-        this->isBoundary = true;
-    }
-    this->heuristic = 0;
-    this->priority = 0;
-    this->neighborCount = 0;
+    this->isBoundary = abs(v3Norm(this->sigma_BN) - 1) < 1e-5;
 
     // check constraint compliance
     this->isFree = true;
     double BN[3][3];
     MRP2C(this->sigma_BN, BN);
-    double boresight_B[3], boresight_N[3];
-    int N;
+    const auto inCone = [&BN](double boresight_B[3], double direction_N[3], double halfAngle) {
+        double boresight_N[3], cross[3];
+        v3tMultM33(boresight_B, BN, boresight_N);
+        v3Cross(boresight_N, direction_N, cross);
+        const double separation = std::atan2(v3Norm(cross), v3Dot(boresight_N, direction_N));
+        constexpr double angularRoundoff = 8.0 * std::numeric_limits<double>::epsilon(); // [rad]
+        return separation <= halfAngle + angularRoundoff;
+    };
     // keep-out
     if (constraints.keepOut) {
-        N = boresights.keepOutBoresightCount;
-        for (int n = 0; n < N; n++) {
-            for (int j = 0; j < 3; j++) {
-                boresight_B[j] = boresights.keepOutBoresight_B[n][j];
-            }
-            v3tMultM33(boresight_B, BN, boresight_N);
-            if (v3Dot(boresight_N, constraints.keepOutDir_N) >= cos(boresights.keepOutFov[n])) {
+        for (int n = 0; n < boresights.keepOutBoresightCount; n++) {
+            if (inCone(boresights.keepOutBoresight_B[n], constraints.keepOutDir_N, boresights.keepOutFov[n])) {
                 this->isFree = false;
                 return;
             }
@@ -66,20 +117,12 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
     }
     // keep-in
     if (constraints.keepIn) {
-        N = boresights.keepInBoresightCount;
-        bool isIn = false;
-        for (int n = 0; n < N; n++) {
-            for (int j = 0; j < 3; j++) {
-                boresight_B[j] = boresights.keepInBoresight_B[n][j];
-            }
-            v3tMultM33(boresight_B, BN, boresight_N);
-            if (v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n])) {
-                isIn = true;
+        for (int n = 0; n < boresights.keepInBoresightCount; n++) {
+            if (inCone(boresights.keepInBoresight_B[n], constraints.keepInDir_N, boresights.keepInFov[n])) {
+                return;
             }
         }
-        if (!isIn) {
-            this->isFree = false;
-        }
+        this->isFree = false;
     }
 
     return;
@@ -177,12 +220,13 @@ bool NodeList::contains(Node* node)
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
 {
-    return;
+    std::fill(std::begin(sigma_BN_goal), std::end(sigma_BN_goal), std::numeric_limits<double>::quiet_NaN());
 }
 
 /*! This is the constructor for the module class. It sets default variable
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver(int N)
+    : ConstrainedAttitudeManeuver()
 {
     this->N = N;
     this->scStateMsgBuffer = this->scStateInMsg.zeroMsgPayload;
@@ -208,7 +252,10 @@ void ConstrainedAttitudeManeuver::SelfInit()
 void ConstrainedAttitudeManeuver::appendKeepOutDirection(double direction[3], double Fov)
 {
     int N = this->boresights.keepOutBoresightCount;
-    v3Normalize(direction, this->boresights.keepOutBoresight_B[N]);
+    if (N < 0 || N >= static_cast<int>(std::size(this->boresights.keepOutFov))) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: cannot append a keep-out boresight at index %d.", N);
+    }
+    setBoresight(direction, Fov, "keep-out", this->boresights.keepOutBoresight_B[N]);
     this->boresights.keepOutFov[N] = Fov;
     this->boresights.keepOutBoresightCount += 1;
 }
@@ -217,7 +264,10 @@ void ConstrainedAttitudeManeuver::appendKeepOutDirection(double direction[3], do
 void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], double Fov)
 {
     int N = this->boresights.keepInBoresightCount;
-    v3Normalize(direction, this->boresights.keepInBoresight_B[N]);
+    if (N < 0 || N >= static_cast<int>(std::size(this->boresights.keepInFov))) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: cannot append a keep-in boresight at index %d.", N);
+    }
+    setBoresight(direction, Fov, "keep-in", this->boresights.keepInBoresight_B[N]);
     this->boresights.keepInFov[N] = Fov;
     this->boresights.keepInBoresightCount += 1;
 }
@@ -227,6 +277,9 @@ the grid is generated and the graph search is performed. */
 void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     ReadInputs();
+    if (!cArray2EigenMRPd(this->sigma_BN_goal).coeffs().allFinite()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: a finite goal attitude is required (sigma_BN_goal at reset).");
+    }
 
     Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
     Node goalNode = Node(this->sigma_BN_goal, this->constraints, this->boresights);
@@ -294,35 +347,44 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
  */
 void ConstrainedAttitudeManeuver::ReadInputs()
 {
-    double relPosVector[3];
+    this->constraints = {};
 
-    //! - Read the input messages into the correct pointer
-    if (this->scStateInMsg.isWritten()) {
-        this->scStateMsgBuffer = this->scStateInMsg();
+    if (!this->scStateInMsg.isLinked() || !this->scStateInMsg.isWritten()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: scStateInMsg must be linked and written before reset.");
     }
-    if (this->vehicleConfigInMsg.isWritten()) {
-        this->vehicleConfigMsgBuffer = this->vehicleConfigInMsg();
+    if (!this->vehicleConfigInMsg.isLinked() || !this->vehicleConfigInMsg.isWritten()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: vehicleConfigInMsg must be linked and written before reset.");
     }
-    if (this->keepOutCelBodyInMsg.isWritten()) {
+    this->scStateMsgBuffer = this->scStateInMsg();
+    this->vehicleConfigMsgBuffer = this->vehicleConfigInMsg();
+    const bool useOut = this->keepOutConfigured();
+    const bool useIn = this->keepInConfigured();
+    validateActiveCones(this->boresights, useOut, useIn);
+    if (useOut && !this->keepOutCelBodyInMsg.isWritten()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: keepOutCelBodyInMsg has not been written.");
+    }
+    if (useIn && !this->keepInCelBodyInMsg.isWritten()) {
+        bskLogger.bskError("ConstrainedAttitudeManeuver: keepInCelBodyInMsg has not been written.");
+    }
+    const auto setDirection = [this](double bodyPosition[3], double direction[3], const char* name) {
+        double relative[3]; // [m]
+        v3Subtract(bodyPosition, this->scStateMsgBuffer.r_BN_N, relative);
+        normalizeDirection(relative, name, "line of sight");
+        v3Copy(relative, direction);
+    };
+    if (useOut) {
         this->keepOutCelBodyMsgBuffer = this->keepOutCelBodyInMsg();
-
-        //! - Compute the inertial direction of the object w.r.t. the S/C
-        v3Subtract(this->keepOutCelBodyMsgBuffer.PositionVector, this->scStateMsgBuffer.r_BN_N, relPosVector);
-        v3Normalize(relPosVector, this->constraints.keepOutDir_N);
-        this->constraints.keepOut = true;
+        setDirection(
+            this->keepOutCelBodyMsgBuffer.PositionVector, this->constraints.keepOutDir_N, "keepOutCelBodyInMsg");
     }
-    if (this->keepInCelBodyInMsg.isWritten()) {
+    if (useIn) {
         this->keepInCelBodyMsgBuffer = this->keepInCelBodyInMsg();
-
-        //! - Compute the inertial direction of the object w.r.t. the S/C
-        v3Subtract(this->keepInCelBodyMsgBuffer.PositionVector, this->scStateMsgBuffer.r_BN_N, relPosVector);
-        v3Normalize(relPosVector, this->constraints.keepInDir_N);
-        this->constraints.keepIn = true;
+        setDirection(this->keepInCelBodyMsgBuffer.PositionVector, this->constraints.keepInDir_N, "keepInCelBodyInMsg");
     }
-    if (!this->keepOutCelBodyInMsg.isWritten() && !this->keepInCelBodyInMsg.isWritten()) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n");
+    this->constraints.keepOut = useOut;
+    this->constraints.keepIn = useIn;
+    if (!useOut && !useIn) {
+        bskLogger.bskLog(BSK_WARNING, "ConstrainedAttitudeManeuver: no pointing constraints are active.");
     }
 }
 
