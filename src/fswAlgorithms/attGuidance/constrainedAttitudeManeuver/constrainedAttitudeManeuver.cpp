@@ -29,6 +29,7 @@
 #include <map>
 #include <math.h>
 #include <stdexcept>
+#include <utility>
 
 namespace {
 bool validListIndex(const NodeList& nodes, int index)
@@ -158,20 +159,65 @@ NodeList::NodeList()
     return;
 }
 
+NodeList::NodeList(const NodeList& source)
+    : NodeList()
+{
+    *this = source;
+}
+
+NodeList& NodeList::operator=(const NodeList& source)
+{
+    if (this == &source) {
+        return *this;
+    }
+    if (source.N < 0 || source.N > static_cast<int>(std::size(source.list))) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: invalid source node count.");
+    }
+    for (int i = 0; i < source.N; ++i) {
+        if (source.owners.count(source.list[i]) == 0) {
+            BSKLogger().bskError(
+                "ConstrainedAttitudeManeuver: cannot copy a list containing grid-backed or borrowed nodes.");
+        }
+    }
+    auto newOwners = source.owners;
+    const bool changed = N != source.N || !std::equal(source.list, source.list + source.N, list);
+    std::copy_n(source.list, source.N, list);
+    N = source.N;
+    owners.swap(newOwners);
+    if (changed) {
+        notifyChange();
+    }
+    return *this;
+}
+
 /*! Class Destructor. */
 NodeList::~NodeList()
 {
     return;
 }
 
-/*! This method appends a pointer to the node list. */
-void NodeList::append(Node* node)
+void NodeList::notifyChange() const
+{
+    if (onChange) {
+        onChange();
+    }
+}
+
+/*! @brief Append a node and retain its optional storage owner until its last entry is removed.
+ @param node Pointer to the node to append.
+ @param owner Optional handle keeping the node alive.
+ */
+void NodeList::append(Node* node, std::shared_ptr<void> owner)
 {
     if (this->N < 0 || this->N >= static_cast<int>(std::size(this->list))) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: node list capacity exceeded.");
     }
+    if (owner) {
+        owners.try_emplace(node, std::move(owner));
+    }
     this->list[this->N] = node;
     this->N += 1;
+    notifyChange();
 }
 
 /*! This method removes the pointer at index M from the node list. */
@@ -180,16 +226,25 @@ void NodeList::pop(int M)
     if (!validListIndex(*this, M)) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: node list index %d is out of range.", M);
     }
+    Node* removed = this->list[M];
     for (int m = M; m < this->N - 1; m++) {
         this->list[m] = this->list[m + 1];
     }
     this->N -= 1;
+    notifyChange();
+    if (!owners.empty() && !contains(removed)) {
+        owners.erase(removed);
+    }
 }
 
 /*! This method resets the list counter to 0, effectively clearing the list. */
 void NodeList::clear()
 {
-    this->N = 0;
+    if (this->N != 0) {
+        this->N = 0;
+        notifyChange();
+    }
+    owners.clear();
 }
 
 /*! This method swaps the two pointers at indices m and n. */
@@ -198,7 +253,10 @@ void NodeList::swap(int m, int n)
     if (!validListIndex(*this, m) || !validListIndex(*this, n)) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: node list swap indices (%d, %d) are out of range.", m, n);
     }
-    std::swap(this->list[m], this->list[n]);
+    if (this->list[m] != this->list[n]) {
+        std::swap(this->list[m], this->list[n]);
+        notifyChange();
+    }
 }
 
 /*! This method sorts the nodes in the list according to their priority. */
@@ -231,6 +289,7 @@ bool NodeList::contains(Node* node)
     values and initializes the various parts of the model */
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
 {
+    path.onChange = [this] { invalidateWaypoints(); };
     std::fill(std::begin(sigma_BN_goal), std::end(sigma_BN_goal), std::numeric_limits<double>::quiet_NaN());
 }
 
@@ -424,7 +483,10 @@ void ConstrainedAttitudeManeuver::invalidateWaypoints()
 
 void ConstrainedAttitudeManeuver::clearPath()
 {
-    invalidateWaypoints();
+    if (this->path.N == 0) {
+        // An empty list can still have manually supplied spline inputs.
+        invalidateWaypoints();
+    }
     this->path.clear();
 }
 
