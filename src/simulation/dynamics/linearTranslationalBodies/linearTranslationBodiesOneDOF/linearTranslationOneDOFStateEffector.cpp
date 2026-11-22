@@ -289,14 +289,13 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
  */
 void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    this->rho = this->rhoState->stateView()(0, 0);
-    this->rhoDot = this->rhoDotState->stateView()(0, 0);
-
     if (this->isAxisLocked) {
         Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
         this->rhoDotState->setState(zeroMatrix);
     }
 
+    this->rho = this->rhoState->stateView()(0, 0);
+    this->rhoDot = this->rhoDotState->stateView()(0, 0);
     this->r_FcF0_B = this->dcm_FB.transpose() * this->r_FcF_F + this->rho * this->fHat_B;
     this->r_FcB_B = this->r_F0B_B + this->r_FcF0_B;
     this->rTilde_FcB_B = eigenTilde(this->r_FcB_B);

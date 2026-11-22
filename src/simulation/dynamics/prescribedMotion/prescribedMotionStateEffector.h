@@ -113,14 +113,16 @@ class PrescribedMotionStateEffector final
 
   private:
     void updateRelativeKinematics(double integTime);
+    void sumMassProps(); //!< Combine this body's relative kinematics with stored child properties.
     void refreshPrescribedKinematics(double time); //!< Refresh the body and its children using the cached parent pose.
     void refreshInertialKinematics(double time,
                                    const Eigen::MRPd& sigma_BN,
                                    const Eigen::Vector3d& omega_BN_B) override;
-    void validateMass(double candidateMass); //!< Reject invalid mass without changing configuration or states
-    std::optional<double> translationEpoch;  //!< [s] Epoch of the configured or sampled translation.
-    std::optional<double> rotationEpoch;     //!< [s] Epoch of the configured or sampled rotation.
-    double mass;                             //!< [kg] Effector mass
+    void validateMass(double candidateMass);   //!< Reject invalid mass without changing configuration or states
+    bool* massPropsChangedByCommand = nullptr; //!< Borrowed flag shared by effectors on this spacecraft.
+    std::optional<double> translationEpoch;    //!< [s] Epoch of the configured or sampled translation.
+    std::optional<double> rotationEpoch;       //!< [s] Epoch of the configured or sampled rotation.
+    double mass;                               //!< [kg] Effector mass
     Eigen::Matrix3d IPntPc_P; //!< [kg-m^2] Inertia of the effector about its center of mass in P frame components
     Eigen::Vector3d r_MB_B;   //!< [m] Position of point M relative to point B in B frame components
     Eigen::Vector3d r_PcP_P;  //!< [m] Position of the effector center of mass relative to point P in P frame components

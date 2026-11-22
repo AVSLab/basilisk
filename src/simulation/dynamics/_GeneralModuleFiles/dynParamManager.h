@@ -157,6 +157,7 @@ class DynParamManager
     };
     InertialFrame inertialFrame; //!< Integration origin and publication epoch for this spacecraft's effectors.
     bool hasConstraint = false;  //!< Coupled loads require all endpoints to be refreshed before each stage.
+    bool massPropsChangedByCommand = false; //!< A prescribed command changed the accepted mass configuration.
 #endif
     /**
      * @brief Update an existing property without changing its shape.

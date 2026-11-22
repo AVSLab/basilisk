@@ -35,7 +35,7 @@ import pytest
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.architecture import messaging
 from Basilisk.simulation import extForceTorque, gravityEffector, meanRevertingNoiseStateEffector
-from Basilisk.simulation import spacecraft, stateArchitecture, svIntegrators
+from Basilisk.simulation import linearTranslationOneDOFStateEffector, spacecraft, stateArchitecture, svIntegrators
 from Basilisk.simulation.gravityModel import GravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
@@ -632,6 +632,77 @@ def test_synchronized_secondary_output_epoch(shared_body):
     np.testing.assert_array_equal(state.v_BN_N[2], result.payload.VelocityVector)
     expected_energy = -result.sc.hub.mHub * result.body.mu / np.linalg.norm(reference.r_RN_N)  # [J]
     assert result.log.energy[2] == pytest.approx(expected_energy, rel=1e-13)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+def test_synchronized_ephemeris_rejection_preserves_pending_lock(integrator_name):
+    """A secondary's missing ephemeris defers the primary's slider lock until a successful retry."""
+    sim = SimulationBaseClass.SimBaseClass()
+    step = macros.sec2nano(1.0)  # [ns]
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", step))
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    mass = 1.0  # [kg] for each hub and the slider
+    for sc in (primary, secondary):
+        sc.hub.mHub = mass
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    primary.setIntegrator(getattr(svIntegrators, integrator_name)(primary))
+    primary.syncDynamicsIntegration(secondary)
+
+    slider = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    rate = 1.0  # [m/s] along the primary's x axis
+    slider.setMass(mass)
+    slider.setRhoDotInit(rate)
+    primary.addStateEffector(slider)
+    lock = messaging.ArrayEffectorLockMsgPayload()
+    lock.effectorLockFlag = [1]
+    command = messaging.ArrayEffectorLockMsg().write(lock)
+    slider.motorLockInMsg.subscribeTo(command)
+    planet = gravityEffector.GravBodyData()
+    planet.planetName = "secondaryPlanet"
+    planet.mu = 1.0  # [m^3/s^2]
+    planet.isCentralBody = True
+    ephemeris = messaging.SpicePlanetStateMsg()
+    planet.planetBodyInMsg.subscribeTo(ephemeris)
+    secondary.gravField.addGravBody(planet)
+    secondary.hub.r_CN_NInit = [1000.0, 0.0, 0.0]  # [m]
+
+    sim.AddModelToTask("task", primary, 3)
+    sim.AddModelToTask("task", secondary, 2)
+    sim.AddModelToTask("task", slider, 1)
+    joint = slider.translatingBodyOutMsg.addSubscriber()
+    state = primary.scStateOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    def check_primary(tick, expected_rate, expected_vx):
+        assert primary.timeBeforeNanos == tick
+        primary.computeEnergyMomentum(tick * macros.NANO2SEC)
+        primary.writeOutputStateMessages(tick)
+        slider.writeOutputStateMessages(tick)
+        assert joint().rhoDot == pytest.approx(expected_rate)
+        np.testing.assert_allclose(state().v_CN_N, [expected_vx, 0.0, 0.0], rtol=0, atol=1e-14)  # [m/s]
+        # Two equal masses have total mass 2m and reduced mass m/2.
+        assert primary.totOrbEnergy == pytest.approx(mass * expected_vx**2)
+        assert primary.totRotEnergy == pytest.approx(mass * expected_rate**2 / 4)
+
+    check_primary(0, rate, 0.0)
+    stored_energies = primary.totOrbEnergy, primary.totRotEnergy
+    published_rate = joint().rhoDot
+    published_velocity = tuple(state().v_CN_N)
+    with pytest.raises(BasiliskError, match="ephemeris must be written"):
+        primary.UpdateState(step)
+    assert (primary.totOrbEnergy, primary.totRotEnergy) == stored_energies
+    assert joint().rhoDot == published_rate
+    np.testing.assert_array_equal(state().v_CN_N, published_velocity)
+    assert joint.timeWritten() == state.timeWritten() == 0
+    check_primary(0, rate, 0.0)
+
+    ephemeris.write(messaging.SpicePlanetStateMsgPayload())
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    check_primary(step, 0.0, -rate / 2)
+    assert joint().rho == pytest.approx(0.0)  # [m] locked from the start of the interval
 
 
 @pytest.mark.parametrize("initially_written", [True, False])

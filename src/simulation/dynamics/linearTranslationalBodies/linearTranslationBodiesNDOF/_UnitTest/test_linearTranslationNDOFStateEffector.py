@@ -196,6 +196,53 @@ def test_translatingBodyOutputMessagesMatchOneDOF():
                                    err_msg=field + " does not match the one-DOF effector.")
 
 
+def test_moving_slider_lock_delta_v_matches_one_dof():
+    """Lock equivalent force-free sliders and compare the accumulated center-of-mass delta-v."""
+    sim = SimulationBaseClass.SimBaseClass()
+    step = macros.sec2nano(1.0)  # [ns]
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", step))
+    one_dof = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    n_dof = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+    body = linearTranslationNDOFStateEffector.TranslatingBody()
+    initial_rate = 1.0  # [m/s]
+    for slider in (one_dof, body):
+        slider.setMass(1.0)  # [kg]
+        slider.setRhoDotInit(initial_rate)
+    n_dof.addTranslatingBody(body)
+
+    lock = messaging.ArrayEffectorLockMsgPayload()
+    lock_source = messaging.ArrayEffectorLockMsg().write(lock)
+    spacecraft_outputs = []
+    for joint in (one_dof, n_dof):
+        sc = spacecraft.Spacecraft()
+        sc.hub.mHub = 1.0  # [kg]
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        sc.addStateEffector(joint)
+        joint.motorLockInMsg.subscribeTo(lock_source)
+        sim.AddModelToTask("task", sc, 2)
+        sim.AddModelToTask("task", joint, 1)
+        spacecraft_outputs.append(sc.scStateOutMsg.addSubscriber())
+    outputs = [one_dof.translatingBodyOutMsg.addSubscriber(), n_dof.translatingBodyOutMsgs[0].addSubscriber()]
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    lock.effectorLockFlag = [1]
+    lock_source.write(lock, step)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    assert all(output().rhoDot == pytest.approx(initial_rate) for output in outputs)
+
+    sim.ConfigureStopTime(2 * step)
+    sim.ExecuteSimulation()
+    assert all(output().rhoDot == 0.0 for output in outputs)
+    assert all(output.timeWritten() == 2 * step for output in spacecraft_outputs)
+    one_state, n_state = (output() for output in spacecraft_outputs)
+    for field in ("TotalAccumDV_CN_N", "TotalAccumDVBdy"):
+        np.testing.assert_allclose(getattr(n_state, field), 0.0, rtol=0, atol=1e-12)  # [m/s]
+        np.testing.assert_allclose(getattr(one_state, field), getattr(n_state, field), rtol=0, atol=1e-12)  # [m/s]
+
+
 @pytest.mark.parametrize("segment, shouldRaise", [(1, False), (3, False), (0, True), (4, True)])
 def test_translatingBodyDynamicEffectorSegmentBounds(segment, shouldRaise):
     """

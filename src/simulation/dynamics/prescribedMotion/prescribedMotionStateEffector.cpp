@@ -148,6 +148,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 */
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 {
+    this->massPropsChangedByCommand = &states.massPropsChangedByCommand;
     // Get access to the hub states needed for dynamic coupling
     this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
@@ -267,6 +268,15 @@ void PrescribedMotionStateEffector::updateRelativeKinematics(double integTime)
 void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
     this->updateRelativeKinematics(integTime);
+    for (StateEffector* child : this->stateEffectors) {
+        child->effProps.hasMassPropertyRateDynamics = false;
+        child->updateEffectorMassProps(integTime);
+    }
+    this->sumMassProps();
+}
+
+void PrescribedMotionStateEffector::sumMassProps()
+{
     this->effProps.mEffDot = 0.0;
     this->effProps.mEffDotDynamics = 0.0;
     this->effProps.rEffPrime_CB_BDynamics.setZero();
@@ -297,8 +307,6 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     // Loop through attached state effectors and compute their contributions
     std::vector<StateEffector*>::iterator it;
     for (it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
-        (*it)->effProps.hasMassPropertyRateDynamics = false;
-        (*it)->updateEffectorMassProps(integTime);
         if ((*it)->effProps.hasMassPropertyRateDynamics || (*it)->effProps.mEffDot != 0.0) {
             this->bskLogger.bskLog(
                 BSK_ERROR, "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
@@ -624,6 +632,8 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
         } else {
             this->updateRelativeKinematics(time);
         }
+        this->sumMassProps();
+        *this->massPropsChangedByCommand = true;
     }
 
     // Call the method to write the output messages

@@ -162,7 +162,9 @@ class Spacecraft : public DynamicObject
     std::string propName_centerOfMassDotSC;   //!< property name of centerOfMassDotSC
 
   private:
-    void registerDynamics(); //!< Register and link dynamics during Reset
+    void registerDynamics();         //!< Register and link dynamics during Reset
+    void refreshAcceptedMassProps(); //!< Recompute stale mass properties at the accepted epoch.
+    void sumMassProps();             //!< Combine the stored hub and effector mass properties.
     /** @brief Refresh the hub and articulated poses at the accepted epoch. */
     void updateAcceptedInertialState();
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;

@@ -202,6 +202,7 @@ A missing perturbing-body input alone does not prevent publication of the inerti
 In six-degree-of-freedom mode, the spacecraft computes energy from the accepted state after
 applying any prescribed attitude and translation. A direct call to ``spacecraft.computeEnergyMomentum(time)``
 evaluates the gravitational potential of the current state at the supplied time in seconds.
+Its kinetic energy and momentum include prescribed-body commands read at the accepted spacecraft tick.
 At a zero-duration update with a pending ephemeris, ``totOrbEnergy`` and ``orbPotentialEnergyContr``
 are ``NaN``. An advance rejected for a missing ephemeris leaves the stored diagnostics intact.
 Direct energy queries raise ``BasiliskError`` if any required body has an unavailable sample.

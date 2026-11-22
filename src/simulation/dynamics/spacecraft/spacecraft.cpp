@@ -159,6 +159,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
         return;
     }
+    this->refreshAcceptedMassProps();
     SCMassPropsMsgPayload massStateOut = this->scMassOutMsg.zeroMsgPayload;
     massStateOut.massSC = (*this->m_SC)(0, 0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
@@ -399,9 +400,28 @@ void Spacecraft::refreshInitialDerivatives()
     this->equationsOfMotion(this->timeBefore, initialDerivativeTimeStep);
 }
 
+void Spacecraft::refreshAcceptedMassProps()
+{
+    if (this->dynManager.massPropsChangedByCommand) {
+        // The commanded body has updated its contribution. Re-evaluating other effectors here can apply a
+        // pending joint lock during an energy query or message write.
+        this->sumMassProps();
+    }
+}
+
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors
  */
 void Spacecraft::updateSCMassProps(double time)
+{
+    this->hub.updateEffectorMassProps(time);
+    for (StateEffector* effector : this->states) {
+        effector->effProps.hasMassPropertyRateDynamics = false;
+        effector->updateEffectorMassProps(time);
+    }
+    this->sumMassProps();
+}
+
+void Spacecraft::sumMassProps()
 {
     // - Zero the properties which will get populated in this method
     (*this->m_SC).setZero();
@@ -416,7 +436,6 @@ void Spacecraft::updateSCMassProps(double time)
     this->ISCPntBPrimeDynamics_B.setZero();
 
     // Add in hubs mass props to the spacecraft mass props
-    this->hub.updateEffectorMassProps(time);
     (*this->m_SC)(0, 0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
     (*this->c_B) += this->hub.effProps.mEff * this->hub.effProps.rEff_CB_B;
@@ -424,8 +443,6 @@ void Spacecraft::updateSCMassProps(double time)
     // - Loop through state effectors to get mass props
     std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
-        (*it)->effProps.hasMassPropertyRateDynamics = false;
-        (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0, 0) += (*it)->effProps.mEff;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
@@ -453,6 +470,7 @@ void Spacecraft::updateSCMassProps(double time)
     Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->stateView();
     Eigen::Vector3d cLocal_B = (*this->c_B);
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
+    this->dynManager.massPropsChangedByCommand = false;
 }
 
 /*! Return true if the spacecraft can use direct rigid-hub equations instead of
@@ -680,6 +698,10 @@ void Spacecraft::prepareIntegrationInputs(uint64_t integrateToThisTimeNanos)
 void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
+    if (!this->pointMassTranslationalOnly && !this->useHubOnlyFastPath()) {
+        // Sample current effector motion and mass flow at the start of the delta-v interval.
+        this->updateSCMassProps(this->timeBefore);
+    }
     if (integrateToThisTimeNanos == this->timeBeforeNanos) {
         this->applyPrescribedMotion();
         this->updateAcceptedInertialState();
@@ -802,6 +824,7 @@ void Spacecraft::computeEnergyMomentum(double time)
     if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
         this->bskLogger.bskError("spacecraft: energy and momentum require an accepted spacecraft state.");
     }
+    this->refreshAcceptedMassProps();
 
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = hubR_N->stateView();
