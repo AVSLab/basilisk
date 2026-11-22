@@ -164,11 +164,25 @@ def test_invalid_pulse_configuration(field, value, path):
             effector.computeForceTorque(0.0, 1.0)
 
 
-@pytest.mark.parametrize("time", [np.nan, np.inf, -np.inf, -1.0])  # [s]
+@pytest.mark.parametrize("time", [np.nan, np.inf, -np.inf])  # [s]
 def test_invalid_pulse_evaluation_time(time):
-    """Evaluation time must be finite and non-negative."""
+    """Evaluation time must be finite."""
     with pytest.raises(BasiliskError, match="integTime"):
         configured_pulse().computeForceTorque(time, 1.0)
+
+
+def test_sosri_launch_stage_preserves_initial_pulse_impulse():
+    """A pre-zero stage uses the initial torque throughout the first constant-torque step."""
+    step = 0.03125  # [s]; every positive SOSRI stage lies within the first pulse
+    effector = configured_pulse()
+    effector.pulsedTorqueExternalPntB_B = [1.0, 0.0, 0.0]  # [N*m]
+    sim, parent = pulse_simulation(effector, step=step)
+    parent.setIntegrator(svIntegrators.svStochasticIntegratorSOSRI(parent))
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(step))
+    sim.ExecuteSimulation()
+    np.testing.assert_allclose(parent.scStateOutMsg.read().omega_BN_B, [step, 0.0, 0.0],
+                               rtol=1e-13, atol=1e-14)  # [rad/s] for unit inertia
 
 
 def test_pulse_large_counts_do_not_overflow_integer_arithmetic():

@@ -42,6 +42,8 @@ off period does not enlarge the window around the initial pulse transitions.
 ``computeForceTorque()`` uses its integration time in seconds. Its ``timeStep`` argument does
 not set the pulse interval. Repeated evaluations, intermediate integrator stages, and evaluations
 at earlier times return the torque for the supplied time without advancing internal pulse state.
+For integrator stages before simulation time zero, the effector uses the initial pulse value.
+This preserves the first step's angular impulse when all its positive stages fall within the first pulse.
 Choose an integration step and error tolerance that resolve the pulse transitions; the torque
 is discontinuous at those transitions.
 

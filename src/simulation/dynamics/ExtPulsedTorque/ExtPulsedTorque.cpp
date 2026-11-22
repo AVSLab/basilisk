@@ -100,8 +100,8 @@ void ExtPulsedTorque::readInputMessages()
 void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
 {
     this->validateConfiguration();
-    if (!std::isfinite(integTime) || integTime < 0.0) {
-        this->bskLogger.bskError("ExtPulsedTorque: integTime must be finite and non-negative, in seconds.");
+    if (!std::isfinite(integTime)) {
+        this->bskLogger.bskError("ExtPulsedTorque: integTime must be finite, in seconds.");
     }
 
     this->forceExternal_N.setZero();
@@ -114,7 +114,8 @@ void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[may
     const double onDuration = static_cast<double>(this->countOnPulse) * this->pulseInterval; // [s]
     const double countPeriod = 2.0 * static_cast<double>(this->countOnPulse) + this->countOff;
     const double cycleDuration = countPeriod * this->pulseInterval; // [s]
-    double phase = std::fmod(integTime, cycleDuration);             // [s]
+    // Extend the first pulse to pre-zero integrator stages so the first step has its full impulse.
+    double phase = std::fmod(std::max(0.0, integTime), cycleDuration); // [s]
     // Roundoff in decimal intervals can place a transition just inside the preceding segment.
     // Scale each tolerance to its own transition and the evaluation time, so a long future off
     // period cannot advance the initial pulse edges. Bound it to keep adjacent windows separate.
