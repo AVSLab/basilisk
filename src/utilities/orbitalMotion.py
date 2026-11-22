@@ -950,7 +950,9 @@ def clMeanOscMapChecked(req: float, J2: float, oe: ClassicElements, oep: Classic
     """Apply the first-order J2 mean/osculating element mapping.
 
     The mapping follows Appendix F of *Analytical Mechanics of Space Systems*,
-    Schaub and Junkins, fourth edition. Inputs must be finite and elliptic,
+    Schaub and Junkins, fourth and fifth editions, including the short-period
+    longitude correction described in :ref:`meanOscShortPeriodCorrection`.
+    Inputs must be finite and elliptic,
     with inclination in [0, pi], and sufficiently far from the critical
     inclinations where ``1 - 5*cos(i)**2 = 0``. The perturbation must be small;
     applying the opposite mapping leaves errors of second order in J2.
@@ -1236,9 +1238,11 @@ def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep: ClassicElement
     """Map mean/osculating elements while preserving historical failure behavior.
 
     Parameters and supported-domain results are those of :func:`clMeanOscMapChecked`.
-    Inputs rejected by that function use the original formulas, including their
-    historical exceptions or nonfinite results. Use the checked function to opt
-    into explicit domain validation.
+    Inputs rejected by that function use a legacy fallback that preserves
+    historical domain/error handling, including exceptions or nonfinite results.
+    Numerical corrections, including the Eq. (F.11) short-period longitude term,
+    apply to both paths. Use the checked function to opt into explicit domain
+    validation.
     Inclination must be finite and in [0, pi], including on the legacy path.
     """
     _validate_inclination(oe.i)

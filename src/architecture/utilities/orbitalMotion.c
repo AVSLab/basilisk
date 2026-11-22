@@ -1502,7 +1502,9 @@ void rv2hillChecked(double* rc_N, double* vc_N, double* rd_N, double* vd_N, doub
  * @param elements_p Output classical elements, with the same units as the input.
  * @param sgn +1 for mean to osculating, -1 for osculating to mean.
  * @note Follows Appendix F of Analytical Mechanics of Space Systems, Schaub and
- * Junkins, fourth edition. Inputs must be finite and elliptic with inclination
+ * Junkins, fourth and fifth editions, with the Eq. (F.11) short-period correction
+ * -e/(eta*(1+eta)) times the short-period part of e*delta(M) in Eq. (F.12).
+ * Inputs must be finite and elliptic with inclination
  * in [0, pi], away from the critical inclinations where 1 - 5*cos(i)^2 = 0.
  * The perturbation must be small; opposite mappings leave second-order J2 errors.
  * @note Both equatorial limits are supported. Whole revolutions in true anomaly
@@ -1600,8 +1602,10 @@ void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho
  * @param elements Input classical elements, with angles in radians.
  * @param elements_p Output classical elements, with the same units as the input.
  * @param sgn +1 for mean to osculating, -1 for osculating to mean.
- * @note See clMeanOscMapChecked() for the supported domain. Rejected domains
- * retain historical results. Checked calls provide explicit domain validation.
+ * @note See clMeanOscMapChecked() for the supported domain. Rejected inputs use
+ * a legacy fallback that preserves historical domain/error handling. Numerical
+ * corrections, including the Eq. (F.11) short-period longitude term, apply to
+ * both paths. Checked calls provide explicit domain validation.
  * Invalid inclinations are always rejected; use 0 <= i <= pi.
  */
 void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)

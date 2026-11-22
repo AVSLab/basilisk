@@ -30,7 +30,7 @@ from numpy import linalg as la
 from Basilisk.utilities.orbitalMotion import ClassicElements, EquinoctialElements, f2E, E2M, M2E, E2f
 
 def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements, sign: int):
-    """Retain the historical formula for clMeanOscMap outside its checked domain.
+    """Retain unchecked clMeanOscMap behavior with the Appendix F correction.
 
     Distances use a consistent unit L, velocities L/s, and angles radians.
     """
