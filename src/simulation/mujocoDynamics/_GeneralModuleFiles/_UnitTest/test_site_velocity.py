@@ -352,6 +352,74 @@ def test_invalid_final_mass_rolls_back_synchronized_step(solver):
     check(2 * step)
 
 
+@pytest.mark.parametrize("primary_is_spacecraft", [True, False])
+def test_rejected_same_tick_hub_references(primary_is_spacecraft):
+    """Withdrawing references after rejection preserves the accepted hub pose and velocity on retry."""
+    sc, scene = spacecraft.Spacecraft(), mujoco.MJScene(SLIDER_SITE_XML)
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    sc.hub.r_CN_NInit = [1.0, 2.0, 3.0]  # [m]
+    sc.hub.v_CN_NInit = [0.25, 0.0, 0.0]  # [m/s]
+    sc.hub.sigma_BNInit = [0.1, 0.0, 0.0]  # [-]
+    sc.hub.omega_BN_BInit = [0.05, 0.0, 0.0]  # [rad/s]
+    primary, secondary = (sc, scene) if primary_is_spacecraft else (scene, sc)
+    primary.setIntegrator(svIntegrators.svIntegratorRK4(primary))
+    primary.syncDynamicsIntegration(secondary)
+    hub = sc.scStateOutMsg.addSubscriber()
+
+    def hub_states():
+        names = (sc.hub.nameOfHubPosition, sc.hub.nameOfHubVelocity, sc.hub.nameOfHubSigma, sc.hub.nameOfHubOmega)
+        return np.array([sc.dynManager.getStateObject(name).getState() for name in names]).reshape(4, 3)
+
+    def published():
+        msg = hub()
+        return np.array([msg.r_BN_N, msg.v_BN_N, msg.sigma_BN, msg.omega_BN_B])
+
+    class RejectTrial(sysModel.SysModel):
+        def UpdateState(self, tick):
+            if reject:
+                trial.append(hub_states())
+                raise RuntimeError("reject same-tick stage")
+
+    reject, trial = False, []
+    probe = RejectTrial()
+    scene.AddModelToDynamicsTask(probe)
+    scene.extraEoMCall = False
+    sc.Reset(0)
+    scene.Reset(0)
+    step = macros.sec2nano(1.0)  # [ns]
+    primary.UpdateState(step)
+    accepted = published()
+    np.testing.assert_array_equal(hub_states(), accepted)
+
+    trans = messaging.TransRefMsgPayload()
+    trans.r_RN_N = [10.0, 0.0, 0.0]  # [m]
+    trans.v_RN_N = [0.0, 2.0, 0.0]  # [m/s]
+    att = messaging.AttRefMsgPayload()
+    att.sigma_RN = [0.0, 0.0, 0.1]  # [-]
+    att.omega_RN_N = [0.0, 0.0, 0.5]  # [rad/s] along the rotation axis
+    trans_msg = messaging.TransRefMsg().write(trans, step)
+    att_msg = messaging.AttRefMsg().write(att, step)
+    sc.transRefInMsg.subscribeTo(trans_msg)
+    sc.attRefInMsg.subscribeTo(att_msg)
+    reject = True
+    with pytest.raises(RuntimeError, match="director method error"):
+        primary.UpdateState(step)
+    np.testing.assert_allclose(trial[0], [trans.r_RN_N, trans.v_RN_N, att.sigma_RN, att.omega_RN_N])
+    np.testing.assert_array_equal(hub_states(), accepted)
+    np.testing.assert_array_equal(published(), accepted)
+    assert sc.timeBeforeNanos == scene.timeBeforeNanos == hub.timeWritten() == step
+
+    sc.transRefInMsg.unsubscribe()
+    sc.attRefInMsg.unsubscribe()
+    reject = False
+    sc.moduleID += 1  # Distinguish a fresh publication at the same timestamp.
+    primary.UpdateState(step)
+    assert hub.moduleID() == sc.moduleID
+    np.testing.assert_array_equal(hub_states(), accepted)
+    np.testing.assert_array_equal(published(), accepted)
+
+
 @pytest.mark.parametrize("failure", [None, "drift", "diffusion", "invalid_mass"])
 def test_accepted_callback_reads_published_peer(failure):
     """Accepted callbacks see the peer and leave local joint outputs consistent even on failure."""

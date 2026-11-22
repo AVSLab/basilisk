@@ -74,8 +74,6 @@ class StateVecIntegrator
     void evaluateDiffusions(double time, double timeStep);
     /** @brief Validate every object's final candidate before releasing the entry state. */
     void validateFinalStates() const;
-    /** @brief Refresh object-owned outputs after restoring the entry state of a failed step. */
-    void restoreOutputsAfterRollback() const;
     /** @brief Borrow dynamics objects in callback order. */
     const std::vector<DynamicObject*>& dynamics() const noexcept { return this->dynPtrs; }
 
@@ -84,6 +82,8 @@ class StateVecIntegrator
     friend class integrator_step_test::StateVecIntegratorTestAccess;
     /** @brief Prepare workspace and execute the numerical method. */
     void integrate(double currentTime, double timeStep, std::optional<uint64_t> endTick = std::nullopt);
+    /** @brief Let each model undo step preparation and restore its accepted outputs after a failure. */
+    void restoreDynamicsAfterFailedStep() const;
     void prepareConstraintEndpoints(double time);
     std::optional<uint64_t> scheduledEndTick; ///< [ns] Exact scheduler target when available.
     std::optional<uint64_t> fixedStageTick;   ///< [ns] Active fixed-step start, midpoint, or end.

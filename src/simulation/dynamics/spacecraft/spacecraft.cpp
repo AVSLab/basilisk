@@ -341,6 +341,10 @@ void Spacecraft::registerDynamics()
     }
 
     this->dynManager.finalizeStates();
+    const auto& registry = this->dynManager.getStateRegistry();
+    const auto& last = registry.getStateLayouts().back();
+    this->rollbackSegment = registry.getStateSegment(0, last.stateOffset + last.stateCount);
+    this->stateBeforePreparation.resize(static_cast<Eigen::Index>(this->rollbackSegment.count));
 
     // - Link in states for the Spacecraft, gravity and the hub
     this->linkInStates(this->dynManager);
@@ -690,6 +694,19 @@ void Spacecraft::prepareIntegrationInputs(uint64_t integrateToThisTimeNanos)
     if (!this->getIntegrationOwner()) {
         // The primary samples first so that secondaries can read its forwarded ephemeris.
         this->gravField.writeOutputMessages(integrateToThisTimeNanos);
+    }
+    // Same-tick references and joint locks can change states before the numerical method saves its entry state.
+    this->hasPreparationSnapshot = !this->states.empty() || integrateToThisTimeNanos == this->timeBeforeNanos;
+    if (this->hasPreparationSnapshot) {
+        this->stateBeforePreparation = this->dynManager.getStateRegistry().segmentView(this->rollbackSegment);
+    }
+}
+
+void Spacecraft::restoreAfterFailedStep()
+{
+    if (this->hasPreparationSnapshot) {
+        this->dynManager.getStateRegistry().segmentView(this->rollbackSegment) = this->stateBeforePreparation;
+        this->dynManager.inertialFrame.acceptedTimeNanos.reset(); // Effector caches may still hold trial values.
     }
 }
 

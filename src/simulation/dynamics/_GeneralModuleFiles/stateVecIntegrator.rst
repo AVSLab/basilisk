@@ -17,8 +17,9 @@ while the dynamics group remains unchanged. Model code calls ``DynamicObject::in
 call ``evaluateDerivatives()`` and ``evaluateDiffusions()`` to evaluate the dynamics
 objects in synchronization order. After installing the final candidate, call
 ``validateFinalStates()`` while the step-entry state is still available for rollback.
-If validation or stage evaluation throws, restore the step-entry states, call
-``restoreOutputsAfterRollback()``, and propagate the error.
+If validation or stage evaluation throws, restore the numerical method's entry
+states and propagate the error. The dynamics group then lets each model undo
+changes made during step preparation and restore its accepted outputs.
 
 Ownership
 ---------

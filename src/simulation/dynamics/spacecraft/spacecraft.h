@@ -26,6 +26,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
 #include <Eigen/Core>
 #include <stdint.h>
@@ -105,6 +106,9 @@ class Spacecraft : public DynamicObject
   private:
     std::vector<StateEffector*> states;         //!< Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors; //!< Vector of dynamic effectors attached to dynObject
+    StateBufferSegment rollbackSegment;         //!< Hub and effector states that preparation can change.
+    Eigen::VectorXd stateBeforePreparation;     //!< Accepted state before applying references or joint locks.
+    bool hasPreparationSnapshot = false;        //!< This attempt saved the state before preparation.
 
     template<typename Type>
     /** Assign the state engine state and parameter names to an effector */
@@ -170,6 +174,7 @@ class Spacecraft : public DynamicObject
     void publishIntegratedState(uint64_t tick) final;
     void writeAcceptedStateMessages();
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;
+    void restoreAfterFailedStep() final;
     void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);
     void prepareConstraintEndpoints(double time) final;

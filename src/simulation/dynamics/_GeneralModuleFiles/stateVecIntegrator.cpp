@@ -45,13 +45,13 @@ void StateVecIntegrator::validateFinalStates() const
     }
 }
 
-void StateVecIntegrator::restoreOutputsAfterRollback() const
+void StateVecIntegrator::restoreDynamicsAfterFailedStep() const
 {
     for (DynamicObject* object : this->dynPtrs) {
         try {
             object->restoreAfterFailedStep();
         } catch (const std::exception& error) {
-            object->bskLogger.bskLog(BSK_WARNING, "Failed to restore dynamics output: %s", error.what());
+            object->bskLogger.bskLog(BSK_WARNING, "Failed to restore dynamics after a rejected step: %s", error.what());
         }
     }
 }

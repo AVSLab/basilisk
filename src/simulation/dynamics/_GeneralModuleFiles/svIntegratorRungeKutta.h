@@ -223,7 +223,6 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
         this->validateFinalStates();
     } catch (...) {
         this->scatterStates(this->baseState);
-        this->restoreOutputsAfterRollback();
         throw;
     }
 }

@@ -122,15 +122,20 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
     for (DynamicObject* object : this->integrator->dynPtrs) {
         object->prepareIntegrationInputs(integrateToThisTimeNanos);
     }
-    for (DynamicObject* object : this->integrator->dynPtrs) {
-        object->preIntegration(integrateToThisTimeNanos);
-    }
-    if (stageEpoch.active) {
+    try {
         for (DynamicObject* object : this->integrator->dynPtrs) {
-            object->refreshInitialDerivatives();
+            object->preIntegration(integrateToThisTimeNanos);
         }
+        if (stageEpoch.active) {
+            for (DynamicObject* object : this->integrator->dynPtrs) {
+                object->refreshInitialDerivatives();
+            }
+        }
+        this->integrator->integrate(this->timeBefore, this->timeStep, integrateToThisTimeNanos);
+    } catch (...) {
+        this->integrator->restoreDynamicsAfterFailedStep();
+        throw;
     }
-    this->integrator->integrate(this->timeBefore, this->timeStep, integrateToThisTimeNanos);
     // A callback can read a peer's telemetry or throw. Publish the whole group before the first callback.
     for (DynamicObject* object : this->integrator->dynPtrs) {
         object->publishIntegratedState(integrateToThisTimeNanos);

@@ -189,7 +189,6 @@ void StateVecStochasticIntegrator::validateStochasticTopology() const
 void StateVecStochasticIntegrator::restoreStochasticStates() const
 {
     this->scatterStochasticStates(this->rollbackState);
-    this->restoreOutputsAfterRollback();
 }
 
 void StateVecStochasticIntegrator::buildStochasticCandidateInPlace(const Eigen::VectorXd& base,

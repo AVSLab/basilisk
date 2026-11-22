@@ -180,7 +180,7 @@ class DynamicObject : public SysModel
     /** @brief Run optional callbacks after the entire dynamics group has published. */
     virtual void runAcceptedStateCallbacks() {}
 
-    /** @brief Refresh object-owned outputs after the integrator rolls back a failed step. */
+    /** @brief Undo changes from step preparation or trial evaluation after a rejected step. */
     virtual void restoreAfterFailedStep() {}
 
     /** @brief Reject changes that would invalidate the fixed state layout. */
