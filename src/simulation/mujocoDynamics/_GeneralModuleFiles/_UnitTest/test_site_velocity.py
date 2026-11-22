@@ -280,5 +280,35 @@ def test_accepted_clocks_at_multi_year_epoch(extra_eom_call):
     assert mass().massSC == pytest.approx(1.0 + mass_rate.massSC * step * macros.NANO2SEC)  # [kg]
 
 
+@pytest.mark.parametrize("offset, step", [(0, 3_906_250), (8, 1_000_000_000), (3, 5)])  # [ns]
+def test_rk4_stage_timestamps_at_multi_year_epoch(offset, step):
+    """RK4 task and site timestamps follow the integer interval even when stage seconds coincide."""
+    primary, secondary = mujoco.MJScene(SLIDER_SITE_XML), mujoco.MJScene(SLIDER_SITE_XML)
+    primary.setIntegrator(svIntegrators.svIntegratorRK4(primary))
+    primary.syncDynamicsIntegration(secondary)
+
+    class ClockProbe(sysModel.SysModel):
+        def __init__(self, scene):
+            super().__init__()
+            self.scene = scene
+            self.site = scene.getSite("tip").stateOutMsg.addSubscriber()
+            self.samples = []
+
+        def UpdateState(self, tick):
+            self.samples.append((tick, self.site.timeWritten(), self.scene.getEvaluationTime()))
+
+    start = 126_230_400_000_000_000 + offset  # [ns] four Julian years plus the offset
+    probes = [ClockProbe(scene) for scene in (primary, secondary)]
+    for probe in probes:
+        probe.scene.AddModelToDynamicsTask(probe)
+        probe.scene.Reset(start)
+    primary.UpdateState(start + step)
+    stages = [start, start + step // 2, start + step // 2, start + step]
+    seconds = [start / 10**9 + fraction * (step * macros.NANO2SEC) for fraction in (0.0, 0.5, 0.5, 1.0)]
+    for probe in probes:
+        assert probe.samples == list(zip(stages, stages, seconds))
+        assert probe.site.timeWritten() == start + step
+
+
 if __name__ == "__main__":
     test_siteVelocity()

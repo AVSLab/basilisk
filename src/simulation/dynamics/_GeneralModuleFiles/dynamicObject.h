@@ -31,6 +31,7 @@
 #include "stateEffector.h"
 #include "stateVecIntegrator.h"
 #include <memory>
+#include <optional>
 #include <stdint.h>
 #include <vector>
 
@@ -152,6 +153,9 @@ class DynamicObject : public SysModel
     DynamicObject* integrationOwner = nullptr;      ///< Borrowed primary object, or null for independent integration.
 
   protected:
+    /** @brief Return the scheduled start, midpoint, or end tick during a fixed Runge-Kutta stage. */
+    std::optional<uint64_t> getFixedStageTick() const noexcept;
+
     /** @brief Prepare coupled constraint geometry before any object evaluates this stage.
      * @param time [s] Signed integrator stage time.
      */

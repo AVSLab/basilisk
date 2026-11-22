@@ -19,14 +19,16 @@
 
 #include "stateVecIntegrator.h"
 #include "dynamicObject.h"
+#include <algorithm>
 
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn)
     : dynPtrs{ dynIn }
 {
 }
 
-void StateVecIntegrator::integrate(double currentTime, double timeStep)
+void StateVecIntegrator::integrate(double currentTime, double timeStep, std::optional<uint64_t> endTick)
 {
+    this->scheduledEndTick = endTick;
     this->ensureIntegrationBinding();
     this->integrateImpl(currentTime, timeStep);
 }
@@ -54,6 +56,29 @@ void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotion(time, timeStep);
     }
+}
+
+void StateVecIntegrator::evaluateFixedStepDerivatives(double startTime, double timeStep, double fraction)
+{
+    if (this->scheduledEndTick) {
+        // After years of simulation, distinct RK stage ticks can round to the same double in seconds.
+        const auto start = this->dynPtrs.front()->timeBeforeNanos;
+        const auto end = *this->scheduledEndTick;
+        if (fraction == 0.0) {
+            this->fixedStageTick = start;
+        } else if (fraction == 0.5) {
+            const auto first = std::min(start, end);
+            this->fixedStageTick = first + (std::max(start, end) - first) / 2;
+        } else if (fraction == 1.0) {
+            this->fixedStageTick = end;
+        }
+    }
+    struct ClearStageTick
+    {
+        std::optional<uint64_t>& tick;
+        ~ClearStageTick() { tick.reset(); }
+    } clear{ this->fixedStageTick };
+    this->evaluateDerivatives(startTime + fraction * timeStep, timeStep);
 }
 
 void StateVecIntegrator::evaluateDiffusions(double time, double timeStep)

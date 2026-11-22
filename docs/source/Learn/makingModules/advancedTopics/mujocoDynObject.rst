@@ -26,6 +26,8 @@ In a model attached to a scene's drift or diffusion task, use ``scene.getEvaluat
 for time-dependent calculations. It returns the integrator stage time in seconds. Stages can
 run out of order, and SOSRI can evaluate before simulation time zero. The ``UpdateState``
 argument and message timestamps are unsigned nanoseconds, so a pre-zero stage carries timestamp zero.
+RK4 timestamps use the integer start and end ticks. Its two midpoint stages use the same tick,
+rounded down if the midpoint falls between nanoseconds.
 
 After a step, the scene clock and its scene, site, mass, and scalar-joint messages describe the
 accepted state. The message timestamps retain the exact integer tick even at multi-year epochs.

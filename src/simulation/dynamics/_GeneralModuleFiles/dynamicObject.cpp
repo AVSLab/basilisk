@@ -91,6 +91,12 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
     dynPtr->integrationOwner = this;
 }
 
+std::optional<uint64_t> DynamicObject::getFixedStageTick() const noexcept
+{
+    const auto& method = (this->integrationOwner ? this->integrationOwner : this)->integrator;
+    return method ? method->fixedStageTick : std::nullopt;
+}
+
 void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
 {
     if (this->integrationOwner != nullptr) {
@@ -124,7 +130,7 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
             object->refreshInitialDerivatives();
         }
     }
-    this->integrator->integrate(this->timeBefore, this->timeStep);
+    this->integrator->integrate(this->timeBefore, this->timeStep, integrateToThisTimeNanos);
     for (DynamicObject* object : this->integrator->dynPtrs) {
         object->postIntegration(integrateToThisTimeNanos);
     }

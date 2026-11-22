@@ -355,7 +355,8 @@ uint64_t MJScene::stageTimestamp(double time) const
 
 void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
-    const uint64_t nanos = this->stageTimestamp(t);
+    const auto fixedTick = this->getFixedStageTick();
+    const uint64_t nanos = fixedTick ? *fixedTick : this->stageTimestamp(t);
 
     // Make sure the model is compiled
     this->spec.recompileUntilStable();
