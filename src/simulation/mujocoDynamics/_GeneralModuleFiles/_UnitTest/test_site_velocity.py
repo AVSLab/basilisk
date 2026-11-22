@@ -29,6 +29,7 @@ if mujocoEnabled:
     from Basilisk.simulation import linearTranslationOneDOFStateEffector, mujoco, spacecraft, svIntegrators
 
 from Basilisk.architecture import messaging, sysModel
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
@@ -348,6 +349,68 @@ def test_invalid_final_mass_rolls_back_synchronized_step(solver):
     check(step)
     rate.massSC = 0.0  # [kg/s]
     rates.write(rate)
+    primary.UpdateState(2 * step)
+    check(2 * step)
+
+
+@pytest.mark.parametrize("primary_is_spacecraft", [True, False])
+@pytest.mark.parametrize("link_during_stage", [False, True])
+def test_late_point_mass_attitude_reference(primary_is_spacecraft, link_during_stage):
+    """Reject an unsupported reference before either model commits and allow retry after disconnect."""
+    sc, scene = spacecraft.Spacecraft(), mujoco.MJScene(SLIDER_SITE_XML)
+    sc.pointMassTranslationalOnly = True
+    sc.hub.mHub = 1.0  # [kg]
+    hub_speed, slide_speed = 1.0, -2.0  # [m/s]
+    sc.hub.v_CN_NInit = [hub_speed, 0.0, 0.0]  # [m/s]
+    primary, secondary = (sc, scene) if primary_is_spacecraft else (scene, sc)
+    primary.setIntegrator(svIntegrators.svIntegratorRK4(primary))
+    primary.syncDynamicsIntegration(secondary)
+    scene.extraEoMCall = False
+    reference = messaging.AttRefMsg()
+    stages = []
+    link_in_callback = False
+
+    class StageProbe(sysModel.SysModel):
+        def UpdateState(self, tick):
+            stages.append(tick)
+            if link_in_callback:
+                sc.attRefInMsg.subscribeTo(reference)
+
+    probe = StageProbe()
+    scene.AddModelToDynamicsTask(probe)
+    hub = sc.scStateOutMsg.addSubscriber()
+    state = scene.stateOutMsg.addSubscriber()
+    sc.Reset(0)
+    scene.Reset(0)
+    slide = scene.getBody("slider").getScalarJoint("slide")
+    slide.setVelocity(slide_speed)
+    position = sc.dynManager.getStateObject(sc.hub.nameOfHubPosition)
+    velocity = sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity)
+
+    def check(tick):
+        t = tick * macros.NANO2SEC  # [s]
+        assert sc.timeBeforeNanos == scene.timeBeforeNanos == hub.timeWritten() == state.timeWritten() == tick
+        assert scene.getEvaluationTime() == t
+        assert hub().r_BN_N[0] == position.getState()[0][0] == pytest.approx(hub_speed * t)
+        assert hub().v_BN_N[0] == velocity.getState()[0][0] == hub_speed
+        assert state().qpos[0][0] == slide.getPositionState().getState()[0][0] == pytest.approx(slide_speed * t)
+        assert state().qvel[0][0] == slide.getVelocityState().getState()[0][0] == slide_speed
+
+    step = macros.sec2nano(1.0)  # [ns]
+    primary.UpdateState(step)
+    check(step)
+    stages.clear()
+    if link_during_stage:
+        reference.write(messaging.AttRefMsgPayload(), step)
+        link_in_callback = True
+    else:
+        sc.attRefInMsg.subscribeTo(reference)  # Even an unwritten attitude reference is unsupported.
+    with pytest.raises(BasiliskError, match="does not support attitude reference"):
+        primary.UpdateState(2 * step)
+    assert bool(stages) == link_during_stage
+    check(step)
+    link_in_callback = False
+    sc.attRefInMsg.unsubscribe()
     primary.UpdateState(2 * step)
     check(2 * step)
 

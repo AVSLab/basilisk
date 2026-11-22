@@ -196,12 +196,17 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
 }
 
-void Spacecraft::applyPrescribedMotion()
+void Spacecraft::validateAttitudeReference()
 {
     if (this->pointMassTranslationalOnly && this->attRefInMsg.isLinked()) {
         bskLogger.bskError(
             "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
     }
+}
+
+void Spacecraft::applyPrescribedMotion()
+{
+    this->validateAttitudeReference();
     if (this->attRefInMsg.isLinked() && this->attRefInMsg.isWritten()) {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
@@ -682,6 +687,7 @@ void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double time
 
 void Spacecraft::prepareIntegrationInputs(uint64_t integrateToThisTimeNanos)
 {
+    this->validateAttitudeReference();
     this->gravField.loadEphemerides(false);
     if (!this->gravField.originReady) {
         this->dynManager.inertialFrame.originReady = false;

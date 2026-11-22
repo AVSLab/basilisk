@@ -174,11 +174,14 @@ class Spacecraft : public DynamicObject
     void publishIntegratedState(uint64_t tick) final;
     void writeAcceptedStateMessages();
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;
+    // A stage callback can connect a reference after the group has sampled its inputs.
+    void validateIntegratedState() final { this->validateAttitudeReference(); }
     void restoreAfterFailedStep() final;
     void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);
     void prepareConstraintEndpoints(double time) final;
     void refreshArticulatedEndpoints(double time);
+    void validateAttitudeReference();
     void applyPrescribedMotion();    //!< Apply written attitude and translation references to the hub.
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used
 };
