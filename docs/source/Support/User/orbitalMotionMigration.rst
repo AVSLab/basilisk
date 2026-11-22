@@ -126,6 +126,62 @@ native test; the four real self-check entry points remain. Eclipse corrections
 and debris plotting compatibility preserve their callable interfaces. Forward-anomaly precision
 near the parabolic limit remains outside this change.
 
+.. _meanOscShortPeriodCorrection:
+
+Mean/osculating short-period longitude correction
+-------------------------------------------------
+
+``clMeanOscMap`` and ``clMeanOscMapChecked`` include the missing short-period
+term in Eq. (F.11) of *Analytical Mechanics of Space Systems*, fourth and fifth
+editions (issue `1728 <https://github.com/AVSLab/basilisk/issues/1728>`__). The
+additional contribution to the mapped mean longitude is
+
+.. math::
+
+    \Delta(M' + \omega' + \Omega')
+    = -\frac{e}{\eta(1+\eta)}\,(e\,\delta M)_{\mathrm{sp}},
+    \qquad \eta = \sqrt{1-e^2}.
+
+Here :math:`(e\,\delta M)_{\mathrm{sp}}` is only the short-period (second)
+term of Eq. (F.12), including its signed :math:`\gamma'_2` factor. The
+long-period term proportional to :math:`\sin 2\omega` must be excluded.
+The correction applies to both mapping directions and to both the checked
+and legacy C and Python paths. It changes the reconstructed argument of
+periapsis :math:`\omega'`; the other mapped elements are unchanged. It is
+of order :math:`eJ_2` and vanishes for circular input orbits.
+
+The omission is present in Basilisk 2.12.2 and can cause kilometer-scale
+position errors for eccentric Earth orbits. For example, mean elements
+:math:`a=26600\,\mathrm{km}`, :math:`e=0.74`, :math:`i=63^\circ`,
+:math:`\Omega=0^\circ`, :math:`\omega=20^\circ`, and :math:`M=10^\circ`
+give :math:`\omega'=20.5940140816^\circ` with Basilisk's default Earth
+constants, versus :math:`20.6069207693^\circ` before this correction.
+The corresponding positions differ by about 2.284 km. Existing users
+should recompute affected reference results with the corrected mapping.
+The first-order approximation and its critical-inclination limitations
+still apply; a forward/inverse round trip is not an independent accuracy test.
+
+Anomaly branches
+^^^^^^^^^^^^^^^^
+
+The difference :math:`f-M` in Eqs. (F.11) and (F.13) must be the equation
+of the center, satisfying :math:`|f-M|<\pi` for elliptic orbits. Keep the
+anomalies on consistent branches. For :math:`E,M\in[0,2\pi)`, use the
+half-angle expression
+
+.. math::
+
+    f = 2\operatorname{atan2}\!\left(
+        \sqrt{1+e}\sin\frac{E}{2},
+        \sqrt{1-e}\cos\frac{E}{2}\right).
+
+If the supplied anomalies use different branches, replace :math:`f-M`
+in those equations by :math:`\operatorname{atan2}(\sin(f-M),\cos(f-M))`.
+Basilisk's checked mapping already normalizes the input true anomaly and
+uses a half-angle ``atan2`` conversion to eccentric anomaly, so it preserves
+this difference when the input true anomaly crosses a branch or includes
+whole revolutions.
+
 Regression coverage
 -------------------
 
@@ -141,3 +197,11 @@ the preserved APIs. Existing numerical, controller, ephemeris, and scenario
 tests remain part of validation. The optional Vizard-driven OpNav Monte Carlo
 example requires an external renderer and is not exercised by the normal suite;
 its inclination bounds were updated by inspection.
+
+Mean/osculating regression tests compare mapped mean longitude with
+complex-step derivatives of Brouwer's generating function, independently
+of the implemented element corrections. They cover both mapping directions,
+legacy fallback paths, nonzero long-period contributions, and low through
+high eccentricities in Python and compiled C. Planar references cover
+circular and eccentric equatorial limits, and anomaly-branch checks include
+high-eccentricity orbits.
