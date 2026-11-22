@@ -160,9 +160,10 @@ class Spacecraft : public DynamicObject
     void registerDynamics(); //!< Register and link dynamics during Reset
     /** @brief Refresh the hub and articulated poses at the accepted epoch. */
     void updateAcceptedInertialState();
+    void prepareIntegrationInputs(uint64_t callTimeNanos) final;
+    void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);
-    void readOptionalRefMsg(); //!< Read the optional attitude or translational reference input message and set the
-                               //!< reference states
+    void applyPrescribedMotion();    //!< Apply written attitude and translation references to the hub.
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used
 };
 

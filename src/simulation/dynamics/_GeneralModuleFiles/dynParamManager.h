@@ -149,6 +149,7 @@ class DynParamManager
     /** @brief Epoch and integration origin shared by the spacecraft and its attached effectors. */
     struct InertialFrame
     {
+        bool originReady = false; //!< True when the integration origin can be located in inertial coordinates.
         std::optional<uint64_t> acceptedTimeNanos;                //!< [ns] Empty while the endpoint holds a trial pose.
         std::optional<uint64_t> exactStageTimeNanos;              //!< [ns] Set during reset and zero-duration stages.
         Eigen::Vector3d originPosition = Eigen::Vector3d::Zero(); //!< [m] Integration origin in inertial coordinates.

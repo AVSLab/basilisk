@@ -152,6 +152,14 @@ class DynamicObject : public SysModel
     DynamicObject* integrationOwner = nullptr;      ///< Borrowed primary object, or null for independent integration.
 
   protected:
+    /** @brief Refresh derivatives after every synchronized object has prepared its initial state. */
+    virtual void refreshInitialDerivatives() {}
+
+    /** @brief Sample and validate inputs before any synchronized object runs preIntegration().
+     * @param callTimeNanos [ns] Requested end of the step.
+     */
+    virtual void prepareIntegrationInputs(uint64_t callTimeNanos [[maybe_unused]]) {}
+
     /** @brief Reject changes that would invalidate the fixed state layout. */
     void requireMutableTopology(const char* operation) const;
 };

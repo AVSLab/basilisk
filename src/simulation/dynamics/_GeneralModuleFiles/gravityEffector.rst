@@ -24,7 +24,7 @@ provides information on what this message is used for.
     :caption: GravityEffector Module I/O Messages
 
     output centralBodyOutMsg SpicePlanetStateMsgPayload
-        Central planet body state output message.
+        Central planet state. A connected ephemeris is forwarded after its first write and retains its source timestamp.
 
 The gravity effector contains a list of ``GravBodyData`` objects which contain the planet mass and size properties etc.
 The following table lists the Spice planet ephemeris input message that can be connected to a ``GravBodyData`` object.
@@ -164,6 +164,20 @@ time supplied by the integrator in double-precision seconds. SOSRI can evaluate 
 zero. When the spacecraft accepts a state, the central body is extrapolated to the
 accepted clock tick. Subtracting the integer output and message timestamps before conversion to
 seconds preserves small offsets even years into a mission.
+A synchronized spacecraft can publish between its primary's steps. It republishes its accepted
+inertial state and timestamp even if another spacecraft has since refreshed a shared gravity body.
+Its mass-state message also carries the accepted timestamp.
+A secondary subscribed to its primary's ``centralBodyOutMsg`` uses the sample forwarded at
+the start of the same integration step, with the original source timestamp.
 
+If a linked planet message is still unwritten during spacecraft reset, the spacecraft defers
+its initial derivatives. On a zero-duration update, the spacecraft applies written attitude
+and translation references and reevaluates the derivatives with the latest available ephemerides
+once all linked planet messages are written. This includes replacements at the same timestamp.
 At reset and during zero-duration updates, the spacecraft stores that tick directly in the double-precision
 nanosecond component of ``systemTime``. Other stages report their signed stage time.
+Until its reference is first written, each component of the motion retains
+its configured or integrated state.
+Write every linked ephemeris before advancing simulation time. While a linked central-body input
+is unwritten, the spacecraft defers its inertial state message. Mass properties remain available.
+A missing perturbing-body input alone does not prevent publication of the inertial state.

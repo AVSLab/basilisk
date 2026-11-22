@@ -17,6 +17,7 @@
 
  */
 
+#include <algorithm>
 #include <functional>
 #include <optional>
 
@@ -132,6 +133,10 @@ double GravBodyData::potentialAtOffset(const Eigen::Vector3d& r_I, double dt) co
 void GravBodyData::loadEphemeris()
 {
     if (this->planetBodyInMsg.isLinked()) {
+        if (!this->planetBodyInMsg.isWritten()) {
+            this->ephemerisReady = false;
+            return;
+        }
         this->localPlanet = this->planetBodyInMsg();
         this->timeWritten = this->planetBodyInMsg.timeWritten();
     } else {
@@ -139,6 +144,7 @@ void GravBodyData::loadEphemeris()
         this->localPlanet = this->planetBodyInMsg.zeroMsgPayload;
         this->timeWritten = 0;
     }
+    this->ephemerisReady = true;
 }
 
 void GravBodyData::registerProperties(DynParamManager& statesIn)
@@ -188,15 +194,34 @@ void GravityEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
                                    body->planetName.c_str());
         }
     }
-    this->UpdateState(currentSimNanos);
+    this->loadEphemerides(true);
 }
 
 void GravityEffector::UpdateState(uint64_t currentSimNanos)
 {
+    this->loadEphemerides(false);
+    this->writeOutputMessages(currentSimNanos);
+}
+
+bool GravityEffector::ephemeridesReady() const
+{
+    return this->bodiesResolved && std::all_of(this->gravBodies.begin(), this->gravBodies.end(), [](const auto& body) {
+               return body->ephemerisReady;
+           });
+}
+
+void GravityEffector::loadEphemerides(bool atReset)
+{
+    this->bodiesResolved = false;
+    this->originReady = true;
     // Updates the central body
     this->centralBody.reset();
     for (auto&& body : this->gravBodies) {
-        body->loadEphemeris();
+        if (atReset && !body->planetBodyInMsg.isLinked()) {
+            body->ephemerisReady = true; // Keep a manually configured initial planet state.
+        } else {
+            body->loadEphemeris();
+        }
 
         if (!body->isCentralBody)
             continue;
@@ -208,16 +233,24 @@ void GravityEffector::UpdateState(uint64_t currentSimNanos)
             throw std::invalid_argument(errorMessage);
         } else {
             this->centralBody = body;
+            this->originReady = body->ephemerisReady;
         }
     }
-
-    this->writeOutputMessages(currentSimNanos);
+    this->bodiesResolved = true;
 }
 
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
     if (this->centralBodyOutMsg.isLinked() && this->centralBody) {
-        this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
+        auto& input = this->centralBody->planetBodyInMsg;
+        if (input.isLinked()) {
+            if (input.isWritten()) {
+                auto planet = input();
+                this->centralBodyOutMsg.write(&planet, this->moduleID, input.timeWritten());
+            }
+        } else {
+            this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
+        }
     }
 }
 

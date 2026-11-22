@@ -75,8 +75,8 @@ class GravBodyData
      */
     double computePotentialEnergyInertial(const Eigen::Vector3d& r_I, uint64_t simTimeNanos) const;
 
-    /** Read the ephemeris data from planetBodyInMsg if it's linked.
-     * Otherwise, zeros `this->localPlanet`.
+    /** @brief Load a written planet ephemeris or use a zero state for an unlinked input.
+     * @note A linked, unwritten input marks the cached sample unavailable.
      */
     void loadEphemeris();
 
@@ -139,7 +139,8 @@ class GravBodyData
     Eigen::MatrixXd* J20002Pfix;     /**< [-]      (state engine property) planet attitude [PN] */
     Eigen::MatrixXd* J20002Pfix_dot; /**< [1/s]    (state engine property) planet attitude rate [PN_dot] */
 
-    uint64_t timeWritten = 0; /**< [ns]     time the input planet state message was written */
+    uint64_t timeWritten = 0;    /**< [ns]     time the input planet state message was written */
+    bool ephemerisReady = false; //!< The cached planet state is available to all spacecraft sharing this body.
 };
 
 /*! @brief gravity effector class */
@@ -198,6 +199,10 @@ class GravityEffector : public SysModel
 
     /** @brief Update the inertial state using a signed ephemeris offset.
      */
+    bool ephemeridesReady() const; //!< Check the current samples, including bodies refreshed by another spacecraft.
+    bool bodiesResolved = false;   //!< The last scan completed and identified the integration origin.
+    bool originReady = false;      //!< The last gravity sample included the integration origin.
+    void loadEphemerides(bool atReset);
     void updateInertialPosAndVelAtOffset(const Eigen::Vector3d& r_BF_N, const Eigen::Vector3d& rDot_BF_N, double dt);
 
     /** Writes to centralBodyOutMsg if it is linked and there is a central body */

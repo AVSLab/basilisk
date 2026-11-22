@@ -71,7 +71,6 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
     this->timeBefore = epochSeconds(CurrentSimNanos);
     this->timeBeforeNanos = CurrentSimNanos;
     this->gravField.Reset(CurrentSimNanos);
-    // - Call method for initializing the dynamics of spacecraft
     this->registerDynamics();
 
     this->updateAcceptedInertialState();
@@ -108,9 +107,12 @@ void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
 void Spacecraft::updateAcceptedInertialState()
 {
     auto& frame = this->dynManager.inertialFrame;
+    frame.originReady = this->gravField.originReady;
     frame.acceptedTimeNanos = this->timeBeforeNanos;
-    this->gravField.updateInertialPosAndVel(
-        this->hubR_N->stateView(), this->hubV_N->stateView(), this->timeBeforeNanos);
+    if (frame.originReady) {
+        this->gravField.updateInertialPosAndVel(
+            this->hubR_N->stateView(), this->hubV_N->stateView(), this->timeBeforeNanos);
+    }
 }
 
 void Spacecraft::updateSystemTime(double stageTime)
@@ -123,6 +125,19 @@ void Spacecraft::updateSystemTime(double stageTime)
 /*! This is the method where the messages of the state of vehicle are written */
 void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 {
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        return;
+    }
+    SCMassPropsMsgPayload massStateOut = this->scMassOutMsg.zeroMsgPayload;
+    massStateOut.massSC = (*this->m_SC)(0, 0);
+    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
+    eigenMatrixXd2CArray(*this->ISCPntB_B, (double*)massStateOut.ISC_PntB_B);
+    this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
+
+    if (!this->dynManager.inertialFrame.originReady) {
+        return;
+    }
+
     // - Populate state output message
     SCStatesMsgPayload stateOut;
     stateOut = this->scStateOutMsg.zeroMsgPayload;
@@ -153,25 +168,15 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
-
-    // - Populate mass state output message
-    SCMassPropsMsgPayload massStateOut;
-    massStateOut = this->scMassOutMsg.zeroMsgPayload;
-    massStateOut.massSC = (*this->m_SC)(0, 0);
-    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    eigenMatrixXd2CArray(*this->ISCPntB_B, (double*)massStateOut.ISC_PntB_B);
-    this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
 }
 
-/*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the
- * hub*/
-void Spacecraft::readOptionalRefMsg()
+void Spacecraft::applyPrescribedMotion()
 {
-    if (this->attRefInMsg.isLinked()) {
-        if (this->pointMassTranslationalOnly) {
-            bskLogger.bskError(
-                "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
-        }
+    if (this->pointMassTranslationalOnly && this->attRefInMsg.isLinked()) {
+        bskLogger.bskError(
+            "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
+    }
+    if (this->attRefInMsg.isLinked() && this->attRefInMsg.isWritten()) {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
@@ -184,7 +189,7 @@ void Spacecraft::readOptionalRefMsg()
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
 
-    if (this->transRefInMsg.isLinked()) {
+    if (this->transRefInMsg.isLinked() && this->transRefInMsg.isWritten()) {
         Eigen::Vector3d r_RN_N;
         Eigen::Vector3d v_RN_N;
         TransRefMsgPayload transRefMsgBuffer;
@@ -201,11 +206,14 @@ void Spacecraft::readOptionalRefMsg()
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
 void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 {
-    // - Get access to the spice bodies
-    this->gravField.UpdateState(CurrentSimNanos);
-
-    // - Integrate the state forward in time
-    this->integrateState(CurrentSimNanos);
+    if (this->getIntegrationOwner()) {
+        this->gravField.writeOutputMessages(CurrentSimNanos);
+        if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+            return; // A failed trial left the state-engine properties at an intermediate stage.
+        }
+    } else {
+        this->integrateState(CurrentSimNanos);
+    }
 
     // A synchronized secondary can publish between integration steps.
     this->writeOutputStateMessages(this->timeBeforeNanos);
@@ -341,7 +349,7 @@ void Spacecraft::registerDynamics()
     }
 
     // If set, read in and prescribe attitude reference motion as initial states
-    readOptionalRefMsg();
+    this->applyPrescribedMotion();
     this->updateAcceptedInertialState();
 
     // Reset evaluates derivatives before the first synchronized update.
@@ -351,6 +359,11 @@ void Spacecraft::registerDynamics()
         ~ClearInitialEpoch() { epoch.reset(); }
     } clear{ this->dynManager.inertialFrame.exactStageTimeNanos };
     this->dynManager.inertialFrame.exactStageTimeNanos = this->timeBeforeNanos;
+    this->refreshInitialDerivatives();
+}
+
+void Spacecraft::refreshInitialDerivatives()
+{
     this->equationsOfMotion(this->timeBefore, initialDerivativeTimeStep);
 }
 
@@ -424,6 +437,10 @@ bool Spacecraft::useHubOnlyFastPath() const
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     this->updateSystemTime(integTimeSeconds);
+    // A planet publisher may run after the spacecraft at reset or on the zero-duration initial tick.
+    if (!this->gravField.ephemeridesReady()) {
+        return;
+    }
     this->dynManager.inertialFrame.acceptedTimeNanos.reset();
 
     if (this->pointMassTranslationalOnly) {
@@ -604,12 +621,33 @@ void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double time
     this->equationsOfMotion(integTimeSeconds, timeStep);
 }
 
-/*! Prepare for integration process
- @param integrateToThisTimeNanos Time to integrate to
+void Spacecraft::prepareIntegrationInputs(uint64_t integrateToThisTimeNanos)
+{
+    this->gravField.loadEphemerides(false);
+    if (!this->gravField.originReady) {
+        this->dynManager.inertialFrame.originReady = false;
+    }
+    const bool ephemeridesReady = this->gravField.ephemeridesReady();
+    if (!ephemeridesReady && integrateToThisTimeNanos != this->timeBeforeNanos) {
+        this->bskLogger.bskError(
+            "spacecraft: a linked planet ephemeris must be written before advancing the dynamics.");
+    }
+    if (!this->getIntegrationOwner()) {
+        // The primary samples first so that secondaries can read its forwarded ephemeris.
+        this->gravField.writeOutputMessages(integrateToThisTimeNanos);
+    }
+}
+
+/*! @brief Prepare the spacecraft state after the group has sampled its inputs.
+ * @param integrateToThisTimeNanos [ns] Requested end of the step.
  */
 void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
+    if (integrateToThisTimeNanos == this->timeBeforeNanos) {
+        this->applyPrescribedMotion();
+        this->updateAcceptedInertialState();
+    }
     if (this->pointMassTranslationalOnly) {
         return;
     }
@@ -639,7 +677,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
         integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
     this->timeBefore = epochSeconds(integrateToThisTimeNanos);
     if (this->pointMassTranslationalOnly) {
-        this->readOptionalRefMsg();
+        this->applyPrescribedMotion();
         this->updateAcceptedInertialState();
         return;
     }
@@ -689,7 +727,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 
     // - Call hubs modify states to allow for switching of MRPs
     this->hub.modifyStates(integrateToThisTime);
-    this->readOptionalRefMsg();
+    this->applyPrescribedMotion();
     this->updateAcceptedInertialState();
 
     // - Loop over stateEffectors to call modifyStates

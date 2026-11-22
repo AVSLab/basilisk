@@ -112,8 +112,17 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
         ~ZeroDurationEpoch() { set(std::nullopt); }
     } stageEpoch{ this->integrator->dynPtrs, integrateToThisTimeNanos == this->timeBeforeNanos };
     stageEpoch.set(integrateToThisTimeNanos);
+    // A missing ephemeris on one spacecraft must be detected before a peer applies a pending joint lock.
+    for (DynamicObject* object : this->integrator->dynPtrs) {
+        object->prepareIntegrationInputs(integrateToThisTimeNanos);
+    }
     for (DynamicObject* object : this->integrator->dynPtrs) {
         object->preIntegration(integrateToThisTimeNanos);
+    }
+    if (stageEpoch.active) {
+        for (DynamicObject* object : this->integrator->dynPtrs) {
+            object->refreshInitialDerivatives();
+        }
     }
     this->integrator->integrate(this->timeBefore, this->timeStep);
     for (DynamicObject* object : this->integrator->dynPtrs) {

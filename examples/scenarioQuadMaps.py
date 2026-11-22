@@ -155,7 +155,7 @@ def run(show_plots):
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
     spiceObject.zeroBase = 'Earth'
 
-    scSim.AddModelToTask(simTaskName, spiceObject)
+    scSim.AddModelToTask(simTaskName, spiceObject, ModelPriority=2)
 
     #
     #   Set up orbit and simulation time
