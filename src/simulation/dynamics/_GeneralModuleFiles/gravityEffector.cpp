@@ -99,17 +99,19 @@ void GravBodyData::computePlanetOrientation(double dt,
 
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
 {
-    return this->gravityAtOffset(r_I, this->ephemerisOffset(simTimeNanos));
+    return this->gravityAtOffset(r_I, this->ephemerisOffset(simTimeNanos), this->standaloneProperties);
 }
 
-Eigen::Vector3d GravBodyData::gravityAtOffset(const Eigen::Vector3d& r_I, double dt)
+Eigen::Vector3d GravBodyData::gravityAtOffset(const Eigen::Vector3d& r_I, double dt, const PropertyHandles& properties)
 {
     Eigen::Matrix3d dcmAdvanced_NPfix, dcmAdvanced_NPfix_dot;
     this->computePlanetOrientation(dt, dcmAdvanced_NPfix, dcmAdvanced_NPfix_dot);
 
     // store the current planet orientation and rates as [PN] and [PN_dot], as documented for the properties
-    *this->J20002Pfix = dcmAdvanced_NPfix.transpose();
-    *this->J20002Pfix_dot = dcmAdvanced_NPfix_dot.transpose();
+    if (properties.J20002Pfix) {
+        *properties.J20002Pfix = dcmAdvanced_NPfix.transpose();
+        *properties.J20002Pfix_dot = dcmAdvanced_NPfix_dot.transpose();
+    }
 
     // Compute position in the body-fixed reference frame and compute the gravity
     Eigen::Vector3d r_Pfix = dcmAdvanced_NPfix.transpose() * r_I;
@@ -149,23 +151,30 @@ void GravBodyData::loadEphemeris()
 
 void GravBodyData::registerProperties(DynParamManager& statesIn)
 {
+    this->standaloneProperties = this->createProperties(statesIn);
+}
+
+GravBodyData::PropertyHandles GravBodyData::createProperties(DynParamManager& statesIn)
+{
     if (this->planetName == "") {
         auto errorMessage = "You must specify a planetary body name in GravBodyData";
         this->bskLogger.bskError("%s", errorMessage);
         throw std::invalid_argument(errorMessage);
     }
 
+    PropertyHandles properties;
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    this->r_PN_N = statesIn.createProperty(this->planetName + ".r_PN_N", stateInit);
-    this->v_PN_N = statesIn.createProperty(this->planetName + ".v_PN_N", stateInit);
+    properties.r_PN_N = statesIn.createProperty(this->planetName + ".r_PN_N", stateInit);
+    properties.v_PN_N = statesIn.createProperty(this->planetName + ".v_PN_N", stateInit);
 
     Eigen::MatrixXd muInit = Eigen::MatrixXd::Zero(1, 1);
-    this->muPlanet = statesIn.createProperty(this->planetName + ".mu", muInit);
+    properties.muPlanet = statesIn.createProperty(this->planetName + ".mu", muInit);
 
-    this->J20002Pfix =
+    properties.J20002Pfix =
         statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix));
-    this->J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
-                                                   c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
+    properties.J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
+                                                        c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
+    return properties;
 }
 
 void GravityEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
@@ -263,10 +272,10 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, zeroVector3d);
     this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, zeroVector3d);
 
-    // register planet position and velocity state vectors as parameters in the
-    // state engine
-    for (auto&& body : this->gravBodies) {
-        body->registerProperties(statesIn);
+    // Spacecraft can share a body's ephemeris, but each writes planet properties in its own state manager.
+    this->bodyProperties.clear();
+    for (const auto& body : this->gravBodies) {
+        this->bodyProperties.emplace(body, body->createProperties(statesIn));
     }
 }
 
@@ -301,6 +310,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
 
     for (auto&& body : this->gravBodies) {
         // position of Planet being queried wrt N
+        const auto& properties = this->bodyProperties.at(body);
         const double dt = this->currentEphemerisOffset(*body); // [s]
         Eigen::Vector3d r_PN_N = body->positionAtOffset(dt);
         Eigen::Vector3d r_cP_N = r_cN_N - r_PN_N; // position of s/c CoM wrt planet in N
@@ -311,15 +321,15 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
             // Subtract accel of central body due to other bodies to get
             // RELATIVE accel of s/c. See Vallado on "Three-body and n-body
             // Equations"
-            rDotDot_cF_N += body->gravityAtOffset(r_PN_N - r_CN_N, dt);
+            rDotDot_cF_N += body->gravityAtOffset(r_PN_N - r_CN_N, dt, properties);
         }
         // acceleration of c wrt N in N, due to P
-        rDotDot_cF_N += body->gravityAtOffset(r_cP_N, dt);
+        rDotDot_cF_N += body->gravityAtOffset(r_cP_N, dt, properties);
 
         // store planet states in the state engine parameters
-        *(body->r_PN_N) = r_PN_N;
-        *(body->v_PN_N) = cArray2EigenVector3d(body->localPlanet.VelocityVector);
-        (*(body->muPlanet))(0, 0) = body->mu;
+        *properties.r_PN_N = r_PN_N;
+        *properties.v_PN_N = cArray2EigenVector3d(body->localPlanet.VelocityVector);
+        (*properties.muPlanet)(0, 0) = body->mu;
     }
 
     *this->gravProperty = rDotDot_cF_N;

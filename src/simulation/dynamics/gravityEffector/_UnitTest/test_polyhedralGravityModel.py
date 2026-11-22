@@ -388,6 +388,7 @@ def test_inertial_potential_uses_requested_orientation(c_shape, orientation, off
         np.asarray(body.computeGravityInertial(position.tolist(), evaluation_time)).ravel(),
         expected_acceleration, rtol=1e-13, atol=0.0,
     )
+    np.testing.assert_allclose(manager.getPropertyReference("energy_test.J20002Pfix"), dcm_PN, rtol=0, atol=1e-13)
 
 
 def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, moving_body, time_step, initialize=True):

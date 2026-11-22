@@ -93,6 +93,7 @@ void GravityGradientEffector::linkInStates(DynParamManager& states)
 
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->r_BN_N = states.getStateObject(this->stateNameOfPosition);
+    this->inertialHubPosition = states.getPropertyReference(this->propName_inertialPosition);
     this->ISCPntB_B = states.getPropertyReference(this->propName_inertiaSC);
     this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
     this->m_SC = states.getPropertyReference(this->propName_m_SC);
@@ -130,7 +131,7 @@ void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused
         double mu = (*this->muPlanet[c])(0, 0); /* in m^3/s^2 */
 
         /* determine spacecraft CM position relative to planet */
-        Eigen::Vector3d r_CP_N = this->r_BN_N->stateView() + dcm_BN.transpose() * (*this->c_B) - *(this->r_PN_N[c]);
+        Eigen::Vector3d r_CP_N = (*this->inertialHubPosition - *this->r_PN_N[c]) + dcm_BN.transpose() * (*this->c_B);
 
         /* find orbit radius */
         double rMag = r_CP_N.norm();

@@ -443,6 +443,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     }
     this->dynManager.inertialFrame.acceptedTimeNanos.reset();
 
+    const bool hubOnly = this->useHubOnlyFastPath();
+    if (!hubOnly || !this->dynEffectors.empty()) {
+        this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
+    }
+
     if (this->pointMassTranslationalOnly) {
         Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
         Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
@@ -476,7 +481,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         return;
     }
 
-    if (this->useHubOnlyFastPath()) {
+    if (hubOnly) {
         Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
         Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
 
@@ -524,9 +529,6 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     Eigen::Vector3d vLocal_CN_N = this->hubV_N->stateView() + dcm_NB * (*this->cDot_B);
 
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
-
-    // - refresh so effectors publish inertial properties at the current substep
-    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;

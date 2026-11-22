@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 /** Container for gravitational body data
@@ -80,17 +81,10 @@ class GravBodyData
      */
     void loadEphemeris();
 
-    /** Creates the following properies in the given statesIn object.
-     *
-     *      - [planetName].r_PN_N
-     *      - [planetName].v_PN_N
-     *      - [planetName].mu
-     *      - [planetName].J20002Pfix
-     *      - [planetName].J20002Pfix_dot
-     *
-     * `vr_PN_N`, `v_PN_N`, and `mu` are initialized to zero, while `J20002Pfix` and `J20002Pfix_dot`
-     * are initialized to the values stored in `this->localPlanet`. This usually means that
-     * `J20002Pfix` is initialized to the identity matrix and `J20002Pfix_dot` to zero.
+    /** @brief Register planet properties for standalone calls to computeGravityInertial().
+     * @param statesIn State manager that will receive orientation updates and must outlive those calls.
+     * @note Position, velocity, and gravitational parameter start at zero. Orientation and its
+     * derivative start at the values in localPlanet. Each spacecraft registers its own properties separately.
      */
     void registerProperties(DynParamManager& statesIn);
 
@@ -118,11 +112,21 @@ class GravBodyData
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
+    struct PropertyHandles
+    {
+        Eigen::MatrixXd* r_PN_N = nullptr;         //!< [m] Planet inertial position.
+        Eigen::MatrixXd* v_PN_N = nullptr;         //!< [m/s] Planet inertial velocity.
+        Eigen::MatrixXd* muPlanet = nullptr;       //!< [m^3/s^2] Gravitational parameter.
+        Eigen::MatrixXd* J20002Pfix = nullptr;     //!< [-] Planet orientation [PN].
+        Eigen::MatrixXd* J20002Pfix_dot = nullptr; //!< [1/s] Planet orientation derivative.
+    };
+    PropertyHandles createProperties(DynParamManager& statesIn);
+    PropertyHandles standaloneProperties; //!< Used only by explicitly registered, standalone body queries.
     double ephemerisOffset(double stageTimeSeconds) const; //!< [s] Stage time relative to the ephemeris message.
     double ephemerisOffset(uint64_t timeNanos) const;      //!< [s] Integer epoch relative to the ephemeris message.
     Eigen::Vector3d positionAtOffset(double dt) const;     //!< [m] Inertial position at offset dt [s] from the message.
     double potentialAtOffset(const Eigen::Vector3d& r_I, double dt) const;
-    Eigen::Vector3d gravityAtOffset(const Eigen::Vector3d& r_I, double dt);
+    Eigen::Vector3d gravityAtOffset(const Eigen::Vector3d& r_I, double dt, const PropertyHandles& properties);
 
     /** @brief Extrapolate the planet orientation and its derivative from the ephemeris message.
      * @param dt Signed time since the ephemeris message [s].
@@ -132,12 +136,6 @@ class GravBodyData
     void computePlanetOrientation(double dt,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix_dot) const;
-
-    Eigen::MatrixXd* r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
-    Eigen::MatrixXd* v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd* muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd* J20002Pfix;     /**< [-]      (state engine property) planet attitude [PN] */
-    Eigen::MatrixXd* J20002Pfix_dot; /**< [1/s]    (state engine property) planet attitude rate [PN_dot] */
 
     uint64_t timeWritten = 0;    /**< [ns]     time the input planet state message was written */
     bool ephemerisReady = false; //!< The cached planet state is available to all spacecraft sharing this body.
@@ -157,8 +155,8 @@ class GravityEffector : public SysModel
     /** Links the correlation between times property */
     void linkInStates(DynParamManager& statesIn);
 
-    /** Registers the gravity, inertial position, and inertial velocity properties.
-     * It also calls `registerProperties` for every associated `GravBodyData`.
+    /** @brief Register spacecraft gravity properties and the properties of each associated body.
+     * @param statesIn This spacecraft's state manager.
      */
     void registerProperties(DynParamManager& statesIn);
 
@@ -222,6 +220,7 @@ class GravityEffector : public SysModel
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
+    std::unordered_map<std::shared_ptr<GravBodyData>, GravBodyData::PropertyHandles> bodyProperties;
     DynParamManager::InertialFrame* inertialFrame = nullptr; //!< Frame of the registered spacecraft.
     Eigen::MatrixXd* gravProperty;                           /**< [-] g_N property for output */
     Eigen::MatrixXd* timeCorr;                               /**< [-] Time correlation property */
