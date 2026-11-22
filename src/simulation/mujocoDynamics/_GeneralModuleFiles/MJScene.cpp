@@ -24,6 +24,7 @@
 #include "StatefulSysModel.h"
 
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 
@@ -33,6 +34,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <unordered_set>
 #include <vector>
@@ -163,8 +165,9 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     }
     this->prepareOutputStateMessageStorage(model->nq, model->nv, model->na);
 
-    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(CurrentSimNanos);
     this->timeBeforeNanos = CurrentSimNanos;
+    data->time = this->timeBefore;
     this->firstDynamicsCall = true;
     this->registerAndBindDynamicsState(model, data, topologyAlreadyFinalized);
     if (topologyAlreadyFinalized) {
@@ -178,7 +181,6 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     }
     this->populateOutputStateMessagePayload(model->nq, model->nv, model->na);
     this->synchronizeMujocoFromStates(model, data);
-    data->time = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->publishOutputStateMessage(CurrentSimNanos);
 }
 
@@ -328,15 +330,32 @@ void MJScene::configureAdaptiveStateTolerances()
 void MJScene::UpdateState(uint64_t CurrentSimNanos)
 {
     this->integrateState(CurrentSimNanos);
-    this->writeOutputStateMessages(CurrentSimNanos);
-    for (auto&& body : this->spec.getBodies()) {
-        body.writeStateDependentOutputMessages(CurrentSimNanos);
+}
+
+uint64_t MJScene::stageTimestamp(double time) const
+{
+    if (time == this->timeBefore) {
+        return this->timeBeforeNanos;
     }
+    // Task and message timestamps are unsigned. Keep the signed evaluation time in mjData.
+    constexpr uint64_t nanosPerSecond = 1'000'000'000;         // [ns/s]
+    const double nanos = std::max(0.0, time) * nanosPerSecond; // [ns]
+    if (nanos < 0x1p53) { // [ns] doubles represent consecutive integer ticks below this limit
+        return static_cast<uint64_t>(nanos);
+    }
+    constexpr auto maxTick = std::numeric_limits<uint64_t>::max(); // [ns]
+    double wholeSeconds;
+    const double fraction = std::modf(time, &wholeSeconds);
+    if (wholeSeconds > static_cast<double>(maxTick / nanosPerSecond)) {
+        return maxTick;
+    }
+    const auto wholeTicks = static_cast<uint64_t>(wholeSeconds) * nanosPerSecond;
+    return wholeTicks + std::min(maxTick - wholeTicks, static_cast<uint64_t>(fraction * nanosPerSecond));
 }
 
 void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
-    auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    const uint64_t nanos = this->stageTimestamp(t);
 
     // Make sure the model is compiled
     this->spec.recompileUntilStable();
@@ -432,7 +451,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 
 void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unused]])
 {
-    auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    const uint64_t nanos = this->stageTimestamp(t);
     this->spec.recompileUntilStable();
     ScopedFlag mutationGuard(this->sceneMutationBlocked);
     MJSpec::NoRecompileGuard recompileGuard(this->spec);
@@ -452,23 +471,25 @@ void MJScene::preIntegration(uint64_t callTime)
 
 void MJScene::postIntegration(uint64_t callTimeNanos)
 {
-    this->timeBefore = static_cast<double>(callTimeNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(callTimeNanos);
     this->timeBeforeNanos = callTimeNanos;
-    double callTime = static_cast<double>(callTimeNanos) * NANO2SEC;
-
-    // Copy data from Basilisk state objects to MuJoCo structs
-    updateMujocoArraysFromStates();
-
-    if (extraEoMCall) {
-        // If asked, this will call the equations of motion one last
-        // time with the final/integrated state. This also calls
-        // MJFwdKinematics::fwdKinematics
-        equationsOfMotion(callTime, 0);
-        equationsOfMotionDiffusion(callTime, 0);
-    } else {
-        // Always forward the kinematics with the final state
-        MJFwdKinematics::fwdKinematics(*this, static_cast<uint64_t>(callTime * SEC2NANO));
+    if (this->extraEoMCall) {
+        this->equationsOfMotion(this->timeBefore, 0);
+        this->equationsOfMotionDiffusion(this->timeBefore, 0);
     }
+    this->publishAcceptedState();
+}
+
+void MJScene::publishAcceptedState()
+{
+    auto* data = this->getMujocoData();
+    this->synchronizeMujocoFromStates(this->getMujocoModel(), data);
+    data->time = this->timeBefore;
+    MJFwdKinematics::fwdKinematics(*this, this->timeBeforeNanos);
+    for (auto&& body : this->spec.getBodies()) {
+        body.writeStateDependentOutputMessages(this->timeBeforeNanos);
+    }
+    this->writeOutputStateMessages(this->timeBeforeNanos);
 }
 
 void MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)

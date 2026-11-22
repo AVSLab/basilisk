@@ -19,6 +19,18 @@ exposed through :ref:`MJScene<MJScene>` are heavily based on the mathematical an
 For the implementation contract between MuJoCo joint states, quaternion policies,
 Basilisk integrators, and Reset/recompilation rollback, see :ref:`integratorArchitecture`.
 
+Dynamics task time and output
+-----------------------------
+
+In a model attached to a scene's drift or diffusion task, use ``scene.getEvaluationTime()``
+for time-dependent calculations. It returns the integrator stage time in seconds. Stages can
+run out of order, and SOSRI can evaluate before simulation time zero. The ``UpdateState``
+argument and message timestamps are unsigned nanoseconds, so a pre-zero stage carries timestamp zero.
+
+After a step, the scene clock and its scene, site, mass, and scalar-joint messages describe the
+accepted state. The message timestamps retain the exact integer tick even at multi-year epochs.
+A synchronized scene publishes when its primary advances it.
+
 Installation
 ------------
 By default, Basilisk will not build MuJoCo-related capabilities. To enable these, modify the call to

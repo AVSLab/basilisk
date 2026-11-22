@@ -373,16 +373,18 @@ class MJScene : public DynamicObject
      *
      * @warning `SysModel` added to the dynamics task should be memoryless.
      * That is, any output message computed should depend strictly on
-     * input messages and the current time/states. It should save values
-     * internally with the expectation of using them in further calls
-     * to `UpdateState`. The reason for this is that `UpdateState` may
-     * be called at arbitrary simulation times, and not necessarily in
-     * order or with consistent time steps.
+     * input messages and the current time/states. Use getEvaluationTime() for
+     * time-dependent dynamics. Integrator stages can run before zero or out of order.
      *
      * @param model The system model to add.
      * @param priority The priority of the model in the task list.
      */
     void AddModelToDynamicsTask(SysModel* model, int32_t priority = -1);
+
+    /** @brief Read the MuJoCo clock used to evaluate dynamics.
+     * @return Signed stage time during a drift or diffusion callback, or the accepted time after a step [s].
+     */
+    double getEvaluationTime() { return this->getMujocoData()->time; }
 
     /** @brief Adds a model to the diffusion dynamics task.
      *
@@ -738,6 +740,9 @@ class MJScene : public DynamicObject
   private:
     friend class MJSpec;
     friend class MJFwdKinematics;
+
+    uint64_t stageTimestamp(double time) const;
+    void publishAcceptedState();
 
     /** @brief Committed dimensions and joint kinds that a recompiled model must preserve.
      * These dimensions and addresses must match the fixed state layout.

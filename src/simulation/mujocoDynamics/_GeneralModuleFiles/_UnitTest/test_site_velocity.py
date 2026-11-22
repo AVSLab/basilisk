@@ -26,9 +26,9 @@ pytestmark = pytest.mark.skipif(
     reason="Requires Basilisk built with --mujoco True",
 )
 if mujocoEnabled:
-    from Basilisk.simulation import mujoco
+    from Basilisk.simulation import mujoco, svIntegrators
 
-from Basilisk.architecture import sysModel
+from Basilisk.architecture import messaging, sysModel
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
@@ -232,6 +232,52 @@ def test_site_messages_publish_stage_and_final_states(extra_eom_call):
     final_state = site.stateOutMsg.read()
     assert reader.timeWritten() == macros.sec2nano(dt)
     assert final_state.r_BN_N[0] == pytest.approx(2.0 + dt)
+
+
+@pytest.mark.parametrize("extra_eom_call", [False, True])
+def test_accepted_clocks_at_multi_year_epoch(extra_eom_call):
+    """Check the integer publications and the native clock through a reset and an Euler step."""
+    scene = mujoco.MJScene(SLIDER_SITE_XML)
+    scene.extraEoMCall = extra_eom_call
+    scene.setIntegrator(svIntegrators.svIntegratorEuler(scene))
+    body = scene.getBody("slider")
+    joint = body.getScalarJoint("slide")
+    site = body.getOrigin().stateOutMsg.addSubscriber()
+    mass = body.massPropertiesOutMsg.addSubscriber()
+    mass_rate = messaging.SCMassPropsMsgPayload()
+    mass_rate.massSC = 0.25  # [kg/s]
+    mass_rate_msg = messaging.SCMassPropsMsg().write(mass_rate)
+    body.derivativeMassPropertiesInMsg.subscribeTo(mass_rate_msg)
+    readers = [site, scene.stateOutMsg.addSubscriber(), mass,
+               joint.stateOutMsg.addSubscriber(), joint.stateDotOutMsg.addSubscriber()]
+    samples = []
+
+    class ClockProbe(sysModel.SysModel):
+        def Reset(self, tick):
+            samples.append((scene.getEvaluationTime(), tick))
+
+        def UpdateState(self, tick):
+            samples.append((scene.getEvaluationTime(), tick))
+
+    probe = ClockProbe()
+    scene.AddModelToDynamicsTask(probe)
+    scene.AddModelToDiffusionDynamicsTask(probe)
+    start = 126_230_400_000_000_003  # [ns] four Julian years plus three nanoseconds
+    step = 1_000_000_001  # [ns]
+    scene.Reset(start)
+    assert samples == [(start / 10**9, start)]
+    samples.clear()
+    joint.setVelocity(1.0)  # [m/s]
+    scene.UpdateState(start)
+    assert samples == [(start / 10**9, start)] * (3 if extra_eom_call else 1)
+    samples.clear()
+    end = start + step
+    scene.UpdateState(end)
+    assert samples == [(start / 10**9, start)] + ([(end / 10**9, end)] * 2 if extra_eom_call else [])
+    assert scene.getEvaluationTime() == end / 10**9
+    assert all(reader.timeWritten() == end for reader in readers)
+    assert site().r_BN_N[0] == pytest.approx(step * macros.NANO2SEC, rel=0, abs=1e-14)
+    assert mass().massSC == pytest.approx(1.0 + mass_rate.massSC * step * macros.NANO2SEC)  # [kg]
 
 
 if __name__ == "__main__":
