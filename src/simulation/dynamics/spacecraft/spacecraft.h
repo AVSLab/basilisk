@@ -27,7 +27,9 @@
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
+#include <Eigen/Core>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
@@ -139,7 +141,7 @@ class Spacecraft : public DynamicObject
     Eigen::MatrixXd* cDot_B;         //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd* ISCPntBPrime_B; //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd* g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::MatrixXd* sysTime;        //!< [s] System time
+    Eigen::MatrixXd* sysTime;        //!< Integration stage time in rounded nanoseconds and seconds, both signed
     double mDotDynamics = 0.0;       //!< [kg/s] Aggregate mass rate substituted into generic rate-dependent terms
     Eigen::Vector3d cPrimeEffectorDynamics_B = Eigen::Vector3d::Zero(); //!< [m/s] Dynamics effector CoM rate
     Eigen::Matrix3d ISCPntBPrimeDynamics_B = Eigen::Matrix3d::Zero();   //!< [kg m^2/s] Dynamics inertia rate
@@ -155,7 +157,10 @@ class Spacecraft : public DynamicObject
     std::string propName_centerOfMassDotSC;   //!< property name of centerOfMassDotSC
 
   private:
-    void registerDynamics();   //!< Register and link dynamics during Reset
+    void registerDynamics(); //!< Register and link dynamics during Reset
+    /** @brief Refresh the hub and articulated poses at the accepted epoch. */
+    void updateAcceptedInertialState();
+    void updateSystemTime(double stageTime);
     void readOptionalRefMsg(); //!< Read the optional attitude or translational reference input message and set the
                                //!< reference states
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used

@@ -34,6 +34,16 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/macroDefinitions.h"
 
+/** @brief Convert an absolute simulation clock tick to integrator time.
+ * @param nanos [ns] Simulation epoch.
+ * @return Epoch in seconds, with the fractional second converted separately for long simulations.
+ */
+static inline double epochSeconds(uint64_t nanos)
+{
+    constexpr uint64_t nanosPerSecond = 1'000'000'000; // [ns/s]
+    return static_cast<double>(nanos / nanosPerSecond) + static_cast<double>(nanos % nanosPerSecond) / nanosPerSecond;
+}
+
 /*! @brief Angular velocity of a planet-fixed frame, derived once from an orientation and its derivative.
  *
  * The planet angular velocity is constant while an orientation is extrapolated, so a caller that advances the same

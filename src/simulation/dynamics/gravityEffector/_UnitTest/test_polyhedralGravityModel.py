@@ -26,6 +26,7 @@ cover the sign and reference-frame corrections in issue 1689.
 """
 
 from collections import Counter
+from fractions import Fraction
 from types import SimpleNamespace
 
 import numpy as np
@@ -33,7 +34,8 @@ import pytest
 
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.architecture import messaging
-from Basilisk.simulation import gravityEffector, spacecraft, stateArchitecture, svIntegrators
+from Basilisk.simulation import gravityEffector, meanRevertingNoiseStateEffector
+from Basilisk.simulation import spacecraft, stateArchitecture, svIntegrators
 from Basilisk.simulation.gravityModel import GravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
@@ -45,6 +47,8 @@ from Basilisk.utilities.supportDataTools.dataFetcher import DataFile, get_path
 
 SIDE_LENGTH = 1000.0  # [m]
 MU = 4.46e5  # [m^3/s^2]
+# Five Julian years plus a few nanoseconds that a double absolute epoch cannot retain.
+MISSION_EPOCH_NS = 5 * 31_557_600 * 1_000_000_000 + 3  # [ns]
 
 
 def _make_mesh(cells):
@@ -386,7 +390,7 @@ def test_inertial_potential_uses_requested_orientation(c_shape, orientation, off
     )
 
 
-def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, moving_body, time_step):
+def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, moving_body, time_step, initialize=True):
     """Configure a spacecraft and an analytic, once-written planet ephemeris.
 
     :param model_kind: Polyhedral, point-mass, or degree-zero spherical-harmonic model.
@@ -395,6 +399,7 @@ def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, movin
     :param spin_rate: Constant planet spin about the inertial z axis [rad/s].
     :param moving_body: Whether to translate the planet with a constant velocity.
     :param time_step: Simulation task period [s].
+    :param initialize: Whether to initialize at the default simulation epoch.
     :return: Simulation, model, ephemeris, and logger handles.
     """
     if model_kind == "polyhedral":
@@ -458,7 +463,8 @@ def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, movin
         "energy": lambda _: sc.totOrbEnergy,
     })
     sim.AddModelToTask("task", log)
-    sim.InitializeSimulation()
+    if initialize:
+        sim.InitializeSimulation()
     return SimpleNamespace(
         sim=sim, sc=sc, body=body, model=model, bodies=bodies, log=log,
         message=message, payload=payload, angle=angle, spin_rate=spin_rate, integrator=integrator,
@@ -499,6 +505,112 @@ def test_reported_energy_uses_body_frame_and_output_epoch(model_kind, frame, int
         expected_energy = result.sc.hub.mHub * (0.5 * velocity.dot(velocity) + potential)
         absolute_tolerance = 1e-8  # [J]
         assert energy == pytest.approx(expected_energy, rel=1e-12, abs=absolute_tolerance)
+
+
+@pytest.mark.parametrize("epoch_ns", [0, MISSION_EPOCH_NS])
+def test_gravity_at_negative_sosri_stage(epoch_ns):
+    """Evaluate a moving, rotating body at SOSRI's second drift stage at launch and five years later."""
+    spin_rate = 0.2  # [rad/s]
+    step = 1.0  # [s]
+    stage_time = epoch_ns / 1_000_000_000 - 0.04199224421316468 * step  # [s] second SOSRI drift stage
+    result = _make_energy_simulation("polyhedral", "inertial", "svStochasticIntegratorSOSRI", spin_rate, True, step)
+    result.message.write(result.payload, epoch_ns)
+    result.sc.gravField.UpdateState(epoch_ns)
+    result.sc.equationsOfMotion(stage_time, step)
+
+    # Subtract the exact values of the integrator's double and the message's integer timestamp.
+    dt = float(Fraction(stage_time) - Fraction(epoch_ns, 1_000_000_000))  # [s]
+    position = np.asarray(result.payload.PositionVector) + dt * np.asarray(result.payload.VelocityVector)
+    dcm = _body_rotation(result.angle + spin_rate * dt)
+    relative = np.asarray(result.sc.hub.r_CN_NInit).ravel() - position
+    acceleration = dcm.T @ np.asarray(result.model.computeField((dcm @ relative).tolist())).ravel()
+    manager = result.sc.dynManager
+    body_position = np.ravel(manager.getPropertyReference("energy_body.r_PN_N"))
+    np.testing.assert_allclose(body_position, position, rtol=0, atol=1e-12)
+    np.testing.assert_allclose(manager.getPropertyReference("energy_body.J20002Pfix"), dcm, rtol=0, atol=1e-13)
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), acceleration, rtol=1e-11, atol=1e-14)
+    clock = np.ravel(manager.getPropertyReference("systemTime"))
+    np.testing.assert_array_equal(clock, [round(stage_time * 1e9), stage_time])
+
+
+@pytest.mark.parametrize("epoch_ns", [0, MISSION_EPOCH_NS])
+def test_sosri_spacecraft_output_epoch(epoch_ns, capfd):
+    """Check the published state and orbital potential at exact clock ticks during a noisy SOSRI step."""
+    step_ns = 1_000_000_001  # [ns]
+    result = _make_energy_simulation(
+        "point_mass", "central", "svStochasticIntegratorSOSRI", 0.0, True, 1.0, initialize=False
+    )
+    sc = result.sc
+    noise = meanRevertingNoiseStateEffector.MeanRevertingNoiseStateEffector()
+    noise.setTimeConstant(100.0)  # [s]
+    noise.setStationaryStd(1.0)  # [-]
+    sc.addStateEffector(noise)
+    result.integrator.setRNGSeed(1)
+
+    # The fixed secondary also exercises a five-year offset from its default ephemeris at zero.
+    secondary = gravityEffector.GravBodyData()
+    secondary.planetName = "secondary"
+    secondary.mu = 1.0e6  # [m^3/s^2]
+    sc.gravField.addGravBody(secondary)
+    result.payload.VelocityVector = [1500.0, -500.0, 200.0]  # [m/s]
+    message_ns = epoch_ns + 7  # [ns]
+    result.message.write(result.payload, message_ns)
+    sc.Reset(epoch_ns)
+    velocity = np.array(result.payload.VelocityVector)
+    for output_ns in (epoch_ns, epoch_ns + step_ns):
+        if output_ns != epoch_ns:
+            sc.UpdateState(output_ns)
+        dt = (output_ns - message_ns) * macros.NANO2SEC  # [s]
+        central = np.array(result.payload.PositionVector) + dt * velocity
+        relative = np.ravel(sc.dynManager.getStateObject(sc.hub.nameOfHubPosition).getState())
+        relative_velocity = np.ravel(sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity).getState())
+        output = sc.scStateOutMsg.read()
+        np.testing.assert_allclose(output.r_BN_N, relative + central, rtol=0, atol=1e-10)
+        np.testing.assert_allclose(output.v_BN_N, relative_velocity + velocity, rtol=0, atol=1e-12)
+
+    assert "Negative time value" not in capfd.readouterr().err
+
+
+def test_multi_year_stage_origin():
+    """Reset and subsequent Euler steps start at the nearest representable time in seconds."""
+    whole = 4 * 31_557_600  # [s] exactly representable four-year epoch
+    step_ns = 125_000_000  # [ns]
+    epoch_ns = whole * 1_000_000_000  # [ns]
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorEuler", 0.0, True, 0.125, initialize=False)
+    result.payload.VelocityVector = [30_000.0, 0.0, 0.0]  # [m/s]
+    result.message.write(result.payload, epoch_ns)
+    result.sc.Reset(epoch_ns)
+
+    def check_stage(offset):
+        clock = np.ravel(result.sc.dynManager.getPropertyReference("systemTime"))
+        assert clock[1] == whole + offset
+        position = np.ravel(result.sc.dynManager.getPropertyReference("energy_body.r_PN_N"))
+        expected = result.payload.PositionVector + offset * np.array(result.payload.VelocityVector)
+        np.testing.assert_array_equal(position, expected)
+
+    check_stage(0.0)
+    result.sc.UpdateState(epoch_ns)
+    result.sc.UpdateState(epoch_ns + step_ns)
+    result.sc.UpdateState(epoch_ns + 2 * step_ns)
+    check_stage(0.125)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRK4", "svIntegratorEuler"])
+def test_zero_duration_system_clock(integrator_name):
+    """The nanosecond clock can represent this exact tick even though a round-trip through seconds loses 16 ns."""
+    tick = 140_000_000_123_456_016  # [ns]
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    sc.setIntegrator(getattr(svIntegrators, integrator_name)(sc))
+    for update in (sc.Reset, sc.UpdateState):
+        update(tick)
+        nanos, seconds = np.ravel(sc.dynManager.getPropertyReference("systemTime"))
+        assert int(nanos) == tick
+        assert seconds == tick / 1_000_000_000
+    sc.UpdateState(tick + 1_000_000_000)  # [ns]
+    nanos, seconds = np.ravel(sc.dynManager.getPropertyReference("systemTime"))
+    assert int(nanos) == round(seconds * 1_000_000_000)
 
 
 @pytest.mark.parametrize("spin_rate", [0.0, 0.0004])  # [rad/s]

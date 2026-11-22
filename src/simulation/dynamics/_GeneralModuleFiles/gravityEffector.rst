@@ -159,3 +159,11 @@ evaluated field by a relative error of order :math:`(\omega\,\Delta t)^2`.
 The advanced orientation and its time derivative at the same epoch are stored as the state-engine properties
 ``[planetName].J20002Pfix`` and ``[planetName].J20002Pfix_dot``, both in the :math:`[PN]` convention of the
 planet state message.
+For spacecraft dynamics, gravity extrapolates planet position and orientation to the signed stage
+time supplied by the integrator in double-precision seconds. SOSRI can evaluate a stage before time
+zero. When the spacecraft accepts a state, the central body is extrapolated to the
+accepted clock tick. Subtracting the integer output and message timestamps before conversion to
+seconds preserves small offsets even years into a mission.
+
+At reset and during zero-duration updates, the spacecraft stores that tick directly in the double-precision
+nanosecond component of ``systemTime``. Other stages report their signed stage time.

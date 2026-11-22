@@ -19,6 +19,7 @@
 
 #include "dynamicObject.h"
 #include <algorithm>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -95,6 +96,22 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
     if (this->integrationOwner != nullptr) {
         return;
     }
+    // Fixed-step integrators can evaluate additional stages even when no time elapses.
+    struct ZeroDurationEpoch
+    {
+        const std::vector<DynamicObject*>& objects;
+        bool active;
+        void set(std::optional<uint64_t> epoch) const
+        {
+            if (active) {
+                for (auto* object : objects) {
+                    object->dynManager.inertialFrame.exactStageTimeNanos = epoch;
+                }
+            }
+        }
+        ~ZeroDurationEpoch() { set(std::nullopt); }
+    } stageEpoch{ this->integrator->dynPtrs, integrateToThisTimeNanos == this->timeBeforeNanos };
+    stageEpoch.set(integrateToThisTimeNanos);
     for (DynamicObject* object : this->integrator->dynPtrs) {
         object->preIntegration(integrateToThisTimeNanos);
     }

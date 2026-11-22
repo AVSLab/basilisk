@@ -118,12 +118,18 @@ class GravBodyData
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
-    /** @brief Extrapolate the planet orientation and its derivative to an evaluation time.
-     * @param simTimeNanos Evaluation time [ns].
+    double ephemerisOffset(double stageTimeSeconds) const; //!< [s] Stage time relative to the ephemeris message.
+    double ephemerisOffset(uint64_t timeNanos) const;      //!< [s] Integer epoch relative to the ephemeris message.
+    Eigen::Vector3d positionAtOffset(double dt) const;     //!< [m] Inertial position at offset dt [s] from the message.
+    double potentialAtOffset(const Eigen::Vector3d& r_I, double dt) const;
+    Eigen::Vector3d gravityAtOffset(const Eigen::Vector3d& r_I, double dt);
+
+    /** @brief Extrapolate the planet orientation and its derivative from the ephemeris message.
+     * @param dt Signed time since the ephemeris message [s].
      * @param dcmAdvanced_NPfix Output rotation from body-fixed to inertial coordinates [-].
      * @param dcmAdvanced_NPfix_dot Output time derivative of dcmAdvanced_NPfix [1/s].
      */
-    void computePlanetOrientation(uint64_t simTimeNanos,
+    void computePlanetOrientation(double dt,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix_dot) const;
 
@@ -162,8 +168,15 @@ class GravityEffector : public SysModel
      */
     void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
 
-    /** Updates the inertial position and velocity properties */
+    /** @brief Update inertial position and velocity at the current integration stage. */
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
+
+    /** @brief Update inertial position and velocity at the spacecraft output epoch.
+     * @param r_BF_N Spacecraft position relative to the integration origin, in inertial components [m].
+     * @param rDot_BF_N Spacecraft velocity relative to the integration origin, in inertial components [m/s].
+     * @param outputTimeNanos Accepted spacecraft epoch [ns].
+     */
+    void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N, uint64_t outputTimeNanos);
 
     /** @brief Accumulate specific potential energy from the associated gravity bodies.
      * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin, in inertial coordinates [m].
@@ -179,12 +192,13 @@ class GravityEffector : public SysModel
     void addGravBody(std::shared_ptr<GravBodyData> gravBody);
 
   private:
-    /** @brief Extrapolate a planet position with constant velocity.
-     * @param bodyData Planet data supplying the position and velocity.
-     * @param simTimeNanos Evaluation time [ns].
-     * @return Planet position in inertial coordinates [m].
+    friend class Spacecraft;
+
+    double currentEphemerisOffset(const GravBodyData& body) const;
+
+    /** @brief Update the inertial state using a signed ephemeris offset.
      */
-    Eigen::Vector3d getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData, uint64_t simTimeNanos);
+    void updateInertialPosAndVelAtOffset(const Eigen::Vector3d& r_BF_N, const Eigen::Vector3d& rDot_BF_N, double dt);
 
     /** Writes to centralBodyOutMsg if it is linked and there is a central body */
     void writeOutputMessages(uint64_t currentSimNanos);
@@ -203,8 +217,9 @@ class GravityEffector : public SysModel
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
-    Eigen::MatrixXd* gravProperty;             /**< [-] g_N property for output */
-    Eigen::MatrixXd* timeCorr;                 /**< [-] Time correlation property */
+    DynParamManager::InertialFrame* inertialFrame = nullptr; //!< Frame of the registered spacecraft.
+    Eigen::MatrixXd* gravProperty;                           /**< [-] g_N property for output */
+    Eigen::MatrixXd* timeCorr;                               /**< [-] Time correlation property */
     Eigen::MatrixXd* inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
                                                   coordinate frame, property for output. */
     Eigen::MatrixXd* inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice

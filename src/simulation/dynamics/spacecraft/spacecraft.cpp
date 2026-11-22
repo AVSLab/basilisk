@@ -22,6 +22,13 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
+#include <cmath>
+#include <optional>
+
+namespace {
+constexpr double initialDerivativeTimeStep = 1.0; // [s] Nominal step supplied to effectors during initialization.
+} // namespace
 
 /*! This is the constructor, setting variables to default values */
 Spacecraft::Spacecraft()
@@ -61,13 +68,13 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskError("spacecraft: pointMassTranslationalOnly does not support attached state effectors.");
     }
 
+    this->timeBefore = epochSeconds(CurrentSimNanos);
+    this->timeBeforeNanos = CurrentSimNanos;
     this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
     this->registerDynamics();
 
-    // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be
-    // defined relative to a planet
-    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
+    this->updateAcceptedInertialState();
     this->writeOutputStateMessages(CurrentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
     std::vector<StateEffector*>::iterator it;
@@ -76,8 +83,6 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
 
-    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
-    this->timeBeforeNanos = CurrentSimNanos;
     for (StateEffector* stateEffector : this->states) {
         stateEffector->freezeTopology();
     }
@@ -98,6 +103,21 @@ void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
     this->dynEffectors.push_back(newDynamicEffector);
+}
+
+void Spacecraft::updateAcceptedInertialState()
+{
+    auto& frame = this->dynManager.inertialFrame;
+    frame.acceptedTimeNanos = this->timeBeforeNanos;
+    this->gravField.updateInertialPosAndVel(
+        this->hubR_N->stateView(), this->hubV_N->stateView(), this->timeBeforeNanos);
+}
+
+void Spacecraft::updateSystemTime(double stageTime)
+{
+    const auto& tick = this->dynManager.inertialFrame.exactStageTimeNanos;
+    const double nanos = tick ? static_cast<double>(*tick) : std::round(stageTime * SEC2NANO); // [ns]
+    *this->sysTime << nanos, stageTime;
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
@@ -187,20 +207,13 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
     // - Integrate the state forward in time
     this->integrateState(CurrentSimNanos);
 
-    // If set, read in and prescribe attitude reference motion
-    readOptionalRefMsg();
-
-    Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
-    Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
-    this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
-
-    // - Write the state of the vehicle into messages
-    this->writeOutputStateMessages(CurrentSimNanos);
+    // A synchronized secondary can publish between integration steps.
+    this->writeOutputStateMessages(this->timeBeforeNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages
     std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
+        (*it)->writeOutputStateMessages(this->timeBeforeNanos);
     }
 }
 
@@ -297,7 +310,7 @@ void Spacecraft::registerDynamics()
         (*this->m_SC)(0, 0) = this->hub.mHub;
         (*this->ISCPntB_B) = this->hub.IHubPntBc_B;
     } else {
-        this->updateSCMassProps(0.0);
+        this->updateSCMassProps(this->timeBefore);
     }
 
     if (!this->pointMassTranslationalOnly) {
@@ -329,9 +342,16 @@ void Spacecraft::registerDynamics()
 
     // If set, read in and prescribe attitude reference motion as initial states
     readOptionalRefMsg();
+    this->updateAcceptedInertialState();
 
-    // - Call equations of motion at time zero
-    this->equationsOfMotion(0.0, 1.0);
+    // Reset evaluates derivatives before the first synchronized update.
+    struct ClearInitialEpoch
+    {
+        std::optional<uint64_t>& epoch;
+        ~ClearInitialEpoch() { epoch.reset(); }
+    } clear{ this->dynManager.inertialFrame.exactStageTimeNanos };
+    this->dynManager.inertialFrame.exactStageTimeNanos = this->timeBeforeNanos;
+    this->equationsOfMotion(this->timeBefore, initialDerivativeTimeStep);
 }
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors
@@ -403,10 +423,8 @@ bool Spacecraft::useHubOnlyFastPath() const
  dynParam Manager thus solving for Xdot*/
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
-    // - Update time to the current time
-    uint64_t integTimeNanos = secToNano(integTimeSeconds);
-
-    (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
+    this->updateSystemTime(integTimeSeconds);
+    this->dynManager.inertialFrame.acceptedTimeNanos.reset();
 
     if (this->pointMassTranslationalOnly) {
         Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
@@ -619,12 +637,14 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeBeforeNanos =
         integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
-    this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(integrateToThisTimeNanos);
     if (this->pointMassTranslationalOnly) {
+        this->readOptionalRefMsg();
+        this->updateAcceptedInertialState();
         return;
     }
 
-    double integrateToThisTime = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC; // - convert to seconds
+    const double integrateToThisTime = this->timeBefore; // [s]
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);
@@ -669,6 +689,8 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 
     // - Call hubs modify states to allow for switching of MRPs
     this->hub.modifyStates(integrateToThisTime);
+    this->readOptionalRefMsg();
+    this->updateAcceptedInertialState();
 
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
