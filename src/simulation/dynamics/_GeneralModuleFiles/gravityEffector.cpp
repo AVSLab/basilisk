@@ -368,12 +368,27 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N,
                                                 double& orbPotEnergyContr,
                                                 uint64_t simTimeNanos)
 {
+    if (!this->ephemeridesReady()) {
+        this->bskLogger.bskError(
+            "GravityEffector: orbital energy requires a sample from every linked planet ephemeris.");
+    }
+    this->accumulatePotential(r_cF_N, orbPotEnergyContr, simTimeNanos);
+}
+
+void GravityEffector::updateEnergyContributionsAtTime(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, double time)
+{
+    this->accumulatePotential(r_cF_N, orbPotEnergyContr, time);
+}
+
+template<typename Time>
+void GravityEffector::accumulatePotential(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, Time time)
+{
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero(); // C is central body. position of C wrt N in N
     Eigen::Vector3d r_cN_N;                           // position c wrt N in N
 
     if (this->centralBody) { // Evaluates true if there is a central body, false
                              // otherwise
-        r_CN_N = this->centralBody->positionAtOffset(this->centralBody->ephemerisOffset(simTimeNanos));
+        r_CN_N = this->centralBody->positionAtOffset(this->centralBody->ephemerisOffset(time));
         r_cN_N = r_cF_N + r_CN_N; // shift s/c to be wrt inertial frame origin
                                   // if it isn't already
     } else {
@@ -382,7 +397,7 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N,
 
     for (auto&& body : this->gravBodies) {
         // P is planet being queried. position of planet wrt N in N
-        const double dt = body->ephemerisOffset(simTimeNanos); // [s]
+        const double dt = body->ephemerisOffset(time); // [s]
         Eigen::Vector3d r_PN_N = body->positionAtOffset(dt);
         // c is s/c CoM. position of c wrt P in N
         Eigen::Vector3d r_cP_N = r_cN_N - r_PN_N;

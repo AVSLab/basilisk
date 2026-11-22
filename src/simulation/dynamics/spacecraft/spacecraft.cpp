@@ -24,14 +24,19 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/stateExtrapolation.h"
 #include <cmath>
+#include <limits>
 #include <optional>
+#include <utility>
 
 namespace {
+constexpr double unavailableEnergy = std::numeric_limits<double>::quiet_NaN();
 constexpr double initialDerivativeTimeStep = 1.0; // [s] Nominal step supplied to effectors during initialization.
 } // namespace
 
 /*! This is the constructor, setting variables to default values */
 Spacecraft::Spacecraft()
+    : totOrbEnergy(unavailableEnergy)
+    , orbPotentialEnergyContr(unavailableEnergy)
 {
     // - Set default propery names
     this->sysTimePropertyName = "systemTime";
@@ -187,6 +192,7 @@ void Spacecraft::applyPrescribedMotion()
 
         this->hubSigma->setState(sigma_BN.coeffs());
         this->hubOmega_BN_B->setState(omega_BN_B);
+        *this->cDot_B = *this->cPrime_B + omega_BN_B.cross(Eigen::Vector3d(*this->c_B));
     }
 
     if (this->transRefInMsg.isLinked() && this->transRefInMsg.isWritten()) {
@@ -724,13 +730,21 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
         this->omegaDot_BN_B = { 0., 0., .0 };
     }
 
-    // - Compute Energy and Momentum
-    this->computeEnergyMomentum(integrateToThisTime);
-
-    // - Call hubs modify states to allow for switching of MRPs
     this->hub.modifyStates(integrateToThisTime);
     this->applyPrescribedMotion();
     this->updateAcceptedInertialState();
+
+    // - Compute Energy and Momentum
+    {
+        // Preserve virtual dispatch for spacecraft subclasses and clear the context if a callback throws.
+        struct ClearEnergyEpoch
+        {
+            bool& active;
+            ~ClearEnergyEpoch() { active = false; }
+        } clear{ this->useAcceptedEnergyEpoch };
+        this->useAcceptedEnergyEpoch = true;
+        this->computeEnergyMomentum(integrateToThisTime);
+    }
 
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
@@ -747,6 +761,20 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
  for validation purposes. */
 void Spacecraft::computeEnergyMomentum(double time)
 {
+    if (this->pointMassTranslationalOnly) {
+        this->bskLogger.bskError(
+            "spacecraft: computeEnergyMomentum is unavailable in pointMassTranslationalOnly mode.");
+    }
+    const bool atAcceptedEpoch = std::exchange(this->useAcceptedEnergyEpoch, false) && time == this->timeBefore;
+    const bool ephemeridesReady = this->hubR_N != nullptr && this->gravField.ephemeridesReady();
+    if (!atAcceptedEpoch && !ephemeridesReady) {
+        this->bskLogger.bskError("spacecraft: orbital energy requires initialized dynamics and a sample from every "
+                                 "linked planet ephemeris.");
+    }
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        this->bskLogger.bskError("spacecraft: energy and momentum require an accepted spacecraft state.");
+    }
+
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = hubR_N->stateView();
     Eigen::Vector3d rDotLocal_BN_N = hubV_N->stateView();
@@ -776,7 +804,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(
-        time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+        this->timeBefore, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -789,7 +817,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(
-            time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+            this->timeBefore, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }
@@ -805,7 +833,13 @@ void Spacecraft::computeEnergyMomentum(double time)
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;
     Eigen::Vector3d rLocal_CN_N = this->hubR_N->stateView() + dcmLocal_NB * (*this->c_B);
-    gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr, secToNano(time));
+    if (!ephemeridesReady) {
+        this->orbPotentialEnergyContr = unavailableEnergy;
+    } else if (atAcceptedEpoch) {
+        this->gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr, this->timeBeforeNanos);
+    } else {
+        this->gravField.updateEnergyContributionsAtTime(rLocal_CN_N, this->orbPotentialEnergyContr, time);
+    }
     this->totOrbEnergy += (*this->m_SC)(0, 0) * this->orbPotentialEnergyContr;
 
     // - Find total rotational energy

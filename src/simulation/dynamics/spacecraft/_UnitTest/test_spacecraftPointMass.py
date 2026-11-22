@@ -157,6 +157,16 @@ def test_spacecraftPointMass_zeroAccelerationsBeforeIntegration(pointMassMode):
         np.testing.assert_array_equal(dataLog.omegaDot_BN_B, np.zeros_like(dataLog.omegaDot_BN_B))
 
 
+def test_spacecraftPointMass_rejectsDirectEnergyQuery():
+    """A direct energy query reports the translation-only mode restriction."""
+    scObject = spacecraft.Spacecraft()
+    scObject.pointMassTranslationalOnly = True
+    _configureHub(scObject)
+    scObject.Reset(0)
+    with pytest.raises(BasiliskError, match="computeEnergyMomentum.*pointMassTranslationalOnly"):
+        scObject.computeEnergyMomentum(0.0)
+
+
 def test_spacecraftPointMass_rejectsStateEffectors():
     """Point-mass mode must reject state effectors because they add internal states."""
 

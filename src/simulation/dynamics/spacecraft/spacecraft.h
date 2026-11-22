@@ -48,10 +48,10 @@ class Spacecraft : public DynamicObject
     std::string sysTimePropertyName;               //!< Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg;     //!< (optional) reference attitude input message name
     ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< (optional) reference translation input message name
-    double totOrbEnergy;                           //!< [J] Total orbital kinetic energy
+    double totOrbEnergy;                           //!< [J] Total orbital energy.
     double totRotEnergy;                           //!< [J] Total rotational energy
     double rotEnergyContr;                         //!< [J] Contribution of stateEffector to total rotational energy
-    double orbPotentialEnergyContr;                //!< [J] Contribution of stateEffector to total rotational energy
+    double orbPotentialEnergyContr;                //!< [m^2/s^2] Specific orbital potential.
     BackSubMatrices backSubContributions;          //!< class variable
     Eigen::Vector3d sumForceExternal_N;            //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;            //!< [N] Sum of forces given in the body frame
@@ -70,7 +70,11 @@ class Spacecraft : public DynamicObject
     Eigen::Vector3d rotAngMomPntCContr_B; //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
     HubEffector hub;                      //!< The spacecraft plus needs access to the spacecraft hub
     GravityEffector gravField;            //!< Gravity effector for gravitational field experienced by spacecraft
-    bool pointMassTranslationalOnly = false;     //!< -- If true, integrate only translational point-mass dynamics
+    bool pointMassTranslationalOnly = false; //!< -- If true, integrate only translational point-mass dynamics
+  private:
+    bool useAcceptedEnergyEpoch = false; //!< Supply the accepted tick to the scheduled virtual energy callback.
+
+  public:
     BSKLogger bskLogger;                         //!< BSK Logging
     Message<SCStatesMsgPayload> scStateOutMsg;   //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg; //!< spacecraft mass properties output message
@@ -124,7 +128,7 @@ class Spacecraft : public DynamicObject
         effector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
     }
 
-    StateData* hubR_N;                         //!< State data accesss to inertial position for the hub
+    StateData* hubR_N = nullptr;               //!< Hub position state, available after dynamics registration.
     StateData* hubV_N;                         //!< State data access to inertial velocity for the hub
     StateData* hubOmega_BN_B;                  //!< State data access to the attitude rate of the hub
     StateData* hubSigma;                       //!< State data access to sigmaBN for the hub

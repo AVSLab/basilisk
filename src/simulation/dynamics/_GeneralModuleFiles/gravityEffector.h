@@ -179,8 +179,9 @@ class GravityEffector : public SysModel
 
     /** @brief Accumulate specific potential energy from the associated gravity bodies.
      * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin, in inertial coordinates [m].
-     * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     * @param[in,out] orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
      * @param simTimeNanos Evaluation time for planet positions and orientations [ns].
+     * @throws BasiliskError if ephemerides are unavailable. The accumulator retains its input value.
      */
     void updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, uint64_t simTimeNanos);
 
@@ -195,8 +196,15 @@ class GravityEffector : public SysModel
 
     double currentEphemerisOffset(const GravBodyData& body) const;
 
-    /** @brief Update the inertial state using a signed ephemeris offset.
+    /** @brief Accumulate specific potential at a time supplied in seconds.
+     * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin [m].
+     * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     * @param time Evaluation time [s].
      */
+    void updateEnergyContributionsAtTime(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, double time);
+
+    template<typename Time>
+    void accumulatePotential(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, Time time);
     bool ephemeridesReady() const; //!< Check the current samples, including bodies refreshed by another spacecraft.
     bool bodiesResolved = false;   //!< The last scan completed and identified the integration origin.
     bool originReady = false;      //!< The last gravity sample included the integration origin.

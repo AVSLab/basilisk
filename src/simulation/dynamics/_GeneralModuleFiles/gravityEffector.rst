@@ -184,3 +184,17 @@ its configured or integrated state.
 Write every linked ephemeris before advancing simulation time. While a linked central-body input
 is unwritten, the spacecraft defers its inertial state message. Mass properties remain available.
 A missing perturbing-body input alone does not prevent publication of the inertial state.
+
+In six-degree-of-freedom mode, the spacecraft computes energy from the accepted state after
+applying any prescribed attitude and translation. A direct call to ``spacecraft.computeEnergyMomentum(time)``
+evaluates the gravitational potential of the current state at the supplied time in seconds.
+At a zero-duration update with a pending ephemeris, ``totOrbEnergy`` and ``orbPotentialEnergyContr``
+are ``NaN``. An advance rejected for a missing ephemeris leaves the stored diagnostics intact.
+Direct energy queries raise ``BasiliskError`` if any required body has an unavailable sample.
+If an integration error leaves effector data at a trial stage, direct spacecraft energy queries
+also raise ``BasiliskError``. The last reported energy remains available until the next successful spacecraft update.
+The public C++ method ``GravityEffector.updateEnergyContributions()`` also checks sample
+availability before adding to the caller's accumulator.
+Spacecraft sharing a ``GravBodyData`` see the same sample validity. After a missing ephemeris
+is written, sampling it on either spacecraft makes that body's data available to both.
+Direct energy queries in ``pointMassTranslationalOnly`` mode also raise ``BasiliskError``.

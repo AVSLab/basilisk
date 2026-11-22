@@ -569,6 +569,12 @@ def test_sosri_spacecraft_output_epoch(epoch_ns, capfd):
         np.testing.assert_allclose(output.r_BN_N, relative + central, rtol=0, atol=1e-10)
         np.testing.assert_allclose(output.v_BN_N, relative_velocity + velocity, rtol=0, atol=1e-12)
 
+    expected_potential = (
+        -result.body.mu / np.linalg.norm(relative)
+        - secondary.mu / np.linalg.norm(central)
+        - secondary.mu / np.linalg.norm(relative + central)
+    )
+    assert sc.orbPotentialEnergyContr == pytest.approx(expected_potential, rel=1e-13)
     assert "Negative time value" not in capfd.readouterr().err
 
 
@@ -624,6 +630,8 @@ def test_synchronized_secondary_output_epoch(shared_body):
     )
     np.testing.assert_allclose(state.r_BN_N[2], result.log.position[2] + central, rtol=0, atol=1e-10)
     np.testing.assert_array_equal(state.v_BN_N[2], result.payload.VelocityVector)
+    expected_energy = -result.sc.hub.mHub * result.body.mu / np.linalg.norm(reference.r_RN_N)  # [J]
+    assert result.log.energy[2] == pytest.approx(expected_energy, rel=1e-13)
 
 
 @pytest.mark.parametrize("initially_written", [True, False])
@@ -692,6 +700,9 @@ def test_reset_waits_for_planet_ephemerides(initially_written):
     central_written = 0 in initially_written
     assert state.isWritten() == central_written
     assert mass.isWritten()
+    if len(initially_written) < 2:
+        assert np.isnan(result.sc.totOrbEnergy)
+        assert np.isnan(result.sc.orbPotentialEnergyContr)
     manager = result.sc.dynManager
     relative = np.ravel(result.sc.hub.r_CN_NInit)
     central = np.array(payloads[0].PositionVector)  # [m]
@@ -713,6 +724,12 @@ def test_reset_waits_for_planet_ephemerides(initially_written):
         np.testing.assert_array_equal(result.sc.scStateOutMsg.read().r_BN_N, relative + central)
     assert result.sc.scMassOutMsg.read().massSC == result.sc.hub.mHub
     if len(initially_written) < 2:
+        assert np.isnan(result.log.energy[0])
+        assert np.isnan(result.sc.orbPotentialEnergyContr)
+        expected_rotation = 0.5 * result.sc.hub.IHubPntBc_B[2][2] * spin_rate**2  # [J]
+        assert result.sc.totRotEnergy == pytest.approx(expected_rotation)
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            result.sc.computeEnergyMomentum(0.0)
         with pytest.raises(BasiliskError, match="ephemeris must be written"):
             result.sc.UpdateState(macros.sec2nano(1.0))
     for msg, payload in zip(messages, payloads):
@@ -728,6 +745,17 @@ def test_reset_waits_for_planet_ephemerides(initially_written):
     np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), expected, rtol=1e-12, atol=1e-15)
     expected_velocity = np.ravel(result.sc.hub.v_CN_NInit) + expected
     np.testing.assert_allclose(result.log.velocity[-1], expected_velocity, rtol=0, atol=1e-12)
+    position = result.log.position[-1]
+    potential = (
+        -result.body.mu / np.linalg.norm(position)
+        - moon.mu / np.linalg.norm(separation)
+        - moon.mu / np.linalg.norm(position - separation)
+    )
+    energy = result.sc.hub.mHub * (0.5 * expected_velocity.dot(expected_velocity) + potential)  # [J]
+    assert result.log.energy[-1] == pytest.approx(energy, rel=1e-12)
+    result.sc.computeEnergyMomentum(1.0)  # [s]
+    assert result.sc.totOrbEnergy == pytest.approx(energy, rel=1e-12)
+    assert result.sc.orbPotentialEnergyContr == pytest.approx(potential, rel=1e-12)
 
 
 @pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
@@ -859,6 +887,66 @@ def test_time_zero_references_with_ready_gravity(integrator_name, reference):
     assert np.all(np.isfinite(sc.scStateOutMsg.read().TotalAccumDV_CN_N))
 
 
+@pytest.mark.parametrize("sample_via_spacecraft", [True, False], ids=["spacecraft", "gravity-effector"])
+def test_direct_energy_after_incomplete_sample(sample_via_spacecraft):
+    """Both spacecraft reject incomplete shared samples and recover when either resamples the bodies."""
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorEuler", 0.0, False, 1.0, initialize=False)
+    other = gravityEffector.GravBodyData()
+    other.planetName = "other"
+    other.mu = 1.0e6  # [m^3/s^2]
+    other_payload = messaging.SpicePlanetStateMsgPayload()
+    original = messaging.SpicePlanetStateMsg().write(other_payload)
+    other.planetBodyInMsg.subscribeTo(original)
+    result.sc.gravField.addGravBody(other)
+    peer = spacecraft.Spacecraft()
+    peer.ModelTag = "peer"
+    peer.hub.mHub = result.sc.hub.mHub
+    peer.hub.IHubPntBc_B = result.sc.hub.IHubPntBc_B
+    peer.hub.r_CN_NInit = result.sc.hub.r_CN_NInit
+    peer.gravField.gravBodies = spacecraft.GravBodyVector([result.body, other])
+    result.sim.AddModelToTask("task", peer)
+    result.sc.gravField.UpdateState(0)
+    with pytest.raises(BasiliskError, match="orbital energy"):
+        result.sc.computeEnergyMomentum(0.0)
+    result.sim.InitializeSimulation()
+    result.sc.computeEnergyMomentum(0.0)
+    initial_potential = result.sc.orbPotentialEnergyContr
+    peer.computeEnergyMomentum(0.0)
+    assert peer.orbPotentialEnergyContr == initial_potential
+
+    result.payload.PositionVector = [12000.0, 3000.0, 200.0]  # [m]
+    result.message.write(result.payload)
+    replacement = messaging.SpicePlanetStateMsg()
+    other.planetBodyInMsg.subscribeTo(replacement)
+    if sample_via_spacecraft:
+        with pytest.raises(BasiliskError, match="ephemeris must be written"):
+            result.sc.UpdateState(macros.sec2nano(1.0))
+    else:
+        result.sc.gravField.UpdateState(0)
+    for sc in (result.sc, peer):
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            sc.computeEnergyMomentum(0.0)
+        assert sc.orbPotentialEnergyContr == initial_potential
+
+    other_payload.PositionVector = [-4000.0, 0.0, 0.0]  # [m]
+    replacement.write(other_payload)
+    for sc in (result.sc, peer):
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            sc.computeEnergyMomentum(0.0)
+    if sample_via_spacecraft:
+        result.sc.UpdateState(0)
+    else:
+        peer.gravField.UpdateState(0)
+    position = np.ravel(result.sc.hub.r_CN_NInit)
+    expected = (
+        -result.body.mu / np.linalg.norm(position - result.payload.PositionVector)
+        - other.mu / np.linalg.norm(position - other_payload.PositionVector)
+    )
+    for sc in (result.sc, peer):
+        sc.computeEnergyMomentum(0.0)
+        assert sc.orbPotentialEnergyContr == pytest.approx(expected, rel=1e-12)
+
+
 def test_multi_year_stage_origin():
     """Reset and subsequent Euler steps start at the nearest representable time in seconds."""
     whole = 4 * 31_557_600  # [s] exactly representable four-year epoch
@@ -899,6 +987,49 @@ def test_zero_duration_system_clock(integrator_name):
     sc.UpdateState(tick + 1_000_000_000)  # [ns]
     nanos, seconds = np.ravel(sc.dynManager.getPropertyReference("systemTime"))
     assert int(nanos) == round(seconds * 1_000_000_000)
+
+
+def test_direct_energy_query_epoch():
+    """An explicit query can differ from the accepted clock even when both round to the same double."""
+    query_ns = MISSION_EPOCH_NS - 3  # [ns] whole second
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorRK4", 0.0, True, 1.0, initialize=False)
+    result.payload.VelocityVector = [30_000.0, 0.0, 0.0]  # [m/s]
+    result.message.write(result.payload, query_ns)
+    result.sc.Reset(MISSION_EPOCH_NS)
+    result.sc.UpdateState(MISSION_EPOCH_NS)
+    relative = np.ravel(result.sc.hub.r_CN_NInit) - result.payload.PositionVector
+    displacement = 3e-9 * np.array(result.payload.VelocityVector)  # [m] since the ephemeris write
+    planet_position = result.sc.dynManager.getPropertyReference("energy_body.r_PN_N")
+    np.testing.assert_array_equal(np.ravel(planet_position), result.payload.PositionVector + displacement)
+    accepted = relative - displacement  # [m]
+    assert result.sc.orbPotentialEnergyContr == pytest.approx(-result.body.mu / np.linalg.norm(accepted), rel=1e-13)
+    for offset in (0.0, 0.03125):  # [s] exactly representable query offsets
+        result.sc.computeEnergyMomentum(query_ns // 1_000_000_000 + offset)
+        displacement = relative - offset * np.array(result.payload.VelocityVector)
+        expected = -result.body.mu / np.linalg.norm(displacement)
+        assert result.sc.orbPotentialEnergyContr == pytest.approx(expected, rel=1e-13)
+
+
+def test_energy_uses_prescribed_angular_rate_at_offset_center():
+    """Check orbital energy and center velocity when a reference changes the hub angular rate."""
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorRK4", 0.0, False, 1.0, initialize=False)
+    offset = np.array([2.0, 0.0, 0.0])  # [m] center of mass relative to the hub origin
+    result.sc.hub.r_BcB_B = offset.tolist()
+    result.sim.InitializeSimulation()
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+    reference = messaging.AttRefMsgPayload()
+    reference.omega_RN_N = [0.0, 0.0, 0.2]  # [rad/s] with identity reference attitude
+    message = messaging.AttRefMsg().write(reference, macros.sec2nano(1.0))
+    result.sc.attRefInMsg.subscribeTo(message)
+    result.sim.ConfigureStopTime(macros.sec2nano(1.0))
+    result.sim.ExecuteSimulation()
+    output = result.sc.scStateOutMsg.read()
+    velocity = np.array(output.v_BN_N) + np.cross(reference.omega_RN_N, offset)
+    np.testing.assert_allclose(output.v_CN_N, velocity, rtol=0, atol=1e-12)
+    potential = -result.body.mu / np.linalg.norm(np.array(output.r_BN_N) + offset)
+    expected_energy = result.sc.hub.mHub * (0.5 * velocity.dot(velocity) + potential)  # [J]
+    assert result.sc.totOrbEnergy == pytest.approx(expected_energy, rel=1e-13)
 
 
 @pytest.mark.parametrize("spin_rate", [0.0, 0.0004])  # [rad/s]
