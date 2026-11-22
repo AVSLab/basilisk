@@ -175,6 +175,7 @@ void LinearTranslationNDOFStateEffector::readInputMessages()
  */
 void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computeTranslatingBodyInertialStates();
 
     // Write out the translating body output messages
@@ -189,7 +190,7 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
             this->translatingBodyOutMsgs[i]->write(&translatingBodyBuffer, this->moduleID, CurrentClock);
         }
 
-        if (this->translatingBodyConfigLogOutMsgs[i]->isLinked()) {
+        if (epoch && this->translatingBodyConfigLogOutMsgs[i]->isLinked()) {
             configLogMsg = this->translatingBodyConfigLogOutMsgs[i]->zeroMsgPayload;
 
             // Logging the F frame is the body frame B of that object
@@ -197,7 +198,7 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
             eigenVector3d2CArray(translatingBody->v_FcN_N, configLogMsg.v_BN_N);
             eigenMatrixXd2CArray(*translatingBody->sigma_FN, configLogMsg.sigma_BN);
             eigenMatrixXd2CArray(*translatingBody->omega_FN_F, configLogMsg.omega_BN_B);
-            this->translatingBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
+            this->translatingBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, *epoch);
         }
 
         i++;
@@ -705,6 +706,16 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
             1.0 / 2.0 * translatingBody->k * (translatingBody->rho - translatingBody->rhoRef) *
                 (translatingBody->rho - translatingBody->rhoRef);
     }
+}
+
+void LinearTranslationNDOFStateEffector::refreshInertialKinematics(double time,
+                                                                   const Eigen::MRPd& sigma_BN,
+                                                                   const Eigen::Vector3d& omega_BN_B)
+{
+    this->updateEffectorMassProps(time);
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeTranslatingBodyInertialStates();
 }
 
 /*! This method computes the translating body states relative to the inertial frame */

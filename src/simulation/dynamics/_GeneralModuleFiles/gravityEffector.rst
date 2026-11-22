@@ -170,6 +170,9 @@ seconds preserves small offsets even years into a mission.
 A synchronized spacecraft can publish between its primary's steps. It republishes its accepted
 inertial state and timestamp even if another spacecraft has since refreshed a shared gravity body.
 Its mass-state message also carries the accepted timestamp.
+Schedule articulated effectors at their parent spacecraft module's rate. Their inertial outputs use
+the spacecraft's accepted pose and timestamp, including when the hub follows a prescribed reference.
+A rejected integration trial leaves the previously published inertial messages available.
 A secondary subscribed to its primary's ``centralBodyOutMsg`` uses the sample forwarded at
 the start of the same integration step, with the original source timestamp.
 
@@ -182,7 +185,13 @@ nanosecond component of ``systemTime``. Other stages report their signed stage t
 Until its reference is first written, each component of the motion retains
 its configured or integrated state.
 Write every linked ephemeris before advancing simulation time. While a linked central-body input
-is unwritten, the spacecraft defers its inertial state message. Mass properties remain available.
+is unwritten, the spacecraft and its articulated bodies defer their inertial state messages.
+Mass properties and relative joint states can already be read.
+State-effector reaction forces and torques retain their initial zero values until the spacecraft
+evaluates the derivatives with a complete gravity sample. After a rejected integration trial,
+queries retain the last accepted reaction loads until the next successful update.
+Hinge reaction forces and torques use the accepted hub angular velocity, including a written
+attitude reference, and the hinge acceleration from the last dynamics evaluation.
 A missing perturbing-body input alone does not prevent publication of the inertial state.
 
 In six-degree-of-freedom mode, the spacecraft computes energy from the accepted state after

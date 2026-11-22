@@ -92,6 +92,7 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
  */
 void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computePanelInertialStates();
 
     if (this->hingedRigidBodyOutMsg.isLinked()) {
@@ -102,7 +103,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
     }
 
     // write out the panel state config log message
-    if (this->hingedRigidBodyConfigLogOutMsg.isLinked()) {
+    if (epoch && this->hingedRigidBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload;
         // Note, logging the hinge frame S is the body frame B of that object
@@ -110,7 +111,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_SN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -438,7 +439,7 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
     // - Calculate force that the HRB is applying to the spacecraft
     this->forceOnBody_B = -(this->mass * this->d * this->sHat3_P * thetaDDotLocal +
                             this->mass * this->d * this->thetaDot * this->thetaDot * this->sHat1_P +
-                            2.0 * this->mass * this->d * this->thetaDot * this->omegaLoc_PN_P.cross(this->sHat3_P));
+                            2.0 * this->mass * this->d * this->thetaDot * omegaLocal_PN_P.cross(this->sHat3_P));
 
     // - Calculate torque that the HRB is applying about point B
     Eigen::Vector3d torqueFactorPntB_P =
@@ -449,7 +450,7 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
                       this->r_SP_P.cross(this->rPrime_SP_P.cross(omegaLocal_PN_P)));
     this->torqueOnBodyPntB_B =
         -(torqueFactorPntB_P * thetaDDotLocal + inertiaPrimeOmegaPntB_P +
-          this->thetaDot * this->omegaLoc_PN_P.cross(torqueFactorPntB_P) +
+          this->thetaDot * omegaLocal_PN_P.cross(torqueFactorPntB_P) +
           this->mass * this->d * this->thetaDot * this->thetaDot * this->r_SP_P.cross(this->sHat1_P));
 
     // - Define values needed to get the torque about point C
@@ -465,10 +466,20 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
         this->ISPrimePntS_P * omegaLocal_PN_P - this->mass * (rPrime_SC_B.cross(r_SC_B.cross(omegaLocal_PN_P)) +
                                                               r_SC_B.cross(rPrime_SC_B.cross(omegaLocal_PN_P)));
     this->torqueOnBodyPntC_B = -(torqueFactorPntC_P * thetaDDotLocal + inertiaPrimeOmegaPntC_P +
-                                 this->thetaDot * this->omegaLoc_PN_P.cross(torqueFactorPntC_P) +
+                                 this->thetaDot * omegaLocal_PN_P.cross(torqueFactorPntC_P) +
                                  this->mass * this->d * this->thetaDot * this->thetaDot * r_SC_B.cross(this->sHat1_P));
 
     return;
+}
+
+void HingedRigidBodyStateEffector::refreshInertialKinematics(double time,
+                                                             const Eigen::MRPd& sigma_BN,
+                                                             const Eigen::Vector3d& omega_BN_B)
+{
+    this->updateEffectorMassProps(time);
+    this->sigma_BN = sigma_BN;
+    this->omega_BN_B = omega_BN_B;
+    this->computePanelInertialStates();
 }
 
 /*! This method computes the panel states relative to the inertial frame

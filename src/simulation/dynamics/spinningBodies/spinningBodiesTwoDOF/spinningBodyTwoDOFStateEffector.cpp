@@ -186,6 +186,7 @@ void SpinningBodyTwoDOFStateEffector::validateConfiguration()
  */
 void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computeSpinningBodyInertialStates();
 
     // Write out the spinning body output messages
@@ -204,7 +205,7 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     }
 
     // Write out the spinning body state config log message
-    if (this->spinningBodyConfigLogOutMsgs[0]->isLinked()) {
+    if (epoch && this->spinningBodyConfigLogOutMsgs[0]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->spinningBodyConfigLogOutMsgs[0]->zeroMsgPayload;
 
@@ -213,10 +214,10 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVector3d2CArray((this->v_Sc1N_N), configLogMsg.v_BN_N);
         eigenMatrixXd2CArray((*this->sigma_S1N), configLogMsg.sigma_BN);
         eigenMatrixXd2CArray((*this->omega_S1N_S1), configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, *epoch);
     }
 
-    if (this->spinningBodyConfigLogOutMsgs[1]->isLinked()) {
+    if (epoch && this->spinningBodyConfigLogOutMsgs[1]->isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->spinningBodyConfigLogOutMsgs[1]->zeroMsgPayload;
 
@@ -225,7 +226,7 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVector3d2CArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_S2N, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_S2N_S2, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -447,10 +448,6 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime,
     this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
     if (!this->dynEffectors.empty()) {
-        this->rDot_S1B_B = this->omega_BN_B.cross(this->r_S1B_B);
-        this->rDot_S2B_B = this->rDot_S1B_B + this->rPrime_S2S1_B + this->omega_BN_B.cross(this->r_S2S1_B);
-        this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omega_BN_B.cross(this->r_Sc1B_B);
-        this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omega_BN_B.cross(this->r_Sc2B_B);
         this->computeSpinningBodyInertialStates();
     }
 
@@ -812,6 +809,19 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
                      1.0 / 2.0 * this->k2 * (this->theta2 - this->theta2Ref) * (this->theta2 - this->theta2Ref);
 }
 
+void SpinningBodyTwoDOFStateEffector::refreshInertialKinematics(double time,
+                                                                const Eigen::MRPd& sigma_BN,
+                                                                const Eigen::Vector3d& omega_BN_B)
+{
+    // Accepted joint properties were sampled by the spacecraft. A parent pose update must not apply a pending lock.
+    if (!this->inertialFrame->acceptedTimeNanos) {
+        this->updateEffectorMassProps(time);
+    }
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeSpinningBodyInertialStates();
+}
+
 /*! This method computes the spinning body states relative to the inertial frame */
 void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
 {
@@ -820,6 +830,13 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
         const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
         this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
     }
+
+    this->omega_S1N_B = this->omega_S1B_B + this->omega_BN_B;
+    this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
+    this->rDot_S1B_B = this->omega_BN_B.cross(this->r_S1B_B);
+    this->rDot_S2B_B = this->rDot_S1B_B + this->rPrime_S2S1_B + this->omega_BN_B.cross(this->r_S2S1_B);
+    this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omega_BN_B.cross(this->r_Sc1B_B);
+    this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omega_BN_B.cross(this->r_Sc2B_B);
 
     // Compute the inertial attitude
     Eigen::Matrix3d dcm_S1N;

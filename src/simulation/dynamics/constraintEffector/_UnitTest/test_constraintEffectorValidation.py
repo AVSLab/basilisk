@@ -17,9 +17,115 @@
 import numpy as np
 import pytest
 
+from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
-from Basilisk.simulation import constraintDynamicEffector, spacecraft, spinningBodyOneDOFStateEffector
+from Basilisk.simulation import constraintDynamicEffector, gravityEffector, prescribedMotionStateEffector, spacecraft
+from Basilisk.simulation import spinningBodyOneDOFStateEffector, svIntegrators
 from Basilisk.utilities import SimulationBaseClass, macros
+
+
+def _spinning_body():
+    body = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    body.mass = 1.0  # [kg]
+    body.sHat_S = [1.0, 0.0, 0.0]  # [-]
+    body.dcm_S0B = np.eye(3).tolist()
+    body.IPntSc_S = np.eye(3).tolist()  # [kg*m^2]
+    return body
+
+
+def test_articulated_output_uses_parent_epoch_between_steps():
+    """A faster task publishes its articulated inertial pose at the synchronized parent's epoch."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(1.0)  # [ns]
+    process.addTask(sim.CreateNewTask("slow", 2 * step), 10)
+    process.addTask(sim.CreateNewTask("fast", step))
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    primary.syncDynamicsIntegration(secondary)
+    for sc in (primary, secondary):
+        sc.hub.mHub = 10.0  # [kg]
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    secondary.hub.v_CN_NInit = [1.0, 0.0, 0.0]  # [m/s]
+    spin = _spinning_body()
+    secondary.addStateEffector(spin)
+    state = spin.spinningBodyConfigLogOutMsg.addSubscriber()
+    sim.AddModelToTask("slow", primary)
+    sim.AddModelToTask("fast", secondary, 2)
+    sim.AddModelToTask("fast", spin, 1)
+    sim.InitializeSimulation()
+    for tick, epoch, position in [(0, 0, 0.0), (step, 0, 0.0), (2 * step, 2 * step, 2.0)]:  # [ns], [ns], [m]
+        sim.ConfigureStopTime(tick)
+        sim.ExecuteSimulation()
+        assert state.timeWritten() == epoch
+        np.testing.assert_allclose(state().r_BN_N, [position, 0.0, 0.0], atol=1e-14)
+
+
+@pytest.mark.parametrize("nested", [False, True], ids=["hub", "prescribed-parent"])
+def test_articulated_inertial_output_waits_for_central_ephemeris(nested):
+    """Publish joint state while waiting for the origin, then publish the body in inertial coordinates."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    process.addTask(sim.CreateNewTask("task", macros.sec2nano(0.1)))  # [ns]
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 9.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    sc.hub.r_CN_NInit = [100.0, 0.0, 0.0]  # [m]
+    spin = _spinning_body()
+    spin.r_SB_B = [2.0, 0.0, 0.0]  # [m]
+    if nested:
+        platform = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+        platform.addStateEffector(spin)
+        sc.addStateEffector(platform)
+        platform_state = platform.prescribedMotionConfigLogOutMsg.addSubscriber()
+    else:
+        sc.addStateEffector(spin)
+    center = gravityEffector.GravBodyData()
+    center.planetName = "center"
+    center.isCentralBody = True
+    center.mu = 1.0  # [m^3/s^2]
+    source = messaging.SpicePlanetStateMsg()
+    center.planetBodyInMsg.subscribeTo(source)
+    sc.gravField.addGravBody(center)
+    joint = spin.spinningBodyOutMsg.addSubscriber()
+    inertial = spin.spinningBodyConfigLogOutMsg.addSubscriber()
+    sim.AddModelToTask("task", sc)
+    if nested:
+        sim.AddModelToTask("task", platform)
+    sim.AddModelToTask("task", spin)
+    sim.InitializeSimulation()
+    assert not inertial.isWritten()
+    if nested:
+        assert not platform_state.isWritten()
+    else:
+        assert joint.isWritten()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    assert joint.isWritten() and not inertial.isWritten()
+    if nested:
+        assert not platform_state.isWritten()
+
+    sample = messaging.SpicePlanetStateMsgPayload()
+    sample.PositionVector = [1.0e6, 0.0, 0.0]  # [m]
+    source.write(sample, 0)
+    if nested:
+        # An upstream model also moves the prescribed attachment before the spacecraft's time-zero refresh.
+        motion = messaging.PrescribedTranslationMsgPayload()
+        motion.r_PM_M = [3.0, 0.0, 0.0]  # [m]
+        motion_source = messaging.PrescribedTranslationMsg().write(motion)
+        platform.prescribedTranslationInMsg.subscribeTo(motion_source)
+        platform.UpdateState(0)
+        assert not platform_state.isWritten()
+    sc.UpdateState(0)
+    if nested:
+        assert platform_state.isWritten()
+        spin.UpdateState(0)
+    assert inertial.isWritten()
+    # The hub origin is displaced from the system center of mass by the spinning body's mass fraction.
+    offset = sc.hub.mHub / (sc.hub.mHub + spin.mass) * np.ravel(spin.r_SB_B)
+    expected = np.array(sample.PositionVector) + np.ravel(sc.hub.r_CN_NInit) + offset
+    if nested:
+        expected += motion.r_PM_M
+    np.testing.assert_allclose(spin.spinningBodyConfigLogOutMsg.read().r_BN_N, expected, rtol=0.0, atol=1e-9)
 
 
 def _simulationWithConstraint(attachToBranch):
@@ -37,15 +143,7 @@ def _simulationWithConstraint(attachToBranch):
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
     spinningBody = None
     if attachToBranch:
-        spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-        spinningBody.mass = 1.0  # [kg]
-        spinningBody.sHat_S = [[1.0], [0.0], [0.0]]  # [-]
-        spinningBody.dcm_S0B = [[1.0, 0.0, 0.0],
-                                [0.0, 1.0, 0.0],
-                                [0.0, 0.0, 1.0]]  # [-]
-        spinningBody.IPntSc_S = [[1.0, 0.0, 0.0],
-                                 [0.0, 1.0, 0.0],
-                                 [0.0, 0.0, 1.0]]  # [kg m^2]
+        spinningBody = _spinning_body()
         spinningBody.addDynamicEffector(constraintEffector)
         spacecraftObject.addStateEffector(spinningBody)
     else:

@@ -245,6 +245,7 @@ void SpinningBodyNDOFStateEffector::readInputMessages()
  */
 void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computeSpinningBodyInertialStates();
 
     size_t spinningBodyIndex = 0;
@@ -257,7 +258,7 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
             this->spinningBodyOutMsgs[spinningBodyIndex]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
         }
 
-        if (this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->isLinked()) {
+        if (epoch && this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->isLinked()) {
             SCStatesMsgPayload configLogMsg = this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->zeroMsgPayload;
 
             // Logging the S frame is the body frame B of that object
@@ -265,7 +266,7 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
             eigenVector3d2CArray(spinningBody->v_ScN_N, configLogMsg.v_BN_N);
             eigenMatrixXd2CArray(*spinningBody->sigma_SN, configLogMsg.sigma_BN);
             eigenMatrixXd2CArray(*spinningBody->omega_SN_S, configLogMsg.omega_BN_B);
-            this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
+            this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->write(&configLogMsg, this->moduleID, *epoch);
         }
         spinningBodyIndex++;
     }
@@ -514,10 +515,6 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
         }
     }
     if (hasAttachedEffectors) {
-        for (auto& spinningBody : this->spinningBodyVec) {
-            spinningBody->omega_SN_B = spinningBody->omega_SB_B + this->omega_BN_B;
-            spinningBody->rDot_ScB_B = spinningBody->rPrime_ScB_B + this->omega_BN_B.cross(spinningBody->r_ScB_B);
-        }
         this->computeSpinningBodyInertialStates();
     }
 
@@ -794,6 +791,16 @@ void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime [[maybe_
     this->thetaDotState->setDerivative(thetaDDot);
 }
 
+void SpinningBodyNDOFStateEffector::refreshInertialKinematics(double time,
+                                                              const Eigen::MRPd& sigma_BN,
+                                                              const Eigen::Vector3d& omega_BN_B)
+{
+    this->updateEffectorMassProps(time);
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeSpinningBodyInertialStates();
+}
+
 /*! @brief Update the effector energy and momentum contributions.
  *
  * @param[in] integTime [s] Current integration time.
@@ -833,6 +840,8 @@ void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
     }
 
     for (auto& spinningBody : this->spinningBodyVec) {
+        spinningBody->omega_SN_B = spinningBody->omega_SB_B + this->omega_BN_B;
+        spinningBody->rDot_ScB_B = spinningBody->rPrime_ScB_B + this->omega_BN_B.cross(spinningBody->r_ScB_B);
         // Compute the rotational properties
         Eigen::Matrix3d dcm_SN = spinningBody->dcm_BS.transpose() * this->dcm_BN;
         const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);

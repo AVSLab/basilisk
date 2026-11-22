@@ -71,6 +71,9 @@ class DualHingedRigidBodyStateEffector final
     void writeOutputStateMessages(uint64_t CurrentClock) override;
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     void computePanelInertialStates();
 
   public:

@@ -259,6 +259,7 @@ void LinearTranslationOneDOFStateEffector::readInputMessages()
  */
 void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentSimNanos);
     this->computeTranslatingBodyInertialStates();
 
     if (this->translatingBodyOutMsg.isLinked()) {
@@ -269,7 +270,7 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, CurrentSimNanos);
     }
 
-    if (this->translatingBodyConfigLogOutMsg.isLinked()) {
+    if (epoch && this->translatingBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->translatingBodyConfigLogOutMsg.zeroMsgPayload;
 
@@ -278,7 +279,7 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
         eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_FN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentSimNanos);
+        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -482,6 +483,19 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [
     rhoDDot(0, 0) = this->aRho.dot(rDDot_BN_B) + this->bRho.dot(omegaDot_BN_B) + this->cRho;
     this->rhoDotState->setDerivative(rhoDDot);
     this->rhoState->setDerivative(this->rhoDotState->stateView());
+}
+
+void LinearTranslationOneDOFStateEffector::refreshInertialKinematics(double time,
+                                                                     const Eigen::MRPd& sigma_BN,
+                                                                     const Eigen::Vector3d& omega_BN_B)
+{
+    // Accepted joint properties were sampled by the spacecraft. A parent pose update must not apply a pending lock.
+    if (!this->inertialFrame->acceptedTimeNanos) {
+        this->updateEffectorMassProps(time);
+    }
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeTranslatingBodyInertialStates();
 }
 
 /*! @brief Update the effector energy and momentum contributions.

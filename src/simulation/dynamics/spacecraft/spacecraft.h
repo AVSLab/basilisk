@@ -72,7 +72,8 @@ class Spacecraft : public DynamicObject
     GravityEffector gravField;            //!< Gravity effector for gravitational field experienced by spacecraft
     bool pointMassTranslationalOnly = false; //!< -- If true, integrate only translational point-mass dynamics
   private:
-    bool useAcceptedEnergyEpoch = false; //!< Supply the accepted tick to the scheduled virtual energy callback.
+    bool stateEffectorDerivativesReady = false; //!< The last dynamics evaluation computed state-effector derivatives.
+    bool useAcceptedEnergyEpoch = false;        //!< Supply the accepted tick to the scheduled virtual energy callback.
 
   public:
     BSKLogger bskLogger;                         //!< BSK Logging
@@ -167,6 +168,7 @@ class Spacecraft : public DynamicObject
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;
     void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);
+    void refreshArticulatedEndpoints(double time);
     void applyPrescribedMotion();    //!< Apply written attitude and translation references to the hub.
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used
 };

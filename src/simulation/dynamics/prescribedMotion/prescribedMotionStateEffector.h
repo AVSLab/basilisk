@@ -111,6 +111,11 @@ class PrescribedMotionStateEffector final
         prescribedMotionConfigLogOutMsg; //!< Output config log message for the effector's states
 
   private:
+    void updateRelativeKinematics(double integTime);
+    void refreshPrescribedKinematics(double time); //!< Refresh the body and its children using the cached parent pose.
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     void validateMass(double candidateMass); //!< Reject invalid mass without changing configuration or states
     double currentSimTimeSec;                //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                             //!< [kg] Effector mass

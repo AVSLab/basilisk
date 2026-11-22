@@ -214,6 +214,9 @@ class SpinningBodyNDOFStateEffector final
     std::string getNameOfThetaDotState() const { return this->nameOfThetaDotState; };
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     void validateConfiguration();
     void validateCommandCapacity();
     static uint64_t effectorID;

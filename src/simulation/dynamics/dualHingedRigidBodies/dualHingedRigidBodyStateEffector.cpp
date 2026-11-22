@@ -554,6 +554,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
  */
 void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computePanelInertialStates();
 
     HingedRigidBodyMsgPayload panelOutputStates; //!< instance of messaging system message struct
@@ -567,6 +568,10 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     panelOutputStates.thetaDot = this->theta2Dot;
     this->dualHingedRigidBodyOutMsgs[1]->write(&panelOutputStates, this->moduleID, CurrentClock);
 
+    if (!epoch) {
+        return;
+    }
+
     // write out the panel state config log message
     SCStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
@@ -576,7 +581,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_SN[i], configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_SN_S[i], configLogMsg.omega_BN_B);
-        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -597,6 +602,16 @@ void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputStateMessages(CurrentSimNanos);
 
     return;
+}
+
+void DualHingedRigidBodyStateEffector::refreshInertialKinematics(double time,
+                                                                 const Eigen::MRPd& sigma_BN,
+                                                                 const Eigen::Vector3d& omega_BN_B)
+{
+    this->updateEffectorMassProps(time);
+    this->sigma_BN = sigma_BN;
+    this->omega_BN_B = omega_BN_B;
+    this->computePanelInertialStates();
 }
 
 /*! This method computes the panel states relative to the inertial frame

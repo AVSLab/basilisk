@@ -118,6 +118,7 @@ void Spacecraft::updateAcceptedInertialState()
         this->gravField.updateInertialPosAndVel(
             this->hubR_N->stateView(), this->hubV_N->stateView(), this->timeBeforeNanos);
     }
+    this->refreshArticulatedEndpoints(this->timeBefore);
 }
 
 void Spacecraft::updateSystemTime(double stageTime)
@@ -125,6 +126,17 @@ void Spacecraft::updateSystemTime(double stageTime)
     const auto& tick = this->dynManager.inertialFrame.exactStageTimeNanos;
     const double nanos = tick ? static_cast<double>(*tick) : std::round(stageTime * SEC2NANO); // [ns]
     *this->sysTime << nanos, stageTime;
+}
+
+void Spacecraft::refreshArticulatedEndpoints(double time)
+{
+    if (!this->states.empty()) {
+        const Eigen::MRPd sigma_BN(this->hubSigma->stateView().data());
+        const Eigen::Vector3d omega_BN_B = this->hubOmega_BN_B->stateView();
+        for (StateEffector* effector : this->states) {
+            effector->updateInertialState(time, this->dynManager.inertialFrame, sigma_BN, omega_BN_B);
+        }
+    }
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
@@ -442,6 +454,7 @@ bool Spacecraft::useHubOnlyFastPath() const
  dynParam Manager thus solving for Xdot*/
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
+    this->stateEffectorDerivativesReady = false;
     this->updateSystemTime(integTimeSeconds);
     // A planet publisher may run after the spacecraft at reset or on the zero-duration initial tick.
     if (!this->gravField.ephemeridesReady()) {
@@ -622,6 +635,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     for (it = states.begin(); it != states.end(); it++) {
         (*it)->computeDerivatives(integTimeSeconds, hubVDeriv, hubOmegaDeriv, sigmaBNLoc);
     }
+    this->stateEffectorDerivativesReady = !this->states.empty();
 }
 
 void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
@@ -753,7 +767,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
         (*it)->modifyStates(integrateToThisTime);
     }
     // - Compute force and torque on the body due to stateEffectors
-    this->calcForceTorqueFromStateEffectors(integrateToThisTime, newOmega_BN_B);
+    this->calcForceTorqueFromStateEffectors(integrateToThisTime, this->hubOmega_BN_B->stateView());
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
@@ -862,6 +876,11 @@ void Spacecraft::computeEnergyMomentum(double time)
  are calculated in the intergrator calls */
 void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
 {
+    // A rejected trial can leave stage derivatives in the state effectors.
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos || !this->stateEffectorDerivativesReady ||
+        !this->gravField.ephemeridesReady()) {
+        return;
+    }
     // - Loop over stateEffectors to get their contributions to energy and momentum
     std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {

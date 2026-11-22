@@ -19,7 +19,8 @@
 import numpy as np
 import pytest
 
-from Basilisk.simulation import extForceTorque, gravityEffector, hingedRigidBodyStateEffector, spacecraft
+from Basilisk.architecture import messaging
+from Basilisk.simulation import extForceTorque, gravityEffector, hingedRigidBodyStateEffector, spacecraft, svIntegrators
 from Basilisk.utilities import SimulationBaseClass, macros
 
 
@@ -89,6 +90,125 @@ def _assert_conserved(history, name):
         (history - history[0]) / initial_magnitude, 0.0,
         rtol=0.0, atol=1e-10, err_msg=f"{name} is not conserved",
     )
+
+
+def test_hinge_reaction_waits_for_gravity():
+    """Defer reaction loads while gravity is pending and recover on the first positive step."""
+    time_step = 0.01  # [s]
+    samples = []
+    for delayed in (False, True):
+        sim, body, panels, _ = _make_spacecraft(time_step, 0.0, (0.0, 0.0))
+        panel = panels[0]
+        panel.thetaDotInit = 1.0  # [rad/s]
+        body.hub.omega_BN_BInit = [0.3, 0.4, 0.5]  # [rad/s]
+        body.hub.r_CN_NInit = [100.0, 0.0, 0.0]  # [m]
+        planet = gravityEffector.GravBodyData()
+        planet.planetName = "planet"
+        planet.mu = 1.0  # [m^3/s^2]
+        source = messaging.SpicePlanetStateMsg()
+        planet.planetBodyInMsg.subscribeTo(source)
+        body.gravField.addGravBody(planet)
+        payload = messaging.SpicePlanetStateMsgPayload()
+        if not delayed:
+            source.write(payload)
+        sim.InitializeSimulation()
+        sim.ConfigureStopTime(0)
+        sim.ExecuteSimulation()
+        if delayed:
+            np.testing.assert_array_equal(panel.forceOnBody_B, np.zeros((3, 1)))
+            source.write(payload)
+            body.gravField.UpdateState(0)
+            # Refreshing the ephemeris alone has not evaluated the hinge derivatives.
+            body.calcForceTorqueFromStateEffectors(0.0, body.hub.omega_BN_BInit)
+            for load in (panel.forceOnBody_B, panel.torqueOnBodyPntB_B, panel.torqueOnBodyPntC_B):
+                np.testing.assert_array_equal(load, np.zeros((3, 1)))
+        sim.ConfigureStopTime(macros.sec2nano(time_step))
+        sim.ExecuteSimulation()
+        samples.append([panel.forceOnBody_B, panel.torqueOnBodyPntB_B, panel.torqueOnBodyPntC_B])
+    assert all(np.linalg.norm(load) > 0 for load in samples[0])
+    np.testing.assert_allclose(samples[1], samples[0], rtol=1e-12, atol=1e-12)
+
+
+def test_hinge_reaction_uses_accepted_hub_rate():
+    """A new prescribed hub rate contributes Coriolis force and gyroscopic torque at the accepted pose."""
+    step = 0.1  # [s]
+    sim, body, panels, _ = _make_spacecraft(step, 0.0, (0.0, 0.0))
+    panel = panels[0]
+    # Mirror the panels about the hub center of mass so C is fixed in B.
+    inertia = 50.0  # [kg*m^2], spherical panel inertia
+    for hinge, frame in zip(panels, [np.eye(3), np.diag([-1.0, 1.0, -1.0])]):
+        hinge.dcm_HB = frame.tolist()
+        hinge.thetaDotInit = 1.0  # [rad/s]
+        hinge.IPntS_S = (inertia * np.eye(3)).tolist()
+    ref = messaging.AttRefMsgPayload()
+    source = messaging.AttRefMsg().write(ref)
+    body.attRefInMsg.subscribeTo(source)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    ref.omega_RN_N = [0.2, 0.35, 0.45]  # [rad/s], identity hub attitude
+    source.write(ref, macros.sec2nano(step))
+    sim.ConfigureStopTime(macros.sec2nano(step))
+    sim.ExecuteSimulation()
+
+    def loads():
+        return np.array([panel.forceOnBody_B, panel.torqueOnBodyPntB_B, panel.torqueOnBodyPntC_B]).reshape(3, 3)
+
+    scheduled = loads()
+    omega = body.scStateOutMsg.read().omega_BN_B
+    np.testing.assert_array_equal(omega, ref.omega_RN_N)
+    body.calcForceTorqueFromStateEffectors(step, omega)
+    np.testing.assert_array_equal(loads(), scheduled)
+    body.calcForceTorqueFromStateEffectors(step, np.zeros(3))
+    joint = panel.hingedRigidBodyOutMsg.read()
+    # At fixed joint state the rate-dependent force is Coriolis. Its moment and the
+    # transport of panel spin angular momentum give the rate-dependent moments about B and C.
+    axis = np.array([0.0, 1.0, 0.0])
+    arm = -panel.d * np.array([np.cos(joint.theta), 0.0, -np.sin(joint.theta)])  # [m]
+    force = -2 * panel.mass * np.cross(omega, joint.thetaDot * np.cross(axis, arm))  # [N]
+    moment_b = np.cross(np.ravel(panel.r_HB_B) + arm, force) - np.cross(omega, inertia * joint.thetaDot * axis)  # [N*m]
+    moment_c = moment_b - np.cross(np.ravel(body.hub.r_BcB_B), force)  # [N*m]
+    np.testing.assert_allclose(scheduled - loads(), [force, moment_b, moment_c], rtol=1e-12, atol=1e-12)
+
+
+def test_hinge_reaction_survives_rejected_step(monkeypatch):
+    """Retain the accepted loads after rejection and match an uninterrupted RKF45 step on retry."""
+    step = 1.0  # [s]
+
+    def loads(panel):
+        return np.array([panel.forceOnBody_B, panel.torqueOnBodyPntB_B, panel.torqueOnBodyPntC_B])
+
+    final = []
+    for reject_trial in (False, True):
+        sim, body, panels, _ = _make_spacecraft(step, 40.0, (0.0, 0.0))  # [N*m/rad], [N*m*s/rad]
+        panel = panels[0]
+        panel.thetaDotInit = 1.0  # [rad/s]
+        body.hub.omega_BN_BInit = [0.3, 0.4, 0.5]  # [rad/s]
+        integrator = svIntegrators.svIntegratorRKF45(body)
+        body.setIntegrator(integrator)
+        state = body.scStateOutMsg.addSubscriber()
+        sim.InitializeSimulation()
+        sim.ConfigureStopTime(0)
+        sim.ExecuteSimulation()
+
+        accepted = loads(panel)
+        if reject_trial:
+            with monkeypatch.context() as trial:
+                trial.setattr(integrator, "relTol", 1e-15)
+                trial.setattr(integrator, "absTol", 1e-15)
+                trial.setattr(integrator, "safetyFactorForNextStepSize", 0.0)
+                trial.setattr(integrator, "minimumFactorDecreaseForNextStepSize", 0.0)
+                with pytest.raises(RuntimeError, match="representable forward progress"):
+                    body.UpdateState(macros.sec2nano(step))
+            body.calcForceTorqueFromStateEffectors(0.0, body.hub.omega_BN_BInit)
+            assert state.isWritten() and state.timeWritten() == 0
+            np.testing.assert_array_equal(loads(panel), accepted)
+
+        body.UpdateState(macros.sec2nano(step))
+        assert state.timeWritten() == macros.sec2nano(step)
+        final.append(loads(panel))
+        assert all(not np.allclose(new, old) for new, old in zip(final[-1], accepted))
+    np.testing.assert_allclose(final[1], final[0], rtol=1e-12, atol=1e-12, equal_nan=False)
 
 
 @pytest.mark.parametrize("case", ["gravity", "no_gravity", "damping"])

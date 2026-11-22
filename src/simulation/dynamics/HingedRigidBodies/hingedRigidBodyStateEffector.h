@@ -71,6 +71,9 @@ class HingedRigidBodyStateEffector final
     std::vector<DynamicEffector*> dynEffectors;                 //!< Vector of dynamic effectors attached
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     static uint64_t effectorID; //!< [] ID number of this panel
     double u;                   //!< [N-m] optional motor torque
 

@@ -28,6 +28,8 @@ from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedMotionStateEffector
 from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.simulation import spacecraft
+from Basilisk.simulation import spinningBodyOneDOFStateEffector
+from Basilisk.simulation import svIntegrators
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -38,6 +40,38 @@ splitPath = path.split('simulation')
 
 matplotlib.rc('xtick', labelsize=16)
 matplotlib.rc('ytick', labelsize=16)
+
+
+def test_branch_follows_accepted_attitude_reference():
+    """A fixed mount must follow a new hub attitude at the end of a positive step."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(1.0)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 5.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    platform = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    platform.setR_MB_B([2.0, 0.0, 0.0])  # [m]
+    sc.addStateEffector(platform)
+    platform_state = platform.prescribedMotionConfigLogOutMsg.addSubscriber()
+    ref = messaging.AttRefMsgPayload()
+    source = messaging.AttRefMsg().write(ref)
+    sc.attRefInMsg.subscribeTo(source)
+    sim.AddModelToTask("task", sc, 2)
+    sim.AddModelToTask("task", platform, 1)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    np.testing.assert_array_equal(platform_state().r_BN_N, [2.0, 0.0, 0.0])  # [m]
+
+    ref.sigma_RN = [0.0, 0.0, np.tan(np.pi / 8)]  # MRP for 90 degrees about +z
+    source.write(ref, step)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    assert platform_state.timeWritten() == step
+    np.testing.assert_allclose(platform_state().sigma_BN, ref.sigma_RN, atol=1e-14)
+    np.testing.assert_allclose(platform_state().r_BN_N, [0.0, 2.0, 0.0], atol=1e-14)  # [m]
 
 
 @pytest.mark.parametrize("theta_init", [0.0, macros.D2R * 10.0, macros.D2R * -5.0])

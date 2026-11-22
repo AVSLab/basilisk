@@ -110,6 +110,7 @@ void PrescribedMotionStateEffector::validateMass(double candidateMass)
 */
 void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(currentClock);
 
     // Write the prescribed translational motion output message if it is linked
     if (this->prescribedTranslationOutMsg.isLinked()) {
@@ -130,7 +131,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
     }
 
     // Write the config log message if it is linked
-    if (this->prescribedMotionConfigLogOutMsg.isLinked()) {
+    if (epoch && this->prescribedMotionConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
 
         // Note that the configLogMsg B frame represents the effector body frame (frame P)
@@ -138,7 +139,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         eigenVector3d2CArray(this->v_PcN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_PN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_PN_P, configLogMsg.omega_BN_B);
-        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
+        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -200,28 +201,17 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
     this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
 }
 
-/*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft.
-
- @param integTime [s] Time the method is called
-*/
-void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
+/** @brief Evaluate prescribed motion relative to the parent at the requested epoch.
+ * @param integTime [s] Time at which to evaluate the motion.
+ */
+void PrescribedMotionStateEffector::updateRelativeKinematics(double integTime)
 {
-    this->effProps.mEffDot = 0.0;
-    this->effProps.mEffDotDynamics = 0.0;
-    this->effProps.rEffPrime_CB_BDynamics.setZero();
-    this->effProps.IEffPrimePntB_BDynamics.setZero();
-    this->effProps.hasMassPropertyRateDynamics = false;
-
     // Update the prescribed states
     double dt = integTime - this->currentSimTimeSec;
     this->r_PM_M = this->rEpoch_PM_M + (this->rPrimeEpoch_PM_M * dt) + (0.5 * this->rPrimePrime_PM_M * dt * dt);
     this->rPrime_PM_M = this->rPrimeEpoch_PM_M + (this->rPrimePrime_PM_M * dt);
     this->omega_PM_P = this->omegaEpoch_PM_P + (this->omegaPrime_PM_P * dt);
     this->sigma_PM = Eigen::MRPd(this->sigma_PMState->stateView().data());
-
-    // Give the mass of the prescribed body to the effProps mass
-    this->effProps.mEff = this->mass;
 
     // Compute dcm_BM
     this->dcm_BM = this->sigma_MB.toRotationMatrix();
@@ -256,13 +246,31 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->r_PcP_B = this->dcm_BP * this->r_PcP_P;
     this->r_PcB_B = this->r_PcP_B + *this->r_PB_B;
 
+    // Find the B frame time derivative of r_PcB_B
+    this->rPrime_PcB_B = this->omega_PB_B.cross(this->r_PcP_B) + this->rPrime_PM_B;
+    *this->rPrime_PB_B = this->rPrime_PM_B;
+}
+
+/*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
+ spacecraft.
+
+ @param integTime [s] Time the method is called
+*/
+void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
+{
+    this->updateRelativeKinematics(integTime);
+    this->effProps.mEffDot = 0.0;
+    this->effProps.mEffDotDynamics = 0.0;
+    this->effProps.rEffPrime_CB_BDynamics.setZero();
+    this->effProps.IEffPrimePntB_BDynamics.setZero();
+    this->effProps.hasMassPropertyRateDynamics = false;
+
+    this->effProps.mEff = this->mass;
+
     // Find the effector inertia about point B
     this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
     this->IPntPc_B = this->dcm_BP * this->IPntPc_P * this->dcm_BP.transpose();
     this->effProps.IEffPntB_B = this->IPntPc_B - this->mass * this->rTilde_PcB_B * this->rTilde_PcB_B;
-
-    // Find the B frame time derivative of r_PcB_B
-    this->rPrime_PcB_B = this->omega_PB_B.cross(this->r_PcP_B) + this->rPrime_PM_B;
 
     if (this->stateEffectors.empty()) {
         this->effProps.rEff_CB_B = this->r_PcB_B;
@@ -298,7 +306,6 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
         Eigen::Vector3d rPPrime_EcP_P = (*it)->effProps.rEffPrime_CB_B;
         Eigen::Vector3d rPrime_EcP_B = this->dcm_BP * rPPrime_EcP_P + this->omega_PB_B.cross(r_EcP_B);
-        *this->rPrime_PB_B = this->rPrime_PM_B;
         Eigen::Vector3d rPrime_EcB_B = rPrime_EcP_B + *this->rPrime_PB_B;
         this->effProps.rEffPrime_CB_B += (*it)->effProps.mEff * rPrime_EcB_B;
 
@@ -518,6 +525,26 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
     // Prescribed motion rotational energy contribution
     rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B) +
                       0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
+}
+
+void PrescribedMotionStateEffector::refreshInertialKinematics(double time,
+                                                              const Eigen::MRPd& sigma_BN,
+                                                              const Eigen::Vector3d& omega_BN_B)
+{
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->refreshPrescribedKinematics(time);
+}
+
+void PrescribedMotionStateEffector::refreshPrescribedKinematics(double time)
+{
+    this->updateRelativeKinematics(time);
+    this->omega_PN_B = this->omega_PB_B + this->omega_BN_B;
+    this->rDot_PcB_B = this->rPrime_PcB_B + this->omega_BN_B.cross(this->r_PcB_B);
+    this->computePrescribedMotionInertialStates();
+    for (StateEffector* child : this->stateEffectors) {
+        child->updateInertialState(time, *this->inertialFrame, Eigen::MRPd(this->sigma_PN->data()), *this->omega_PN_P);
+    }
 }
 
 /*! This method computes the effector states relative to the inertial frame.
