@@ -19,7 +19,13 @@
 
 #include "NBodyGravity.h"
 
+#include <algorithm>
+#include <optional>
+#include <vector>
+
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
 namespace {
@@ -33,20 +39,76 @@ bool isCentral(const GravitySource& source)
     return source.gravBody ? source.gravBody->isCentralBody : source.isCentralBody;
 }
 
-bool isStateLinked(GravitySource& source)
-{
-    return source.stateInMsg.isLinked() || (source.gravBody && source.gravBody->planetBodyInMsg.isLinked());
-}
-
-SpicePlanetStateMsgPayload readState(GravitySource& source, BSKLogger& bskLogger)
+ReadFunctor<SpicePlanetStateMsgPayload>* stateReader(GravitySource& source)
 {
     if (source.stateInMsg.isLinked()) {
-        return source.stateInMsg();
+        return &source.stateInMsg;
     }
-    if (source.gravBody && source.gravBody->planetBodyInMsg.isLinked()) {
-        return source.gravBody->planetBodyInMsg();
+    return source.gravBody && source.gravBody->planetBodyInMsg.isLinked() ? &source.gravBody->planetBodyInMsg : nullptr;
+}
+
+struct SourcePose
+{
+    std::shared_ptr<GravityModel> model;
+    bool central;
+    Eigen::Vector3d position = Eigen::Vector3d::Zero(); // [m] in the ephemeris frame
+    Eigen::Matrix3d dcm_PN = Eigen::Matrix3d::Identity();
+
+    Eigen::Vector3d acceleration(const Eigen::Vector3d& displacement_N) const
+    {
+        return dcm_PN.transpose() * model->computeField(dcm_PN * displacement_N);
     }
-    bskLogger.bskError("Cannot read an unlinked NBodyGravity source ephemeris message.");
+};
+
+SourcePose sampleSource(GravitySource& source, std::optional<uint64_t> taskTick)
+{
+    SourcePose pose{ getGravityModel(source), isCentral(source) };
+    auto* reader = stateReader(source);
+    if (!reader) {
+        return pose;
+    }
+    auto sample = (*reader)();
+    const double dt = taskTick ? MJScene::getDynamicsTimeOffset(*taskTick, reader->timeWritten()) : 0.0; // [s]
+    pose.position = Eigen::Vector3d(sample.PositionVector);
+    pose.dcm_PN = c2DArray2EigenMatrix3d(sample.J20002Pfix);
+    if (pose.dcm_PN.isZero()) { // Position-only ephemerides are inertially aligned.
+        pose.dcm_PN.setIdentity();
+    }
+    if (dt != 0.0) {
+        pose.position += dt * Eigen::Vector3d(sample.VelocityVector);
+        const Eigen::Matrix3d dcm_NP = pose.dcm_PN.transpose();
+        const auto spin = planetSpin(dcm_NP, c2DArray2EigenMatrix3d(sample.J20002Pfix_dot).transpose());
+        pose.dcm_PN = advanceDcm(dcm_NP, spin, dt).transpose();
+    }
+    return pose;
+}
+
+std::vector<SourcePose> sampleSources(std::map<std::string, GravitySource>& sources, std::optional<uint64_t> taskTick)
+{
+    std::vector<SourcePose> poses;
+    poses.reserve(sources.size());
+    for (auto& [_, source] : sources) {
+        poses.push_back(sampleSource(source, taskTick));
+    }
+    return poses;
+}
+
+Eigen::Vector3d targetAcceleration(const std::vector<SourcePose>& sources, const SCStatesMsgPayload& target)
+{
+    const auto central =
+        std::find_if(sources.begin(), sources.end(), [](const SourcePose& source) { return source.central; });
+    const Eigen::Vector3d origin = central == sources.end() ? Eigen::Vector3d::Zero() : central->position;
+    const Eigen::Vector3d targetPosition(target.r_BN_N);
+    Eigen::Vector3d acceleration = Eigen::Vector3d::Zero();
+    for (const auto& source : sources) {
+        const Eigen::Vector3d sourceToOrigin = origin - source.position;
+        acceleration += source.acceleration(sourceToOrigin + targetPosition);
+        if (central != sources.end() && !source.central) {
+            // Subtract this source's acceleration on the moving central body at the same stage.
+            acceleration -= source.acceleration(sourceToOrigin);
+        }
+    }
+    return acceleration;
 }
 } // namespace
 
@@ -67,7 +129,7 @@ void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     bool foundCentralSource = false;
 
     for (auto&& [name, source] : sources) {
-        if (sources.size() > 1 && !isStateLinked(source)) {
+        if (sources.size() > 1 && !stateReader(source)) {
             bskLogger.bskError("%sSource '%s' has no ephemeris input but there are multiple gravity sources!",
                                errorPrefix.c_str(),
                                name.c_str());
@@ -87,7 +149,7 @@ void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
                                error->c_str());
         }
 
-        if (gravityModel->dependsOnOrientation() && !isStateLinked(source)) {
+        if (gravityModel->dependsOnOrientation() && !stateReader(source)) {
             bskLogger.bskLog(BSK_WARNING,
                              "%sSource '%s' uses an orientation-dependent gravity model, but no "
                              "ephemeris input is connected. The body will be treated as non-rotating.",
@@ -106,6 +168,7 @@ void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 void NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
 {
+    const auto poses = sampleSources(sources, CurrentSimNanos);
     for (auto&& [_, target] : targets) {
         auto targetStatePayload = target.centerOfMassStateInMsg();
         Eigen::Matrix3d dcm_BN = std::invoke([&]() {
@@ -114,7 +177,7 @@ void NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
             return cArray2EigenMatrix3d(*dcm_BN);
         });
 
-        auto gravity_N = computeAccelerationOnTarget(target);
+        auto gravity_N = targetAcceleration(poses, targetStatePayload);
         auto gravity_B = dcm_BN * gravity_N;
 
         auto massPropPayload = target.massPropertiesInMsg();
@@ -196,93 +259,11 @@ GravityTarget& NBodyGravity::addGravityTarget(std::string name, MJBody& body)
 
 Eigen::Vector3d NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector3d r_J2000)
 {
-    // Orientation and position of the gravity source in J2000
-    Eigen::Matrix3d dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d r_sourceJ2000 = Eigen::Vector3d::Zero();
-    if (isStateLinked(source)) {
-        auto spicePayload = readState(source, bskLogger);
-        dcm_sourceFixedJ2000 = c2DArray2EigenMatrix3d(spicePayload.J20002Pfix);
-        // Position-only ephemeris messages leave the source DCM at its zero
-        // default. Match GravityEffector by treating that source as inertially
-        // aligned instead of collapsing every transformed position to zero.
-        if (dcm_sourceFixedJ2000.isZero()) {
-            dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
-        }
-        r_sourceJ2000 = cArray2EigenVector3d(spicePayload.PositionVector);
-    }
-
-    // Transform position in J2000 reference frame to source-fixed reference frame
-    Eigen::Vector3d r_sourceFix = dcm_sourceFixedJ2000 * (r_J2000 - r_sourceJ2000);
-
-    // Compute the gravity acceleration on the source-fixed reference frame
-    Eigen::Vector3d grav_sourceFix = getGravityModel(source)->computeField(r_sourceFix);
-
-    // Convert gravity to J2000 reference frame
-    return dcm_sourceFixedJ2000.transpose() * grav_sourceFix;
+    const auto pose = sampleSource(source, std::nullopt);
+    return pose.acceleration(r_J2000 - pose.position);
 }
 
 Eigen::Vector3d NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
 {
-    /* List of points and frames of interest in this function:
-
-        - SpiceRef: Spice messages report body positions and orientations
-            w.r.t this frame. Typically, this is the J2000 frame centered
-            at the solar system barycenter, but might be different if
-            `zeroBase` or `referenceBase` were updated in `SpiceInterface`
-        - N: inertial reference frame of the simulation. If there is a
-            central body, then the center of this reference frame is the
-            center of the central body. Otherwise, the center coincides
-            with J2000. The orientation always coincides with J2000.
-        - target: a position corresponding to the target
-    */
-
-    auto targetStatePayload = target.centerOfMassStateInMsg();
-
-    /* Position of the target w.r.t the inertial center of the simulation,
-    given in the inertial reference frame of the simulation.
-    This might be body-centered if this simulation has a central body. */
-    Eigen::Vector3d r_targetN_N = cArray2EigenVector3d(targetStatePayload.r_BN_N);
-
-    /* Position of the central body w.r.t the Spice reference frame.
-    The following loop will update this IF there is a central body whose state
-    inMsg is connected, otherwise assume central source is at center of integration. */
-    Eigen::Vector3d r_centralSourceSpiceRef_N = Eigen::Vector3d::Zero();
-    bool centralSourceExists = false;
-
-    for (auto&& [_, source] : sources) {
-        if (!isCentral(source))
-            continue;
-
-        centralSourceExists = true;
-
-        if (!isStateLinked(source))
-            break;
-
-        auto spicePayload = readState(source, bskLogger);
-        r_centralSourceSpiceRef_N = cArray2EigenVector3d(spicePayload.PositionVector);
-    }
-
-    /* Position of the target w.r.t the Spice center and reference frame.
-    If there is a central body, and this central body does not correspond to
-    the SpiceRef center, then this is the position of the target w.r.t the central
-    body (r_targetN_N) + the position of the central w.r.t SpiceRef (r_centralSourceSpiceRef_N). */
-    Eigen::Vector3d r_targetSpiceRef_N = r_targetN_N + r_centralSourceSpiceRef_N;
-
-    // Gravity acceleration acting on the target in the inertial reference frame
-    Eigen::Vector3d grav_N = Eigen::Vector3d::Zero();
-
-    // Total acceleration is the sum of accelerations produced by each source
-    // But also taking into account the relative acceleration of the central body
-    for (auto&& [_, source] : sources) {
-        grav_N += computeAccelerationFromSource(source, r_targetSpiceRef_N);
-
-        // If there is a central body, and 'source' is not this one,
-        // then we need to take into account the acceleration of the central
-        // body due to the effect of this other source.
-        if (centralSourceExists && !isCentral(source)) {
-            grav_N -= computeAccelerationFromSource(source, r_centralSourceSpiceRef_N);
-        }
-    }
-
-    return grav_N;
+    return targetAcceleration(sampleSources(sources, std::nullopt), target.centerOfMassStateInMsg());
 }

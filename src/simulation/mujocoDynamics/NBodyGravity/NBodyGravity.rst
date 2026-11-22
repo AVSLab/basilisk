@@ -11,7 +11,7 @@ Messages are registered per source and per target via ``addGravitySource`` and `
 .. bsk-module-io:: NBodyGravity
 
    input source.stateInMsg SpicePlanetStateMsgPayload
-      Inertial position and velocity of the gravity source (e.g., from SPICE). One per registered source.
+      Inertial position and velocity of the source, with optional planet-fixed orientation and its derivative.
 
    input target.massPropertiesInMsg SCMassPropsMsgPayload
       Mass properties of the gravity target. One per registered target.
@@ -39,30 +39,39 @@ where :math:`\mathbf{a}_k` is the acceleration from source :math:`k` evaluated a
 
 and is published as a ``ForceAtSiteMsgPayload`` in the site frame.
 
-If one source is designated as the central body, the central-body acceleration is subtracted from all other
-targets (third-body perturbation formulation).
+If one source is designated as the central body, target positions are relative to it. For each other source,
+the module subtracts the acceleration that source exerts on the central body from the acceleration it exerts
+on the target.
 
 Multiple gravity sources and targets can be registered. Each source provides its own ``GravityModel`` (e.g.,
-point-mass or spherical harmonics) and its inertial state via ``stateInMsg``. Each target provides mass properties
-and center-of-mass state via ``massPropertiesInMsg`` and ``centerOfMassStateInMsg``.
+point-mass or spherical harmonics). A source reads its ephemeris from ``stateInMsg``. For a factory-created
+source, connecting ``stateInMsg`` overrides the shared gravity body's ``planetBodyInMsg``.
+Each target provides mass properties and center-of-mass state via ``massPropertiesInMsg`` and ``centerOfMassStateInMsg``.
 
 Detailed Behavior
 -----------------
-At each update step, the module performs the following operations for each target:
+At each dynamics evaluation, the module advances each source from its own message write time to the
+integrator stage. Position uses the reported velocity. Orientation uses the angular velocity derived
+from ``J20002Pfix`` and ``J20002Pfix_dot``. An omitted orientation defaults to inertial alignment.
+The same source poses are used for every target and for the central-body acceleration. The module
+then multiplies each target's acceleration by its mass and expresses the force in the site frame.
 
-1. Reads the target mass and center-of-mass state.
-2. For each gravity source, reads its inertial state and evaluates the gravity model.
-3. Sums accelerations from all sources (applying the third-body formulation if a central body is defined).
-4. Multiplies by target mass to obtain force.
-5. Writes the result to ``target.massFixedForceOutMsg``.
+Stage times may precede the message epoch, including before simulation time zero with SOSRI.
+When scheduled outside a scene dynamics task, the module evaluates at its scheduled tick.
+In both cases the target state is read as supplied and should describe that evaluation epoch.
+The untimed helpers ``computeAccelerationFromSource()`` and ``computeAccelerationOnTarget()``
+evaluate the ephemeris messages as written.
 
-During ``Reset()``, the module validates that all source and target input messages are linked and that at most one
-central body is defined.
+During ``Reset()``, the module checks target connections and permits at most one central body.
+A single source with no ephemeris is treated as stationary at the origin. Multiple sources each
+require an ephemeris connection.
 
 Module Assumptions and Limitations
 ----------------------------------
 - The module computes forces at the target center of mass; torques due to gravity gradient are not modeled.
-- Sources and targets are processed in insertion order (alphabetical by name in the internal map).
+- Between ephemeris samples the source velocity and spin are constant. Choose the publisher rate
+  to resolve changes in either quantity over the interval.
+- Sources and targets are processed in alphabetical order by name.
 
 Verification and Testing
 ------------------------

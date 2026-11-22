@@ -51,6 +51,28 @@ struct MujocoStateSegments
     StateBufferSegment qvelDerivative;
 };
 
+// A task receives only an unsigned tick. Expose its continuous stage time while the task
+// runs, including to message-only models that have no body or site linking them to the scene.
+struct TaskStage
+{
+    uint64_t tick;
+    double seconds;
+};
+thread_local const TaskStage* continuousStage = nullptr;
+
+void executeDynamicsTask(SysModelTask& task, uint64_t tick, double seconds, bool exactTick)
+{
+    // Restore the outer clock even if a nested scene or a task callback throws.
+    struct RestoreStage
+    {
+        const TaskStage* previous;
+        ~RestoreStage() { continuousStage = previous; }
+    } restore{ continuousStage };
+    const TaskStage stage{ tick, seconds };
+    continuousStage = exactTick ? nullptr : &stage;
+    task.ExecuteTaskList(tick);
+}
+
 class ScopedFlag
 {
   public:
@@ -354,6 +376,17 @@ uint64_t MJScene::stageTimestamp(double time) const
     return wholeTicks + std::min(maxTick - wholeTicks, static_cast<uint64_t>(fraction * nanosPerSecond));
 }
 
+double MJScene::getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick)
+{
+    if (continuousStage && continuousStage->tick == taskTick) {
+        constexpr uint64_t nanosPerSecond = 1'000'000'000; // [ns/s]
+        return (continuousStage->seconds - static_cast<double>(messageTick / nanosPerSecond)) -
+               static_cast<double>(messageTick % nanosPerSecond) / nanosPerSecond;
+    }
+    // Preserve small stage offsets at multi-year epochs, including for ordinary scheduled updates.
+    return taskTick >= messageTick ? epochSeconds(taskTick - messageTick) : -epochSeconds(messageTick - taskTick);
+}
+
 void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
     const auto fixedTick = this->getFixedStageTick();
@@ -396,7 +429,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // which will take the recently updated qpos and qvel data,
     // do the fwd kinematics, and update the state messages.
     // These messages can then be read by the rest of modules.
-    this->dynamicsTask.ExecuteTaskList(nanos);
+    executeDynamicsTask(this->dynamicsTask, nanos, t, fixedTick.has_value() || t == this->timeBefore);
 
     // Refresh after task callbacks, including direct StateData writes that
     // cannot mark the scene's explicit stale flag.
@@ -465,7 +498,7 @@ void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unuse
     data->time = t;
     this->trialStateActive = true;
 
-    this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
+    executeDynamicsTask(this->dynamicsDiffusionTask, nanos, t, t == this->timeBefore);
 }
 
 void MJScene::preIntegration(uint64_t callTime)

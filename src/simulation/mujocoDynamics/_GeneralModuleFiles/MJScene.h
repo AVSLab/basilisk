@@ -386,6 +386,14 @@ class MJScene : public DynamicObject
      */
     double getEvaluationTime() { return this->getMujocoData()->time; }
 
+    /** @brief Compute the signed age of a message for a dynamics task, or for an ordinary scheduled update.
+     * @param taskTick [ns] Timestamp passed to the model's UpdateState().
+     * @param messageTick [ns] Timestamp of the source message.
+     * @return Elapsed seconds from the message epoch to the evaluation epoch. Uses the continuous stage time
+     * during a scene callback when the integrator does not supply an exact tick.
+     */
+    static double getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick);
+
     /** @brief Adds a model to the diffusion dynamics task.
      *
      * This task and function are only relevant when the dynamics of
