@@ -1,0 +1,1 @@
+- Fixed the missing short-period longitude term in the C and Python mean/osculating element mappings, including legacy paths, for both conversion directions; added independent regression tests and :ref:`meanOscShortPeriodCorrection` documentation (issue 1728).
