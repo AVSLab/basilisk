@@ -142,15 +142,15 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     # This pulls the actual data log from the simulation run.
     forceOutput = dataLog.forceRequestInertial
 
-    # set the filtered output truth states
+    # Gauss-equation force references include the Eq. (F.11) longitude correction (issue #1728).
     if useClassicElem:
-        trueVector = [[-849.57347406544340628897771239280701,
-                       1849.77641265032843875815160572528839,
-                       136.07817734479317550722043961286545]]
+        trueVector = [[-849.546123379227,
+                       1849.776420721693,
+                       136.08637181261676]]  # [N]
     else:
-        trueVector = [[-1655.37188207880308254971168935298920,
-                       1788.61776379042521512019447982311249,
-                       52.54814237453938119415397522971034]]
+        trueVector = [[-1655.365545843777,
+                       1788.6184649718475,
+                       52.54814236471713]]  # [N]
 
     # compare the meanOEFeedback results to the truth values
     for i in range(0, len(trueVector)):

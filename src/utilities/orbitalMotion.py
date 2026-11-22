@@ -1055,10 +1055,13 @@ def _cl_mean_osc_map(req, J2, oe, oep, sign):
            - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
            - 3 * e * math.sin(2 * omega + f) - e * math.sin(2 * omega + 3 * f))  # (F.11)
 
-    edM = gamma2p / 8 * e * (eta ** 3) * inclination_factor * math.sin(2 * omega) \
-        - gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
+    edM_lp = gamma2p / 8 * e * (eta ** 3) * inclination_factor * math.sin(2 * omega)
+    edM_sp = -gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
         * ((a_r * eta) ** 2 + a_r + 1) * math.sin(f) + 3 *(1 - ((math.cos(i)) ** 2)) *((-(a_r * eta) ** 2 - a_r + 1) \
         * math.sin(2 * omega + f) + ((a_r * eta) ** 2 + a_r + 1 / 3) * math.sin(2 * omega + 3 * f)))  # (F.12)
+    edM = edM_lp + edM_sp
+    # Appendix F erratum: only the short-period part of e*delta(M) enters (F.11).
+    MpopOp -= e / (eta * (1 + eta)) * edM_sp
 
     dOmega = -gamma2p / 8 * (e ** 2) * math.cos(i) * (11 + 80 * ((math.cos(i)) ** 2) /(1 - 5 * ((math.cos(i)) ** 2)) \
            + 200 * ((math.cos(i)) ** 4) /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \

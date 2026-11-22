@@ -1256,7 +1256,7 @@ TEST(OrbitalMotion, classicElementsToMeanElements)
     EXPECT_NEAR(elements_p.e, 0.20017786852908628358882481279579, orbitalElementsAccuracy);
     EXPECT_NEAR_REL(elements_p.i, 0.20000333960738947425284095515963, orbitalElementsAccuracy);
     EXPECT_NEAR(elements_p.Omega, 0.15007256499303692209856819772540, orbitalElementsAccuracy);
-    EXPECT_NEAR(elements_p.omega, 0.50011857315729335571319325026707, orbitalElementsAccuracy);
+    EXPECT_NEAR(elements_p.omega, 0.5001220829381423, orbitalElementsAccuracy); // [rad]
     EXPECT_NEAR_REL(elements_p.f, 0.19982315726261962174348241205735, orbitalElementsAccuracy);
 }
 
@@ -1264,12 +1264,12 @@ TEST(OrbitalMotion, classicElementsToMeanElements)
 TEST(OrbitalMotion, meanOscEquatorial)
 {
     // Planar-limit references: delta(a)/a = 2*gamma*(a_r^3-eta^-3),
-    // delta(mean longitude) = 3*gamma/eta^4*(f-M+e*sin(f)).
+    // delta(mean longitude) = 3*gamma/eta^4*(f-M+e*sin(f)) - e/(eta*(1+eta))*e*delta(M).
     // Eccentricity and mean anomaly are recovered from (e+delta(e), e*delta(M)).
-    const double expectedR[2][3] = { { 4499.199053733382, 5668.85695301761, 0.0 },
-                                     { 4488.47581038344, 5657.032670656745, 0.0 } }; // [km]
-    const double expectedV[2][3] = { { -5.950694310784638, 4.990389813133058, 0.0 },
-                                     { -5.964686867945799, 5.000352990770512, 0.0 } }; // [km/s]
+    const double expectedR[2][3] = { { 4499.29591560223, 5668.780075354534, 0.0 },
+                                     { 4488.379149241521, 5657.109363440752, 0.0 } }; // [km]
+    const double expectedV[2][3] = { { -5.95060904021076, 4.990491490623828, 0.0 },
+                                     { -5.964772307018929, 5.000251072733523, 0.0 } }; // [km/s]
     for (int direction : { -1, 1 }) {
         const int index = (direction + 1) / 2;
         for (bool retrograde : { false, true }) {

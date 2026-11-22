@@ -614,11 +614,12 @@ def test_orbitalMotion(show_plots):
     elements.f = 0.2
     elements_p = orbitalMotion.ClassicElements()
     orbitalMotion.clMeanOscMap(req, J2, elements, elements_p, 1)
+    # Corrected Appendix F reference: a [km], e [-], i/Omega/omega/f [rad].
     trueElements_p = np.array([1000.07546442015950560744386166334152,
                                0.20017786852908628358882481279579,
                                0.20000333960738947425284095515963,
                                0.15007256499303692209856819772540,
-                               0.50011857315729335571319325026707,
+                               0.5001220829381423,
                                0.19982315726261962174348241205735])
     mappedElements_p = np.array([elements_p.a, elements_p.e, elements_p.i,
                                  elements_p.Omega, elements_p.omega, elements_p.f])
