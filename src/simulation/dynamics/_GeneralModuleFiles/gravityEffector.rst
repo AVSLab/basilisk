@@ -180,8 +180,13 @@ If a linked planet message is still unwritten during spacecraft reset, the space
 its initial derivatives. On a zero-duration update, the spacecraft applies written attitude
 and translation references and reevaluates the derivatives with the latest available ephemerides
 once all linked planet messages are written. This includes replacements at the same timestamp.
+Synchronized spacecraft apply their written motion references and refresh articulated endpoint positions,
+attitudes, and velocities before evaluating initial constraint loads. The initial derivatives, accepted endpoints,
+and all gravity evaluations during a zero-duration update use the exact integer tick, including at multi-year epochs.
 At reset and during zero-duration updates, the spacecraft stores that tick directly in the double-precision
 nanosecond component of ``systemTime``. Other stages report their signed stage time.
+At each subsequent integrator stage, constraints use endpoint positions and velocities in a common inertial frame.
+A constraint with an unknown central-body origin defers its loads until both endpoints can be located.
 Until its reference is first written, each component of the motion retains
 its configured or integrated state.
 Write every linked ephemeris before advancing simulation time. While a linked central-body input

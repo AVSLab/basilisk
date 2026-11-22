@@ -246,7 +246,7 @@ void NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynam
 
     HingedPanel& panel = this->PanelVec[(size_t)(segment - 1)];
     panel.assignStateParamNames<DynamicEffector*>(newDynamicEffector);
-    panel.dynEffectors.push_back(newDynamicEffector);
+    panel.dynEffectors.push_back(newDynamicEffector->forAttachment(false));
     this->hasAttachedEffectors = true;
 }
 

@@ -106,7 +106,7 @@ void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
 {
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(true));
 }
 
 void Spacecraft::updateAcceptedInertialState()
@@ -126,6 +126,20 @@ void Spacecraft::updateSystemTime(double stageTime)
     const auto& tick = this->dynManager.inertialFrame.exactStageTimeNanos;
     const double nanos = tick ? static_cast<double>(*tick) : std::round(stageTime * SEC2NANO); // [ns]
     *this->sysTime << nanos, stageTime;
+}
+
+void Spacecraft::prepareConstraintEndpoints(double time)
+{
+    this->dynManager.inertialFrame.acceptedTimeNanos.reset();
+    if (!this->dynManager.hasConstraint) {
+        return;
+    }
+    this->dynManager.inertialFrame.originReady = this->gravField.originReady;
+    if (this->gravField.originReady) {
+        this->updateSystemTime(time);
+        this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
+        this->refreshArticulatedEndpoints(time);
+    }
 }
 
 void Spacecraft::refreshArticulatedEndpoints(double time)

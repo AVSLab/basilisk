@@ -152,6 +152,11 @@ class DynamicObject : public SysModel
     DynamicObject* integrationOwner = nullptr;      ///< Borrowed primary object, or null for independent integration.
 
   protected:
+    /** @brief Prepare coupled constraint geometry before any object evaluates this stage.
+     * @param time [s] Signed integrator stage time.
+     */
+    virtual void prepareConstraintEndpoints(double time [[maybe_unused]]) {}
+
     /** @brief Refresh derivatives after every synchronized object has prepared its initial state. */
     virtual void refreshInitialDerivatives() {}
 

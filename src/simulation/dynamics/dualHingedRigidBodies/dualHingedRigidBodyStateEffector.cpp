@@ -180,7 +180,7 @@ void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDy
 
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector, segment);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
     this->dynEffectorSegments.push_back(segment);
 }
 

@@ -192,32 +192,6 @@ void ConstraintDynamicEffector::setC_a(double c_a)
     }
 }
 
-/*! @brief Add a spacecraft position-state name.
- *
- * @param[in] value Position-state name to add.
- */
-void ConstraintDynamicEffector::setStateNameOfPosition(std::string value)
-{
-    if (!value.empty()) {
-        this->stateNameOfPosition.push_back(value);
-    } else {
-        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfPosition variable must be a non-empty string");
-    }
-}
-
-/*! @brief Add a spacecraft velocity-state name.
- *
- * @param[in] value Velocity-state name to add.
- */
-void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value)
-{
-    if (!value.empty()) {
-        this->stateNameOfVelocity.push_back(value);
-    } else {
-        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfVelocity variable must be a non-empty string");
-    }
-}
-
 /*! @brief Add a spacecraft attitude-state name.
  *
  * @param[in] value Attitude-state name to add.
@@ -333,199 +307,186 @@ void ConstraintDynamicEffector::readInputMessage()
     }
 }
 
-/*! This method allows the constraint effector to have access to the parent states
- @param states The states to link
- */
+DynamicEffector* ConstraintDynamicEffector::forAttachment(bool hub)
+{
+    if (this->attachmentCount >= this->endpoints.size()) {
+        this->bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
+    }
+    const auto index = this->attachmentCount;
+    auto& endpoint = this->endpoints[index];
+    endpoint.setPropName_inertialPosition(this->propName_inertialPosition.at(index));
+    endpoint.setPropName_inertialVelocity(this->propName_inertialVelocity.at(index));
+    // Hub attitude and rate names are stored separately from articulated-body names.
+    // For a mixed pair, each parent therefore uses the first entry of its kind.
+    const bool firstIsHub = !this->endpoints[0].getStateNameOfSigma().empty();
+    const std::size_t typeIndex = index == 1 && firstIsHub == hub ? 1 : 0;
+    if (hub) {
+        endpoint.setStateNameOfPosition(this->stateNameOfPosition);
+        endpoint.setStateNameOfVelocity(this->stateNameOfVelocity);
+        endpoint.setStateNameOfSigma(this->stateNameOfSigma.at(typeIndex));
+        endpoint.setStateNameOfOmega(this->stateNameOfOmega.at(typeIndex));
+    } else {
+        endpoint.setPropName_inertialAttitude(this->propName_inertialAttitude.at(typeIndex));
+        endpoint.setPropName_inertialAngVelocity(this->propName_inertialAngVelocity.at(typeIndex));
+    }
+    ++this->attachmentCount;
+    return &endpoint;
+}
+
+void ConstraintDynamicEffector::Endpoint::linkInStates(DynParamManager& states)
+{
+    this->hubPosition = states.getStateObject(this->stateNameOfPosition);
+    this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
+    this->hubAttitude = states.getStateObject(this->stateNameOfSigma);
+    this->hubRate = states.getStateObject(this->stateNameOfOmega);
+    this->linkTranslation(states);
+}
+
+void ConstraintDynamicEffector::Endpoint::linkInProperties(DynParamManager& states)
+{
+    this->branchAttitude = states.getPropertyReference(this->propName_inertialAttitude);
+    this->branchRate = states.getPropertyReference(this->propName_inertialAngVelocity);
+    this->linkTranslation(states);
+}
+
+void ConstraintDynamicEffector::Endpoint::linkTranslation(DynParamManager& states)
+{
+    this->owner.validateConfiguration();
+    this->owner.initializeGains();
+    this->position = states.getPropertyReference(this->propName_inertialPosition);
+    this->velocity = states.getPropertyReference(this->propName_inertialVelocity);
+    states.hasConstraint = true;
+    this->frame = &states.inertialFrame;
+    if (this->owner.bothLinked() && this->owner.endpoints[0].hubAttitude && this->owner.endpoints[1].branchAttitude &&
+        this->owner.propName_inertialPosition.size() == 2) {
+        // Preserve the public property lists for a hub followed by an articulated parent.
+        this->owner.propName_inertialPosition.erase(this->owner.propName_inertialPosition.begin());
+        this->owner.propName_inertialVelocity.erase(this->owner.propName_inertialVelocity.begin());
+    }
+}
+
+Eigen::MRPd ConstraintDynamicEffector::Endpoint::attitude() const
+{
+    return Eigen::MRPd(this->hubAttitude ? this->hubAttitude->stateView().data() : this->branchAttitude->data());
+}
+
+Eigen::Vector3d ConstraintDynamicEffector::Endpoint::angularVelocity() const
+{
+    if (this->hubRate) {
+        return this->hubRate->stateView();
+    }
+    return *this->branchRate;
+}
+
 void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 {
-    if (this->scInitCounter > 1) {
-        bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
-    }
-
-    this->validateConfiguration();
-    this->initializeGains();
-
-    int stateIdx = -1;
-    if (this->scInitCounter == 0) {
-        this->parent1.parentType = "hub";
-        this->parent1.idx = 0;
-        this->hubCounter = 1;
-        stateIdx = this->parent1.idx;
-    } else if (this->scInitCounter == 1) {
-        this->parent2.parentType = "hub";
-        if (this->hubCounter == 0) {
-            this->parent2.idx = 0;
-        } else if (this->hubCounter == 1) {
-            this->parent2.idx = 1;
-        }
-        stateIdx = this->parent2.idx;
-    }
-
-    const size_t statePosition = static_cast<size_t>(stateIdx);
-    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[statePosition]));
-    this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[statePosition]));
-    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[statePosition]));
-    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[statePosition]));
-
-    this->scInitCounter++;
+    this->forAttachment(true)->linkInStates(states);
 }
 
-/*! This method is used to link properties to the constraint effector.
- @param properties The parameter manager to collect from
- */
-void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties)
+void ConstraintDynamicEffector::linkInProperties(DynParamManager& states)
 {
-    if (this->scInitCounter > 1) {
-        bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
-    }
-
-    this->validateConfiguration();
-    this->initializeGains();
-
-    int propIdx = -1;
-    if (this->scInitCounter == 0) {
-        this->parent1.parentType = "effector";
-        this->parent1.idx = 0;
-        this->effectorCounter = 1;
-        propIdx = this->parent1.idx;
-    } else if (this->scInitCounter == 1) {
-        this->parent2.parentType = "effector";
-        if (this->effectorCounter == 0) {
-            this->parent2.idx = 0;
-            // if a spacecraft is added first, it propulated the pos and vel properties
-            this->propName_inertialPosition.erase(this->propName_inertialPosition.begin());
-            this->propName_inertialVelocity.erase(this->propName_inertialVelocity.begin());
-        } else if (this->effectorCounter == 1) {
-            this->parent2.idx = 1;
-        }
-        propIdx = this->parent2.idx;
-    }
-
-    const size_t propertyPosition = static_cast<size_t>(propIdx);
-    this->inertialAttitudeProperty.push_back(
-        properties.getPropertyReference(this->propName_inertialAttitude[propertyPosition]));
-    this->inertialAngVelocityProperty.push_back(
-        properties.getPropertyReference(this->propName_inertialAngVelocity[propertyPosition]));
-    this->inertialPositionProperty.push_back(
-        properties.getPropertyReference(this->propName_inertialPosition[propertyPosition]));
-    this->inertialVelocityProperty.push_back(
-        properties.getPropertyReference(this->propName_inertialVelocity[propertyPosition]));
-
-    this->scInitCounter++;
+    this->forAttachment(false)->linkInProperties(states);
 }
 
-/*! This method computes the forces on torques on each spacecraft body.
- @param integTime Integration time
- @param timeStep Current integration time step used
- */
-void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+bool ConstraintDynamicEffector::bothLinked() const
 {
-    if (this->scInitCounter == 2) {      // only proceed once both spacecraft are added
-        if (this->effectorStatus == 0) { // disabled: apply and report no loads, but keep measuring the violations
-            this->forceExternal_N = Eigen::Vector3d::Zero();
-            this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
-            this->Fc_N = Eigen::Vector3d::Zero();
-            this->T_B1 = Eigen::Vector3d::Zero();
-            this->T_B2 = Eigen::Vector3d::Zero();
-        }
-        // alternate assigning the constraint force and torque
-        if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
-            Eigen::Vector3d r_B1N_N;
-            Eigen::Vector3d rDot_B1N_N;
-            Eigen::Vector3d omega_B1N_B1;
-            Eigen::MRPd sigma_B1N;
-            Eigen::Vector3d r_B2N_N;
-            Eigen::Vector3d rDot_B2N_N;
-            Eigen::Vector3d omega_B2N_B2;
-            Eigen::MRPd sigma_B2N;
-            const size_t parent1Index = static_cast<size_t>(parent1.idx);
-            const size_t parent2Index = static_cast<size_t>(parent2.idx);
-            if (this->parent1.parentType == "hub") {
-                // - Collect states from parent spacecraft hub
-                r_B1N_N = this->hubPosition[parent1Index]->stateView();
-                rDot_B1N_N = this->hubVelocity[parent1Index]->stateView();
-                omega_B1N_B1 = this->hubOmega[parent1Index]->stateView();
-                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1Index]->stateView().data());
-            } else if (this->parent1.parentType == "effector") {
-                // - Collect properties from parent effector
-                r_B1N_N = *this->inertialPositionProperty[parent1Index];
-                rDot_B1N_N = *this->inertialVelocityProperty[parent1Index];
-                omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1Index];
-                sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1Index]->data());
-            } else {
-                bskLogger.bskError("ConstraintDynamicEffector: invalid parent1 type '%s'.",
-                                   this->parent1.parentType.c_str());
-            }
-            if (this->parent2.parentType == "hub") {
-                r_B2N_N = this->hubPosition[parent2Index]->stateView();
-                rDot_B2N_N = this->hubVelocity[parent2Index]->stateView();
-                omega_B2N_B2 = this->hubOmega[parent2Index]->stateView();
-                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2Index]->stateView().data());
-            } else if (this->parent2.parentType == "effector") {
-                r_B2N_N = *this->inertialPositionProperty[parent2Index];
-                rDot_B2N_N = *this->inertialVelocityProperty[parent2Index];
-                omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2Index];
-                sigma_B2N = Eigen::MRPd(this->inertialAttitudeProperty[parent2Index]->data());
-            } else {
-                bskLogger.bskError("ConstraintDynamicEffector: invalid parent2 type '%s'.",
-                                   this->parent2.parentType.c_str());
-            }
+    return this->endpoints[0].frame && this->endpoints[1].frame;
+}
 
-            // computing direction constraint psi in the N frame
-            Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
-            Eigen::Matrix3d dcm_B2N = (sigma_B2N.toRotationMatrix()).transpose();
-            Eigen::Vector3d r_P1B1_N = dcm_B1N.transpose() * this->r_P1B1_B1;
-            Eigen::Vector3d r_P2B2_N = dcm_B2N.transpose() * this->r_P2B2_B2;
-            Eigen::Vector3d r_P2P1_N = r_P2B2_N + r_B2N_N - r_P1B1_N - r_B1N_N;
+void ConstraintDynamicEffector::Endpoint::computeForceTorque(double time [[maybe_unused]],
+                                                             double timeStep [[maybe_unused]])
+{
+    this->owner.evaluateConstraint();
+    this->forceExternal_N = this->index == 0 ? this->owner.Fc_N : -this->owner.Fc_N;
+    this->torqueExternalPntB_B = this->index == 0 ? this->owner.T_B1 : this->owner.T_B2;
+    this->owner.forceExternal_N = this->forceExternal_N;
+    this->owner.torqueExternalPntB_B = this->torqueExternalPntB_B;
+    this->owner.directEndpoint = 1 - this->index;
+}
 
-            // computing length constraint rate of change psiPrime in the N frame
-            Eigen::Vector3d rDot_P1B1_B1 = omega_B1N_B1.cross(this->r_P1B1_B1);
-            Eigen::Vector3d rDot_P2B2_B2 = omega_B2N_B2.cross(this->r_P2B2_B2);
-            Eigen::Vector3d rDot_P1N_N = dcm_B1N.transpose() * rDot_P1B1_B1 + rDot_B1N_N;
-            Eigen::Vector3d rDot_P2N_N = dcm_B2N.transpose() * rDot_P2B2_B2 + rDot_B2N_N;
-            Eigen::Vector3d rDot_P2P1_N = rDot_P2N_N - rDot_P1N_N;
-            Eigen::Vector3d omega_B1N_N = dcm_B1N.transpose() * omega_B1N_B1;
+void ConstraintDynamicEffector::computeForceTorque(double time, double timeStep)
+{
+    if (this->bothLinked()) {
+        this->endpoints[this->directEndpoint].computeForceTorque(time, timeStep);
+    }
+}
 
-            // calculate the direction constraint violations
-            this->psi_N = r_P2P1_N - dcm_B1N.transpose() * this->r_P2P1_B1Init;
-            this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
+void ConstraintDynamicEffector::evaluateConstraint()
+{
+    if (!this->bothLinked()) {
+        return;
+    }
+    const bool unknownOrigin = !this->endpoints[0].frame->originReady || !this->endpoints[1].frame->originReady;
+    if (this->effectorStatus == 0 || unknownOrigin) {
+        this->Fc_N.setZero();
+        this->T_B1.setZero();
+        this->T_B2.setZero();
+    }
+    if (unknownOrigin) {
+        return;
+    }
+    const auto& first = this->endpoints[0];
+    const auto& second = this->endpoints[1];
+    Eigen::Vector3d r_B2B1_N;
+    Eigen::Vector3d rDot_B2B1_N;
+    if (first.hubPosition && second.hubPosition && first.frame->originPosition == second.frame->originPosition &&
+        first.frame->originVelocity == second.frame->originVelocity) {
+        // The same translation and boost cancel exactly in the integrated hub states.
+        r_B2B1_N = second.hubPosition->stateView() - first.hubPosition->stateView();
+        rDot_B2B1_N = second.hubVelocity->stateView() - first.hubVelocity->stateView();
+    } else {
+        r_B2B1_N = *second.position - *first.position;
+        rDot_B2B1_N = *second.velocity - *first.velocity;
+    }
+    const Eigen::Vector3d omega_B1N_B1 = first.angularVelocity();
+    const Eigen::MRPd sigma_B1N = first.attitude();
+    const Eigen::Vector3d omega_B2N_B2 = second.angularVelocity();
+    const Eigen::MRPd sigma_B2N = second.attitude();
 
-            // calculate the attitude constraint violations
-            this->phi = eigenC2MRP(dcm_B2N * dcm_B1N.transpose() *
-                                   this->dcm_B2B1Init.transpose()); // calculate the difference in attitude
-            Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
-            this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
+    // computing direction constraint psi in the N frame
+    Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
+    Eigen::Matrix3d dcm_B2N = (sigma_B2N.toRotationMatrix()).transpose();
+    Eigen::Vector3d r_P1B1_N = dcm_B1N.transpose() * this->r_P1B1_B1;
+    Eigen::Vector3d r_P2B2_N = dcm_B2N.transpose() * this->r_P2B2_B2;
+    // Difference the parent states before adding local offsets to preserve small attachment motions.
+    Eigen::Vector3d r_P2P1_N = r_B2B1_N + (r_P2B2_N - r_P1B1_N);
 
-            if (this->effectorStatus == 1) {
-                // calculate the constraint force
-                this->Fc_N = this->k_d * this->psi_N +
-                             this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
-                this->forceExternal_N = this->Fc_N;
+    // computing length constraint rate of change psiPrime in the N frame
+    Eigen::Vector3d rDot_P1B1_B1 = omega_B1N_B1.cross(this->r_P1B1_B1);
+    Eigen::Vector3d rDot_P2B2_B2 = omega_B2N_B2.cross(this->r_P2B2_B2);
+    Eigen::Vector3d rDot_P2P1_N =
+        rDot_B2B1_N + (dcm_B2N.transpose() * rDot_P2B2_B2 - dcm_B1N.transpose() * rDot_P1B1_B1);
+    Eigen::Vector3d omega_B1N_N = dcm_B1N.transpose() * omega_B1N_B1;
 
-                // calculate the torque on each spacecraft from the direction constraint
-                Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
-                Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
-                Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
-                Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+    // calculate the direction constraint violations
+    this->psi_N = r_P2P1_N - dcm_B1N.transpose() * this->r_P2P1_B1Init;
+    this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
 
-                // calculate the constraint torque imparted on each spacecraft from the attitude constraint
-                Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-                Eigen::Vector3d L_B2_att =
-                    -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
-                Eigen::Vector3d L_B1_att = -dcm_B1B2 * L_B2_att;
-                this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
+    // calculate the attitude constraint violations
+    this->phi = eigenC2MRP(dcm_B2N * dcm_B1N.transpose() *
+                           this->dcm_B2B1Init.transpose()); // calculate the difference in attitude
+    Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
+    this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
 
-                // assign forces and torques for spacecraft 1
-                this->forceExternal_N = this->Fc_N;
-                this->torqueExternalPntB_B = L_B1_len + L_B1_att;
-                this->T_B1 = this->torqueExternalPntB_B;
-            }
-        } else if (this->scID == 1) {
-            // assign forces and torques for spacecraft 2
-            this->forceExternal_N = -this->Fc_N;
-            this->torqueExternalPntB_B = this->T_B2;
-        }
-        this->scID = 1 - this->scID; // toggle spacecraft to be assigned forces and torques
+    if (this->effectorStatus == 1) {
+        // calculate the constraint force
+        this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // force on endpoint 1
+
+        // calculate the torque on each spacecraft from the direction constraint
+        Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
+        Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
+        Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
+        Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+
+        // calculate the constraint torque imparted on each spacecraft from the attitude constraint
+        Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
+        Eigen::Vector3d L_B2_att =
+            -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
+        Eigen::Vector3d L_B1_att = -dcm_B1B2 * L_B2_att;
+        this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
+
+        // assign forces and torques for spacecraft 1
+        this->T_B1 = L_B1_len + L_B1_att;
     }
 }
 

@@ -143,7 +143,7 @@ void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynami
 
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager

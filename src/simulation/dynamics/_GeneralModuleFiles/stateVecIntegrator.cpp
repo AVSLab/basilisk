@@ -41,8 +41,16 @@ void StateVecIntegrator::ensureIntegrationBinding()
     }
 }
 
+void StateVecIntegrator::prepareConstraintEndpoints(double time)
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->prepareConstraintEndpoints(time);
+    }
+}
+
 void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
 {
+    this->prepareConstraintEndpoints(time);
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotion(time, timeStep);
     }
@@ -50,6 +58,7 @@ void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
 
 void StateVecIntegrator::evaluateDiffusions(double time, double timeStep)
 {
+    this->prepareConstraintEndpoints(time);
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotionDiffusion(time, timeStep);
     }

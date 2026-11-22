@@ -168,6 +168,7 @@ class Spacecraft : public DynamicObject
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;
     void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);
+    void prepareConstraintEndpoints(double time) final;
     void refreshArticulatedEndpoints(double time);
     void applyPrescribedMotion();    //!< Apply written attitude and translation references to the hub.
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used

@@ -33,6 +33,175 @@ def _spinning_body():
     return body
 
 
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("late_input", ["secondary-ephemeris", "primary-ephemeris", "translation", "branch-reference"])
+def test_synchronized_constraint_at_time_zero(integrator_name, late_input):
+    """Check both parents' restoring accelerations and the direction of motion after a delayed input."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(0.1)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    primary.setIntegrator(getattr(svIntegrators, integrator_name)(primary))
+    primary.syncDynamicsIntegration(secondary)
+    mass = 10.0  # [kg]
+    separation = 2.0  # [m]
+    rest_length = 1.0  # [m]
+    stiffness = 10.0  # [N/m]
+    constraint = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraint.setR_P2P1_B1Init([rest_length, 0.0, 0.0])
+    constraint.setK_d(stiffness)
+    secondary.hub.r_CN_NInit = [separation, 0.0, 0.0]
+    for sc in (primary, secondary):
+        sc.hub.mHub = mass
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        sim.AddModelToTask("task", sc)
+    primary.addDynamicEffector(constraint)
+    if late_input == "branch-reference":
+        spin = _spinning_body()
+        rate_damping = 4.0  # [N*m*s]
+        constraint.setC_a(rate_damping)
+        attitude = messaging.AttRefMsgPayload()
+        attitude_source = messaging.AttRefMsg().write(attitude)
+        secondary.attRefInMsg.subscribeTo(attitude_source)
+        secondary.hub.mHub = mass - spin.mass
+        spin.addDynamicEffector(constraint)
+        secondary.addStateEffector(spin)
+    else:
+        secondary.addDynamicEffector(constraint)
+    sim.AddModelToTask("task", constraint)
+
+    if late_input.endswith("ephemeris"):
+        body = gravityEffector.GravBodyData()
+        body.planetName = "distantBody"
+        body.mu = 1.0  # [m^3/s^2]
+        planet = messaging.SpicePlanetStateMsgPayload()
+        planet.PositionVector = [1.0e6, 0.0, 0.0]  # [m]
+        source = messaging.SpicePlanetStateMsg()
+        body.planetBodyInMsg.subscribeTo(source)
+        host = primary if late_input == "primary-ephemeris" else secondary
+        host.gravField.addGravBody(body)
+    else:
+        translation = messaging.TransRefMsgPayload()
+        translation.r_RN_N = [separation, 0.0, 0.0]
+        source = messaging.TransRefMsg().write(translation)
+        secondary.transRefInMsg.subscribeTo(source)
+
+    sim.InitializeSimulation()
+    primary_gravity = secondary_gravity = 0.0  # [m/s^2]
+    if late_input.endswith("ephemeris"):
+        if host is primary:
+            # The secondary evaluated its reset derivatives while the primary was still waiting for gravity.
+            velocity = secondary.dynManager.getStateObject(secondary.hub.nameOfHubVelocity)
+            expected = -stiffness * (separation - rest_length) / mass  # [m/s^2]
+            np.testing.assert_allclose(np.ravel(velocity.getStateDeriv()), [expected, 0.0, 0.0], rtol=1e-13)
+            primary_gravity = body.mu / planet.PositionVector[0]**2
+        else:
+            secondary_gravity = body.mu / (planet.PositionVector[0] - separation)**2
+        source.write(planet, 0)
+    else:
+        separation = 3.0  # [m]
+        translation.r_RN_N = [separation, 0.0, 0.0]
+        source.write(translation, 0)
+        if late_input == "branch-reference":
+            attitude.omega_RN_N = [0.0, 0.0, 2.0]  # [rad/s]
+            attitude_source.write(attitude, 0)
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    acceleration = stiffness * (separation - rest_length) / mass  # [m/s^2]
+    assert secondary.scStateOutMsg.read().r_BN_N[0] == separation
+    for sc, expected in ((primary, primary_gravity + acceleration), (secondary, secondary_gravity - acceleration)):
+        velocity = sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity)
+        np.testing.assert_allclose(np.ravel(velocity.getStateDeriv()), [expected, 0.0, 0.0], rtol=1e-13)
+    if late_input == "branch-reference":
+        # At zero attitude error the damping torque is c_a * omega / 4. The spin adds inertia about z.
+        torque = rate_damping * attitude.omega_RN_N[2] / 4.0  # [N*m]
+        for sc, inertia, sign in ((primary, 1.0, 1), (secondary, 2.0, -1)):  # [kg*m^2]
+            omega = sc.dynManager.getStateObject(sc.hub.nameOfHubOmega)
+            np.testing.assert_allclose(np.ravel(omega.getStateDeriv()), [0.0, 0.0, sign * torque / inertia])
+    if late_input.endswith("ephemeris"):
+        sim.ConfigureStopTime(step)
+        sim.ExecuteSimulation()
+        assert primary.scStateOutMsg.read().v_BN_N[0] > 0.0
+        assert secondary.scStateOutMsg.read().v_BN_N[0] < 0.0
+
+
+@pytest.mark.parametrize("integrator_name, epoch", [
+    ("svIntegratorRK4", 0),
+    ("svIntegratorRK4", 120_000_000_123_456_789),
+    ("svIntegratorEuler", 120_000_000_123_456_789),
+    ("svIntegratorRKF45", 120_000_000_123_456_789),
+    ("svStochasticIntegratorSOSRI", 120_000_000_123_456_789),
+])  # [ns] reset epoch
+@pytest.mark.parametrize("origin, boost, second_offset, second_boost", [
+    (0.0, 0.0, 0.0, 0.0), (149_597_870_700.0, 30_000.0, 0.0, 0.0),
+    (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 0.5),
+])  # [m], [m/s], [m], [m/s]
+def test_hub_constraint_at_planetary_distance(origin, boost, second_offset, second_boost, integrator_name, epoch):
+    """Both hub derivatives and accepted telemetry must use the same origins at reset."""
+    sample = messaging.SpicePlanetStateMsgPayload()
+    sample.PositionVector = [origin, 0.0, 0.0]
+    sample.VelocityVector = [0.0, boost, 0.0]
+    source = messaging.SpicePlanetStateMsg().write(sample, epoch)
+    center = gravityEffector.GravBodyData()
+    center.planetName = "earth"
+    center.isCentralBody = True
+    center.mu = 3.986e14  # [m^3/s^2]
+    center.planetBodyInMsg.subscribeTo(source)
+    constraint = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraint.setR_P2B2_B2([0.1, 0.0, 0.0])  # [m]
+    hub_gap = 2.1  # [m]
+    constraint.setR_P2P1_B1Init([hub_gap + 0.1, 0.0, 0.0])  # [m]
+    constraint.setK_d(1e5)  # [N/m]
+    constraint.setC_d(1e5)  # [N*s/m]
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    primary.setIntegrator(getattr(svIntegrators, integrator_name)(primary))
+    primary.syncDynamicsIntegration(secondary)
+    spin_rate = 1.0  # [rad/s]
+    for sc, offset in ((primary, 0.0), (secondary, hub_gap)):  # [m]
+        sc.hub.mHub = 100.0  # [kg]
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        sc.hub.r_CN_NInit = [offset, 7e6, 0.0]  # [m]
+        sc.hub.omega_BN_BInit = [0.0, 0.0, spin_rate]
+        sc.hub.v_CN_NInit = [0.0, offset * spin_rate, 0.0]  # [m/s]
+        if sc is secondary and (second_offset or second_boost):
+            shifted = gravityEffector.GravBodyData()
+            shifted.planetName = center.planetName
+            shifted.isCentralBody = True
+            shifted.mu = center.mu
+            sample.PositionVector = [origin + second_offset, 0.0, 0.0]
+            sample.VelocityVector = [0.0, boost + second_boost, 0.0]
+            shifted_source = messaging.SpicePlanetStateMsg().write(sample, epoch)
+            shifted.planetBodyInMsg.subscribeTo(shifted_source)
+            sc.gravField.addGravBody(shifted)
+        else:
+            sc.gravField.addGravBody(center)
+        sc.addDynamicEffector(constraint)
+    primary.Reset(epoch)
+    secondary.Reset(epoch)
+    constraint.Reset(epoch)
+    expected_error = np.array([second_offset, 0.0, 0.0])  # [m]
+    expected_velocity_error = np.array([0.0, second_boost - spin_rate * second_offset, 0.0])  # [m/s]
+    expected_force = constraint.getK_d() * expected_error + constraint.getC_d() * expected_velocity_error  # [N]
+
+    def check_acceleration(sc, force):
+        position = np.ravel(sc.hub.r_CN_NInit)
+        gravity = -center.mu * position / np.linalg.norm(position)**3  # [m/s^2]
+        velocity = sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity)
+        np.testing.assert_allclose(np.ravel(velocity.getStateDeriv()), gravity + force / sc.hub.mHub,
+                                   rtol=0.0, atol=1e-10)  # [m/s^2]
+
+    # The second Reset sees both endpoints. The zero-duration update refreshes both hub derivatives.
+    check_acceleration(secondary, -expected_force)
+    primary.UpdateState(epoch)
+    check_acceleration(primary, expected_force)
+    check_acceleration(secondary, -expected_force)
+    for sc, x in ((primary, origin), (secondary, origin + second_offset)):
+        planet_position = sc.dynManager.getPropertyReference("earth.r_PN_N")
+        np.testing.assert_array_equal(np.ravel(planet_position), [x, 0.0, 0.0])  # [m] at the ephemeris write tick
+
+
 def test_articulated_output_uses_parent_epoch_between_steps():
     """A faster task publishes its articulated inertial pose at the synchronized parent's epoch."""
     sim = SimulationBaseClass.SimBaseClass()

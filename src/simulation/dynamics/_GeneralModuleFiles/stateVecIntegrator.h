@@ -76,6 +76,7 @@ class StateVecIntegrator
     friend class integrator_step_test::StateVecIntegratorTestAccess;
     /** @brief Prepare workspace and execute the numerical method. */
     void integrate(double currentTime, double timeStep);
+    void prepareConstraintEndpoints(double time);
 
     std::vector<DynamicObject*> dynPtrs; ///< Borrowed callback targets, with the primary first.
     bool bindingPrepared = false;        ///< True when workspace preparation has succeeded for the current group.

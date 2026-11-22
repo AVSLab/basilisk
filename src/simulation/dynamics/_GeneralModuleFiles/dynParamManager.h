@@ -156,6 +156,7 @@ class DynParamManager
         Eigen::Vector3d originVelocity = Eigen::Vector3d::Zero(); //!< [m/s] Integration origin in inertial coordinates.
     };
     InertialFrame inertialFrame; //!< Integration origin and publication epoch for this spacecraft's effectors.
+    bool hasConstraint = false;  //!< Coupled loads require all endpoints to be refreshed before each stage.
 #endif
     /**
      * @brief Update an existing property without changing its shape.

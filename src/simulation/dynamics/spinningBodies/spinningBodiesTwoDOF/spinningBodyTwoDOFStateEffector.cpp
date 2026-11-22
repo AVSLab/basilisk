@@ -298,7 +298,7 @@ void SpinningBodyTwoDOFStateEffector::addDynamicEffector(DynamicEffector* newDyn
 {
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector, segment);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
 }
 
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links

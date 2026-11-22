@@ -322,7 +322,7 @@ void SpinningBodyNDOFStateEffector::addDynamicEffector(DynamicEffector* newDynam
     } else {
         const size_t segmentIndex = static_cast<size_t>(segment - 1);
         this->spinningBodyVec[segmentIndex]->assignStateParamNames(newDynamicEffector);
-        this->spinningBodyVec[segmentIndex]->dynEffectors.push_back(newDynamicEffector);
+        this->spinningBodyVec[segmentIndex]->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
     }
 }
 

@@ -335,7 +335,7 @@ void LinearTranslationNDOFStateEffector::addDynamicEffector(DynamicEffector* new
 
     auto& translatingBody = this->translatingBodyVec[static_cast<size_t>(segment - 1)];
     translatingBody->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
-    translatingBody->dynEffectors.push_back(newDynamicEffector);
+    translatingBody->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
 }
 
 /*! This method registers each translating body's inertial properties with the dynamic parameter
