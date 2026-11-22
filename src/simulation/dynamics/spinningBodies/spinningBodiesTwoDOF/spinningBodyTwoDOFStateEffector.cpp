@@ -193,14 +193,14 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     HingedRigidBodyMsgPayload spinningBodyBuffer;
     if (this->spinningBodyOutMsgs[0]->isLinked()) {
         spinningBodyBuffer = this->spinningBodyOutMsgs[0]->zeroMsgPayload;
-        spinningBodyBuffer.theta = this->theta1;
-        spinningBodyBuffer.thetaDot = this->theta1Dot;
+        spinningBodyBuffer.theta = this->theta1State->stateView()(0, 0);
+        spinningBodyBuffer.thetaDot = this->theta1DotState->stateView()(0, 0);
         this->spinningBodyOutMsgs[0]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
     if (this->spinningBodyOutMsgs[1]->isLinked()) {
         spinningBodyBuffer = this->spinningBodyOutMsgs[1]->zeroMsgPayload;
-        spinningBodyBuffer.theta = this->theta2;
-        spinningBodyBuffer.thetaDot = this->theta2Dot;
+        spinningBodyBuffer.theta = this->theta2State->stateView()(0, 0);
+        spinningBodyBuffer.thetaDot = this->theta2DotState->stateView()(0, 0);
         this->spinningBodyOutMsgs[1]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 

@@ -253,8 +253,9 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
         if (this->spinningBodyOutMsgs[spinningBodyIndex]->isLinked()) {
             HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyOutMsgs[spinningBodyIndex]->zeroMsgPayload;
 
-            spinningBodyBuffer.theta = spinningBody->theta;
-            spinningBodyBuffer.thetaDot = spinningBody->thetaDot;
+            const auto stateIndex = static_cast<Eigen::Index>(spinningBodyIndex);
+            spinningBodyBuffer.theta = this->thetaState->stateView()(stateIndex);
+            spinningBodyBuffer.thetaDot = this->thetaDotState->stateView()(stateIndex);
             this->spinningBodyOutMsgs[spinningBodyIndex]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
         }
 

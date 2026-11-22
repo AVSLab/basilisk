@@ -26,7 +26,10 @@ pytestmark = pytest.mark.skipif(
     reason="Requires Basilisk built with --mujoco True",
 )
 if mujocoEnabled:
-    from Basilisk.simulation import linearTranslationOneDOFStateEffector, mujoco, spacecraft, svIntegrators
+    from Basilisk.simulation import (
+        linearTranslationNDOFStateEffector, linearTranslationOneDOFStateEffector, mujoco, spacecraft,
+        spinningBodyNDOFStateEffector, spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector, svIntegrators,
+    )
 
 from Basilisk.architecture import messaging, sysModel
 from Basilisk.architecture.bskLogging import BasiliskError
@@ -481,6 +484,93 @@ def test_rejected_same_tick_hub_references(primary_is_spacecraft):
     assert hub.moduleID() == sc.moduleID
     np.testing.assert_array_equal(hub_states(), accepted)
     np.testing.assert_array_equal(published(), accepted)
+
+
+def _free_joint(kind, speeds):
+    if kind == "slider1":
+        joint = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+        joint.setRhoDotInit(speeds[0])
+        return joint, [joint.translatingBodyOutMsg], "rho"
+    if kind == "sliderN":
+        joint = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+        for speed in speeds:
+            body = linearTranslationNDOFStateEffector.TranslatingBody()
+            body.setMass(1.0)  # [kg]
+            body.setRhoDotInit(speed)
+            joint.addTranslatingBody(body)
+        return joint, joint.translatingBodyOutMsgs, "rho"
+    if kind == "spin1":
+        joint = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+        joint.sHat_S = [1.0, 0.0, 0.0]  # [-]
+        joint.thetaDotInit = speeds[0]
+        return joint, [joint.spinningBodyOutMsg], "theta"
+    if kind == "spin2":
+        joint = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
+        joint.mass1 = 1.0  # [kg]
+        joint.theta1DotInit, joint.theta2DotInit = speeds
+    else:
+        joint = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+        for speed in speeds:
+            body = spinningBodyNDOFStateEffector.SpinningBody()
+            body.setThetaDotInit(speed)
+            joint.addSpinningBody(body)
+    return joint, joint.spinningBodyOutMsgs, "theta"
+
+
+@pytest.mark.parametrize("solver", ["svIntegratorEuler", "svStochasticIntegratorMayurama"])
+@pytest.mark.parametrize("primary_is_spacecraft", [True, False])
+@pytest.mark.parametrize("kind", ["slider1", "sliderN", "spin1", "spin2", "spinN"])
+def test_joint_rate_after_rejected_step_and_lock_withdrawal(solver, primary_is_spacecraft, kind):
+    """Withdrawing a lock republishes the accepted position and rate on every axis before retry."""
+    sc, scene = spacecraft.Spacecraft(), mujoco.MJScene(SLIDER_SITE_XML)
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    speeds = (1.0,) if kind in ("slider1", "spin1") else (1.0, -0.5)  # [m/s] or [rad/s]
+    joint, outputs, field = _free_joint(kind, speeds)
+    sc.addStateEffector(joint)
+    readers = [msg.addSubscriber() for msg in outputs]
+    assert len(readers) == len(speeds)
+    primary, secondary = (sc, scene) if primary_is_spacecraft else (scene, sc)
+    primary.setIntegrator(getattr(svIntegrators, solver)(primary))
+    primary.syncDynamicsIntegration(secondary)
+    lock = messaging.ArrayEffectorLockMsgPayload()
+    command = messaging.ArrayEffectorLockMsg().write(lock)
+    joint.motorLockInMsg.subscribeTo(command)
+    rate = messaging.SCMassPropsMsgPayload()
+    rates = messaging.SCMassPropsMsg().write(rate)
+    scene.getBody("slider").derivativeMassPropertiesInMsg.subscribeTo(rates)
+    sc.Reset(0)
+    scene.Reset(0)
+    joint.Reset(0)
+
+    def check(tick):
+        assert sc.timeBeforeNanos == scene.timeBeforeNanos == tick
+        for reader, speed in zip(readers, speeds):
+            assert reader.timeWritten() == tick
+            assert getattr(reader(), field + "Dot") == pytest.approx(speed)
+            assert getattr(reader(), field) == pytest.approx(speed * tick * macros.NANO2SEC)
+
+    step = macros.sec2nano(1.0)  # [ns]
+    primary.UpdateState(step)
+    lock.effectorLockFlag = [1] * len(speeds)
+    command.write(lock, step)
+    joint.UpdateState(step)
+    rate.massSC = -2.0  # [kg/s] invalid final mass
+    rates.write(rate, step)
+    with pytest.raises(RuntimeError, match="finite and nonnegative"):
+        primary.UpdateState(2 * step)
+    check(step)
+
+    lock.effectorLockFlag = [0] * len(speeds)
+    command.write(lock, step)
+    joint.moduleID += 1  # The writer ID distinguishes a fresh same-tick output from the previous message.
+    joint.UpdateState(step)
+    assert all(reader.moduleID() == joint.moduleID for reader in readers)
+    check(step)
+    rate.massSC = 0.0  # [kg/s]
+    rates.write(rate, step)
+    primary.UpdateState(2 * step)
+    check(2 * step)
 
 
 @pytest.mark.parametrize("failure", [None, "drift", "diffusion", "invalid_mass"])

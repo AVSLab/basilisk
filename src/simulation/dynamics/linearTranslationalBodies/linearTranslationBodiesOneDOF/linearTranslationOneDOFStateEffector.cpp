@@ -265,8 +265,9 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
     if (this->translatingBodyOutMsg.isLinked()) {
         LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
         translatingBodyBuffer = this->translatingBodyOutMsg.zeroMsgPayload;
-        translatingBodyBuffer.rho = this->rho;
-        translatingBodyBuffer.rhoDot = this->rhoDot;
+        // A rejected step restores the joint states while the last mass-property evaluation can be a trial.
+        translatingBodyBuffer.rho = this->rhoState->stateView()(0, 0);
+        translatingBodyBuffer.rhoDot = this->rhoDotState->stateView()(0, 0);
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, CurrentSimNanos);
     }
 

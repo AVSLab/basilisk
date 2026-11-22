@@ -138,8 +138,8 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     if (this->spinningBodyOutMsg.isLinked()) {
         HingedRigidBodyMsgPayload spinningBodyBuffer;
         spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
-        spinningBodyBuffer.theta = this->theta;
-        spinningBodyBuffer.thetaDot = this->thetaDot;
+        spinningBodyBuffer.theta = this->thetaState->stateView()(0, 0);
+        spinningBodyBuffer.thetaDot = this->thetaDotState->stateView()(0, 0);
         this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 

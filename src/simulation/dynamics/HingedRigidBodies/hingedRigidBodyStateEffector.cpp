@@ -97,8 +97,8 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
     if (this->hingedRigidBodyOutMsg.isLinked()) {
         this->HRBoutputStates = this->hingedRigidBodyOutMsg.zeroMsgPayload;
-        this->HRBoutputStates.theta = this->theta;
-        this->HRBoutputStates.thetaDot = this->thetaDot;
+        this->HRBoutputStates.theta = this->thetaState->stateView()(0, 0);
+        this->HRBoutputStates.thetaDot = this->thetaDotState->stateView()(0, 0);
         this->hingedRigidBodyOutMsg.write(&this->HRBoutputStates, this->moduleID, CurrentClock);
     }
 

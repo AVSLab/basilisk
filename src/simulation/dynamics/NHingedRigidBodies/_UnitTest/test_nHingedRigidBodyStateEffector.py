@@ -37,8 +37,10 @@ from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import svIntegrators
 from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
 
@@ -189,6 +191,62 @@ def test_nHingedRigidBodyOutputMessagesMatchDual():
                 getattr(nConfigRecorders[panelIndex], fieldName),
                 getattr(dualConfigRecorders[panelIndex], fieldName),
                 rtol=0.0, atol=accuracy)
+
+
+@pytest.mark.parametrize("model", ["single", "dual", "N"])
+def test_passive_hinge_telemetry_after_rejected_step(model):
+    """A fresh message at the accepted tick must contain each hinge's restored angle and rate."""
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 50.0  # [kg]
+    sc.hub.IHubPntBc_B = (10.0 * numpy.eye(3)).tolist()  # [kg*m^2]
+    angles = (0.1, -0.2)  # [rad]
+    rates = (1.0, -0.5)  # [rad/s]
+    if model == "single":
+        hinge = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+        hinge.mass = 1.0  # [kg]
+        hinge.thetaInit, hinge.thetaDotInit = angles[0], rates[0]
+        outputs = [hinge.hingedRigidBodyOutMsg]
+    elif model == "dual":
+        hinge = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+        hinge.mass1 = hinge.mass2 = 1.0  # [kg]
+        hinge.theta1Init, hinge.theta2Init = angles
+        hinge.theta1DotInit, hinge.theta2DotInit = rates
+        outputs = hinge.dualHingedRigidBodyOutMsgs
+    else:
+        hinge = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+        for angle, rate in zip(angles, rates):
+            panel = nHingedRigidBodyStateEffector.HingedPanel()
+            panel.IPntS_S = numpy.eye(3).tolist()  # [kg*m^2]
+            panel.thetaInit, panel.thetaDotInit = angle, rate
+            hinge.addHingedPanel(panel)
+        outputs = hinge.nHingedRigidBodyOutMsgs
+    sc.addStateEffector(hinge)
+    readers = [msg.addSubscriber() for msg in outputs]
+    integrator = svIntegrators.svIntegratorRKF45(sc)
+    integrator.relTol = integrator.absTol = 1e-11
+    sc.setIntegrator(integrator)
+    step = macros.sec2nano(1.0)  # [ns]
+    sc.Reset(step)
+    hinge.Reset(step)
+
+    # Force RKF45 to reject after evaluating trial stages with moving hinges.
+    factors = integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize
+    integrator.safetyFactorForNextStepSize = integrator.minimumFactorDecreaseForNextStepSize = 0.0
+    with pytest.raises(RuntimeError, match="representable forward progress"):
+        sc.UpdateState(2 * step)
+    assert sc.timeBeforeNanos == step
+    hinge.moduleID += 1  # Distinguish a fresh same-tick write from the accepted message.
+    hinge.UpdateState(step)
+    assert len(readers) == (1 if model == "single" else 2)
+    for reader, angle, rate in zip(readers, angles, rates):
+        assert reader.timeWritten() == step and reader.moduleID() == hinge.moduleID
+        assert (reader().theta, reader().thetaDot) == (angle, rate)
+
+    integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize = factors
+    sc.UpdateState(2 * step)
+    for reader, angle, rate in zip(readers, angles, rates):
+        assert reader.timeWritten() == 2 * step
+        assert reader().theta != pytest.approx(angle) and reader().thetaDot != pytest.approx(rate)
 
 
 @pytest.mark.parametrize("segment, shouldRaise", [(1, False), (3, False), (0, True), (4, True)])

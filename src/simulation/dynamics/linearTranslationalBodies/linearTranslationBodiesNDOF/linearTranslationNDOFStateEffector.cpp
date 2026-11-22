@@ -185,8 +185,9 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
     for (auto& translatingBody : this->translatingBodyVec) {
         if (this->translatingBodyOutMsgs[i]->isLinked()) {
             translatingBodyBuffer = this->translatingBodyOutMsgs[i]->zeroMsgPayload;
-            translatingBodyBuffer.rho = translatingBody->rho;
-            translatingBodyBuffer.rhoDot = translatingBody->rhoDot;
+            const auto stateIndex = static_cast<Eigen::Index>(i);
+            translatingBodyBuffer.rho = this->rhoState->stateView()(stateIndex);
+            translatingBodyBuffer.rhoDot = this->rhoDotState->stateView()(stateIndex);
             this->translatingBodyOutMsgs[i]->write(&translatingBodyBuffer, this->moduleID, CurrentClock);
         }
 

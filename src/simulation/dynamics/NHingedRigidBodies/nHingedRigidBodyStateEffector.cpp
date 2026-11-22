@@ -81,8 +81,9 @@ void NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
         if (this->nHingedRigidBodyOutMsgs[panelIndex]->isLinked()) {
             HingedRigidBodyMsgPayload panelBuffer = this->nHingedRigidBodyOutMsgs[panelIndex]->zeroMsgPayload;
-            panelBuffer.theta = PanelIt->theta;
-            panelBuffer.thetaDot = PanelIt->thetaDot;
+            const auto stateIndex = static_cast<Eigen::Index>(panelIndex);
+            panelBuffer.theta = this->thetaState->stateView()(stateIndex);
+            panelBuffer.thetaDot = this->thetaDotState->stateView()(stateIndex);
             this->nHingedRigidBodyOutMsgs[panelIndex]->write(&panelBuffer, this->moduleID, CurrentClock);
         }
 

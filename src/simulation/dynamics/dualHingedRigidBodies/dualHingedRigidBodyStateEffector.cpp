@@ -560,12 +560,12 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     HingedRigidBodyMsgPayload panelOutputStates; //!< instance of messaging system message struct
 
     // panel 1 states
-    panelOutputStates.theta = this->theta1;
-    panelOutputStates.thetaDot = this->theta1Dot;
+    panelOutputStates.theta = this->theta1State->stateView()(0, 0);
+    panelOutputStates.thetaDot = this->theta1DotState->stateView()(0, 0);
     this->dualHingedRigidBodyOutMsgs[0]->write(&panelOutputStates, this->moduleID, CurrentClock);
     // panel 2 states
-    panelOutputStates.theta = this->theta2;
-    panelOutputStates.thetaDot = this->theta2Dot;
+    panelOutputStates.theta = this->theta2State->stateView()(0, 0);
+    panelOutputStates.thetaDot = this->theta2DotState->stateView()(0, 0);
     this->dualHingedRigidBodyOutMsgs[1]->write(&panelOutputStates, this->moduleID, CurrentClock);
 
     if (!epoch) {
