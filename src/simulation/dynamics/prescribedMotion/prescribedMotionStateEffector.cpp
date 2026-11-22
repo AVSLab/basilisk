@@ -19,7 +19,7 @@
 
 #include "prescribedMotionStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include <cmath>
 #include <string>
 
@@ -47,7 +47,6 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->r_MB_B.setZero();
     this->r_PcP_P.setZero();
     this->sigma_MB.setIdentity();
-    this->currentSimTimeSec = 0.0;
 
     // Initialize prescribed states at epoch
     this->rEpoch_PM_M.setZero();
@@ -206,11 +205,20 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
  */
 void PrescribedMotionStateEffector::updateRelativeKinematics(double integTime)
 {
-    // Update the prescribed states
-    double dt = integTime - this->currentSimTimeSec;
+    // The spacecraft first evaluates mass properties at its reset epoch, even for an unscheduled effector.
+    if (!this->translationEpoch) {
+        this->translationEpoch = integTime;
+        this->rEpoch_PM_M = this->r_PM_M;
+        this->rPrimeEpoch_PM_M = this->rPrime_PM_M;
+    }
+    if (!this->rotationEpoch) {
+        this->rotationEpoch = integTime;
+        this->omegaEpoch_PM_P = this->omega_PM_P;
+    }
+    const double dt = integTime - *this->translationEpoch; // [s]
     this->r_PM_M = this->rEpoch_PM_M + (this->rPrimeEpoch_PM_M * dt) + (0.5 * this->rPrimePrime_PM_M * dt * dt);
     this->rPrime_PM_M = this->rPrimeEpoch_PM_M + (this->rPrimePrime_PM_M * dt);
-    this->omega_PM_P = this->omegaEpoch_PM_P + (this->omegaPrime_PM_P * dt);
+    this->omega_PM_P = this->omegaEpoch_PM_P + this->omegaPrime_PM_P * (integTime - *this->rotationEpoch);
     this->sigma_PM = Eigen::MRPd(this->sigma_PMState->stateView().data());
 
     // Compute dcm_BM
@@ -577,11 +585,12 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 */
 void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 {
-    // Store the current simulation time
-    this->currentSimTimeSec = static_cast<double>(currentSimNanos) * NANO2SEC;
-
+    const bool hasTranslation =
+        this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten();
+    const bool hasRotation = this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten();
     // Read the translational input message if it is linked and written
-    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
+    if (hasTranslation) {
+        this->translationEpoch = epochSeconds(currentSimNanos);
         PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
         this->r_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_PM_M);
         this->rPrime_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_PM_M);
@@ -593,7 +602,8 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     }
 
     // Read the rotational input message if it is linked and written
-    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten()) {
+    if (hasRotation) {
+        this->rotationEpoch = epochSeconds(currentSimNanos);
         PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
         this->omega_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omega_PM_P);
         this->omegaPrime_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omegaPrime_PM_P);
@@ -604,8 +614,17 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
         this->sigma_PMState->setState(this->sigma_PM.coeffs());
     }
 
-    // Call the method to compute the effector's inertial states
-    this->computePrescribedMotionInertialStates();
+    if (!this->inertialFrame) {
+        this->computePrescribedMotionInertialStates();
+    } else if ((hasTranslation || hasRotation) && this->inertialFrame->acceptedTimeNanos == currentSimNanos) {
+        const double time = epochSeconds(currentSimNanos); // [s]
+        if (this->inertialFrame->originReady) {
+            // Combine the command with the hub pose and rate accepted at the same tick.
+            this->refreshPrescribedKinematics(time);
+        } else {
+            this->updateRelativeKinematics(time);
+        }
+    }
 
     // Call the method to write the output messages
     this->writeOutputStateMessages(currentSimNanos);
