@@ -235,7 +235,8 @@ Candidate assembly has a small internal protocol:
 Those phases describe scratch-buffer validity, not model registration. They prevent a
 method from accepting an incomplete candidate or mixing sparse and final assembly.
 On an attempted-step failure, the numerical method restores its step-entry state values before propagating the error.
-It does not rewind the noise generator, derivatives, messages, or other callback effects.
+The restored states let MuJoCo scenes republish their scene-owned messages at the entry epoch.
+The noise generator, derivatives, and other callback effects retain their latest values.
 
 BSM and MuJoCo adapters
 -----------------------

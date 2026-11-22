@@ -140,6 +140,7 @@ void svStochasticIntegratorSIESME::integrateImpl(double currentTime, double time
         } else {
             buildCandidate(0.0, pseudoStep);
         }
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

@@ -169,6 +169,12 @@ class DynamicObject : public SysModel
      */
     virtual void prepareIntegrationInputs(uint64_t callTimeNanos [[maybe_unused]]) {}
 
+    /** @brief Check the live final candidate while the numerical method can still roll it back. */
+    virtual void validateIntegratedState() {}
+
+    /** @brief Refresh object-owned outputs after the integrator rolls back a failed step. */
+    virtual void restoreAfterFailedStep() {}
+
     /** @brief Reject changes that would invalidate the fixed state layout. */
     void requireMutableTopology(const char* operation) const;
 };

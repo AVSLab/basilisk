@@ -300,6 +300,7 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrateImpl(doub
         } else {
             buildCandidate(0.0, chi3, 0, noiseCount);
         }
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

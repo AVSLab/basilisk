@@ -742,7 +742,10 @@ class MJScene : public DynamicObject
     friend class MJFwdKinematics;
 
     uint64_t stageTimestamp(double time) const;
+    void validateIntegratedState() override;
     void publishAcceptedState();
+    void restoreAfterFailedStep() override;
+    bool trialStateActive = false; //!< A stage has exposed trial data since the last accepted publication.
 
     /** @brief Committed dimensions and joint kinds that a recompiled model must preserve.
      * These dimensions and addresses must match the fixed state layout.

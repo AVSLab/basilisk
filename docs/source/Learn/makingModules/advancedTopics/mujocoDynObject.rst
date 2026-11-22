@@ -31,7 +31,10 @@ rounded down if the midpoint falls between nanoseconds.
 
 After a step, the scene clock and its scene, site, mass, and scalar-joint messages describe the
 accepted state. The message timestamps retain the exact integer tick even at multi-year epochs.
-A synchronized scene publishes when its primary advances it.
+A synchronized scene publishes when its primary advances it. The integrator checks each scene's
+final body masses before accepting the step. On rejection, all scenes return to their entry
+states and refresh their own outputs at that epoch. Models on the dynamics tasks can still
+read trial states during integration.
 
 Installation
 ------------

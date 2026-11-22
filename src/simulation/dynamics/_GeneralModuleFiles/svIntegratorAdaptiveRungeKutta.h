@@ -421,8 +421,10 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double starting
         }
 
         this->scatterStates(this->baseState);
+        this->validateFinalStates();
     } catch (...) {
         this->scatterStates(this->entryState);
+        this->restoreOutputsAfterRollback();
         throw;
     }
 }

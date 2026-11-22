@@ -20,6 +20,7 @@
 #include "stateVecIntegrator.h"
 #include "dynamicObject.h"
 #include <algorithm>
+#include <exception>
 
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn)
     : dynPtrs{ dynIn }
@@ -30,7 +31,29 @@ void StateVecIntegrator::integrate(double currentTime, double timeStep, std::opt
 {
     this->scheduledEndTick = endTick;
     this->ensureIntegrationBinding();
+    // Stochastic methods skip their numerical stages and rollback buffers on zero-duration steps.
+    if (timeStep == 0.0) {
+        this->validateFinalStates();
+    }
     this->integrateImpl(currentTime, timeStep);
+}
+
+void StateVecIntegrator::validateFinalStates() const
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->validateIntegratedState();
+    }
+}
+
+void StateVecIntegrator::restoreOutputsAfterRollback() const
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        try {
+            object->restoreAfterFailedStep();
+        } catch (const std::exception& error) {
+            object->bskLogger.bskLog(BSK_WARNING, "Failed to restore dynamics output: %s", error.what());
+        }
+    }
 }
 
 void StateVecIntegrator::ensureIntegrationBinding()

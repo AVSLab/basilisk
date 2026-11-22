@@ -168,6 +168,7 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     this->timeBefore = epochSeconds(CurrentSimNanos);
     this->timeBeforeNanos = CurrentSimNanos;
     data->time = this->timeBefore;
+    this->trialStateActive = false;
     this->firstDynamicsCall = true;
     this->registerAndBindDynamicsState(model, data, topologyAlreadyFinalized);
     if (topologyAlreadyFinalized) {
@@ -375,6 +376,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // Keep MuJoCo's internal time in sync with the Basilisk simulation time so
     // diagnostics and MuJoCo warnings report the correct timestamp.
     data->time = t;
+    this->trialStateActive = true;
 
     // On the first dynamics call, zero the CTRL array to prevent NaN/uninitialized
     // actuator commands from triggering instability at t=0.
@@ -461,6 +463,7 @@ void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unuse
     mjData* data = this->spec.getMujocoData();
     this->synchronizeMujocoFromStates(model, data);
     data->time = t;
+    this->trialStateActive = true;
 
     this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
 }
@@ -481,6 +484,11 @@ void MJScene::postIntegration(uint64_t callTimeNanos)
     this->publishAcceptedState();
 }
 
+void MJScene::validateIntegratedState()
+{
+    this->validateMujocoMassStates(this->getMujocoModel());
+}
+
 void MJScene::publishAcceptedState()
 {
     auto* data = this->getMujocoData();
@@ -491,6 +499,16 @@ void MJScene::publishAcceptedState()
         body.writeStateDependentOutputMessages(this->timeBeforeNanos);
     }
     this->writeOutputStateMessages(this->timeBeforeNanos);
+    this->trialStateActive = false;
+}
+
+void MJScene::restoreAfterFailedStep()
+{
+    if (this->trialStateActive) {
+        // Restore the compiled scene without running task models or applying pending spec edits.
+        MJSpec::NoRecompileGuard recompileGuard(this->spec);
+        this->publishAcceptedState();
+    }
 }
 
 void MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)

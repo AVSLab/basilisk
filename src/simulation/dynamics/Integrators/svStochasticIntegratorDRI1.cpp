@@ -616,6 +616,7 @@ void svStochasticIntegratorDRI1::integrateImpl(double currentTime, double timeSt
                 }
             }
         }
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

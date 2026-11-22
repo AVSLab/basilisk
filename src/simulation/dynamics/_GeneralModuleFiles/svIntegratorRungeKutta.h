@@ -189,6 +189,7 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
                         state = base + drift * (timeStep * this->coefficients.bArray[0]);
                     }
                 }
+                this->validateFinalStates();
                 return;
             }
         }
@@ -219,8 +220,10 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
         if (!candidateIsLive) {
             this->scatterStates(this->candidateState);
         }
+        this->validateFinalStates();
     } catch (...) {
         this->scatterStates(this->baseState);
+        this->restoreOutputsAfterRollback();
         throw;
     }
 }

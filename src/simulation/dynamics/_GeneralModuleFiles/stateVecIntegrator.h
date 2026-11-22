@@ -72,6 +72,10 @@ class StateVecIntegrator
     void evaluateFixedStepDerivatives(double startTime, double timeStep, double fraction);
     /** @brief Evaluate each object's diffusion at the supplied time and step in seconds. */
     void evaluateDiffusions(double time, double timeStep);
+    /** @brief Validate every object's final candidate before releasing the entry state. */
+    void validateFinalStates() const;
+    /** @brief Refresh object-owned outputs after restoring the entry state of a failed step. */
+    void restoreOutputsAfterRollback() const;
     /** @brief Borrow dynamics objects in callback order. */
     const std::vector<DynamicObject*>& dynamics() const noexcept { return this->dynPtrs; }
 

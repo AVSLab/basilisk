@@ -310,5 +310,120 @@ def test_rk4_stage_timestamps_at_multi_year_epoch(offset, step):
         assert probe.site.timeWritten() == start + step
 
 
+@pytest.mark.parametrize("solver", ["svIntegratorEuler", "svStochasticIntegratorMayurama"])
+def test_invalid_final_mass_rolls_back_synchronized_step(solver):
+    """Reject the secondary's final candidate and retry the same tick from both entry states."""
+    primary, secondary = mujoco.MJScene(SLIDER_SITE_XML), mujoco.MJScene(SLIDER_SITE_XML)
+    primary.setIntegrator(getattr(svIntegrators, solver)(primary))
+    primary.syncDynamicsIntegration(secondary)
+    rates = messaging.SCMassPropsMsg()
+    rate = messaging.SCMassPropsMsgPayload()
+    rates.write(rate)
+    secondary.getBody("slider").derivativeMassPropertiesInMsg.subscribeTo(rates)
+    speeds = (1.0, 2.0)  # [m/s]
+    for scene, speed in zip((primary, secondary), speeds):
+        scene.Reset(0)
+        scene.getBody("slider").getScalarJoint("slide").setVelocity(speed)
+
+    def check(tick):
+        for scene, speed in zip((primary, secondary), speeds):
+            body = scene.getBody("slider")
+            state = scene.stateOutMsg.addSubscriber()
+            mass = body.massPropertiesOutMsg.addSubscriber()
+            site = scene.getSite("tip").stateOutMsg.addSubscriber()
+            x = speed * tick * macros.NANO2SEC  # [m]
+            assert scene.timeBeforeNanos == state.timeWritten() == mass.timeWritten() == site.timeWritten() == tick
+            assert scene.getEvaluationTime() == tick * macros.NANO2SEC
+            assert body.getMass() == mass().massSC == 1.0  # [kg]
+            assert body.getScalarJoint("slide").getPositionState().getState()[0][0] == x
+            assert state().qpos[0][0] == site().r_BN_N[0] == x
+
+    step = macros.sec2nano(1.0)  # [ns]
+    primary.UpdateState(step)
+    check(step)
+    rate.massSC = -2.0  # [kg/s] both solvers evaluate the derivative at the valid entry mass
+    rates.write(rate)
+    with pytest.raises(RuntimeError, match="finite and nonnegative"):
+        primary.UpdateState(2 * step)
+    check(step)
+    rate.massSC = 0.0  # [kg/s]
+    rates.write(rate)
+    primary.UpdateState(2 * step)
+    check(2 * step)
+
+
+def test_synchronized_outputs_after_failed_advance():
+    """Both scenes retain their accepted slider state across a secondary update and an RKF45 failure."""
+    xml = SLIDER_SITE_XML.replace('type="slide"', 'type="slide" stiffness="1"')  # [N/m]
+    primary, secondary = mujoco.MJScene(xml), mujoco.MJScene(xml)
+    integrator = svIntegrators.svIntegratorRKF45(primary)
+    integrator.relTol = integrator.absTol = 1e-11
+    primary.setIntegrator(integrator)
+    primary.syncDynamicsIntegration(secondary)
+    outputs = []
+    for scene in (primary, secondary):
+        scene.Reset(0)
+        body = scene.getBody("slider")
+        joint = body.getScalarJoint("slide")
+        joint.setVelocity(1.0)  # [m/s]
+        outputs.append((scene.stateOutMsg.addSubscriber(), body.getOrigin().stateOutMsg.addSubscriber(),
+                        body.massPropertiesOutMsg.addSubscriber(), joint.stateOutMsg.addSubscriber(),
+                        joint.stateDotOutMsg.addSubscriber()))
+
+    def check(tick):
+        t = tick * macros.NANO2SEC  # [s]
+        for scene, readers in zip((primary, secondary), outputs):
+            state, site, mass, position, rate = (reader() for reader in readers)
+            assert scene.timeBeforeNanos == tick
+            assert scene.getEvaluationTime() == t
+            assert all(reader.timeWritten() == tick for reader in readers)
+            assert mass.massSC == 1.0  # [kg]
+            np.testing.assert_allclose([state.qpos[0][0], site.r_BN_N[0], position.state], np.sin(t), atol=1e-9)
+            np.testing.assert_allclose([state.qvel[0][0], site.v_BN_N[0], rate.state], np.cos(t), atol=1e-9)
+
+    step = macros.sec2nano(1.0)  # [ns]
+    primary.UpdateState(step)
+    check(step)
+    secondary.UpdateState(step + step // 2)
+    check(step)
+
+    factors = integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize
+    integrator.safetyFactorForNextStepSize = integrator.minimumFactorDecreaseForNextStepSize = 0.0
+    with pytest.raises(RuntimeError, match="representable forward progress"):
+        primary.UpdateState(2 * step)
+    check(step)
+    integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize = factors
+    primary.UpdateState(2 * step)
+    check(2 * step)
+
+
+@pytest.mark.parametrize("solver", ["svIntegratorRK4", "svStochasticIntegratorSOSRI"])
+def test_failed_stage_restores_published_site(solver):
+    """A fixed-step or stochastic stage failure restores the site and native clock."""
+    scene = mujoco.MJScene(SLIDER_SITE_XML)
+    scene.setIntegrator(getattr(svIntegrators, solver)(scene))
+    site = scene.getSite("tip").stateOutMsg.addSubscriber()
+    trial_positions = []
+
+    class FailAtPositiveStage(sysModel.SysModel):
+        def UpdateState(self, tick):
+            if scene.getEvaluationTime() > 0.0:
+                trial_positions.append(site().r_BN_N[0])
+                raise RuntimeError("deliberate stage failure")
+
+    probe = FailAtPositiveStage()
+    scene.AddModelToDynamicsTask(probe)
+    scene.Reset(0)
+    scene.getBody("slider").getScalarJoint("slide").setVelocity(1.0)  # [m/s]
+    scene.UpdateState(0)
+    with pytest.raises(RuntimeError):
+        scene.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert len(trial_positions) == 1 and trial_positions[0] != 0.0
+    assert scene.getEvaluationTime() == 0.0  # [s]
+    assert site.timeWritten() == 0  # [ns]
+    assert site().r_BN_N[0] == 0.0  # [m]
+    assert site().v_BN_N[0] == 1.0  # [m/s]
+
+
 if __name__ == "__main__":
     test_siteVelocity()
