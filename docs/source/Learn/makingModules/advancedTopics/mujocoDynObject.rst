@@ -36,7 +36,10 @@ final body masses before accepting the step. On rejection, all scenes return to 
 states and refresh their own outputs at that epoch. Models on the dynamics tasks can still
 read trial states during integration. With ``extraEoMCall = True``, optional drift and diffusion
 callbacks run after every synchronized scene has published. They can read their peers' accepted
-outputs even when those peers have ``extraEoMCall = False``.
+outputs even when those peers have ``extraEoMCall = False``. A synchronized :ref:`spacecraft`
+also publishes its hub state and mass properties and calls each attached state effector's
+``writeOutputStateMessages()`` before these callbacks. Outputs produced in an effector's own
+``UpdateState()`` follow its task schedule.
 
 If an optional callback raises after editing a joint, the scene publishes the valid joint edits
 at the accepted tick before propagating the exception. If a callback supplies invalid body

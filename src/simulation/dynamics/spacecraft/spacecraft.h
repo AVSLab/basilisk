@@ -167,6 +167,8 @@ class Spacecraft : public DynamicObject
     void sumMassProps();             //!< Combine the stored hub and effector mass properties.
     /** @brief Refresh the hub and articulated poses at the accepted epoch. */
     void updateAcceptedInertialState();
+    void publishIntegratedState(uint64_t tick) final;
+    void writeAcceptedStateMessages();
     void prepareIntegrationInputs(uint64_t callTimeNanos) final;
     void refreshInitialDerivatives() final;
     void updateSystemTime(double stageTime);

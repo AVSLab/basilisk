@@ -26,7 +26,7 @@ pytestmark = pytest.mark.skipif(
     reason="Requires Basilisk built with --mujoco True",
 )
 if mujocoEnabled:
-    from Basilisk.simulation import mujoco, svIntegrators
+    from Basilisk.simulation import linearTranslationOneDOFStateEffector, mujoco, spacecraft, svIntegrators
 
 from Basilisk.architecture import messaging, sysModel
 from Basilisk.utilities import SimulationBaseClass
@@ -411,6 +411,59 @@ def test_accepted_callback_reads_published_peer(failure):
     mass = body.massPropertiesOutMsg.addSubscriber()
     assert mass.timeWritten() == end
     assert mass().massSC == body.getMass() == 1.0  # [kg]
+
+
+@pytest.mark.parametrize("primary_is_spacecraft", [True, False])
+@pytest.mark.parametrize("callback_fails", [False, True])
+def test_accepted_callback_reads_spacecraft_and_effector(primary_is_spacecraft, callback_fails):
+    """A MuJoCo callback sees the accepted hub and slider telemetry, even when it raises."""
+    sc, scene = spacecraft.Spacecraft(), mujoco.MJScene(SLIDER_SITE_XML)
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    sc.hub.v_CN_NInit = [0.0, 2.0, 0.0]  # [m/s]
+    slider = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    slider.setMass(1.0)  # [kg]
+    slider.setRhoDotInit(1.0)  # [m/s] along the hub's x axis
+    sc.addStateEffector(slider)
+    primary, secondary = (sc, scene) if primary_is_spacecraft else (scene, sc)
+    primary.setIntegrator(svIntegrators.svIntegratorEuler(primary))
+    primary.syncDynamicsIntegration(secondary)
+    scene.extraEoMCall = True
+
+    hub = sc.scStateOutMsg.addSubscriber()
+    mass = sc.scMassOutMsg.addSubscriber()
+    joint = slider.translatingBodyOutMsg.addSubscriber()
+    body = slider.translatingBodyConfigLogOutMsg.addSubscriber()
+
+    def read_telemetry():
+        ticks = [reader.timeWritten() for reader in (hub, mass, joint, body)]
+        return ticks, [hub().r_BN_N[1], mass().c_B[0], joint().rho, body().r_BN_N[0]]
+
+    samples = []
+
+    class Probe(sysModel.SysModel):
+        def UpdateState(self, tick):
+            samples.append((tick, read_telemetry()))
+            if callback_fails:
+                raise RuntimeError("deliberate accepted callback failure")
+
+    probe = Probe()
+    scene.AddModelToDiffusionDynamicsTask(probe)  # Euler only runs this task after acceptance.
+    for model in (primary, secondary):
+        model.Reset(0)
+    end = macros.sec2nano(1.0)  # [ns]
+    if callback_fails:
+        with pytest.raises(RuntimeError, match="director method error"):
+            primary.UpdateState(end)
+    else:
+        primary.UpdateState(end)
+
+    assert [tick for tick, _ in samples] == [end]
+    assert sc.timeBeforeNanos == scene.timeBeforeNanos == end
+    for ticks, positions in (samples[0][1], read_telemetry()):
+        assert ticks == [end] * 4
+        # Equal masses put the slider half its displacement ahead of the system center of mass.
+        assert positions == pytest.approx([2.0, 0.5, 1.0, 0.5])  # [m]
 
 
 def test_synchronized_outputs_after_failed_advance():

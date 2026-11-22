@@ -79,13 +79,7 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
     this->registerDynamics();
 
     this->updateAcceptedInertialState();
-    this->writeOutputStateMessages(CurrentSimNanos);
-    // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
-    std::vector<StateEffector*>::iterator it;
-    for (it = this->states.begin(); it != this->states.end(); it++) {
-        // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
-    }
+    this->writeAcceptedStateMessages();
 
     for (StateEffector* stateEffector : this->states) {
         stateEffector->freezeTopology();
@@ -241,20 +235,27 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 {
     if (this->getIntegrationOwner()) {
         this->gravField.writeOutputMessages(CurrentSimNanos);
-        if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
-            return; // A failed trial left the state-engine properties at an intermediate stage.
-        }
+        // A synchronized secondary can also publish between integration steps.
+        this->writeAcceptedStateMessages();
     } else {
         this->integrateState(CurrentSimNanos);
     }
+}
 
-    // A synchronized secondary can publish between integration steps.
+void Spacecraft::publishIntegratedState(uint64_t tick)
+{
+    this->postIntegration(tick);
+    this->writeAcceptedStateMessages();
+}
+
+void Spacecraft::writeAcceptedStateMessages()
+{
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        return; // A failed trial left the state-engine properties at an intermediate stage.
+    }
     this->writeOutputStateMessages(this->timeBeforeNanos);
-    // - Loop over stateEffectors to call writeOutputStateMessages
-    std::vector<StateEffector*>::iterator it;
-    for (it = this->states.begin(); it != this->states.end(); it++) {
-        // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(this->timeBeforeNanos);
+    for (StateEffector* effector : this->states) {
+        effector->writeOutputStateMessages(this->timeBeforeNanos);
     }
 }
 
