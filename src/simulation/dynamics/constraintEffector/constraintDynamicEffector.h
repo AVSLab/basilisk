@@ -27,6 +27,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "architecture/messaging/messaging.h"
@@ -175,6 +176,8 @@ class ConstraintDynamicEffector final
     std::array<Endpoint, 2> endpoints{ { { *this, 0 }, { *this, 1 } } };
 #endif
     void evaluateConstraint();
+    void writeConstraintMessage(uint64_t epoch);
+    std::optional<uint64_t> telemetryEpoch(uint64_t clock) const;
     bool bothLinked() const;
     void validateConfiguration(); //!< Validate the user-supplied gain configuration
     void initializeGains();       //!< Refresh derived gains while preserving explicit individual gains
@@ -210,26 +213,23 @@ class ConstraintDynamicEffector final
     double d = 0.0;           //!< coefficient in numerical low pass filter
     double e = 0.0;           //!< coefficient in numerical low pass filter
 
-    double F_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint force at t-2 time step
-    double F_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint force at t-1 time step
-    double F_mag_t = 0.0;                //!< Magnitude of unfiltered constraint force at t time step
-    double F_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint force at t time step
-    double F_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint force at t-1 time step
-    double F_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint force at t-2 time step
+    struct LoadSample
+    {
+        double magnitude = 0.0;
+        double filtered = 0.0;
+    };
+    struct LoadFilter
+    {
+        std::optional<uint64_t> epoch; //!< [ns] Timestamp of the current sample.
+        LoadSample current, previous, previous2;
+    };
+    void updateFilter(LoadFilter& filter, uint64_t epoch, double magnitude) const;
+    LoadFilter forceFilter;   //!< [N] Constraint force magnitude.
+    LoadFilter torque1Filter; //!< [N*m] Endpoint 1 torque magnitude.
+    LoadFilter torque2Filter; //!< [N*m] Endpoint 2 torque magnitude.
 
-    double T1_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 1 at t-2 time step
-    double T1_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 1 at t-1 time step
-    double T1_mag_t = 0.0;                //!< Magnitude of unfiltered constraint torque on s/c 1 at t time step
-    double T1_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint torque on s/c 1 at t time step
-    double T1_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint torque on s/c 1 at t-1 time step
-    double T1_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 1 at t-2 time step
-
-    double T2_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 2 at t-2 time step
-    double T2_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 2at t-1 time step
-    double T2_mag_t = 0.0;                //!< Magnitude of unfiltered constraint torque on s/c 2 at t time step
-    double T2_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint torque on s/c 2 at t time step
-    double T2_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-1 time step
-    double T2_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-2 time step
+    uint64_t appliedStatus = 1;                 //!< Status used by the most recent dynamics evaluation.
+    std::optional<uint64_t> lastPublishedEpoch; //!< [ns] Accepted epoch of the most recent constraint message.
 
     // Simulation variable pointers
     std::vector<std::string> stateNameOfSigma; //!< state engine name of the parent rigid body inertial attitude

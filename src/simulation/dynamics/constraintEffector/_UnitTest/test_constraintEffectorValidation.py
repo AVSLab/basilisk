@@ -127,6 +127,133 @@ def test_synchronized_constraint_at_time_zero(integrator_name, late_input):
         assert secondary.scStateOutMsg.read().v_BN_N[0] < 0.0
 
 
+def _run_constraint_with_central_origin(integrator_name, attachments, translated, pending=(), interruption=None):
+    """Return both hub accelerations at zero and their central-body-relative velocities after one step."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(0.1)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    vehicles = [spacecraft.Spacecraft(), spacecraft.Spacecraft()]
+    primary, secondary = vehicles
+    integrator = getattr(svIntegrators, integrator_name)(primary)
+    primary.setIntegrator(integrator)
+    primary.syncDynamicsIntegration(secondary)
+    constraint = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraint.setR_P2P1_B1Init([1.0, 0.0, 0.0])  # [m]
+    constraint.setK_d(10.0)  # [N/m]
+    constraint.setC_d(3.0)  # [N*s/m]
+    sample = messaging.SpicePlanetStateMsgPayload()
+    if translated:
+        sample.PositionVector = [1000.0, 0.0, 0.0]  # [m]
+        sample.VelocityVector = [0.0, 25.0, 0.0]  # [m/s]
+    sources = [messaging.SpicePlanetStateMsg() for _ in vehicles]
+    branches = []  # Keep the Python owners alive while the spacecraft uses the attached effectors.
+    for i, (sc, attachment, source) in enumerate(zip(vehicles, attachments, sources)):
+        sc.hub.r_CN_NInit = [100.0 + 2.0 * i, 0.0, 0.0]  # [m]
+        sc.hub.mHub = 10.0  # [kg]
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        if attachment == "branch":
+            spin = _spinning_body()
+            sc.hub.mHub -= spin.mass
+            spin.addDynamicEffector(constraint)
+            sc.addStateEffector(spin)
+            branches.append(spin)
+        else:
+            sc.addDynamicEffector(constraint)
+        center = gravityEffector.GravBodyData()
+        center.planetName = "center"
+        center.isCentralBody = True
+        center.mu = 1.0  # [m^3/s^2]
+        center.planetBodyInMsg.subscribeTo(source)
+        if i not in pending:
+            source.write(sample, 0)
+        sc.gravField.addGravBody(center)
+        sim.AddModelToTask("task", sc)
+    sim.AddModelToTask("task", constraint)
+    telemetry = constraint.constraintElements.addSubscriber()
+    if interruption == "rejected-trial":
+        hub_state = secondary.scStateOutMsg.addSubscriber()
+        branch_state = branches[-1].spinningBodyConfigLogOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    if pending:
+        constraint.writeOutputStateMessage(0)
+    assert telemetry.isWritten() == (not pending)
+    accelerations = [np.ravel(sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity).getStateDeriv())
+                     for sc in vehicles]
+    if interruption == "unwritten-origin":
+        replacement = messaging.SpicePlanetStateMsg()
+        center.planetBodyInMsg.subscribeTo(replacement)
+        with pytest.raises(BasiliskError, match="ephemeris must be written"):
+            primary.UpdateState(step)
+        constraint.UpdateState(step)
+        constraint.writeOutputStateMessage(step)
+        assert telemetry.timeWritten() == 0
+        replacement.write(sample, 0)
+    elif interruption == "rejected-trial":
+        accepted_error = list(telemetry().psi_N)
+        accepted_positions = [list(reader().r_BN_N) for reader in (hub_state, branch_state)]
+        settings = (integrator.relTol, integrator.absTol, integrator.safetyFactorForNextStepSize,
+                    integrator.minimumFactorDecreaseForNextStepSize)
+        # Force a rejected candidate and prevent a smaller retry.
+        integrator.relTol = integrator.absTol = 1e-15
+        integrator.safetyFactorForNextStepSize = integrator.minimumFactorDecreaseForNextStepSize = 0.0
+        with pytest.raises(RuntimeError, match="representable forward progress"):
+            primary.UpdateState(step)
+        constraint.UpdateState(step)
+        assert telemetry.timeWritten() == 0
+        np.testing.assert_array_equal(telemetry().psi_N, accepted_error)
+        secondary.UpdateState(step)
+        branches[-1].UpdateState(step)
+        for reader, position in zip((hub_state, branch_state), accepted_positions):
+            assert reader.timeWritten() == 0
+            np.testing.assert_array_equal(reader().r_BN_N, position)
+        (integrator.relTol, integrator.absTol, integrator.safetyFactorForNextStepSize,
+         integrator.minimumFactorDecreaseForNextStepSize) = settings
+    for i in pending:
+        sources[i].write(sample, 0)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    assert telemetry.isWritten() and telemetry.timeWritten() == step
+    if interruption == "rejected-trial":
+        assert hub_state.timeWritten() == branch_state.timeWritten() == step
+        np.testing.assert_allclose(branch_state().r_BN_N, hub_state().r_BN_N)
+    velocities = [np.array(sc.scStateOutMsg.read().v_BN_N) - sample.VelocityVector for sc in vehicles]
+    positions = [np.array(sc.scStateOutMsg.read().r_BN_N) for sc in vehicles]
+    # These endpoints coincide with their hub origins and have zero angular velocity.
+    error = positions[1] - positions[0] - np.ravel(constraint.getR_P2P1_B1Init())
+    expected_force = constraint.getK_d() * error + constraint.getC_d() * (velocities[1] - velocities[0])
+    np.testing.assert_allclose(telemetry().psi_N, error, rtol=0.0, atol=1e-12)  # [m]
+    np.testing.assert_allclose(telemetry().Fc_N, expected_force, rtol=0.0, atol=1e-11)  # [N] on endpoint 1
+    return np.array(accelerations), np.array(velocities)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("attachments", [("hub", "branch"), ("branch", "hub")])
+def test_constraint_invariant_to_central_origin(integrator_name, attachments):
+    """Translating and boosting a common origin must preserve the spring and damping forces at every stage."""
+    baseline = _run_constraint_with_central_origin(integrator_name, attachments, False)
+    shifted = _run_constraint_with_central_origin(integrator_name, attachments, True)
+    expected_x = [1.0 - 1.0 / 100.0**2, -1.0 - 1.0 / 102.0**2]  # [m/s^2], spring plus central gravity
+    np.testing.assert_allclose(shifted[0][:, 0], expected_x, rtol=1e-12)
+    np.testing.assert_allclose(shifted[0], baseline[0], rtol=0.0, atol=1e-11)  # [m/s^2]
+    np.testing.assert_allclose(shifted[1], baseline[1], rtol=0.0, atol=1e-10)  # [m/s]
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("pending", [(1,), (0,), (0, 1)])
+def test_constraint_recovers_on_first_positive_step(integrator_name, pending):
+    """Hold the load while an origin is unknown, then recover when advancing directly from time zero."""
+    attachments = ("branch", "branch")
+    _, control = _run_constraint_with_central_origin(integrator_name, attachments, True)
+    acceleration, recovered = _run_constraint_with_central_origin(integrator_name, attachments, True, pending)
+    for i, radius in enumerate((100.0, 102.0)):  # [m]
+        if i not in pending:
+            np.testing.assert_allclose(acceleration[i], [-1.0 / radius**2, 0.0, 0.0], atol=1e-13)  # [m/s^2]
+    np.testing.assert_allclose(recovered, control, rtol=0.0, atol=1e-10)  # [m/s]
+
+
 @pytest.mark.parametrize("integrator_name, epoch", [
     ("svIntegratorRK4", 0),
     ("svIntegratorRK4", 120_000_000_123_456_789),
@@ -178,6 +305,7 @@ def test_hub_constraint_at_planetary_distance(origin, boost, second_offset, seco
         else:
             sc.gravField.addGravBody(center)
         sc.addDynamicEffector(constraint)
+    telemetry = constraint.constraintElements.addSubscriber()
     primary.Reset(epoch)
     secondary.Reset(epoch)
     constraint.Reset(epoch)
@@ -195,11 +323,156 @@ def test_hub_constraint_at_planetary_distance(origin, boost, second_offset, seco
     # The second Reset sees both endpoints. The zero-duration update refreshes both hub derivatives.
     check_acceleration(secondary, -expected_force)
     primary.UpdateState(epoch)
+    constraint.UpdateState(epoch)
+    assert telemetry.isWritten() and telemetry.timeWritten() == epoch
+    np.testing.assert_allclose(telemetry().psi_N, expected_error, rtol=0.0, atol=1e-14)  # [m]
+    np.testing.assert_allclose(telemetry().Fc_N, expected_force, rtol=0.0, atol=1e-10)  # [N]
     check_acceleration(primary, expected_force)
     check_acceleration(secondary, -expected_force)
     for sc, x in ((primary, origin), (secondary, origin + second_offset)):
         planet_position = sc.dynManager.getPropertyReference("earth.r_PN_N")
         np.testing.assert_array_equal(np.ravel(planet_position), [x, 0.0, 0.0])  # [m] at the ephemeris write tick
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+def test_rejected_constraint_step_invalidates_replaced_origin(integrator_name):
+    """Retain the last message during an origin outage and recover on the next successful advance."""
+    _run_constraint_with_central_origin(integrator_name, ("hub", "branch"), True, interruption="unwritten-origin")
+
+
+def test_constraint_retains_accepted_message_after_rejected_trial():
+    """A rejected RKF45 candidate must not overwrite the last accepted constraint measurement."""
+    _run_constraint_with_central_origin("svIntegratorRKF45", ("branch", "branch"), True, interruption="rejected-trial")
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("hub_first", [True, False])
+def test_constraint_on_same_hub_and_rotated_branch(integrator_name, hub_first):
+    """Coincident points exert no force, and the bending torque restores the joint in either order."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(0.1)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    sc = spacecraft.Spacecraft()
+    sc.setIntegrator(getattr(svIntegrators, integrator_name)(sc))
+    sc.hub.mHub = 10.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    spin = _spinning_body()
+    spin.r_SB_B = [0.0, 2.0, 0.0]  # [m]
+    spin.thetaInit = np.pi / 2  # [rad]
+    sc.addStateEffector(spin)
+    constraint = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraint.setK_d(10.0)  # [N/m]
+    constraint.setK_a(1.0)  # [N*m]
+    constraint.setFilter_Data(1.0, step * macros.NANO2SEC, 0.7)  # [rad/s], [s], [1/s]
+    if hub_first:
+        constraint.setR_P1B1_B1(spin.r_SB_B)
+        sc.addDynamicEffector(constraint)
+        spin.addDynamicEffector(constraint)
+    else:
+        constraint.setR_P2B2_B2(spin.r_SB_B)
+        spin.addDynamicEffector(constraint)
+        sc.addDynamicEffector(constraint)
+    reader = constraint.constraintElements.addSubscriber()
+    joint = spin.spinningBodyOutMsg.addSubscriber()
+    sim.AddModelToTask("task", sc)
+    sim.AddModelToTask("task", constraint)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    np.testing.assert_allclose(reader().psi_N, 0.0, atol=1e-14)  # [m]
+    np.testing.assert_allclose(reader().Fc_N, 0.0, atol=1e-13)  # [N]
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    assert 0.0 < joint().theta < spin.thetaInit
+    assert joint().thetaDot < 0.0
+    torque = constraint.getK_a() * np.tan(joint().theta / 4)  # [N*m]
+    first_torque = np.array([torque if hub_first else -torque, 0.0, 0.0])  # [N*m]
+    np.testing.assert_allclose(reader().L1_B1, first_torque, rtol=1e-12, atol=1e-13)
+    np.testing.assert_allclose(reader().L2_B2, -first_torque, rtol=1e-12, atol=1e-13)
+    filtered_torque = reader().L1_mag_filtered  # [N*m]
+    assert filtered_torque > 0.0
+    status = messaging.DeviceStatusMsgPayload()
+    status.deviceStatus = 0
+    command = messaging.DeviceStatusMsg().write(status, step + step // 2)
+    constraint.effectorStatusInMsg.subscribeTo(command)
+    fields = ("Fc_N", "L1_B1", "L2_B2", "psi_N", "Fc_mag_filtered", "L1_mag_filtered", "L2_mag_filtered")
+    sample = {field: np.array(getattr(reader(), field)) for field in fields}
+    constraint.UpdateState(step + step // 2)
+    constraint.writeOutputStateMessage(step + step // 2)
+    assert reader.timeWritten() == step
+    for field, expected in sample.items():
+        np.testing.assert_array_equal(getattr(reader(), field), expected)
+    sim.ConfigureStopTime(2 * step)
+    sim.ExecuteSimulation()
+    assert reader.timeWritten() == 2 * step
+    np.testing.assert_array_equal(reader().L1_B1, np.zeros(3))
+    np.testing.assert_array_equal(reader().L2_B2, np.zeros(3))
+
+    # The first publication for a new epoch can also occur after the next command arrives.
+    sc.UpdateState(3 * step)
+    status.deviceStatus = 1
+    command.write(status, 3 * step + step // 2)
+    constraint.UpdateState(3 * step + step // 2)
+    assert reader.timeWritten() == 3 * step
+    np.testing.assert_array_equal(reader().L1_B1, np.zeros(3))
+    sc.UpdateState(4 * step)
+    constraint.UpdateState(4 * step)
+    assert np.linalg.norm(reader().L1_B1) > 0.0
+
+
+def test_same_tick_replaces_filtered_constraint_loads():
+    """A revised force and both torques occupy one sample of the filter history."""
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    primary.syncDynamicsIntegration(secondary)
+    constraint = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraint.setK_d(1.0)  # [N/m]
+    constraint.setR_P1B1_B1([0.0, 2.0, 0.0])  # [m]
+    constraint.setR_P2B2_B2([0.0, 3.0, 0.0])  # [m]
+    constraint.setR_P2P1_B1Init([0.0, 1.0, 0.0])  # [m]
+    constraint.setFilter_Data(1.0, 1.0, 0.5)  # [rad/s], [s], [1/s]
+    ref = messaging.TransRefMsgPayload()
+    source = messaging.TransRefMsg().write(ref)
+    secondary.transRefInMsg.subscribeTo(source)
+    for sc in (primary, secondary):
+        sc.hub.mHub = 10.0  # [kg]
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        sc.addDynamicEffector(constraint)
+    reader = constraint.constraintElements.addSubscriber()
+    primary.Reset(0)
+    secondary.Reset(0)
+    constraint.Reset(0)
+
+    def filtered(sample):
+        return np.array([sample.Fc_mag_filtered, sample.L1_mag_filtered, sample.L2_mag_filtered])
+
+    for gap, publish in [(1.0, constraint.UpdateState), (2.0, constraint.UpdateState),
+                         (3.0, constraint.writeOutputStateMessage)]:  # [m]
+        ref.r_RN_N = [gap, 0.0, 0.0]
+        source.write(ref, 0)
+        primary.UpdateState(0)
+        publish(0)
+        initial = gap * np.array([1.0, 2.0, 3.0])  # [N], [N*m], [N*m] from the lever arms
+        np.testing.assert_allclose(filtered(reader()), initial / 7)
+
+    # The configured filter has numerator [1, 2, 1] and denominator [7, -6, 3].
+    inputs = [np.zeros(3), initial]
+    outputs = [np.zeros(3), initial / 7]
+    for seconds in (1, 2):
+        tick = macros.sec2nano(seconds)  # [ns]
+        primary.UpdateState(tick)
+        constraint.UpdateState(tick)
+        if seconds == 1:
+            ref.r_RN_N = [4.0, 0.0, 0.0]  # [m] replace a sample with nonzero filter history
+            source.write(ref, tick)
+            primary.UpdateState(tick)
+            constraint.UpdateState(tick)
+        sample = reader()
+        magnitudes = np.linalg.norm([sample.Fc_N, sample.L1_B1, sample.L2_B2], axis=1)
+        expected = (magnitudes + 2 * inputs[-1] + inputs[-2] + 6 * outputs[-1] - 3 * outputs[-2]) / 7
+        np.testing.assert_allclose(filtered(sample), expected)
+        inputs.append(magnitudes)
+        outputs.append(expected)
 
 
 def test_articulated_output_uses_parent_epoch_between_steps():

@@ -137,9 +137,10 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     effectorStatusMsg = messaging.DeviceStatusMsg().write(effectorStatusMsgPayload)
     constraintEffector.effectorStatusInMsg.subscribeTo(effectorStatusMsg)
 
-#. (Optional) Setup Low Pass Filtering for the Constraint Forces and Torques acting on the two satellites. Define a positive cut-off frequency wc for the low-pass filter. If not set, defaults to 0::
+#. To filter the constraint force and torque magnitudes, specify the positive cutoff frequency
+   ``wc`` in rad/s, the filter sampling interval ``h`` in seconds, and the damping coefficient ``k`` in 1/s::
 
-    constraintEffector.setFilterData(wc)
+    constraintEffector.setFilter_Data(wc, h, k)
 
 #. The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable ``constraintElements``.
 
@@ -188,6 +189,15 @@ offsets after subtracting the parent states.
 Time-zero reference updates and subsequent integrator stages refresh both endpoints before evaluating either load.
 While either central-body ephemeris is unwritten, the constraint applies zero load and defers its output
 message. Once both origins are known, the next dynamics evaluation uses both updated endpoints.
+The output uses the two accepted poses and their common spacecraft timestamp. If a load changes at that
+same tick, its filtered magnitude is recomputed using the preceding samples. The filter history advances
+once per accepted timestamp.
+When scheduling the constraint for telemetry or status commands, use the spacecraft module's rate.
+Between accepted dynamics steps, its output retains the force, torques, violation, filtered values,
+and timestamp. A status command takes effect at the next dynamics evaluation.
+A rejected integration trial leaves the previous constraint message available.
+``Fc_N`` is the force on endpoint 1 in inertial frame components. Endpoint 2 receives its negative.
+The torques ``L1_B1`` and ``L2_B2`` are expressed in their respective endpoint frames.
 
 The effector records which individual gain setters have been called. Changing ``alpha`` or ``beta``
 and then calling ``Reset()`` refreshes every derived gain while preserving explicit overrides, even

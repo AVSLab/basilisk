@@ -393,9 +393,27 @@ bool ConstraintDynamicEffector::bothLinked() const
     return this->endpoints[0].frame && this->endpoints[1].frame;
 }
 
+std::optional<uint64_t> ConstraintDynamicEffector::telemetryEpoch(uint64_t clock) const
+{
+    if (!this->bothLinked()) {
+        return clock; // Preserve the zero-load output of an unattached constraint.
+    }
+    const auto& first = *this->endpoints[0].frame;
+    const auto& second = *this->endpoints[1].frame;
+    if (!first.originReady || !second.originReady || first.acceptedTimeNanos != second.acceptedTimeNanos) {
+        return std::nullopt;
+    }
+    // Between dynamics steps the previously published measurement and filter history stay together.
+    if (first.acceptedTimeNanos == this->lastPublishedEpoch && first.acceptedTimeNanos != clock) {
+        return std::nullopt;
+    }
+    return first.acceptedTimeNanos;
+}
+
 void ConstraintDynamicEffector::Endpoint::computeForceTorque(double time [[maybe_unused]],
                                                              double timeStep [[maybe_unused]])
 {
+    this->owner.appliedStatus = this->owner.effectorStatus;
     this->owner.evaluateConstraint();
     this->forceExternal_N = this->index == 0 ? this->owner.Fc_N : -this->owner.Fc_N;
     this->torqueExternalPntB_B = this->index == 0 ? this->owner.T_B1 : this->owner.T_B2;
@@ -417,7 +435,7 @@ void ConstraintDynamicEffector::evaluateConstraint()
         return;
     }
     const bool unknownOrigin = !this->endpoints[0].frame->originReady || !this->endpoints[1].frame->originReady;
-    if (this->effectorStatus == 0 || unknownOrigin) {
+    if (this->appliedStatus == 0 || unknownOrigin) {
         this->Fc_N.setZero();
         this->T_B1.setZero();
         this->T_B2.setZero();
@@ -468,7 +486,7 @@ void ConstraintDynamicEffector::evaluateConstraint()
     Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
     this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
 
-    if (this->effectorStatus == 1) {
+    if (this->appliedStatus == 1) {
         // calculate the constraint force
         this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // force on endpoint 1
 
@@ -496,16 +514,27 @@ void ConstraintDynamicEffector::evaluateConstraint()
  */
 void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 {
+    if (const auto epoch = this->telemetryEpoch(CurrentClock)) {
+        this->evaluateConstraint();
+        this->computeFilteredForce(*epoch);
+        this->computeFilteredTorque(*epoch);
+        this->lastPublishedEpoch = *epoch;
+        this->writeConstraintMessage(*epoch);
+    }
+}
+
+void ConstraintDynamicEffector::writeConstraintMessage(uint64_t epoch)
+{
     ConstDynEffectorMsgPayload outputForces;
     outputForces = this->constraintElements.zeroMsgPayload;
-    eigenVector3d2CArray(this->forceExternal_N, outputForces.Fc_N);
+    eigenVector3d2CArray(this->Fc_N, outputForces.Fc_N);
     eigenVector3d2CArray(this->T_B1, outputForces.L1_B1);
     eigenVector3d2CArray(this->T_B2, outputForces.L2_B2);
     eigenVector3d2CArray(this->psi_N, outputForces.psi_N);
-    outputForces.Fc_mag_filtered = this->F_filtered_mag_t;
-    outputForces.L1_mag_filtered = this->T1_filtered_mag_t;
-    outputForces.L2_mag_filtered = this->T2_filtered_mag_t;
-    this->constraintElements.write(&outputForces, this->moduleID, CurrentClock);
+    outputForces.Fc_mag_filtered = this->forceFilter.current.filtered;
+    outputForces.L1_mag_filtered = this->torque1Filter.current.filtered;
+    outputForces.L2_mag_filtered = this->torque2Filter.current.filtered;
+    this->constraintElements.write(&outputForces, this->moduleID, epoch);
 }
 
 /*! Update state method
@@ -514,50 +543,36 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessage();
-    this->computeFilteredForce(CurrentSimNanos);
-    this->computeFilteredTorque(CurrentSimNanos);
     this->writeOutputStateMessage(CurrentSimNanos);
 }
 
-/*! Filtering method to calculate filtered Constraint Force
- @param CurrentClock The current simulation time (used for time stamping)
- */
-void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock [[maybe_unused]])
+void ConstraintDynamicEffector::updateFilter(LoadFilter& filter, uint64_t epoch, double magnitude) const
 {
-    double F_t[3];
-    eigenVector3d2CArray(this->Fc_N, F_t);
-    this->F_mag_t = std::sqrt(pow(F_t[0], 2) + pow(F_t[1], 2) + pow(F_t[2], 2));
-    this->F_filtered_mag_t = this->a * this->F_filtered_mag_tminus1 + this->b * this->F_filtered_mag_tminus2 +
-                             this->c * this->F_mag_t + this->d * this->F_mag_tminus1 + this->e * this->F_mag_tminus2;
-    this->F_filtered_mag_tminus2 = this->F_filtered_mag_tminus1;
-    this->F_filtered_mag_tminus1 = this->F_filtered_mag_t;
-    this->F_mag_tminus2 = this->F_mag_tminus1;
-    this->F_mag_tminus1 = this->F_mag_t;
+    // A revised load at the same tick replaces the current sample. Advancing history would filter it twice.
+    if (filter.epoch != epoch) {
+        filter.previous2 = filter.previous;
+        filter.previous = filter.current;
+        filter.epoch = epoch;
+    }
+    filter.current.magnitude = magnitude;
+    filter.current.filtered = this->a * filter.previous.filtered + this->b * filter.previous2.filtered +
+                              this->c * magnitude + this->d * filter.previous.magnitude +
+                              this->e * filter.previous2.magnitude;
 }
 
-/*! Filtering method to calculate filtered Constraint Torque
- @param CurrentClock The current simulation time (used for time stamping)
+/** @brief Filter the constraint force magnitude.
+ * @param CurrentClock [ns] Accepted sample epoch.
  */
-void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock [[maybe_unused]])
+void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 {
-    double T_t1[3];
-    eigenVector3d2CArray(this->T_B1, T_t1);
-    this->T1_mag_t = std::sqrt(pow(T_t1[0], 2) + pow(T_t1[1], 2) + pow(T_t1[2], 2));
-    this->T1_filtered_mag_t = this->a * this->T1_filtered_mag_tminus1 + this->b * this->T1_filtered_mag_tminus2 +
-                              this->c * this->T1_mag_t + this->d * this->T1_mag_tminus1 +
-                              this->e * this->T1_mag_tminus2;
-    this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
-    this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
-    this->T1_mag_tminus2 = this->T1_mag_tminus1;
-    this->T1_mag_tminus1 = this->T1_mag_t;
-    double T_t2[3];
-    eigenVector3d2CArray(this->T_B2, T_t2);
-    this->T2_mag_t = std::sqrt(pow(T_t2[0], 2) + pow(T_t2[1], 2) + pow(T_t2[2], 2));
-    this->T2_filtered_mag_t = this->a * this->T2_filtered_mag_tminus1 + this->b * this->T2_filtered_mag_tminus2 +
-                              this->c * this->T2_mag_t + this->d * this->T2_mag_tminus1 +
-                              this->e * this->T2_mag_tminus2;
-    this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
-    this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
-    this->T2_mag_tminus2 = this->T2_mag_tminus1;
-    this->T2_mag_tminus1 = this->T2_mag_t;
+    this->updateFilter(this->forceFilter, CurrentClock, this->Fc_N.norm());
+}
+
+/** @brief Filter both endpoint torque magnitudes.
+ * @param CurrentClock [ns] Accepted sample epoch.
+ */
+void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)
+{
+    this->updateFilter(this->torque1Filter, CurrentClock, this->T_B1.norm());
+    this->updateFilter(this->torque2Filter, CurrentClock, this->T_B2.norm());
 }
