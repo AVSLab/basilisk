@@ -352,6 +352,67 @@ def test_invalid_final_mass_rolls_back_synchronized_step(solver):
     check(2 * step)
 
 
+@pytest.mark.parametrize("failure", [None, "drift", "diffusion", "invalid_mass"])
+def test_accepted_callback_reads_published_peer(failure):
+    """Accepted callbacks see the peer and leave local joint outputs consistent even on failure."""
+    primary, secondary = mujoco.MJScene(SLIDER_SITE_XML), mujoco.MJScene(SLIDER_SITE_XML)
+    primary.setIntegrator(svIntegrators.svIntegratorEuler(primary))
+    primary.syncDynamicsIntegration(secondary)
+    primary.extraEoMCall = True
+    site = secondary.getSite("tip").stateOutMsg.addSubscriber()
+    state = secondary.stateOutMsg.addSubscriber()
+    joint = primary.getBody("slider").getScalarJoint("slide")
+    position, velocity = 3.0, -0.75  # [m], [m/s]
+    samples = []
+
+    class PeerProbe(sysModel.SysModel):
+        def __init__(self, task):
+            super().__init__()
+            self.task = task
+
+        def UpdateState(self, tick):
+            if tick == end:
+                samples.append((site.timeWritten(), site().r_BN_N[0], state.timeWritten(),
+                                state().qpos[0][0], secondary.getEvaluationTime()))
+                if self.task == "drift":
+                    joint.getPositionState().setState([[position]])
+                    joint.getVelocityState().setState([[velocity]])
+                if self.task == "diffusion" and failure == "invalid_mass":
+                    primary.getMassState().setState([[0.0], [-1.0]])  # [kg]
+                if self.task == failure:
+                    raise RuntimeError(f"deliberate accepted {failure} callback failure")
+
+    end = macros.sec2nano(1.0)  # [ns]
+    drift, diffusion = PeerProbe("drift"), PeerProbe("diffusion")
+    primary.AddModelToDynamicsTask(drift)
+    primary.AddModelToDiffusionDynamicsTask(diffusion)
+    for scene in (primary, secondary):
+        scene.Reset(0)
+    secondary.getBody("slider").getScalarJoint("slide").setVelocity(2.0)  # [m/s]
+    primary.UpdateState(0)
+    if failure:
+        error = "finite and nonnegative" if failure == "invalid_mass" else "director method error"
+        with pytest.raises(RuntimeError, match=error):
+            primary.UpdateState(end)
+    else:
+        primary.UpdateState(end)
+    assert samples == [(end, 2.0, end, 2.0, 1.0)] * (1 if failure == "drift" else 2)  # [ns], [m], [ns], [m], [s]
+    for scene in (primary, secondary):
+        assert scene.timeBeforeNanos == scene.stateOutMsg.addSubscriber().timeWritten() == end
+    scene_state = primary.stateOutMsg.addSubscriber()
+    primary_site = primary.getSite("tip").stateOutMsg.addSubscriber()
+    q, v = joint.stateOutMsg.addSubscriber(), joint.stateDotOutMsg.addSubscriber()
+    assert all(reader.timeWritten() == end for reader in (scene_state, primary_site, q, v))
+    assert joint.getPositionState().getState()[0][0] == scene_state().qpos[0][0] == position
+    assert primary_site().r_BN_N[0] == q().state == position
+    assert joint.getVelocityState().getState()[0][0] == scene_state().qvel[0][0] == velocity
+    assert primary_site().v_BN_N[0] == v().state == velocity
+    body = primary.getBody("slider")
+    mass = body.massPropertiesOutMsg.addSubscriber()
+    assert mass.timeWritten() == end
+    assert mass().massSC == body.getMass() == 1.0  # [kg]
+
+
 def test_synchronized_outputs_after_failed_advance():
     """Both scenes retain their accepted slider state across a secondary update and an RKF45 failure."""
     xml = SLIDER_SITE_XML.replace('type="slide"', 'type="slide" stiffness="1"')  # [N/m]

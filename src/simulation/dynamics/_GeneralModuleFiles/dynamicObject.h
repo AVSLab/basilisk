@@ -172,6 +172,14 @@ class DynamicObject : public SysModel
     /** @brief Check the live final candidate while the numerical method can still roll it back. */
     virtual void validateIntegratedState() {}
 
+    /** @brief Publish this object's accepted state before synchronized models run optional callbacks.
+     * @param tick [ns] Accepted simulation time.
+     */
+    virtual void publishIntegratedState(uint64_t tick) { this->postIntegration(tick); }
+
+    /** @brief Run optional callbacks after the entire dynamics group has published. */
+    virtual void runAcceptedStateCallbacks() {}
+
     /** @brief Refresh object-owned outputs after the integrator rolls back a failed step. */
     virtual void restoreAfterFailedStep() {}
 

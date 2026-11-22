@@ -477,16 +477,43 @@ void MJScene::postIntegration(uint64_t callTimeNanos)
 {
     this->timeBefore = epochSeconds(callTimeNanos);
     this->timeBeforeNanos = callTimeNanos;
-    if (this->extraEoMCall) {
-        this->equationsOfMotion(this->timeBefore, 0);
-        this->equationsOfMotionDiffusion(this->timeBefore, 0);
-    }
     this->publishAcceptedState();
+    if (!this->deferAcceptedCallbacks) {
+        this->runAcceptedStateCallbacks();
+    }
 }
 
 void MJScene::validateIntegratedState()
 {
     this->validateMujocoMassStates(this->getMujocoModel());
+}
+
+void MJScene::publishIntegratedState(uint64_t callTimeNanos)
+{
+    ScopedFlag defer(this->deferAcceptedCallbacks);
+    this->postIntegration(callTimeNanos);
+}
+
+void MJScene::runAcceptedStateCallbacks()
+{
+    if (this->extraEoMCall) {
+        try {
+            this->equationsOfMotion(this->timeBefore, 0);
+            this->equationsOfMotionDiffusion(this->timeBefore, 0);
+            this->publishAcceptedState();
+        } catch (...) {
+            // Keep joint edits at the accepted tick. Discard masses the native model could not accept.
+            MJSpec::NoRecompileGuard guard(this->spec);
+            auto* model = this->getMujocoModel();
+            try {
+                this->validateMujocoMassStates(model);
+            } catch (const std::invalid_argument&) {
+                std::copy_n(model->body_mass, model->nbody, this->massState->stateView().data());
+            }
+            this->publishAcceptedState();
+            throw;
+        }
+    }
 }
 
 void MJScene::publishAcceptedState()

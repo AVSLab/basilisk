@@ -743,9 +743,12 @@ class MJScene : public DynamicObject
 
     uint64_t stageTimestamp(double time) const;
     void validateIntegratedState() override;
+    void publishIntegratedState(uint64_t tick) override;
+    void runAcceptedStateCallbacks() override;
     void publishAcceptedState();
     void restoreAfterFailedStep() override;
-    bool trialStateActive = false; //!< A stage has exposed trial data since the last accepted publication.
+    bool trialStateActive = false;       //!< A stage has exposed trial data since the last accepted publication.
+    bool deferAcceptedCallbacks = false; //!< The integrator runs callbacks after every peer publishes.
 
     /** @brief Committed dimensions and joint kinds that a recompiled model must preserve.
      * These dimensions and addresses must match the fixed state layout.

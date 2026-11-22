@@ -131,8 +131,12 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
         }
     }
     this->integrator->integrate(this->timeBefore, this->timeStep, integrateToThisTimeNanos);
+    // A callback can read a peer's telemetry or throw. Publish the whole group before the first callback.
     for (DynamicObject* object : this->integrator->dynPtrs) {
-        object->postIntegration(integrateToThisTimeNanos);
+        object->publishIntegratedState(integrateToThisTimeNanos);
+    }
+    for (DynamicObject* object : this->integrator->dynPtrs) {
+        object->runAcceptedStateCallbacks();
     }
 }
 
