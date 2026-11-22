@@ -16,6 +16,7 @@
 
 """Regression tests for the classical mean/osculating J2 mapping."""
 
+import cmath
 import math
 
 import numpy as np
@@ -64,9 +65,9 @@ def _assert_same_state(first, second, tolerance=3e-12):
 def _equatorial_reference(elements, sign):
     """Evaluate the planar limit in eccentricity and mean-longitude variables.
 
-    At either equator, the plane stays fixed and the correction to mean
-    longitude measured along the orbit is ``3*gamma2p*(f-M+e*sin(f))``.
-    This avoids the general inclination and node corrections altogether.
+    At either equator, the plane stays fixed.  Include the eccentricity
+    contribution to mean longitude as well as the equation-of-center term,
+    without using the general inclination and node corrections.
     """
     e = elements.e
     f = math.atan2(math.sin(elements.f), math.cos(elements.f))
@@ -85,9 +86,96 @@ def _equatorial_reference(elements, sign):
     result.e = math.hypot(e + delta_e, e_delta_mean)
     result.i = elements.i
     result.Omega = elements.Omega
-    result.omega = elements.omega + mean - mean_prime + 3.0 * gamma_prime * (f - mean + e * math.sin(f))
+    result.omega = (elements.omega + mean - mean_prime + 3.0 * gamma_prime * (f - mean + e * math.sin(f))
+                    - e / (eta * (1.0 + eta)) * e_delta_mean)
     result.f = orbitalMotion.E2f(orbitalMotion.M2E(mean_prime, result.e), result.e)
     return result
+
+
+def _brouwer_generator(mean, periapsis, actions):
+    """Evaluate the first-order generator in Delaunay variables [km^2/s].
+
+    The short-period part is the expanded form of Lara (2021), Eq. (7),
+    https://doi.org/10.1007/s10569-021-10043-7, including J2.  The long-period
+    part uses the same Brouwer mean-element convention as Appendix F.
+    The actions are L = sqrt(mu*a), G = L*sqrt(1-e^2), and H = G*cos(i).
+    Complex arithmetic allows action derivatives at fixed mean anomaly
+    and periapsis, independently of the element-correction formulas.
+    """
+    action_l, action_g, action_h = actions
+    eccentricity = cmath.sqrt(1.0 - (action_g / action_l)**2)
+    cos_i = action_h / action_g
+    eccentric_anomaly = complex(mean)
+    for _ in range(30):
+        eccentric_anomaly -= ((eccentric_anomaly - eccentricity * cmath.sin(eccentric_anomaly) - mean)
+                              / (1.0 - eccentricity * cmath.cos(eccentric_anomaly)))
+    anomaly = 2.0 * cmath.atan(cmath.sqrt((1.0 + eccentricity) / (1.0 - eccentricity))
+                               * cmath.tan(eccentric_anomaly / 2.0))
+    center = anomaly - mean + eccentricity * cmath.sin(anomaly)
+    harmonics = (cmath.sin(2.0 * periapsis + 2.0 * anomaly)
+                 + eccentricity * cmath.sin(2.0 * periapsis + anomaly)
+                 + eccentricity / 3.0 * cmath.sin(2.0 * periapsis + 3.0 * anomaly))
+    coefficient = (orbitalMotion.MU_EARTH**2 * orbitalMotion.J2_EARTH * orbitalMotion.REQ_EARTH**2
+                   / (4.0 * action_g**3))
+    short_period = (1.0 - 3.0 * cos_i**2) * center - 1.5 * (1.0 - cos_i**2) * harmonics
+    long_period = (eccentricity**2 / 8.0
+                   * (1.0 - 11.0 * cos_i**2 - 40.0 * cos_i**4 / (1.0 - 5.0 * cos_i**2))
+                   * cmath.sin(2.0 * periapsis))
+    return coefficient * (short_period + long_period)
+
+
+def _mean_longitude(elements):
+    """Recover mean longitude [rad] without using Basilisk anomaly helpers."""
+    eccentric_anomaly = math.atan2(math.sqrt(1.0 - elements.e**2) * math.sin(elements.f),
+                                   elements.e + math.cos(elements.f))
+    return eccentric_anomaly - elements.e * math.sin(eccentric_anomaly) + elements.omega + elements.Omega
+
+
+@pytest.mark.parametrize("sign", [-2, -1, 1, 2])
+@pytest.mark.parametrize("semi_major_axis,eccentricity,inclination,periapsis,anomaly", [
+    (7000.0, 0.001, 0.9, 0.4, 0.3),
+    (8000.0, 0.15, 0.7, 1.2, -2.4),
+    (20000.0, 0.5, 0.5, -0.7, 2.7),
+    (26600.0, 0.74, math.radians(63.0), math.radians(20.0), 1.3),
+])  # Semimajor axis [km], eccentricity [-], angles [rad].
+def test_mean_osc_canonical_longitude(implementation, sign, semi_major_axis, eccentricity,
+                                     inclination, periapsis, anomaly):
+    """Match derivatives of the generator, including nonzero long-period terms.
+
+    Signs +/-1 exercise both mapping directions.  Signs +/-2 deliberately
+    exercise the historical unchecked fallback with a scaled perturbation.
+    The longitude correction is dW/dL + dW/dG + dW/dH at fixed angles.
+    """
+    elements = _elements(implementation, eccentricity, inclination, anomaly)
+    elements.a = semi_major_axis
+    elements.omega = periapsis
+    longitude = _mean_longitude(elements)
+    mean = longitude - elements.omega - elements.Omega
+    action_l = math.sqrt(orbitalMotion.MU_EARTH * elements.a)
+    action_g = action_l * math.sqrt(1.0 - eccentricity**2)
+    actions = [action_l, action_g, action_g * math.cos(inclination)]
+    step = 1e-18 * action_l  # [km^2/s]
+    delta_longitude = 0.0  # [rad]
+    for index in range(3):
+        shifted = list(actions)
+        shifted[index] += 1j * step
+        delta_longitude += _brouwer_generator(mean, periapsis, shifted).imag / step
+    mapped = _map(implementation, elements, sign)
+    error = _mean_longitude(mapped) - longitude - sign * delta_longitude
+    assert math.atan2(math.sin(error), math.cos(error)) == pytest.approx(0.0, abs=3e-14)
+
+
+def test_mean_osc_eccentric_regression(implementation):
+    """Reproduce issue #1728 with Basilisk's default Earth constants."""
+    elements = _elements(implementation, eccentricity=0.74, inclination=math.radians(63.0))
+    elements.a = 26600.0  # [km]
+    elements.Omega = 0.0  # [rad]
+    elements.omega = math.radians(20.0)  # [rad]
+    mean = math.radians(10.0)  # [rad]
+    elements.f = orbitalMotion.E2f(orbitalMotion.M2E(mean, elements.e), elements.e)
+    mapped = _map(implementation, elements, 1)
+    expected_periapsis = 20.59401408159442  # [deg]
+    assert math.degrees(mapped.omega) == pytest.approx(expected_periapsis, abs=2e-11)
 
 
 @pytest.mark.parametrize("sign", [-1, 1])
@@ -150,10 +238,11 @@ def test_mean_osc_small_inclination(implementation, sign, inclination):
 
 @pytest.mark.parametrize("sign", [-1, 1])
 @pytest.mark.parametrize("inclination", [0.0, 0.7, math.pi])  # [rad]
+@pytest.mark.parametrize("eccentricity", [0.1, 0.74])
 @pytest.mark.parametrize("anomaly", [0.0, 0.3, -0.3, math.pi - 1e-10, math.pi, math.pi + 1e-10])  # [rad]
-def test_mean_osc_revolutions(implementation, sign, inclination, anomaly):
+def test_mean_osc_revolutions(implementation, sign, inclination, eccentricity, anomaly):
     """Whole turns and crossings of the principal branch preserve mapped states."""
-    elements = _elements(implementation, inclination=inclination, anomaly=anomaly)
+    elements = _elements(implementation, eccentricity, inclination, anomaly)
     reference = _map(implementation, elements, sign)
     for turns in [-100, -2, -1, 1, 2, 100]:
         elements.f = anomaly + turns * 2.0 * math.pi  # [rad]

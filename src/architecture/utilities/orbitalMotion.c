@@ -1155,12 +1155,15 @@ static void clMeanOscMapImpl(double req,
             (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
              e * sin(2.0 * omega + 3.0 * f)); // (F.11)
 
-    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) * inclinationFactor * sin(2.0 * omega) -
-                 gamma2p / 4.0 * pow(eta, 3.0) *
-                     (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
-                      3.0 * (1.0 - pow(cos(i), 2.0)) *
-                          ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
-                           (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+    const double edMLp = gamma2p / 8.0 * e * pow(eta, 3.0) * inclinationFactor * sin(2.0 * omega);
+    const double edMSp = -gamma2p / 4.0 * pow(eta, 3.0) *
+                         (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
+                          3.0 * (1.0 - pow(cos(i), 2.0)) *
+                              ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
+                               (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+    const double edM = edMLp + edMSp;
+    // Appendix F erratum: only the short-period part of e*delta(M) enters (F.11).
+    MpopOp -= e / (eta * (1.0 + eta)) * edMSp;
 
     double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
                         (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
@@ -1388,14 +1391,17 @@ static void legacyClMeanOscMap(double req,
             (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
              e * sin(2.0 * omega + 3.0 * f)); // (F.11)
 
-    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) *
-                     (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
-                     sin(2.0 * omega) -
-                 gamma2p / 4.0 * pow(eta, 3.0) *
-                     (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
-                      3.0 * (1.0 - pow(cos(i), 2.0)) *
-                          ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
-                           (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+    const double edMLp = gamma2p / 8.0 * e * pow(eta, 3.0) *
+                         (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+                         sin(2.0 * omega);
+    const double edMSp = -gamma2p / 4.0 * pow(eta, 3.0) *
+                         (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
+                          3.0 * (1.0 - pow(cos(i), 2.0)) *
+                              ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
+                               (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+    const double edM = edMLp + edMSp;
+    // Appendix F erratum: only the short-period part of e*delta(M) enters (F.11).
+    MpopOp -= e / (eta * (1.0 + eta)) * edMSp;
 
     double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
                         (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
