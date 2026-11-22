@@ -713,6 +713,9 @@ void Spacecraft::restoreAfterFailedStep()
     if (this->hasPreparationSnapshot) {
         this->dynManager.getStateRegistry().segmentView(this->rollbackSegment) = this->stateBeforePreparation;
         this->dynManager.inertialFrame.acceptedTimeNanos.reset(); // Effector caches may still hold trial values.
+        for (StateEffector* effector : this->states) {
+            effector->restoreRelativeMotion(this->timeBefore);
+        }
     }
 }
 

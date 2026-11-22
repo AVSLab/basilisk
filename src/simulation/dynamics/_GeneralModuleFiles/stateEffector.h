@@ -186,6 +186,11 @@ class StateEffector
         Eigen::MRPd sigma_BN) = 0; //!< Method for each stateEffector to calculate derivatives
 
 #ifndef SWIG
+    /** @brief Restore relative motion cached outside the registered state after a rejected step.
+     * @param time [s] Restored spacecraft epoch.
+     */
+    virtual void restoreRelativeMotion(double time [[maybe_unused]]) {}
+
     /** @brief Refresh parent-relative kinematics before coupled loads or initial output.
      * @param time [s] Epoch of the articulated state.
      * @param frame Parent frame supplying the accepted epoch and origin validity.

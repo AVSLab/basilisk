@@ -321,31 +321,48 @@ def test_diagnostic_preserves_pending_joint_lock(diagnostic, joint_on_arm):
 
 
 def test_energy_query_recovers_after_rejected_rkf45_step():
-    """A rejected RKF45 trial preserves stored energy until a successful retry makes queries available."""
+    """A rejected RKF45 trial preserves relative telemetry and stored energy until retry."""
     sc, arm = _spacecraft_with_prescribed_body()
     arm.setRPrimePrime_PM_M([1.0, 0.0, 0.0])  # [m/s^2]
-    arm.setOmega_PM_P([2.0, 0.0, 0.0])  # [rad/s]
+    arm.setOmega_PM_P([1.0, 0.0, 0.0])  # [rad/s]
+    arm.setOmegaPrime_PM_P([0.5, 0.0, 0.0])  # [rad/s^2]
+    translation = arm.prescribedTranslationOutMsg.addSubscriber()
+    rotation = arm.prescribedRotationOutMsg.addSubscriber()
     integrator = svIntegrators.svIntegratorRKF45(sc)
+    integrator.relTol = integrator.absTol = 1e-12
     sc.setIntegrator(integrator)
     sc.Reset(0)
     sc.UpdateState(0)
-    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 2.0])  # [J]
+    step = macros.sec2nano(1.0)  # [ns]
+    sc.UpdateState(step)
+    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 1.0625], atol=1e-12)  # [J]
+    accepted_sigma = rotation().sigma_PM
+    np.testing.assert_allclose(accepted_sigma, [np.tan(1.25 / 4), 0, 0], rtol=0, atol=1e-9)  # 1.25 rad about x
 
     # Force the embedded error check to reject the trial and prevent a smaller retry.
-    integrator.relTol = integrator.absTol = 1e-12
     factors = integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize
     integrator.safetyFactorForNextStepSize = integrator.minimumFactorDecreaseForNextStepSize = 0.0
-    step = macros.sec2nano(1.0)  # [ns]
     with pytest.raises(RuntimeError, match="representable forward progress"):
-        sc.UpdateState(step)
+        sc.UpdateState(2 * step)
     with pytest.raises(BasiliskError, match="accepted spacecraft state"):
-        sc.computeEnergyMomentum(0.0)  # [s]
-    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 2.0])  # [J]
+        sc.computeEnergyMomentum(1.0)  # [s]
+    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 1.0625], atol=1e-12)  # [J]
+
+    arm.moduleID += 1  # Distinguish a fresh publication at the accepted tick from the previous messages.
+    arm.UpdateState(step)
+    for reader in (translation, rotation):
+        assert reader.timeWritten() == step and reader.moduleID() == arm.moduleID
+    np.testing.assert_allclose(translation().r_PM_M, [0.5, 0, 0])  # [m]
+    np.testing.assert_allclose(translation().rPrime_PM_M, [1, 0, 0])  # [m/s]
+    np.testing.assert_allclose(translation().rPrimePrime_PM_M, [1, 0, 0])  # [m/s^2]
+    np.testing.assert_array_equal(rotation().sigma_PM, accepted_sigma)
+    np.testing.assert_allclose(rotation().omega_PM_P, [1.5, 0, 0])  # [rad/s]
+    np.testing.assert_allclose(rotation().omegaPrime_PM_P, [0.5, 0, 0])  # [rad/s^2]
 
     integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize = factors
-    sc.UpdateState(step)
-    sc.computeEnergyMomentum(1.0)  # [s]
-    # The center of mass stays at rest. Relative translation at 1 m/s adds 0.25 J to the 2 J of spin.
+    sc.UpdateState(2 * step)
+    sc.computeEnergyMomentum(2.0)  # [s]
+    # The center of mass stays at rest. At 2 s relative translation contributes 1 J and spin contributes 1.25 J.
     np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 2.25], rtol=0, atol=1e-12)  # [J]
     np.testing.assert_allclose(sc.scStateOutMsg.read().TotalAccumDV_CN_N, np.zeros(3), atol=1e-12)  # [m/s]
 

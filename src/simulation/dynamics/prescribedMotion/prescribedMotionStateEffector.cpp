@@ -201,6 +201,15 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
     this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
 }
 
+void PrescribedMotionStateEffector::restoreRelativeMotion(double time)
+{
+    // The state registry restores the attitude. Re-evaluate the commanded translation and rate at that same epoch.
+    this->updateRelativeKinematics(time);
+    for (StateEffector* child : this->stateEffectors) {
+        child->restoreRelativeMotion(time);
+    }
+}
+
 /** @brief Evaluate prescribed motion relative to the parent at the requested epoch.
  * @param integTime [s] Time at which to evaluate the motion.
  */

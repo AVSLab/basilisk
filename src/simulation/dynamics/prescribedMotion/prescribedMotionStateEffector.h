@@ -112,6 +112,7 @@ class PrescribedMotionStateEffector final
         prescribedMotionConfigLogOutMsg; //!< Output config log message for the effector's states
 
   private:
+    void restoreRelativeMotion(double time) override;
     void updateRelativeKinematics(double integTime);
     void sumMassProps(); //!< Combine this body's relative kinematics with stored child properties.
     void refreshPrescribedKinematics(double time); //!< Refresh the body and its children using the cached parent pose.
