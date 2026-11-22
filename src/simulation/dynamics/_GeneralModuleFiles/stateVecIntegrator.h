@@ -90,6 +90,7 @@ class StateVecIntegrator
 
     std::vector<DynamicObject*> dynPtrs; ///< Borrowed callback targets, with the primary first.
     bool bindingPrepared = false;        ///< True when workspace preparation has succeeded for the current group.
+    bool halfTick = false;               ///< Active fixed stage is half a nanosecond past fixedStageTick.
 };
 
 #endif /* stateVecIntegrator_h */

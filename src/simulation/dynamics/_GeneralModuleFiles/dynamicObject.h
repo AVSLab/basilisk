@@ -155,6 +155,11 @@ class DynamicObject : public SysModel
   protected:
     /** @brief Return the scheduled start, midpoint, or end tick during a fixed Runge-Kutta stage. */
     std::optional<uint64_t> getFixedStageTick() const noexcept;
+    /** @brief Read the integer callback tick and fractional offset of a fixed Runge-Kutta stage.
+     * @param subTickSeconds [s] Receives the offset past the callback tick, or zero outside a fixed stage.
+     * @return The callback tick in nanoseconds, if available.
+     */
+    std::optional<uint64_t> getFixedStageTick(double& subTickSeconds) const noexcept;
 
     /** @brief Prepare coupled constraint geometry before any object evaluates this stage.
      * @param time [s] Signed integrator stage time.

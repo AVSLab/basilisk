@@ -152,9 +152,17 @@ def test_rotating_harmonic_source():
         np.testing.assert_allclose(force().force_S, expected, rtol=1e-13)
 
 
-@pytest.mark.parametrize("solver", ["SOSRI", "RK4"])
-def test_gravity_at_scene_stages(solver):
-    """A moving point mass uses signed SOSRI time and distinguishes nanosecond RK4 stages after four years."""
+@pytest.mark.parametrize(
+    "solver, start, step",  # start and step in [ns]
+    [
+        ("SOSRI", 0, macros.sec2nano(1.0)),
+        ("RK4", 126_230_400_000_000_003, 6),
+        ("RK4", 0, 5),
+        ("RK4", 126_230_400_000_000_003, 5),
+    ],
+)
+def test_gravity_at_scene_stages(solver, start, step):
+    """Gravity follows signed SOSRI stages and exact RK4 midpoints at launch and after four years."""
     from Basilisk.architecture import sysModel
 
     scene = mujoco.MJScene("<mujoco/>")
@@ -162,8 +170,6 @@ def test_gravity_at_scene_stages(solver):
     model = pointMassGravityModel.PointMassGravityModel()
     model.muBody = 1.0e6  # [m^3/s^2]
     source = gravity.addGravitySource("moving", model, False)
-    start = 0 if solver == "SOSRI" else 126_230_400_000_000_003  # [ns]
-    step = macros.sec2nano(1.0) if solver == "SOSRI" else 6  # [ns]
     speed = 10.0  # [m/s]
     radius = 1000.0  # [m]
     source.stateInMsg.subscribeTo(_moving_source(0.0, speed, start))
@@ -173,6 +179,7 @@ def test_gravity_at_scene_stages(solver):
 
     class ForceProbe(sysModel.SysModel):
         def UpdateState(self, tick):
+            assert force.timeWritten() == tick
             samples.append((tick, scene.getEvaluationTime(), list(force().force_S)))
 
     probe = ForceProbe()
@@ -185,10 +192,11 @@ def test_gravity_at_scene_stages(solver):
     scene.UpdateState(start + step)
     if solver == "SOSRI":
         assert any(tick == 0 and seconds < 0 for tick, seconds, _ in samples)
+        offsets = [seconds for _, seconds, _ in samples]  # [s] start is zero
     else:
         assert [tick - start for tick, _, _ in samples] == [0, step // 2, step // 2, step]
-    for tick, seconds, actual in samples:
-        dt = seconds if solver == "SOSRI" else (tick - start) * macros.NANO2SEC  # [s]
+        offsets = [fraction * step * macros.NANO2SEC for fraction in (0, 0.5, 0.5, 1)]  # [s]
+    for dt, (_, _, actual) in zip(offsets, samples):
         expected = [-model.muBody / (radius - speed * dt)**2, 0.0, 0.0]  # [N]
         np.testing.assert_allclose(actual, expected, atol=0, rtol=3e-14)
 

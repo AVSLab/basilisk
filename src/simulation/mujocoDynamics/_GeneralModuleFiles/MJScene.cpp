@@ -51,25 +51,24 @@ struct MujocoStateSegments
     StateBufferSegment qvelDerivative;
 };
 
-// A task receives only an unsigned tick. Expose its continuous stage time while the task
-// runs, including to message-only models that have no body or site linking them to the scene.
+// A task receives an unsigned integer tick. Retain the signed time offset it cannot represent.
 struct TaskStage
 {
     uint64_t tick;
-    double seconds;
+    double offsetSeconds;
 };
-thread_local const TaskStage* continuousStage = nullptr;
+thread_local const TaskStage* activeStage = nullptr;
 
-void executeDynamicsTask(SysModelTask& task, uint64_t tick, double seconds, bool exactTick)
+void executeDynamicsTask(SysModelTask& task, uint64_t tick, double offsetSeconds)
 {
     // Restore the outer clock even if a nested scene or a task callback throws.
     struct RestoreStage
     {
         const TaskStage* previous;
-        ~RestoreStage() { continuousStage = previous; }
-    } restore{ continuousStage };
-    const TaskStage stage{ tick, seconds };
-    continuousStage = exactTick ? nullptr : &stage;
+        ~RestoreStage() { activeStage = previous; }
+    } restore{ activeStage };
+    const TaskStage stage{ tick, offsetSeconds };
+    activeStage = &stage;
     task.ExecuteTaskList(tick);
 }
 
@@ -376,20 +375,28 @@ uint64_t MJScene::stageTimestamp(double time) const
     return wholeTicks + std::min(maxTick - wholeTicks, static_cast<uint64_t>(fraction * nanosPerSecond));
 }
 
+double MJScene::stageOffsetFromTick(double time, uint64_t tick) const
+{
+    if (time == this->timeBefore) {
+        return 0.0; // [s] stageTimestamp() returned the exact accepted tick
+    }
+    constexpr uint64_t nanosPerSecond = 1'000'000'000; // [ns/s]
+    return (time - static_cast<double>(tick / nanosPerSecond)) -
+           static_cast<double>(tick % nanosPerSecond) / nanosPerSecond;
+}
+
 double MJScene::getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick)
 {
-    if (continuousStage && continuousStage->tick == taskTick) {
-        constexpr uint64_t nanosPerSecond = 1'000'000'000; // [ns/s]
-        return (continuousStage->seconds - static_cast<double>(messageTick / nanosPerSecond)) -
-               static_cast<double>(messageTick % nanosPerSecond) / nanosPerSecond;
-    }
-    // Preserve small stage offsets at multi-year epochs, including for ordinary scheduled updates.
-    return taskTick >= messageTick ? epochSeconds(taskTick - messageTick) : -epochSeconds(messageTick - taskTick);
+    // Difference the integer epochs first so a half-nanosecond midpoint survives at multi-year epochs.
+    const double dt =
+        taskTick >= messageTick ? epochSeconds(taskTick - messageTick) : -epochSeconds(messageTick - taskTick); // [s]
+    return activeStage && activeStage->tick == taskTick ? dt + activeStage->offsetSeconds : dt;
 }
 
 void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
-    const auto fixedTick = this->getFixedStageTick();
+    double subTickSeconds;
+    const auto fixedTick = this->getFixedStageTick(subTickSeconds);
     const uint64_t nanos = fixedTick ? *fixedTick : this->stageTimestamp(t);
 
     // Make sure the model is compiled
@@ -429,7 +436,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // which will take the recently updated qpos and qvel data,
     // do the fwd kinematics, and update the state messages.
     // These messages can then be read by the rest of modules.
-    executeDynamicsTask(this->dynamicsTask, nanos, t, fixedTick.has_value() || t == this->timeBefore);
+    executeDynamicsTask(this->dynamicsTask, nanos, fixedTick ? subTickSeconds : this->stageOffsetFromTick(t, nanos));
 
     // Refresh after task callbacks, including direct StateData writes that
     // cannot mark the scene's explicit stale flag.
@@ -498,7 +505,7 @@ void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unuse
     data->time = t;
     this->trialStateActive = true;
 
-    executeDynamicsTask(this->dynamicsDiffusionTask, nanos, t, t == this->timeBefore);
+    executeDynamicsTask(this->dynamicsDiffusionTask, nanos, this->stageOffsetFromTick(t, nanos));
 }
 
 void MJScene::preIntegration(uint64_t callTime)

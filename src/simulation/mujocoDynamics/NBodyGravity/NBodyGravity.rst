@@ -57,6 +57,8 @@ The same source poses are used for every target and for the central-body acceler
 then multiplies each target's acceleration by its mass and expresses the force in the site frame.
 
 Stage times may precede the message epoch, including before simulation time zero with SOSRI.
+For a 5 ns RK4 step, both middle stages evaluate gravity at 2.5 ns into the step and stamp
+their force messages at 2 ns into the step.
 When scheduled outside a scene dynamics task, the module evaluates at its scheduled tick.
 In both cases the target state is read as supplied and should describe that evaluation epoch.
 The untimed helpers ``computeAccelerationFromSource()`` and ``computeAccelerationOnTarget()``

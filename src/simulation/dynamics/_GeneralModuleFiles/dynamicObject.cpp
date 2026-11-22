@@ -93,7 +93,14 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
 
 std::optional<uint64_t> DynamicObject::getFixedStageTick() const noexcept
 {
+    double subTickSeconds;
+    return this->getFixedStageTick(subTickSeconds);
+}
+
+std::optional<uint64_t> DynamicObject::getFixedStageTick(double& subTickSeconds) const noexcept
+{
     const auto& method = (this->integrationOwner ? this->integrationOwner : this)->integrator;
+    subTickSeconds = method && method->fixedStageTick && method->halfTick ? 0.5e-9 : 0.0; // [s]
     return method ? method->fixedStageTick : std::nullopt;
 }
 

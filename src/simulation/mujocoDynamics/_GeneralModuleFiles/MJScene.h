@@ -389,8 +389,8 @@ class MJScene : public DynamicObject
     /** @brief Compute the signed age of a message for a dynamics task, or for an ordinary scheduled update.
      * @param taskTick [ns] Timestamp passed to the model's UpdateState().
      * @param messageTick [ns] Timestamp of the source message.
-     * @return Elapsed seconds from the message epoch to the evaluation epoch. Uses the continuous stage time
-     * during a scene callback when the integrator does not supply an exact tick.
+     * @return Elapsed seconds from the message epoch to the evaluation epoch, including fractional
+     * nanoseconds at RK4 midpoints and signed offsets for continuous stages.
      */
     static double getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick);
 
@@ -750,6 +750,12 @@ class MJScene : public DynamicObject
     friend class MJFwdKinematics;
 
     uint64_t stageTimestamp(double time) const;
+    /** @brief Return the signed offset in seconds between a continuous stage and its callback tick.
+     * @param time [s] Integrator stage time.
+     * @param tick [ns] Callback timestamp from stageTimestamp().
+     * @return The stage time minus the callback epoch in seconds.
+     */
+    double stageOffsetFromTick(double time, uint64_t tick) const;
     void validateIntegratedState() override;
     void publishIntegratedState(uint64_t tick) override;
     void runAcceptedStateCallbacks() override;

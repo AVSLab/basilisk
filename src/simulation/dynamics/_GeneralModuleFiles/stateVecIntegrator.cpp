@@ -83,6 +83,7 @@ void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
 
 void StateVecIntegrator::evaluateFixedStepDerivatives(double startTime, double timeStep, double fraction)
 {
+    this->halfTick = false;
     if (this->scheduledEndTick) {
         // After years of simulation, distinct RK stage ticks can round to the same double in seconds.
         const auto start = this->dynPtrs.front()->timeBeforeNanos;
@@ -91,7 +92,9 @@ void StateVecIntegrator::evaluateFixedStepDerivatives(double startTime, double t
             this->fixedStageTick = start;
         } else if (fraction == 0.5) {
             const auto first = std::min(start, end);
-            this->fixedStageTick = first + (std::max(start, end) - first) / 2;
+            const auto span = std::max(start, end) - first; // [ns]
+            this->fixedStageTick = first + span / 2;
+            this->halfTick = span % 2 != 0;
         } else if (fraction == 1.0) {
             this->fixedStageTick = end;
         }
