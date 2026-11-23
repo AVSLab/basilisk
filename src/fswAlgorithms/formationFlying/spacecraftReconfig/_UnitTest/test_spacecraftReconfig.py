@@ -190,6 +190,50 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 
+@pytest.mark.parametrize("burn_slot", [0, 1, 2])
+def test_fractional_burn_start(burn_slot):
+    """Each burn slot must command both thrusters on the first tick inside the burn window."""
+    module = spacecraftReconfig.spacecraftReconfig()
+    module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    nav = messaging.NavTransMsgPayload()
+    nav.r_BN_N = [7.0e6, 0.0, 0.0]  # [m]
+    nav.v_BN_N = [0.0, 7500.0, 0.0]  # [m/s]
+    nav_msg = messaging.NavTransMsg().write(nav)
+    module.chiefTransInMsg.subscribeTo(nav_msg)
+    module.deputyTransInMsg.subscribeTo(nav_msg)
+    thrusters = messaging.THRArrayConfigMsgPayload()
+    thrusters.numThrusters = 2
+    thruster_msg = messaging.THRArrayConfigMsg().write(thrusters)
+    module.thrustConfigInMsg.subscribeTo(thruster_msg)
+    vehicle_msg = messaging.VehicleConfigMsg().write(messaging.VehicleConfigMsgPayload())
+    module.vehicleConfigInMsg.subscribeTo(vehicle_msg)
+
+    module.SelfInit()
+    epoch = macros.sec2nano(1.0)  # [ns]
+    module.Reset(epoch)
+    module.resetPeriod = 100.0  # [s]
+    # Supply a known schedule so the ignition check is independent of orbit selection.
+    schedule = module.burnArrayInfoOutMsgBuffer
+    for index in range(3):
+        burn = messaging.ReconfigBurnInfoMsgPayload()
+        if index == burn_slot:
+            burn.flag = 1  # pending
+            burn.t = 2.4  # [s] since reset
+            burn.thrustOnTime = 9.5  # [s] total across both thrusters
+        else:
+            burn.flag = 3  # skipped
+        messaging.ReconfigBurnArray_setitem(schedule.burnArray, index, burn)
+
+    command = messaging.THRArrayOnTimeCmdMsgReader()
+    command.subscribeTo(module.onTimeOutMsg)
+    module.UpdateState(epoch)
+    assert not command.isWritten()  # 2.4 s remain, outside the 2.375 s half-burn
+    next_tick = epoch + macros.sec2nano(0.1)  # [ns]
+    module.UpdateState(next_tick)
+    assert command.timeWritten() == next_tick  # 2.3 s remain, inside the half-burn
+    assert list(command().OnTimeRequest[:2]) == [4.75, 4.75]  # [s]
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
