@@ -194,7 +194,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
         // middle of thruster burn duration time is located at the expected exact timing of impulsive control
-        if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
+        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 1) {
             configData->thrustOnFlag = 1; // thrustOnFlag is ON
@@ -224,7 +224,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             // in this case, second burn attitude is set at target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
+        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
             configData->thrustOnFlag = 1;
@@ -259,7 +259,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             // in this case, third burn attitude is set at target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[2].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
+        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1) {
             configData->thrustOnFlag = 1;
