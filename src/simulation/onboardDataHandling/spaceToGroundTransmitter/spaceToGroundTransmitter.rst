@@ -8,6 +8,16 @@ For more information on how to set up and use this module, see the simple data s
 
 Module Assumptions and Limitations
 ----------------------------------
+Each scheduled update with the device commanded off publishes zero baud and an empty partition name.
+It advances the update clock without adding bits to the packet. If the same storage source remains
+available, the unfinished packet's partition still contains data, and a station reports access, the
+first enabled update resumes that packet at the configured baud rate. If the partition has emptied,
+the transmitter can select another partition and report zero baud on that update.
+
+Suspending the transmitter task also suspends its update clock. If the task resumes with the device
+enabled, the interval used for packet progress includes the scheduling gap. To discard partial progress
+on power-up, call ``Reset(currentSimNanos)`` on the transmitter before its first enabled update.
+
 The transmitter uses the last storage input added. If that input is disconnected or unwritten at an update,
 the transmitter discards any partial packet and publishes zero baud with an empty partition name.
 Calling ``Reset()`` or ``addStorageUnitToTransmitter()`` also discards a partial packet, even when adding the
@@ -16,8 +26,8 @@ same storage message again. The next packet uses the largest available partition
 When editing ``storageUnitInMsgs`` directly, the transmitter compares the selected payload address at each
 update. Disconnecting and restoring the same address between updates preserves the partial packet.
 
-Downlink requires at least one connected ground station to report access. Disconnected and unwritten station
-inputs are ignored.
+Downlink requires at least one connected ground station to report access. An enabled update without
+access discards any partial packet. Disconnected and unwritten station inputs are ignored.
 
 Message Connection Descriptions
 -------------------------------
