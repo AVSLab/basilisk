@@ -1,0 +1,1 @@
+- Fixed a half-pixel bias in :ref:`pixelLineConverter` for images with an odd width or height. A circle at the geometric image center now maps to the camera boresight for either parity (#1717).
