@@ -205,3 +205,42 @@ def test_pixel_line_converter_rejects_unknown_planet(planet_id):
     module.Reset(0)
     with pytest.raises(bskLogging.BasiliskError, match="pixelLineConverter: unsupported circle planet ID"):
         module.UpdateState(0)
+
+
+@pytest.mark.parametrize(
+    "resolution, center, expected_ray",  # [pixels], [pixels], [-]
+    [
+        ((512, 512), (255.5, 255.5), (0, 0, -1)),
+        ((511, 511), (255.0, 255.0), (0, 0, -1)),
+        ((511, 512), (255.0, 255.5), (0, 0, -1)),
+        ((512, 511), (255.5, 255.0), (0, 0, -1)),
+        # A 90-degree field of view across 512 pixels gives a focal length of 256 pixels.
+        ((512, 512), (256.5, 254.5), (-1, 1, -256)),
+    ],
+    ids=["even-even", "odd-odd", "odd-even", "even-odd", "off-center"],
+)
+def test_pixel_line_converter_camera_direction(resolution, center, expected_ray):
+    """Check the camera-frame direction for centered detections and a one-pixel offset."""
+    module = pixelLineConverter.pixelLineConverter()
+    camera = messaging.CameraConfigMsgPayload()
+    camera.resolution = resolution
+    camera.fieldOfView = np.pi / 2  # [rad]
+    circle = messaging.OpNavCirclesMsgPayload()
+    circle.valid = 1
+    circle.planetIds = [2]  # Mars
+    circle.circlesCenters = center
+    circle.circlesRadii = [75.0]  # [pixels]
+    module.cameraConfigInMsg.subscribeTo(messaging.CameraConfigMsg().write(camera))
+    module.circlesInMsg.subscribeTo(messaging.OpNavCirclesMsg().write(circle))
+    module.attInMsg.subscribeTo(messaging.NavAttMsg().write(messaging.NavAttMsgPayload()))
+    module.SelfInit()
+    module.Reset(0)
+    module.UpdateState(0)
+
+    output = module.opNavOutMsg.read()
+    assert output.valid == 1
+    position = np.asarray(output.r_BN_C)
+    ray = np.asarray(expected_ray)
+    np.testing.assert_allclose(
+        position / np.linalg.norm(position), ray / np.linalg.norm(ray), rtol=0, atol=1e-14
+    )
