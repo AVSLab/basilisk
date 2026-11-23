@@ -1,25 +1,57 @@
 % !TEX root = ./Basilisk-pixelLineConverter-20190524.tex
 
 \section{User Guide}
-If the modules outputting the messages needed are in place, the message names just need to be matched. If not, the module content looks like the following:
+Connect the camera configuration, circle detection, and navigation attitude
+messages to the converter. The first entry in \texttt{planetIds} identifies
+the observed body. This example places Mars at the center of a
+$511 \times 512$ image. Pixel coordinates start at zero, so the center is
+$(255, 255.5)$.
 
-\begin{itemize}
-\item Create the input messages: \\
-\texttt{inputCamera = pixelLineConverter.CameraConfigMsg()} \\
-\texttt{inputCircles = pixelLineConverter.OpNavCirclesMsg()}\\
-\texttt{inputAtt = pixelLineConverter.NavAttIntMsg()}\\
-\item Set camera: \\
-\texttt{inputCamera.focalLength = 1.}\\
-\texttt{inputCamera.sensorSize = [10, 10]}\\
-\texttt{inputCamera.resolution = [512, 512]}\\
-\texttt{inputCamera.sigma$\_$BC = [1.,0.,0.]}\\
-\item Set circles: \\
-\texttt{inputCircles.circlesCenters = [152, 251]}\\
-\texttt{inputCircles.circlesRadii = [75]}\\
-\texttt{inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]}\\
-\texttt{inputCircles.timeTag = 12345}\\
-\item Set attitude: \\
-\texttt{inputAtt.sigma$\_$BN = [0., 1., 0.]}\\
-\item Set module for Mars: \\
-\texttt{pixelLine.planetTarget = 2}\\
-  \end{itemize}
+{\small
+\begin{verbatim}
+from math import radians
+from Basilisk.architecture import messaging
+from Basilisk.fswAlgorithms import pixelLineConverter
+from Basilisk.utilities import SimulationBaseClass, macros
+
+sim = SimulationBaseClass.SimBaseClass()
+process = sim.CreateNewProcess("opNavProcess")
+taskPeriod = macros.sec2nano(1.0)     # [ns] one-second task period
+process.addTask(sim.CreateNewTask("opNavTask", taskPeriod))
+converter = pixelLineConverter.pixelLineConverter()
+sim.AddModelToTask("opNavTask", converter)
+
+camera = messaging.CameraConfigMsgPayload()
+camera.resolution = [511, 512]         # [pixels] width, height
+camera.fieldOfView = radians(60.0)     # [rad] vertical field of view
+camera.sigma_CB = [0.0, 0.0, 0.0]     # camera aligned with body
+
+circles = messaging.OpNavCirclesMsgPayload()
+circles.valid = 1
+circles.planetIds = [2]               # Mars
+circles.circlesCenters = [255.0, 255.5]  # [pixels] column, row
+circles.circlesRadii = [75.0]         # [pixels]
+circles.uncertainty = [0.5, 0, 0, 0, 0.5, 0, 0, 0, 1]  # [pixel^2]
+
+attitude = messaging.NavAttMsgPayload()
+attitude.sigma_BN = [0.0, 0.0, 0.0]
+cameraMsg = messaging.CameraConfigMsg().write(camera)
+circlesMsg = messaging.OpNavCirclesMsg().write(circles)
+attitudeMsg = messaging.NavAttMsg().write(attitude)
+converter.cameraConfigInMsg.subscribeTo(cameraMsg)
+converter.circlesInMsg.subscribeTo(circlesMsg)
+converter.attInMsg.subscribeTo(attitudeMsg)
+
+sim.InitializeSimulation()
+sim.ConfigureStopTime(0)              # [ns] process the first image
+sim.ExecuteSimulation()
+measurement = converter.opNavOutMsg.read()
+assert measurement.valid == 1
+\end{verbatim}
+}
+
+The output \texttt{r\_BN\_C} gives the position of the spacecraft relative
+to Mars in camera-frame meters. For this centered detection, its first two
+components are zero and its third component is negative. To process another
+detection, write a new circles message with a strictly later message-header
+write time.

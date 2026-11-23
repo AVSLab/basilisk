@@ -32,8 +32,10 @@ def mapState(state, planet, camera):
     A = 2 * np.arctan(state[2]*d_x)
 
     norm = 0.5 * D/np.sin(0.5*A)
-    vec = np.array([state[0]*d_x, state[1]*d_y, 1.])
-    return norm*vec/np.linalg.norm(vec)
+    center = (np.asarray(camera.resolution) - 1) / 2
+    vec = np.array([(state[0] - center[0]) * d_x, (state[1] - center[1]) * d_y, 1.0])
+    # The image ray points from the camera to Mars. The reported position points back to the spacecraft.
+    return -norm * vec / np.linalg.norm(vec)
 
 
 def mapCovar(CovarXYR, rho, planet, camera):
@@ -55,15 +57,7 @@ def mapCovar(CovarXYR, rho, planet, camera):
     return np.dot(CovarMap, np.dot(CoarIn, CovarMap.T))
 
 def test_pixelLine_converter():
-    """ Test ephemNavConverter. """
-    [testResults, testMessage] = pixelLineConverterTestFunction()
-    assert testResults < 1, testMessage
-
-def pixelLineConverterTestFunction():
-    """ Test the ephemNavConverter module. Setup a simulation """
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
+    """Verify inertial position, covariance, and measurement time for a valid Mars detection."""
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -75,7 +69,7 @@ def pixelLineConverterTestFunction():
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
 
-    # Construct the ephemNavConverter module
+    # Construct the pixel-line converter
     # Set the names for the input messages
     pixelLine = pixelLineConverter.pixelLineConverter()
 
@@ -101,7 +95,8 @@ def pixelLineConverterTestFunction():
     inputCircles.circlesCenters = [152, 251]
     inputCircles.circlesRadii = [75]
     inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
-    inputCircles.timeTag = 12345
+    inputCircles.valid = 1
+    inputCircles.planetIds = [2]  # Mars
     circlesInMsg = messaging.OpNavCirclesMsg().write(inputCircles)
     pixelLine.circlesInMsg.subscribeTo(circlesInMsg)
 
@@ -110,9 +105,6 @@ def pixelLineConverterTestFunction():
     attInMsg = messaging.NavAttMsg().write(inputAtt)
     pixelLine.attInMsg.subscribeTo(attInMsg)
 
-    # Set module for Mars
-    pixelLine.planetTarget = 2
-
     dataLog = pixelLine.opNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
@@ -120,15 +112,13 @@ def pixelLineConverterTestFunction():
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(0)  # [ns]
     unitTestSim.ExecuteSimulation()
+    inputCircles.timeTag = 12345  # [ns]
     circlesInMsg.write(inputCircles, testProcessRate)
     unitTestSim.ConfigureStopTime(testProcessRate)  # [ns]
     unitTestSim.ExecuteSimulation()
 
     # Truth Values
-    planet = {}
-    # camera = {}
-    planet["name"] = "Mars"
-    planet["diameter"] = 3396.19 * 2  # km
+    planet = {"diameter": 2 * 3_396_190.0}  # [m]
 
     state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
 
@@ -142,46 +132,18 @@ def pixelLineConverterTestFunction():
 
     r_Nexp = np.dot(dcm_NC, r_Cexp)
     covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T)).flatten()
-    timTagExp = inputCircles.timeTag
-
-    posErr = 1e-10
-    covarErr = 1e-10
-    simHelpers.writeTeXSnippet("toleranceValuePos", str(posErr), path)
-    simHelpers.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
-
-    outputR = dataLog.r_BN_N
-    outputCovar = dataLog.covar_N
-    outputTime = dataLog.timeTag
-    #
-    #
-    for i in range(len(outputR[-1, 1:])):
-        if np.abs(r_Nexp[i] - outputR[-1, i]) > 1E-10 and np.isnan(outputR.any()):
-            testFailCount += 1
-            testMessages.append("FAILED: Position Check in pixelLine")
-
-    for i in range(len(outputCovar[-1, 0:])):
-        if np.abs((covar_Nexp[i] - outputCovar[-1, i])) > 1E-10 and np.isnan(outputTime.any()):
-            testFailCount += 1
-            testMessages.append("FAILED: Covar Check in pixelLine")
-
-    if np.abs((timTagExp - outputTime[-1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
-        testFailCount += 1
-        testMessages.append("FAILED: Time Check in pixelLine")
-    #
-    #   print out success message if no error were found
-    snippentName = "passFail"
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + pixelLine.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + pixelLine.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    simHelpers.writeTeXSnippet(snippentName, passedText, path)
-
-
-    return [testFailCount, ''.join(testMessages)]
+    rtol = 1e-10  # [-]
+    simHelpers.writeTeXSnippet("toleranceValuePos", str(rtol), path)
+    simHelpers.writeTeXSnippet("toleranceValueVel", str(rtol), path)
+    try:
+        assert dataLog.valid[-1] == 1
+        np.testing.assert_allclose(dataLog.r_BN_N[-1], r_Nexp, rtol=rtol, atol=0, equal_nan=False)
+        np.testing.assert_allclose(dataLog.covar_N[-1], covar_Nexp, rtol=rtol, atol=0, equal_nan=False)
+        assert dataLog.timeTag[-1] == inputCircles.timeTag
+    except AssertionError:
+        simHelpers.writeTeXSnippet("passFail", r"\textcolor{Red}{Failed}", path)
+        raise
+    simHelpers.writeTeXSnippet("passFail", r"\textcolor{ForestGreen}{PASSED}", path)
 
 
 if __name__ == '__main__':
