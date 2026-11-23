@@ -7,7 +7,8 @@ The unit test for this converter modules creates all three input messages. Using
 
 \section{Test Parameters}
 
-The unit test verify that the module output message states match expected values.
+The test writes a second circles message one task period after the first and checks
+that the output message header records the second publication at that simulation time.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
@@ -18,7 +19,7 @@ The unit test verify that the module output message states match expected values
 		\hline
 		{\tt r\_N}        & \input{AutoTeX/toleranceValuePos}	   \\
 		{\tt covar\_N}        & \input{AutoTeX/toleranceValueVel}	   \\
-		{\tt timeTag}        & Exact match \\
+		Output message write time & Exact match \\
 		\hline\hline
 	\end{tabular}
 \end{table}

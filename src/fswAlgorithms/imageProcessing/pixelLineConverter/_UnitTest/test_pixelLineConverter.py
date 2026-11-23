@@ -57,7 +57,7 @@ def mapCovar(CovarXYR, rho, planet, camera):
     return np.dot(CovarMap, np.dot(CoarIn, CovarMap.T))
 
 def test_pixelLine_converter():
-    """Verify inertial position, covariance, and measurement time for a valid Mars detection."""
+    """Verify inertial position, covariance, and output publication time for a valid Mars detection."""
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -112,7 +112,6 @@ def test_pixelLine_converter():
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(0)  # [ns]
     unitTestSim.ExecuteSimulation()
-    inputCircles.timeTag = 12345  # [ns]
     circlesInMsg.write(inputCircles, testProcessRate)
     unitTestSim.ConfigureStopTime(testProcessRate)  # [ns]
     unitTestSim.ExecuteSimulation()
@@ -139,7 +138,7 @@ def test_pixelLine_converter():
         assert dataLog.valid[-1] == 1
         np.testing.assert_allclose(dataLog.r_BN_N[-1], r_Nexp, rtol=rtol, atol=0, equal_nan=False)
         np.testing.assert_allclose(dataLog.covar_N[-1], covar_Nexp, rtol=rtol, atol=0, equal_nan=False)
-        assert dataLog.timeTag[-1] == inputCircles.timeTag
+        assert dataLog.timesWritten()[-1] == testProcessRate
     except AssertionError:
         simHelpers.writeTeXSnippet("passFail", r"\textcolor{Red}{Failed}", path)
         raise
