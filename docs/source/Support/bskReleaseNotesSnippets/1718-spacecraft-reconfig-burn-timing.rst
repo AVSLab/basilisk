@@ -1,0 +1,1 @@
+- Fixed :ref:`spacecraftReconfig` ignition timing for all three scheduled burns by preserving fractional seconds in the per-thruster half-burn duration (issue #1718).
