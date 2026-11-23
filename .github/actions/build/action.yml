@@ -64,26 +64,18 @@ runs:
       with:
         disable_annotations: true
 
-    - name: Set sccache as compiler launcher
+    - name: Enable compiler caching if sccache starts
       shell: bash
       run: |
-        if command -v sccache >/dev/null 2>&1; then
-          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
-          echo "CMAKE_C_COMPILER_LAUNCHER=sccache" >> $GITHUB_ENV
-          echo "CMAKE_CXX_COMPILER_LAUNCHER=sccache" >> $GITHUB_ENV
+        if command -v sccache >/dev/null 2>&1 && SCCACHE_GHA_ENABLED=true sccache --zero-stats; then
+          echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
+          echo "CMAKE_C_COMPILER_LAUNCHER=sccache" >> "$GITHUB_ENV"
+          echo "CMAKE_CXX_COMPILER_LAUNCHER=sccache" >> "$GITHUB_ENV"
         else
-          echo "sccache is unavailable; continuing without compiler caching"
+          echo "Continuing without compiler caching (sccache unavailable or startup failed)."
         fi
         if [[ "${{ runner.os }}" == 'Windows' ]]; then
-          echo "CMAKE_BUILD_PARALLEL_LEVEL=$(python -c 'import os; print(os.cpu_count() or 1)')" >> $GITHUB_ENV
-        fi
-
-    - name: Reset sccache statistics
-      continue-on-error: true
-      shell: bash
-      run: |
-        if command -v sccache >/dev/null 2>&1; then
-          sccache --zero-stats
+          echo "CMAKE_BUILD_PARALLEL_LEVEL=$(python -c 'import os; print(os.cpu_count() or 1)')" >> "$GITHUB_ENV"
         fi
 
     - name: Prepare Conan cache context
@@ -154,10 +146,7 @@ runs:
         key: ${{ steps.conan-cache.outputs.cache-primary-key }}
 
     - name: Show sccache statistics
-      if: ${{ always() }}
+      if: ${{ always() && env.CMAKE_C_COMPILER_LAUNCHER == 'sccache' }}
       continue-on-error: true
       shell: bash
-      run: |
-        if command -v sccache >/dev/null 2>&1; then
-          sccache --show-stats
-        fi
+      run: sccache --show-stats
