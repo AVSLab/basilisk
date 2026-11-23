@@ -96,8 +96,8 @@ void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTi
         OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         return;
     }
-    reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0] / 2 + 0.5;
-    reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1] / 2 + 0.5;
+    reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0] / 2.0 + 0.5;
+    reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1] / 2.0 + 0.5;
     if (circlesIn.planetIds[0] != 1.0 && circlesIn.planetIds[0] != 2.0 && circlesIn.planetIds[0] != 3.0) {
         _bskError(configData->bskLogger, "pixelLineConverter: unsupported circle planet ID.");
     }
