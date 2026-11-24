@@ -28,14 +28,30 @@
 #include <limits>
 #include <map>
 #include <math.h>
+#include <queue>
 #include <stdexcept>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 namespace {
 bool validListIndex(const NodeList& nodes, int index)
 {
-    return index >= 0 && index < nodes.N && nodes.N <= static_cast<int>(std::size(nodes.list));
+    return index >= 0 && index < nodes.N && nodes.N == static_cast<int>(nodes.list.size());
 }
+
+//! @brief Immutable frontier priorities, with insertion order breaking ties deterministically.
+struct DistanceSearchEntry
+{
+    double priority; // [-] Accumulated MRP distance plus the lower bound
+    std::size_t order;
+    Node* node;
+
+    bool operator<(const DistanceSearchEntry& other) const
+    {
+        return priority == other.priority ? order > other.order : priority > other.priority;
+    }
+};
 
 void validateCone(const Eigen::Vector3d& boresight, double halfAngle, const char* category)
 {
@@ -267,18 +283,19 @@ NodeList& NodeList::operator=(const NodeList& source)
     if (this == &source) {
         return *this;
     }
-    if (source.N < 0 || source.N > static_cast<int>(std::size(source.list))) {
+    if (source.N < 0 || source.N != static_cast<int>(source.list.size())) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: invalid source node count.");
     }
     for (int i = 0; i < source.N; ++i) {
-        if (source.owners.count(source.list[i]) == 0) {
+        if (source.owners.count(source.list[static_cast<std::size_t>(i)]) == 0) {
             BSKLogger().bskError(
                 "ConstrainedAttitudeManeuver: cannot copy a list containing grid-backed or borrowed nodes.");
         }
     }
     auto newOwners = source.owners;
-    const bool changed = N != source.N || !std::equal(source.list, source.list + source.N, list);
-    std::copy_n(source.list, source.N, list);
+    auto newList = source.list;
+    const bool changed = list != newList;
+    list.swap(newList);
     N = source.N;
     owners.swap(newOwners);
     if (changed) {
@@ -306,13 +323,13 @@ void NodeList::notifyChange() const
  */
 void NodeList::append(Node* node, std::shared_ptr<void> owner)
 {
-    if (this->N < 0 || this->N >= static_cast<int>(std::size(this->list))) {
-        BSKLogger().bskError("ConstrainedAttitudeManeuver: node list capacity exceeded.");
+    if (this->N < 0 || this->N != static_cast<int>(this->list.size()) || this->N == INT_MAX) {
+        BSKLogger().bskError("ConstrainedAttitudeManeuver: invalid node list size.");
     }
     if (owner) {
         owners.try_emplace(node, std::move(owner));
     }
-    this->list[this->N] = node;
+    this->list.push_back(node);
     this->N += 1;
     notifyChange();
 }
@@ -323,10 +340,8 @@ void NodeList::pop(int M)
     if (!validListIndex(*this, M)) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: node list index %d is out of range.", M);
     }
-    Node* removed = this->list[M];
-    for (int m = M; m < this->N - 1; m++) {
-        this->list[m] = this->list[m + 1];
-    }
+    Node* removed = this->list[static_cast<std::size_t>(M)];
+    this->list.erase(this->list.begin() + M);
     this->N -= 1;
     notifyChange();
     if (!owners.empty() && !contains(removed)) {
@@ -338,6 +353,7 @@ void NodeList::pop(int M)
 void NodeList::clear()
 {
     if (this->N != 0) {
+        this->list.clear();
         this->N = 0;
         notifyChange();
     }
@@ -350,8 +366,8 @@ void NodeList::swap(int m, int n)
     if (!validListIndex(*this, m) || !validListIndex(*this, n)) {
         BSKLogger().bskError("ConstrainedAttitudeManeuver: node list swap indices (%d, %d) are out of range.", m, n);
     }
-    if (this->list[m] != this->list[n]) {
-        std::swap(this->list[m], this->list[n]);
+    if (this->list[static_cast<std::size_t>(m)] != this->list[static_cast<std::size_t>(n)]) {
+        std::swap(this->list[static_cast<std::size_t>(m)], this->list[static_cast<std::size_t>(n)]);
         notifyChange();
     }
 }
@@ -362,7 +378,8 @@ void NodeList::sort()
     for (int n = 0; n + 1 < this->N; n++) {
         int best = n;
         for (int m = n + 1; m < this->N; m++) {
-            if (this->list[m]->priority < this->list[best]->priority) {
+            if (this->list[static_cast<std::size_t>(m)]->priority <
+                this->list[static_cast<std::size_t>(best)]->priority) {
                 best = m;
             }
         }
@@ -375,7 +392,7 @@ bool NodeList::contains(Node* node)
 {
     bool flag = false;
     for (int n = 0; n < this->N; n++) {
-        if (node == this->list[n]) {
+        if (node == this->list[static_cast<std::size_t>(n)]) {
             flag = true;
         }
     }
@@ -592,6 +609,7 @@ void ConstrainedAttitudeManeuver::clearPath()
 void ConstrainedAttitudeManeuver::clearGrid()
 {
     clearPath();
+    this->expandedNodeCount = 0;
     this->NodesMap.clear();
     std::fill(std::begin(this->keyS), std::end(this->keyS), invalidGridIndex);
     std::fill(std::begin(this->keyG), std::end(this->keyG), invalidGridIndex);
@@ -904,19 +922,23 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
     this->keyG[2] = keyG[2];
 }
 
-/*! This method is used inside A* to track the path from goal to start, order it from start to goal and store in class
-   variable path
-
+/*! @brief Append the predecessor chain in start-to-goal order without recursive calls.
+ *  @param p Last node of the path to reconstruct.
  */
 void ConstrainedAttitudeManeuver::backtrack(Node* p)
 {
-    if (p == &NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]) {
-        this->path.append(p);
-        return;
-    } else {
-        backtrack(p->backPointer);
-        this->path.append(p);
-        return;
+    Node* const start = gridEndpoint(this->keyS);
+    std::vector<Node*> reversed;
+    while (p != start) {
+        if (p == nullptr) {
+            bskLogger.bskError("ConstrainedAttitudeManeuver: incomplete predecessor chain.");
+        }
+        reversed.push_back(p);
+        p = p->backPointer;
+    }
+    this->path.append(start);
+    for (auto node = reversed.rbegin(); node != reversed.rend(); ++node) {
+        this->path.append(*node);
     }
 }
 
@@ -934,67 +956,115 @@ Node* ConstrainedAttitudeManeuver::gridEndpoint(const int key[3])
     }
 }
 
-/*! This method applies standard distance-based A* to find a valid path
-
+/*! @brief Search the generated graph using accumulated MRP edge distance.
+ *  @note With useShortestPath, the heuristic is one quarter of the principal rotation angle
+ *  to the goal. This consistent lower bound guarantees a shortest grid path on completion.
+ *  Otherwise, the legacy heuristic, ordering and expansion budget are retained.
  */
 void ConstrainedAttitudeManeuver::AStar()
 {
     clearPath();
+    this->expandedNodeCount = 0;
     Node* const start = gridEndpoint(this->keyS);
     Node* const goal = gridEndpoint(this->keyG);
-    for (std::map<int, std::map<int, std::map<int, Node>>>::iterator it1 = NodesMap.begin(); it1 != NodesMap.end();
-         it1++) {
-        for (std::map<int, std::map<int, Node>>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++) {
-            for (std::map<int, Node>::iterator it3 = it2->second.begin(); it3 != it2->second.end(); it3++) {
-                it3->second.heuristic = distance(it3->second, *goal);
+    const Eigen::Quaterniond goalRotation(cArray2EigenMRPd(goal->sigma_BN).toRotationMatrix());
+    std::size_t nodeCount = 0;
+    for (auto& plane : NodesMap) {
+        for (auto& row : plane.second) {
+            for (auto& entry : row.second) {
+                Node& node = entry.second;
+                node.priority = 0.0; // [-] Preserve the legacy start-priority offset.
+                node.backPointer = nullptr;
+                if (this->useShortestPath) {
+                    const Eigen::MRPd attitude = cArray2EigenMRPd(node.sigma_BN);
+                    const double angle =
+                        Eigen::Quaterniond(attitude.toRotationMatrix()).angularDistance(goalRotation); // [rad]
+                    node.heuristic = angle / 4.0;
+                } else {
+                    node.heuristic = distance(node, *goal);
+                }
+                ++nodeCount;
             }
         }
     }
-    int Nmax = 4 * this->N * this->N;
-    int n = 0;
-    double p;
-    Node* key;
-    NodeList O, C;
-    O.append(start);
+    const std::size_t legacyBudget = static_cast<std::size_t>(4 * this->N * this->N);
+    std::unordered_map<Node*, double> costs;
+    std::unordered_set<Node*> closed;
+    costs.reserve(nodeCount);
+    closed.reserve(nodeCount);
+    costs.emplace(start, 0.0);
+    NodeList legacyOpen;
+    std::vector<DistanceSearchEntry> storage;
+    if (this->useShortestPath) {
+        storage.reserve(nodeCount);
+    }
+    std::priority_queue<DistanceSearchEntry> open(std::less<DistanceSearchEntry>(), std::move(storage));
+    std::size_t order = 0;
+    if (this->useShortestPath) {
+        start->priority = start->heuristic;
+        open.push({ start->priority, order++, start });
+    } else {
+        legacyOpen.append(start);
+    }
 
-    while (O.N > 0 && O.list[0] != goal && n < Nmax) {
-        n += 1;
-        C.append(O.list[0]);
-
-        for (int k = 0; k < O.list[0]->neighborCount; k++) {
-            key = O.list[0]->neighbors[k];
-
-            if (C.contains(key) == false) {
-                p = key->heuristic + distance(*O.list[0], *key) + O.list[0]->priority - O.list[0]->heuristic;
-                if (O.contains(key)) {
-                    if (p < key->priority) {
-                        key->priority = p;
-                        key->backPointer = O.list[0];
-                    }
-                } else {
-                    key->priority = p;
-                    key->backPointer = O.list[0];
-                    O.append(key);
+    while (true) {
+        Node* current = nullptr;
+        if (this->useShortestPath) {
+            // Decreasing a cost adds a new immutable entry. Discard the superseded entries.
+            while (!open.empty() &&
+                   (closed.count(open.top().node) || open.top().priority != open.top().node->priority)) {
+                open.pop();
+            }
+            if (!open.empty()) {
+                current = open.top().node;
+                open.pop();
+            }
+        } else if (legacyOpen.N > 0) {
+            current = legacyOpen.list[0];
+        }
+        if (current == nullptr) {
+            bskLogger.bskError(
+                "ConstrainedAttitudeManeuver: distance-based A* did not reach the goal (open list exhausted).");
+        }
+        if (current == goal) {
+            backtrack(goal);
+            return;
+        }
+        if (!this->useShortestPath && this->expandedNodeCount >= legacyBudget) {
+            bskLogger.bskError(
+                "ConstrainedAttitudeManeuver: distance-based A* did not reach the goal (iteration limit reached).");
+        }
+        ++this->expandedNodeCount;
+        closed.insert(current);
+        for (int i = 0; i < current->neighborCount; ++i) {
+            Node* neighbor = current->neighbors[i];
+            if (closed.count(neighbor)) {
+                continue;
+            }
+            const double edgeCost = distance(*current, *neighbor);
+            const double candidate = costs.at(current) + edgeCost;
+            // Retain the legacy arithmetic as well as its tie ordering in the default mode.
+            const double priority = this->useShortestPath
+                                        ? candidate + neighbor->heuristic
+                                        : neighbor->heuristic + edgeCost + current->priority - current->heuristic;
+            const bool discovered = costs.count(neighbor) != 0;
+            if (!discovered ||
+                (this->useShortestPath ? candidate < costs.at(neighbor) : priority < neighbor->priority)) {
+                costs[neighbor] = candidate;
+                neighbor->priority = priority;
+                neighbor->backPointer = current;
+                if (this->useShortestPath) {
+                    open.push({ priority, order++, neighbor });
+                } else if (!discovered) {
+                    legacyOpen.append(neighbor);
                 }
             }
         }
-
-        O.pop(0);
-        O.sort();
+        if (!this->useShortestPath) {
+            legacyOpen.pop(0);
+            legacyOpen.sort();
+        }
     }
-
-    if (O.N == 0 || O.list[0] != goal) {
-        bskLogger.bskError("ConstrainedAttitudeManeuver: distance-based A* did not reach the goal (%s).",
-                           O.N == 0 ? "open list exhausted" : "iteration limit reached");
-    }
-    backtrack(goal);
-
-    // Uncomment to print path node coordinates
-    /*
-    for (int n = 0; n < this->path.N; n++) {
-        std::cout << this->path.list[n]->sigma_BN[0] << " " << this->path.list[n]->sigma_BN[1] << " " <<
-    this->path.list[n]->sigma_BN[2] << "\n";
-    }*/
 }
 
 /*! @brief Require a finite, positive rate for maneuver timing. */
@@ -1011,6 +1081,7 @@ void ConstrainedAttitudeManeuver::validateManeuverRate()
 void ConstrainedAttitudeManeuver::effortBasedAStar()
 {
     clearPath();
+    this->expandedNodeCount = 0;
     Node* const start = gridEndpoint(this->keyS);
     Node* const goal = gridEndpoint(this->keyG);
     requireInputs();
@@ -1024,6 +1095,7 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 
     while (O.N > 0 && O.list[0] != goal && n < Nmax) {
         n += 1;
+        ++this->expandedNodeCount;
         // std::cout << "N = " << n << "\n"; // uncomment to show the number of nodes explored
         C.append(O.list[0]);
 
@@ -1102,9 +1174,10 @@ const char* ConstrainedAttitudeManeuver::prepareWaypoints()
         bskLogger.bskError("ConstrainedAttitudeManeuver: a trajectory requires at least two waypoints.");
     }
     Eigen::VectorXd T(this->path.N);
+    Node* const* nodes = this->path.list.data();
     T[0] = 0;
     for (int n = 0; n < this->path.N - 1; n++) {
-        T[n + 1] = T[n] + 4.0 * distance(*path.list[n], *path.list[n + 1]) / this->avgOmega;
+        T[n + 1] = T[n] + 4.0 * distance(*nodes[n], *nodes[n + 1]) / this->avgOmega;
         if (!std::isfinite(T[n + 1]) || T[n + 1] <= T[n]) {
             return "path waypoint times must be finite and strictly increasing.";
         }
@@ -1118,8 +1191,8 @@ const char* ConstrainedAttitudeManeuver::prepareWaypoints()
     Eigen::Vector4d nextEP;
     for (int n = this->path.N - 1; n >= 0; --n) {
         Eigen::Vector4d ep;
-        MRP2EP(path.list[n]->sigma_BN, ep.data());
-        const double norm = v3Norm(path.list[n]->sigma_BN);
+        MRP2EP(nodes[n]->sigma_BN, ep.data());
+        const double norm = v3Norm(nodes[n]->sigma_BN);
         Eigen::Vector2d scores(norm, norm == 0.0 ? std::numeric_limits<double>::infinity() : 1.0 / norm);
         if (n + 1 < this->path.N) {
             for (int set = 0; set < 2; ++set) {
@@ -1157,7 +1230,7 @@ const char* ConstrainedAttitudeManeuver::prepareWaypoints()
     Eigen::VectorXd X3(this->path.N);
 
     for (int n = 0; n < this->path.N; ++n) {
-        Eigen::MRPd attitude = cArray2EigenMRPd(path.list[n]->sigma_BN);
+        Eigen::MRPd attitude = cArray2EigenMRPd(nodes[n]->sigma_BN);
         if (shadow) {
             attitude = attitude.shadow();
         }
@@ -1344,7 +1417,7 @@ double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
     if (!validListIndex(this->path, index) || nodeCoord < 0 || nodeCoord > 2) {
         return 1000; // random large number that will cause the UnitTest comparison to fail
     } else {
-        return this->path.list[index]->sigma_BN[nodeCoord];
+        return this->path.list[static_cast<std::size_t>(index)]->sigma_BN[nodeCoord];
     }
 }
 
