@@ -63,11 +63,14 @@ The supported grid refinement range is ``2 <= N <= 20``. With the no-argument co
 set ``N`` before building the grid. Its initial value is zero (unset). Grid generation validates the current
 value, including changes made after construction, and raises an error outside this range.
 The planner also raises an error rather than overflowing its fixed storage if a node would have
-more than 52 neighbors or a search/path list would have more than 10000 entries.
+more than 52 neighbors. Search and path storage grow dynamically with the graph.
 ``NodeList.N`` is the read-only active node count in Python. Use ``append()``, ``pop()``,
 and ``clear()`` to change the entries. Python ``append()`` requires a Python-owned node.
 The list retains it until its last entry is removed. The search sets each node's predecessor,
 ``backPointer``, which is read-only in Python.
+For C++ callers, ``NodeList::list`` is now a ``std::vector<Node*>``. Use the list methods to
+populate it. Indexed access to active entries is unchanged; use ``list.data()`` where a raw
+pointer to the entries is required. Do not retain pointers to the entry storage across list changes.
 You can assign a path containing only Python-owned nodes to another planner. A generated path borrows
 nodes from its planner's grid, so copying it raises an error. Use ``returnPathCoord()`` to copy its coordinates.
 ``NodeList.pop()`` and ``NodeList.swap()`` require indices within the active list.
@@ -108,9 +111,11 @@ map to the same sampled attitude, initialization raises an error before graph se
 A finer grid may separate distinct but nearby endpoints.
 
 Even when both endpoints are free, the sampled grid can be disconnected. Both search
-methods raise an error if they exhaust the reachable nodes or reach their iteration
-limit before reaching the goal. A search that reaches its limit may still have
-unexplored nodes. Starting a reset, rebuilding the grid, running either search,
+methods raise an error if they exhaust the reachable nodes. The default distance search
+also raises an error after ``4 * N * N`` expansions, and the effort search after 100 expansions,
+unless the goal is selected. A search that reaches its limit may still have unexplored nodes.
+The optional shortest-path search runs until it selects the goal or exhausts the reachable graph.
+Starting a reset, rebuilding the grid, running either search,
 preparing the waypoints, or refitting the spline invalidates the previous reference.
 Only a successful reset enables ``UpdateState()`` to write either attitude output.
 The maneuver starts at the simulation time passed to that reset. Output messages retain
@@ -127,8 +132,17 @@ parameter ``N``. Each grid node corresponds to an attitude. An undirected graph 
 - ``goalNode`` whose coordinates :math:`\sigma_{BN,G}` correspond to the desired target attitude at the end of the maneuver.
 
 The distance-based search ranks paths by their accumulated MRP distance plus an estimate of the
-distance to the goal. The estimate can exceed the remaining graph distance, so the selected path
-can be longer than the shortest grid path. The effort-based search ranks candidate splines by
+distance to the goal. By default, the estimate can exceed the remaining graph distance, so the selected path
+can be longer than the shortest grid path. Setting ``useShortestPath = True`` selects the consistent
+lower bound :math:`h = \theta/4`, where :math:`\theta \in [0, \pi]` is the principal relative rotation
+angle to the goal in radians. For any edge, its MRP distance :math:`d(u,v)` satisfies
+:math:`\theta(u,v) \leq 4d(u,v)`: along a straight segment between either pair of MRP representations,
+:math:`\|\boldsymbol{\omega}\| = 4\|\dot{\boldsymbol{\sigma}}\|/(1+\|\boldsymbol{\sigma}\|^2)`.
+Together with the triangle inequality for rotation angles, this gives
+:math:`h(u) \leq d(u,v) + h(v)`. The optional search therefore expands each reachable node at most once
+and returns a path with minimum accumulated edge distance when it selects the goal.
+
+The effort-based search ranks candidate splines by
 the integral of the control torque norm. It keeps one predecessor per node even though the effort
 depends on the entire path, so another feasible path can have lower effort.
 
@@ -155,6 +169,27 @@ The attitude, rates and accelerations provided to the Attitude Reference Message
 
 User Guide
 ----------
+To request a shortest path on the generated graph, configure the planner before reset:
+
+.. code-block:: python
+
+    planner.costFcnType = 0
+    planner.useShortestPath = True
+
+``useShortestPath`` defaults to ``False`` and also applies to direct ``AStar()`` calls.
+It has no effect on ``effortBasedAStar()`` or ``costFcnType = 1``. The optional mode shares
+the default distance search's graph and edge costs, but can explore substantially more nodes.
+It uses a priority queue and has no expansion cap; allow additional planning time and memory,
+especially at higher refinement. ``expandedNodeCount`` reports the last search's expansions,
+excluding the selected goal, and is read-only in Python. Building a new grid resets the count.
+
+The guarantee is limited to the sum of MRP edge distances on the generated graph, including its
+endpoint connections and shadow-set links. Equally short paths can have different waypoints.
+It does not guarantee the shortest continuous maneuver, minimum control effort, or continuous
+cone clearance along the fitted reference. ``pathCost`` continues to report the fitted reference's
+control effort in N m s, not grid distance. An unreachable goal means that the generated graph
+has no route; a continuous maneuver may still exist.
+
 A maneuver can start at any simulation time. Waypoint times are elapsed seconds from the
 planner's most recent successful reset. For example, after a reset at 3600 s, waypoint times
 of 0 s and 5 s correspond to simulation times of 3600 s and 3605 s. The attitude reference
@@ -236,3 +271,5 @@ The module is configurable with the following parameters:
      - Required before reset. Set to 0 for interpolation or 1 for least-squares approximation. The initial value is -1 (unset).
    * - ``costFcnType``
      - Required before reset. Set to 0 for total MRP distance or 1 for control effort. The initial value is -1 (unset).
+   * - ``useShortestPath``
+     - Optional distance-search flag, initially ``False``. Set to ``True`` to minimize total MRP edge distance on the generated graph using the rotation-angle lower bound and no expansion cap. Ignored in effort mode.
