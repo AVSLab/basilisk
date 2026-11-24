@@ -30,6 +30,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include <climits>
+#include <cstddef>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -37,6 +38,7 @@
 #include <map>
 #include <memory>
 #include <stdint.h>
+#include <vector>
 
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct
@@ -94,8 +96,8 @@ class NodeList
     NodeList& operator=(const NodeList& source);
     ~NodeList();
 
-    Node* list[10000]{}; //!< Container of pointers to the nodes in the list
-    int N;               //!< Number of nodes in the list
+    std::vector<Node*> list; //!< Dynamically sized pointers to the active nodes
+    int N;                   //!< Number of nodes in the list
     void append(Node* node, std::shared_ptr<void> owner = nullptr);
     void pop(int M);
     void clear();
@@ -136,16 +138,18 @@ class ConstrainedAttitudeManeuver : public SysModel
     double returnPathCoord(int index, int nodeCoord);
 
   public:
-    int N = 0;                   //!< Grid refinement level, zero until configured
-    int BSplineType = -1;        //!< Unset until configured to 0 for interpolation or 1 for least-squares approximation
-    int costFcnType = -1;        //!< Unset until configured to 0 for distance-based search or 1 for effort-based search
-    double sigma_BN_goal[3];     //!< [-] Required goal attitude in MRPs, initially NaN
-    double omega_BN_B_goal[3]{}; //!< [rad/s] Desired body-frame angular rate at the goal, initially zero
-    double avgOmega = 0.0;       //!< [rad/s] Positive rate used to set waypoint intervals from MRP distance
-    double keepOutFov;           //!< Field of view of the sensitive instrument
-    double keepOutBore_B[3];     //!< Body-frame direction of the boresight of the sensitive instrument
-    constraintStruct constraints{}; //!< Constraint directions in inertial coordinates
-    scBoresightStruct boresights{}; //!< Instrument boresight directions in body-frame coordinates
+    int N = 0;            //!< Grid refinement level, zero until configured
+    int BSplineType = -1; //!< Unset until configured to 0 for interpolation or 1 for least-squares approximation
+    int costFcnType = -1; //!< Unset until configured to 0 for distance-based search or 1 for effort-based search
+    bool useShortestPath = false;      //!< Use the consistent rotation-angle lower bound in distance-based A*
+    std::size_t expandedNodeCount = 0; //!< Nodes expanded by the last search, excluding the selected goal
+    double sigma_BN_goal[3];           //!< [-] Required goal attitude in MRPs, initially NaN
+    double omega_BN_B_goal[3]{};       //!< [rad/s] Desired body-frame angular rate at the goal, initially zero
+    double avgOmega = 0.0;             //!< [rad/s] Positive rate used to set waypoint intervals from MRP distance
+    double keepOutFov;                 //!< Field of view of the sensitive instrument
+    double keepOutBore_B[3];           //!< Body-frame direction of the boresight of the sensitive instrument
+    constraintStruct constraints{};    //!< Constraint directions in inertial coordinates
+    scBoresightStruct boresights{};    //!< Instrument boresight directions in body-frame coordinates
     std::map<int, std::map<int, std::map<int, Node>>> NodesMap; //!< C++ map from node indices to Node class
     static constexpr int invalidGridIndex = INT_MAX; //!< Grid index used when an endpoint has not been selected
     int keyS[3] = { invalidGridIndex, invalidGridIndex, invalidGridIndex }; //!< Start node key in NodesMap

@@ -60,6 +60,7 @@ from Basilisk.architecture.swig_common_model import *
 %immutable NodeList::N;
 %ignore NodeList::operator=;
 %immutable ConstrainedAttitudeManeuver::path;
+%immutable ConstrainedAttitudeManeuver::expandedNodeCount;
 %extend ConstrainedAttitudeManeuver {
     void _set_path(const NodeList& path) { $self->path = path; }
 }

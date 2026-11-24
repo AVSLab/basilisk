@@ -1605,18 +1605,35 @@ def test_grid_reset_and_recovery(cost_type, refinement):
     assert model.pathCost == pytest.approx(expected_cost, rel=1e-12)
 
 
-@pytest.mark.parametrize("container_type,capacity", [("neighbors", 52), ("list", 10000)])
-def test_graph_container_capacity(container_type, capacity):
+def test_neighbor_capacity():
     """Allow the last available slot and reject overflow without changing the count."""
     node = constrainedAttitudeManeuver.Node()
-    container = node if container_type == "neighbors" else constrainedAttitudeManeuver.NodeList()
-    append = container.appendNeighbor if container_type == "neighbors" else container.append
+    capacity = 52
     for _ in range(capacity):
-        append(node)
+        node.appendNeighbor(node)
     with pytest.raises(bskLogging.BasiliskError, match="capacity exceeded"):
-        append(node)
-    count = container.neighborCount if container_type == "neighbors" else container.N
-    assert count == capacity
+        node.appendNeighbor(node)
+    assert node.neighborCount == capacity
+
+
+def test_node_list_growth():
+    """Grow beyond the former capacity and preserve ownership through a path copy."""
+    node = constrainedAttitudeManeuver.Node()
+    node.sigma_BN = [0.125, 0.0, 0.0]  # MRPs [-]
+    nodes = constrainedAttitudeManeuver.NodeList()
+    for _ in range(10001):
+        nodes.append(node)
+    model = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver()
+    model.path = nodes
+    nodes.clear()
+    del node, nodes
+    gc.collect()
+    assert model.path.N == 10001
+    assert model.returnPathCoord(10000, 0) == 0.125
+    model.path.pop(10000)
+    assert model.path.N == 10000
+    model.path.clear()
+    assert model.path.N == 0
 
 
 def test_node_list_index_bounds():
