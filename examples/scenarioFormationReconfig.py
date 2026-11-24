@@ -52,9 +52,18 @@ This resulting feedback control error is shown below.
 .. image:: /_images/Scenarios/scenarioFormationReconfig20.svg
    :align: center
 
+The third figure shows the measured deputy-minus-chief element differences minus the commanded
+differences. Zero marks the target in each panel. The semimajor axis difference is normalized
+by the chief's semimajor axis. Its error and the eccentricity error are shown in parts per
+million (ppm). The four angular errors are shown in microradians. The burns reduce all six
+errors over the maneuver, with a small residual remaining at the end.
+
+.. image:: /_images/Scenarios/scenarioFormationReconfig30.svg
+   :align: center
+
 ::
 
-    show_plots = True, useRefAttitude = False
+    show_plots = True, useRefAttitude = True
 
 In this case, reference attitude input is included.
 Therefore, attitude control is executed to both achieve thruster burn and reference attitude.
@@ -64,6 +73,9 @@ This resulting feedback control error is shown below.
    :align: center
 
 .. image:: /_images/Scenarios/scenarioFormationReconfig21.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioFormationReconfig31.svg
    :align: center
 """
 
@@ -338,6 +350,24 @@ def run(show_plots, useRefAttitude):
     plt.ylabel("MRP Error")
     pltName = fileName + "2" + str(int(useRefAttitude))
     figureList[pltName] = plt.figure(2)
+
+    tracking_error = oed - spacecraftReconfigModule.targetClassicOED
+    angular_error = tracking_error[:, 2:]
+    tracking_error[:, 2:] = np.arctan2(np.sin(angular_error), np.cos(angular_error))
+    fig, axes = plt.subplots(3, 2, sharex=True, figsize=(8, 7), constrained_layout=True)
+    fig.suptitle("Relative orbital-element tracking errors")
+    elements = (("Normalized semimajor axis", "ppm"), ("Eccentricity", "ppm"),
+                ("Inclination", "µrad"), ("Right ascension of the ascending node", "µrad"),
+                ("Argument of periapsis", "µrad"), ("Mean anomaly", "µrad"))
+    for ax, error, (name, unit) in zip(axes.flat, tracking_error.T, elements):
+        ax.plot(timeData, error * 1e6)  # dimensionless to ppm, radians to microradians
+        ax.axhline(0.0, color="0.45", linestyle="--", linewidth=0.8, zorder=0)
+        ax.set_title(name)
+        ax.set_ylabel(unit)
+        ax.margins(x=0)
+    fig.supxlabel("Time [orbits]")
+    figureList[f"{fileName}3{int(useRefAttitude)}"] = fig
+
     if(show_plots):
         plt.show()
     plt.close("all")
@@ -347,5 +377,5 @@ def run(show_plots, useRefAttitude):
 if __name__ == "__main__":
     run(
         show_plots = True,  # show_plots
-        useRefAttitude = False  # useRefAttitude
+        useRefAttitude = True  # useRefAttitude
     )

@@ -53,6 +53,16 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
     dataPos, dataVel, dataPos2, dataVel2, dataAttErr, numDataPoints, figureList = \
         scenarioFormationReconfig.run(show_plots, useRefAttitude)
 
+    # Initial deputy-minus-chief offsets relative to the commanded formation.
+    initial_errors = (300., -300., -100., 500., 100., 500.)  # [ppm, ppm, µrad, µrad, µrad, µrad]
+    error_axes = figureList[f"scenarioFormationReconfig3{int(useRefAttitude)}"].axes
+    assert len(error_axes) == len(initial_errors)
+    for axis, initial in zip(error_axes, initial_errors):
+        samples = axis.lines[0].get_ydata()
+        assert len(samples) == len(dataPos)
+        assert samples[0] == pytest.approx(initial)
+        assert abs(samples[-1]) < abs(initial)
+
     numTruthPoints = 5
     skipValue = int(numDataPoints / numTruthPoints)
     dataPos = dataPos[::skipValue]
