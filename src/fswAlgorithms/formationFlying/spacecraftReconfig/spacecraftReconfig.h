@@ -50,7 +50,7 @@ typedef struct
 
     double mu;                  //!< [m^3/s^2] gravity constant of planet being orbited
     double attControlTime;      //!< [s] attitude control margin time (time necessary to change sc's attitude)
-    double targetClassicOED[6]; //!< target classic orital element difference, SMA should be normalized
+    double targetClassicOED[6]; //!< Target element differences, with delta a divided by the chief semimajor axis.
     double resetPeriod;         //!< [s] burn scheduling reset period
     double tCurrent;            //!< [s] timer
     uint64_t prevCallTime;      //!< [ns]

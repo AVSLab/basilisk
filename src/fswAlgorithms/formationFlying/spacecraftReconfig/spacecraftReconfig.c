@@ -417,7 +417,7 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     double rp = oe_c.a * (1.0 - oe_c.e);
     double ra = oe_c.a * (1.0 + oe_c.e);
 
-    da = da - configData->targetClassicOED[0];
+    da -= oe_c.a * configData->targetClassicOED[0]; // [m] error relative to the commanded separation
     di = di - configData->targetClassicOED[2];
     de = de - configData->targetClassicOED[1];
     dOmega = dOmega - configData->targetClassicOED[3];
@@ -472,7 +472,9 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     // 4. calculate dvrp_mag, dvtp_mag, dvra_mag, dvta_mag, dvn_mag
     double dvtp_mag = n * oe_c.a * eta / 4.0 * ((-da) / oe_c.a + (-de) / (1.0 + oe_c.e));
     double dvta_mag = n * oe_c.a * eta / 4.0 * ((-da) / oe_c.a - (-de) / (1.0 - oe_c.e));
-    // compensate drift of dM caused by initial da
+    // A commanded separation drifts by -(3/2) n (delta a/a) T over one chief orbit, with n T = 2 pi.
+    dM -= 3.0 * M_PI * configData->targetClassicOED[0];
+    // Compensate the additional drift from the semimajor-axis error until the two in-plane burns remove it.
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t < configData->burnArrayInfoOutMsgBuffer.burnArray[1].t) {
         dM = dM - 3.0 / 2.0 * n / oe_c.a * da * configData->burnArrayInfoOutMsgBuffer.burnArray[0].t -
              3.0 / 2.0 * n / oe_c.a * (da + 2.0 * oe_c.a * oe_c.a / h * p / rp * dvtp_mag) *

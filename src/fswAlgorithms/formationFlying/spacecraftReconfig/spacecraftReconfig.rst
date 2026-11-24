@@ -63,4 +63,8 @@ This module requires the following variables to be set as parameters:
 - ``mu`` gravitational constant for a central body in m^3/s^2
 - ``targetClassicOED`` desired orbital element difference.
 
-For ``targetClassicOED``, normalized semi major axis must be used.
+The first entry of ``targetClassicOED`` is the desired deputy-minus-chief semimajor axis
+difference divided by the chief's semimajor axis. For example, a target of 0.0001
+with an 11,000 km chief semimajor axis requests a deputy orbit 1.1 km larger.
+The mean anomaly difference is targeted at the end of one chief orbital period.
+If the commanded semimajor axes differ, their mean anomalies continue to drift after the maneuver.
