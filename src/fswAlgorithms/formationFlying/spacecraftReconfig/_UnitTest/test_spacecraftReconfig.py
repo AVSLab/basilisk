@@ -24,6 +24,8 @@
 #   Creation Date:      March 27, 2020
 #
 
+import math
+
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
@@ -286,6 +288,34 @@ def test_burn_clock_after_long_gap(burn_module, existing_plan, capfd):
     module.UpdateState(update_time + step)
     assert module.tCurrent == pytest.approx(0.1)  # [s]
     assert "exceeds safe conversion limit" not in capfd.readouterr().err
+
+
+@pytest.mark.parametrize("offset", [-0.0003, 0.0003])  # [-] relative semimajor axis
+def test_normalized_semimajor_axis_target(burn_module, offset):
+    """A formation on its target orbit can coast to the predicted one-orbit phase difference."""
+    module = burn_module
+    chief = module.chiefTransInMsg.read()
+    scale = 1.0 + offset
+    deputy = messaging.NavTransMsgPayload()
+    deputy.r_BN_N = [r * scale for r in chief.r_BN_N]  # [m] same eccentricity and initial phase
+    deputy.v_BN_N = [v / math.sqrt(scale) for v in chief.v_BN_N]  # [m/s]
+    deputy_msg = messaging.NavTransMsg().write(deputy)
+    module.deputyTransInMsg.subscribeTo(deputy_msg)
+    phase_drift = 2 * math.pi * (scale**-1.5 - 1.0)  # [rad] from Kepler's third law
+    module.targetClassicOED = [offset, 0., 0., 0., 0., phase_drift]  # [-, -, rad, rad, rad, rad]
+    module.Reset(0)
+    module.UpdateState(0)
+    plan = module.burnArrayInfoOutMsg.read()
+    for index in range(3):
+        burn = messaging.ReconfigBurnArray_getitem(plan.burnArray, index)
+        assert burn.flag == 3  # no corrective impulse required to first order
+
+    # Removing the semimajor-axis target requires changing the deputy's orbit.
+    module.targetClassicOED = [0., 0., 0., 0., 0., phase_drift]  # [-, -, rad, rad, rad, rad]
+    module.Reset(0)
+    module.UpdateState(0)
+    plan = module.burnArrayInfoOutMsg.read()
+    assert any(messaging.ReconfigBurnArray_getitem(plan.burnArray, i).flag == 1 for i in range(3))
 
 
 @pytest.mark.parametrize("use_ref_attitude", [False, True])
