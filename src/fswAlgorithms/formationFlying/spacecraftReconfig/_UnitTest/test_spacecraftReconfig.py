@@ -180,6 +180,14 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed " + "resetPeriod")
+
+    # The first update after reset starts the new plan from its current navigation sample.
+    module.Reset(testProcessRate)
+    module.UpdateState(2 * testProcessRate)
+    assert module.tCurrent == 0.0  # [s]
+    module.UpdateState(3 * testProcessRate)
+    assert module.tCurrent == pytest.approx(testProcessRate * macros.NANO2SEC)  # [s]
+
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -190,26 +198,41 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 
-@pytest.mark.parametrize("burn_slot", [0, 1, 2])
-def test_fractional_burn_start(burn_slot):
-    """Each burn slot must command both thrusters on the first tick inside the burn window."""
+@pytest.fixture
+def burn_module():
+    """Provide a module with live navigation, vehicle, and thruster inputs."""
     module = spacecraftReconfig.spacecraftReconfig()
     module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
+    module.targetClassicOED = [0.0, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]  # [-, -, rad, rad, rad, rad]
     nav = messaging.NavTransMsgPayload()
     nav.r_BN_N = [7.0e6, 0.0, 0.0]  # [m]
-    nav.v_BN_N = [0.0, 7500.0, 0.0]  # [m/s]
+    nav.v_BN_N = [0.0, 7500.0, 1000.0]  # [m/s]
     nav_msg = messaging.NavTransMsg().write(nav)
     module.chiefTransInMsg.subscribeTo(nav_msg)
     module.deputyTransInMsg.subscribeTo(nav_msg)
     thrusters = messaging.THRArrayConfigMsgPayload()
     thrusters.numThrusters = 2
+    thruster = messaging.THRConfigMsgPayload()
+    thruster.maxThrust = 22.6  # [N]
+    thruster.tHatThrust_B = [1.0, 0.0, 0.0]  # [-]
+    for index in range(thrusters.numThrusters):
+        messaging.ThrustConfigArray_setitem(thrusters.thrusters, index, thruster)
     thruster_msg = messaging.THRArrayConfigMsg().write(thrusters)
     module.thrustConfigInMsg.subscribeTo(thruster_msg)
-    vehicle_msg = messaging.VehicleConfigMsg().write(messaging.VehicleConfigMsgPayload())
+    vehicle = messaging.VehicleConfigMsgPayload()
+    vehicle.massSC = 500.0  # [kg]
+    vehicle_msg = messaging.VehicleConfigMsg().write(vehicle)
     module.vehicleConfigInMsg.subscribeTo(vehicle_msg)
 
     module.SelfInit()
-    epoch = macros.sec2nano(1.0)  # [ns]
+    yield module
+
+
+@pytest.mark.parametrize("burn_slot", [0, 1, 2])
+@pytest.mark.parametrize("epoch", [0, macros.sec2nano(1.0)])  # [ns]
+def test_fractional_burn_start(burn_module, burn_slot, epoch):
+    """Each burn slot must command both thrusters on the first tick inside the burn window."""
+    module = burn_module
     module.Reset(epoch)
     module.resetPeriod = 100.0  # [s]
     # Supply a known schedule so the ignition check is independent of orbit selection.
@@ -232,6 +255,52 @@ def test_fractional_burn_start(burn_slot):
     module.UpdateState(next_tick)
     assert command.timeWritten() == next_tick  # 2.3 s remain, inside the half-burn
     assert list(command().OnTimeRequest[:2]) == [4.75, 4.75]  # [s]
+
+
+@pytest.mark.parametrize("existing_plan", [False, True], ids=["delayed-first-update", "expired-plan"])
+def test_burn_clock_after_long_gap(burn_module, existing_plan, capfd):
+    """Plan from the first navigation sample, including after a long pause expires an old plan."""
+    module = burn_module
+    module.Reset(0)
+    if existing_plan:
+        module.UpdateState(0)
+        plan = module.burnArrayInfoOutMsg.read()
+        assert plan.burnArray.flag != 0
+
+    update_time = macros.sec2nano(105 * 86400)  # [ns]
+    step = macros.sec2nano(0.1)  # [ns]
+    module.UpdateState(update_time)
+    if existing_plan:
+        # The expired plan is cleared on this update and rebuilt on the next one.
+        plan = module.burnArrayInfoOutMsg.read()
+        assert plan.burnArray.flag == 0
+        update_time += step
+        module.UpdateState(update_time)
+    plan = module.burnArrayInfoOutMsg.read()
+    assert plan.burnArray.flag != 0
+    assert module.tCurrent == 0.0  # [s]
+    module.UpdateState(update_time + step)
+    assert module.tCurrent == pytest.approx(0.1)  # [s]
+    assert "exceeds safe conversion limit" not in capfd.readouterr().err
+
+
+def test_burn_clock_within_long_orbit(burn_module):
+    """Preserve the fractional elapsed time when the existing plan spans the entire gap."""
+    module = burn_module
+    module.mu = orbitalMotion.MU_SUN * 1e9  # [m^3/s^2]
+    nav = messaging.NavTransMsgPayload()
+    nav.r_BN_N = [1.5e11, 0.0, 0.0]  # [m]
+    nav.v_BN_N = [0.0, 28000.0, 4000.0]  # [m/s]
+    nav_msg = messaging.NavTransMsg().write(nav)
+    module.chiefTransInMsg.subscribeTo(nav_msg)
+    module.deputyTransInMsg.subscribeTo(nav_msg)
+    module.Reset(0)
+    module.UpdateState(0)
+
+    elapsed = 105 * 86400 + 0.125  # [s]
+    assert module.resetPeriod > elapsed
+    module.UpdateState(macros.sec2nano(elapsed))
+    assert module.tCurrent == elapsed
 
 
 #
