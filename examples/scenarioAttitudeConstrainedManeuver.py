@@ -89,6 +89,50 @@ constraints for both the sun sensors. The following simulation shows how all the
 .. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver6120702.svg
    :align: center
 
+Comparing Distance-Based Search Modes
+-------------------------------------
+
+An optional comparison uses attitude case 4, the alternate start from issue #1726,
+with one Sun sensor, a 20-degree star-tracker keep-out cone, and a 70-degree
+Sun-sensor keep-in cone::
+
+    figures, comparison = run(True, False, 20, 70, 4, compareSearchModes=True)
+
+This case starts at :math:`\boldsymbol\sigma_{B/N} = [-3/7, -2/7, 0]` and uses
+the same target as case 0. Both searches use ``costFcnType = 0`` on an
+identical grid with refinement ``N = 8``. The default distance heuristic runs
+first, followed by ``useShortestPath = True``, which uses :math:`h = \theta/4`.
+The spacecraft and celestial-body states do not advance between the two plans.
+The subsequent dynamics simulation and figures 1--6 use the shortest-path reference.
+Those six figure names have a ``ShortestPath`` suffix, so saving both modes for
+the same attitude case preserves their separate results.
+Without ``compareSearchModes=True``, the scenario retains its existing effort-based
+planning and returns only the figure dictionary.
+
+The comparison adds an MRP waypoint overlay and a table of accumulated MRP edge
+distance and expanded nodes. The table evaluates the planner's shadow-aware edge
+metric, rather than the length of the plotted polyline or ``pathCost`` (fitted
+control effort). For this case the grid distance decreases from approximately
+1.19731 to 1.13077, a 5.6 percent reduction, with more search work.
+
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuverSearchPaths020704.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuverSearchComparison020704.svg
+   :align: center
+
+The overlay maps waypoints into the unit MRP sphere. Lines across shadow switches
+are omitted, and square markers identify their endpoints; these coordinate jumps
+are not physical rotations through the sphere. The paths connect discrete grid
+waypoints and do not depict the fitted reference. Shortest-path optimality applies
+to accumulated grid edge distance, not control effort or continuous cone clearance.
+Use the existing boresight-angle plots to assess the simulated maneuver.
+
+``comparison`` contains ``default`` and ``shortest`` entries, each with the original
+``waypoints``, ``edgeDistance`` (dimensionless), and ``expandedNodeCount``. The
+native module tests validate shortest-path costs against an independent Dijkstra
+search; the example illustrates the resulting path and search-work differences.
+
 """
 
 import os
