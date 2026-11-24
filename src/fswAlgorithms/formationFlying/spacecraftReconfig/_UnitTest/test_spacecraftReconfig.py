@@ -229,9 +229,10 @@ def burn_module():
 
 
 @pytest.mark.parametrize("burn_slot", [0, 1, 2])
-@pytest.mark.parametrize("epoch", [0, macros.sec2nano(1.0)])  # [ns]
-def test_fractional_burn_start(burn_module, burn_slot, epoch):
-    """Each burn slot must command both thrusters on the first tick inside the burn window."""
+@pytest.mark.parametrize("epoch", [0, macros.sec2nano(4 * 365.25 * 86400) + 1])  # [ns]
+@pytest.mark.parametrize("first_tick", [8.0, 8.1], ids=["at-start", "after-start"])  # [s]
+def test_fractional_burn_start(burn_module, burn_slot, epoch, first_tick):
+    """Each slot commands both thrusters once, on the first tick at or inside the window."""
     module = burn_module
     module.Reset(epoch)
     module.resetPeriod = 100.0  # [s]
@@ -241,7 +242,7 @@ def test_fractional_burn_start(burn_module, burn_slot, epoch):
         burn = messaging.ReconfigBurnInfoMsgPayload()
         if index == burn_slot:
             burn.flag = 1  # pending
-            burn.t = 2.4  # [s] since reset
+            burn.t = 10.375  # [s] midpoint, giving an exactly representable start at 8 s
             burn.thrustOnTime = 9.5  # [s] total across both thrusters
         else:
             burn.flag = 3  # skipped
@@ -249,12 +250,15 @@ def test_fractional_burn_start(burn_module, burn_slot, epoch):
 
     command = messaging.THRArrayOnTimeCmdMsgReader()
     command.subscribeTo(module.onTimeOutMsg)
-    module.UpdateState(epoch)
-    assert not command.isWritten()  # 2.4 s remain, outside the 2.375 s half-burn
-    next_tick = epoch + macros.sec2nano(0.1)  # [ns]
+    for tick in range(80):
+        module.UpdateState(epoch + tick * 100_000_000)  # [ns] regular 0.1 s updates through 7.9 s
+    assert not command.isWritten()
+    next_tick = epoch + macros.sec2nano(first_tick)  # [ns]
     module.UpdateState(next_tick)
-    assert command.timeWritten() == next_tick  # 2.3 s remain, inside the half-burn
+    assert command.timeWritten() == next_tick
     assert list(command().OnTimeRequest[:2]) == [4.75, 4.75]  # [s]
+    module.UpdateState(next_tick + 1)  # [ns]
+    assert command.timeWritten() == next_tick
 
 
 @pytest.mark.parametrize("existing_plan", [False, True], ids=["delayed-first-update", "expired-plan"])
