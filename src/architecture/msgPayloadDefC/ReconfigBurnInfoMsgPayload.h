@@ -24,7 +24,7 @@
 typedef struct
 {
     int flag; //!< 0:not scheduled yet, 1:not burned yet, 2:already burned, 3:skipped (combined with another burn)
-    double t; //!< [s] simulation time of the scheduled burn since module reset
+    double t; //!< [s] scheduled burn midpoint relative to the update that created the burn schedule
     double thrustOnTime; //!< thrust on duration time [s]
     double sigma_RN[3];  //!< target attitude
 } ReconfigBurnInfoMsgPayload;

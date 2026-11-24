@@ -19,8 +19,10 @@
 
 #include "spacecraftReconfig.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -49,7 +51,6 @@ void SelfInit_spacecraftReconfig(spacecraftReconfigConfig* configData, int64_t m
  */
 void Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void)callTime;
     (void)moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
@@ -68,7 +69,7 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t cal
     // zero the burn info buffer
     configData->burnArrayInfoOutMsgBuffer = ReconfigBurnArrayInfoMsg_C_zeroMsgPayload();
 
-    configData->prevCallTime = 0;
+    configData->prevCallTime = callTime;
     configData->tCurrent = 0.0;
     configData->thrustOnFlag = 0;
 
@@ -105,12 +106,15 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t ca
         attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
     }
 
-    if (configData->prevCallTime == 0) {
-        configData->prevCallTime = callTime; // initialize
+    if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag != 0) {
+        // Keep whole seconds separate so an interval longer than 2^53 ns still advances the plan.
+        const uint64_t nanosPerSecond = 1000000000; // [ns/s]
+        const uint64_t previous = configData->prevCallTime;
+        const bool forward = callTime >= previous;
+        const uint64_t gap = forward ? callTime - previous : previous - callTime;
+        const double seconds = (double)(gap / nanosPerSecond) + nanoToSec(gap % nanosPerSecond);
+        configData->tCurrent += forward ? seconds : -seconds;
     }
-    // calculate elapsed time from last module updated time
-    double elapsed_time = diffNanoToSec(callTime, configData->prevCallTime);
-    configData->tCurrent = configData->tCurrent + elapsed_time;
     configData->prevCallTime = callTime;
 
     /* zero output messages */
@@ -173,6 +177,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 0) {
         configData->resetPeriod = 2 * M_PI / sqrt(configData->mu / pow(oe_c.a, 3)); // one orbital period
         ScheduleDV(configData, oe_c, oe_d, thrustConfigMsgBuffer, vehicleConfigMsgBuffer);
+        configData->tCurrent = 0.0; // [s] Burn times are relative to this navigation sample.
         // sort three burns (dvArray structures) in ascending order
         qsort(configData->burnArrayInfoOutMsgBuffer.burnArray,
               sizeof(configData->burnArrayInfoOutMsgBuffer) /
