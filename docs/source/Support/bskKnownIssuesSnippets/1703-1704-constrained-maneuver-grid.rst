@@ -10,6 +10,10 @@
   endpoint rates, and angular travel before using the reference. The planner now checks search completion
   and fitted motion and times the maneuver from reset. Cone clearance between waypoints still requires
   a separate check, as described in the :ref:`constrainedAttitudeManeuver` User Guide.
+  The default distance heuristic can still select a longer grid path. Set ``costFcnType = 0`` and
+  ``useShortestPath = True`` to obtain minimum accumulated MRP edge distance on the generated graph,
+  at the cost of potentially more node expansions (#1726). This option does not minimize fitted
+  control effort or guarantee continuous cone clearance.
 
 - In ``2.12.2``, invalid :ref:`BSpline` inputs or a very short final knot span can yield an incorrect
   fit, and an empty Python sequence passed to an Eigen vector setter can terminate Python. On that
