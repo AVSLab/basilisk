@@ -63,6 +63,12 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
         assert samples[0] == pytest.approx(initial)
         assert abs(samples[-1]) < abs(initial)
 
+    # Both start at +500 µrad. Their distinct signed final errors identify each trace.
+    final_errors = {axis.get_title(): axis.lines[0].get_ydata()[-1] for axis in error_axes}
+    expected = (-5.22, -47.78) if useRefAttitude else (-4.34, -39.81)  # [µrad] RAAN, mean anomaly
+    actual = (final_errors["Right ascension of the ascending node"], final_errors["Mean anomaly"])
+    assert actual == pytest.approx(expected, abs=0.1)  # [µrad]
+
     numTruthPoints = 5
     skipValue = int(numDataPoints / numTruthPoints)
     dataPos = dataPos[::skipValue]
