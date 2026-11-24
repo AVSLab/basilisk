@@ -688,12 +688,16 @@ def test_equivalent_shadow_endpoints(cost_type, start):
     assert model.keyS == model.keyG == [model.invalidGridIndex] * 3
 
 
-@pytest.mark.parametrize("cost_type", [0, 1], ids=["distance", "effort"])
+@pytest.mark.parametrize("cost_type, shortest_path", [(0, False), (0, True), (1, False)],
+                         ids=["distance", "shortest", "effort"])
 @pytest.mark.parametrize("refinement, reason", [(5, "open list exhausted"), (16, "iteration limit reached")])
 @pytest.mark.parametrize("entry_point", ["reset", "direct"])
-def test_disconnected_grid(refinement, reason, cost_type, entry_point):
+def test_disconnected_grid(refinement, reason, cost_type, shortest_path, entry_point):
     """Reject a disconnected grid and resume publishing only after a successful reset."""
     model, messages = _configured_grid_module(5, cost_type)
+    model.useShortestPath = shortest_path
+    if shortest_path:
+        reason = "open list exhausted"
     model.SelfInit()
     cpp_output = model.attRefOutMsg.addSubscriber()
     c_output = messaging.AttRefMsgReader()
@@ -1634,6 +1638,42 @@ def test_node_list_growth():
     assert model.path.N == 10000
     model.path.clear()
     assert model.path.N == 0
+
+
+@pytest.mark.parametrize("spline_type", [0, 1])
+def test_shortest_path_reset(spline_type):
+    """Fit and publish the optional path, with a read-only expansion diagnostic."""
+    model, messages = _configured_grid_module(8, spline_type=spline_type)
+    assert model.useShortestPath is False
+    assert model.expandedNodeCount == 0
+    model.useShortestPath = True
+    model.SelfInit()
+    model.Reset(0)
+    assert model.expandedNodeCount > 0
+    with pytest.raises(AttributeError):
+        model.expandedNodeCount = 0
+    assert np.isfinite(model.pathCost)
+    model.UpdateState(macros.sec2nano(float(model.Output.T[-1][0])))
+    np.testing.assert_allclose(model.attRefOutMsg.read().sigma_RN, model.sigma_BN_goal, atol=1e-12)
+    _generate_test_grid(model)
+    assert model.expandedNodeCount == 0
+    with pytest.raises(bskLogging.BasiliskError, match="requires a successful reset"):
+        model.UpdateState(0)
+
+
+def test_shortest_path_option_does_not_change_effort_search():
+    """Keep effort-based planning independent of the distance-search option."""
+    model, messages = _configured_grid_module(5, cost_type=1)
+    model.Reset(0)
+    expected = np.array([[model.returnPathCoord(i, j) for j in range(3)] for i in range(model.path.N)])
+    expected_effort = model.pathCost
+    expected_count = model.expandedNodeCount
+    model.useShortestPath = True
+    model.Reset(0)
+    actual = np.array([[model.returnPathCoord(i, j) for j in range(3)] for i in range(model.path.N)])
+    np.testing.assert_array_equal(actual, expected)
+    assert model.pathCost == expected_effort
+    assert model.expandedNodeCount == expected_count
 
 
 def test_node_list_index_bounds():
