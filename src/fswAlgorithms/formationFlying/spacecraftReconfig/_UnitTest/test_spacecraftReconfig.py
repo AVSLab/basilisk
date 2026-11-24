@@ -284,8 +284,9 @@ def test_burn_clock_after_long_gap(burn_module, existing_plan, capfd):
     assert "exceeds safe conversion limit" not in capfd.readouterr().err
 
 
-def test_burn_clock_within_long_orbit(burn_module):
-    """Preserve the fractional elapsed time when the existing plan spans the entire gap."""
+@pytest.mark.parametrize("use_ref_attitude", [False, True])
+def test_burn_clock_within_long_orbit(burn_module, use_ref_attitude):
+    """Keep a future burn across a pause, then replan if its entire window was missed."""
     module = burn_module
     module.mu = orbitalMotion.MU_SUN * 1e9  # [m^3/s^2]
     nav = messaging.NavTransMsgPayload()
@@ -294,13 +295,43 @@ def test_burn_clock_within_long_orbit(burn_module):
     nav_msg = messaging.NavTransMsg().write(nav)
     module.chiefTransInMsg.subscribeTo(nav_msg)
     module.deputyTransInMsg.subscribeTo(nav_msg)
+    if use_ref_attitude:
+        reference = messaging.AttRefMsg().write(messaging.AttRefMsgPayload())
+        module.attRefInMsg.subscribeTo(reference)
     module.Reset(0)
     module.UpdateState(0)
 
+    command = messaging.THRArrayOnTimeCmdMsgReader()
+    command.subscribeTo(module.onTimeOutMsg)
+    plan = module.burnArrayInfoOutMsg.read()
+    first_burn = plan.burnArray
     elapsed = 105 * 86400 + 0.125  # [s]
-    assert module.resetPeriod > elapsed
+    assert first_burn.flag == 1
+    assert elapsed < first_burn.t
     module.UpdateState(macros.sec2nano(elapsed))
     assert module.tCurrent == elapsed
+    assert not command.isWritten()
+
+    expected_attitude = list(module.attRefOutMsg.read().sigma_RN)
+    if use_ref_attitude:
+        expected_attitude = [0.1, -0.2, 0.3]  # [-] nominal MRPs at reactivation
+        reference.write(messaging.AttRefMsgPayload(sigma_RN=expected_attitude))
+    resume = 200 * 86400  # [s]
+    assert first_burn.t + first_burn.thrustOnTime < resume < module.resetPeriod
+    module.UpdateState(macros.sec2nano(resume))
+    assert not command.isWritten()
+    assert list(module.attRefOutMsg.read().sigma_RN) == pytest.approx(expected_attitude)
+    assert module.burnArrayInfoOutMsg.read().burnArray.flag == 0
+    new_epoch = macros.sec2nano(resume + 1)  # [ns]
+    module.UpdateState(new_epoch)
+    new_plan = module.burnArrayInfoOutMsg.read()
+    assert new_plan.burnArray.flag == 1
+    assert module.tCurrent == 0.0  # [s]
+    assert not command.isWritten()
+    ignition = new_epoch + macros.sec2nano(new_plan.burnArray.t)  # [ns] inside the new window
+    module.UpdateState(ignition)
+    assert command.timeWritten() == ignition
+    assert list(command().OnTimeRequest[:2]) == pytest.approx([new_plan.burnArray.thrustOnTime / 2] * 2)
 
 
 #

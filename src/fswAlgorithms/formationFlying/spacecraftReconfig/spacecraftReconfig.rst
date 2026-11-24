@@ -51,6 +51,9 @@ Module Assumptions and Limitations
 - This module uses classic orbital element, so this module cannot be applied to near-circular or near-equatorial orbits.
 - Too long or too short attControlTime may result in control error.
 - Impulsive maneuvers are approximated by steady thrust of a certain period.
+- Choose a task period short enough to sample each intended burn window. If an update
+  arrives at or after the end of a pending burn, the module clears the plan and uses
+  the next navigation update to replan. The remaining burns depended on the missed impulse.
 
 User Guide
 ----------------------------------

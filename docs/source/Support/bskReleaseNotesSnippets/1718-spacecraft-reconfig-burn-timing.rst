@@ -1,3 +1,3 @@
 - Fixed :ref:`spacecraftReconfig` ignition timing for all three scheduled burns by preserving fractional half-burn durations and counting the first task interval when the schedule starts at simulation time zero (issue #1718).
-- :ref:`spacecraftReconfig` now starts its clock on the first planning update and can resume after gaps longer than 104 days without stalling an active plan.
+- :ref:`spacecraftReconfig` now starts its clock on the first planning update, handles gaps longer than 104 days, and replans if a pending burn window has passed.
 - :ref:`scenarioFormationReconfig` now plots the tracking error for each of the six commanded relative orbital elements.
