@@ -230,12 +230,17 @@ def burn_module():
     yield module
 
 
-@pytest.mark.parametrize("burn_slot", [0, 1, 2])
+@pytest.mark.parametrize("burn_slot, next_slot", [(0, None), (0, 1), (0, 2), (1, None), (1, 2), (2, None)])
 @pytest.mark.parametrize("epoch", [0, macros.sec2nano(4 * 365.25 * 86400) + 1])  # [ns]
 @pytest.mark.parametrize("first_tick", [8.0, 8.1], ids=["at-start", "after-start"])  # [s]
-def test_fractional_burn_start(burn_module, burn_slot, epoch, first_tick):
-    """Each slot commands both thrusters once, on the first tick at or inside the window."""
+def test_fractional_burn_start(burn_module, burn_slot, next_slot, epoch, first_tick):
+    """Check ignition and the return to nominal attitude across the scheduled burn window."""
     module = burn_module
+    nominal_attitude = [0.25, 0.0, 0.0]  # [-] MRPs
+    burn_attitude = [0.0, 0.25, 0.0]  # [-] MRPs
+    reference = messaging.AttRefMsg().write(messaging.AttRefMsgPayload(sigma_RN=nominal_attitude))
+    module.attRefInMsg.subscribeTo(reference)
+    module.attControlTime = 4.0  # [s] acquire the burn attitude before ignition
     module.Reset(epoch)
     module.resetPeriod = 100.0  # [s]
     # Supply a known schedule so the ignition check is independent of orbit selection.
@@ -246,6 +251,11 @@ def test_fractional_burn_start(burn_module, burn_slot, epoch, first_tick):
             burn.flag = 1  # pending
             burn.t = 10.375  # [s] midpoint, giving an exactly representable start at 8 s
             burn.thrustOnTime = 9.5  # [s] total across both thrusters
+            burn.sigma_RN = burn_attitude
+        elif index == next_slot:
+            burn.flag = 1
+            burn.t = 60.0  # [s] far enough away to return to nominal after the current burn
+            burn.thrustOnTime = 4.0  # [s] total across both thrusters
         else:
             burn.flag = 3  # skipped
         messaging.ReconfigBurnArray_setitem(schedule.burnArray, index, burn)
@@ -259,7 +269,15 @@ def test_fractional_burn_start(burn_module, burn_slot, epoch, first_tick):
     module.UpdateState(next_tick)
     assert command.timeWritten() == next_tick
     assert list(command().OnTimeRequest[:2]) == [4.75, 4.75]  # [s]
+    assert list(module.attRefOutMsg.read().sigma_RN) == burn_attitude
     module.UpdateState(next_tick + 1)  # [ns]
+    assert command.timeWritten() == next_tick
+
+    end_tick = epoch + macros.sec2nano(12.75)  # [ns] scheduled midpoint + half the per-thruster duration
+    module.UpdateState(end_tick - 1)
+    assert list(module.attRefOutMsg.read().sigma_RN) == burn_attitude
+    module.UpdateState(end_tick + 1)
+    assert list(module.attRefOutMsg.read().sigma_RN) == nominal_attitude
     assert command.timeWritten() == next_tick
 
 
