@@ -1301,7 +1301,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         bool returnCamImgStatus = false;
         if (this->noDisplay) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-                if ((CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                if ((this->cameraConfigBuffers[camCounter].renderRate > 0 &&
+                     CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                      this->cameraConfigBuffers[camCounter].isOn == 1) ||
                     this->firstPass < 11) {
                     returnCamImgStatus = true;
@@ -1378,7 +1379,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
                 for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                     /*! - If the camera is requesting periodic images, request them */
-                    if (CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                    if (this->cameraConfigBuffers[camCounter].renderRate > 0 &&
+                        CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                         this->cameraConfigBuffers[camCounter].isOn == 1) {
                         this->requestImage(camCounter, CurrentSimNanos);
                     }
