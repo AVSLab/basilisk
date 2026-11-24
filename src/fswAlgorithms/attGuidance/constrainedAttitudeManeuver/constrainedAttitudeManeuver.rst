@@ -250,6 +250,9 @@ continuous clearance. If the maneuver requires it, verify clearance along the fu
 using the expected time-varying celestial directions and a margin for tracking error.
 
 See :ref:`scenarioAttitudeConstrainedManeuver` for a closed-loop spacecraft example with both cone types.
+Its optional ``compareSearchModes=True`` run with attitude case 4 overlays the default and shortest
+grid paths and compares their accumulated MRP edge distances and node expansions. The example then
+simulates the shortest-path reference; existing calls retain effort-based planning.
 
 The module is configurable with the following parameters:
 
