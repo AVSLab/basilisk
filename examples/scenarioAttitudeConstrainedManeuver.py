@@ -115,7 +115,18 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 
-def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase):
+def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase,
+        *, compareSearchModes=False):
+    """Simulate a constrained maneuver, optionally comparing distance-search modes.
+
+    :param show_plots: Whether to display the figures interactively.
+    :param use2SunSensors: Whether to include the second Sun sensor along body z.
+    :param starTrackerFov: Star-tracker keep-out half-angle in degrees.
+    :param sunSensorFov: Sun-sensor keep-in half-angle in degrees.
+    :param attitudeSetCase: Attitude pair index; case 4 is the alternate-start comparison.
+    :param compareSearchModes: Compare both distance searches, then simulate the shortest path.
+    :return: Figure dictionary, or ``(figures, comparison)`` when comparing search modes.
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -183,10 +194,13 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
-    sigma_BN_start = [ [0.522, -0.065,  0.539],     # to violate one keepIn only
-                       [0.314, -0.251,  0.228],     # to violate two keepIn and not keepOut
-                       [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn
-                       [-0.412, 0.044, -0.264] ]    # to violate keepOut only
+    sigma_BN_start = [  # MRPs [-]
+        [0.522, -0.065, 0.539],      # to violate one keepIn only
+        [0.314, -0.251, 0.228],      # to violate two keepIn and not keepOut
+        [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn
+        [-0.412, 0.044, -0.264],     # to violate keepOut only
+        [-3.0 / 7.0, -2.0 / 7.0, 0.0],  # Alternate start for issue #1726
+    ]
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
@@ -250,10 +264,13 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #
 
     # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
-    sigma_BN_target = [ [0.342,  0.223, -0.432],     # to violate one keepIn only
-                        [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
-                        [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn
-                        [0.350,  0.220, -0.440] ]    # to violate keepOut only
+    sigma_BN_target = [  # MRPs [-]
+        [0.342, 0.223, -0.432],      # to violate one keepIn only
+        [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
+        [0.350, 0.220, -0.440],      # to violate keepOut and both keepIn
+        [0.350, 0.220, -0.440],      # to violate keepOut only
+        [0.342, 0.223, -0.432],      # Alternate start uses the case 0 target
+    ]
 
     # setup readManeuver guidance module
     CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(8)
@@ -262,7 +279,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04
     CAM.BSplineType = 0
-    CAM.costFcnType = 1
+    CAM.costFcnType = 0 if compareSearchModes else 1
     CAM.appendKeepOutDirection([1,0,0], starTrackerFov*macros.D2R)
     CAM.appendKeepInDirection([0,1,0], sunSensorFov*macros.D2R)
     scSim.AddModelToTask(simTaskName, CAM)
@@ -402,6 +419,12 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # cross_init() and reset() routines on each module.
     scSim.InitializeSimulation()
 
+    if compareSearchModes:
+        comparison = {"default": _search_result(CAM)}
+        CAM.useShortestPath = True
+        CAM.Reset(0)  # [ns] Replan before advancing any simulation state.
+        comparison["shortest"] = _search_result(CAM)
+
     # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -457,13 +480,125 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     pltName = fileName + "6" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
     figureList[pltName] = plt.figure(6)
 
+    if compareSearchModes:
+        figureList = {name + "ShortestPath": figure for name, figure in figureList.items()}
+        suffix = f"{int(use2SunSensors)}{starTrackerFov}{sunSensorFov}{attitudeSetCase}"
+        figureList[fileName + "SearchPaths" + suffix] = plot_search_paths(comparison)
+        figureList[fileName + "SearchComparison" + suffix] = plot_search_comparison(comparison, CAM.N)
+
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
+    if compareSearchModes:
+        return figureList, comparison
     return figureList
+
+
+def _edge_distance(first, second):
+    """Evaluate the planner's dimensionless MRP edge metric for two waypoints."""
+    first_node = constrainedAttitudeManeuver.Node()
+    second_node = constrainedAttitudeManeuver.Node()
+    first_node.sigma_BN = first
+    second_node.sigma_BN = second
+    return constrainedAttitudeManeuver.distance(first_node, second_node)
+
+
+def _search_result(model):
+    """Copy the path and search metrics before a subsequent reset invalidates them."""
+    waypoints = np.array([[model.returnPathCoord(i, j) for j in range(3)]
+                         for i in range(model.path.N)])
+    edge_distance = sum(_edge_distance(first, second)
+                        for first, second in zip(waypoints[:-1], waypoints[1:]))
+    return {"waypoints": waypoints, "edgeDistance": edge_distance,
+            "expandedNodeCount": model.expandedNodeCount}
+
+
+def _principal_path_segments(waypoints):
+    """Return unit-sphere waypoints and line segments separated at shadow switches."""
+    principal = np.array(waypoints, dtype=float, copy=True)
+    norm_squared = np.sum(principal**2, axis=1)
+    outside = norm_squared > 1.0
+    principal[outside] *= -1.0 / norm_squared[outside, None]
+    segments = []
+    switches = []
+    start = 0
+    tolerance = 1e-12  # [-] Allow roundoff when comparing MRP distances.
+    for index in range(1, len(principal)):
+        first, second = principal[index - 1:index + 1]
+        if np.linalg.norm(second - first) > _edge_distance(first, second) + tolerance:
+            segments.append(principal[start:index])
+            switches.extend([first, second])
+            start = index
+    segments.append(principal[start:])
+    return principal, segments, np.array(switches).reshape(-1, 3)
+
+
+def plot_search_paths(comparison):
+    """Overlay the grid paths inside the unit MRP sphere, omitting shadow-switch edges."""
+    fig = plt.figure(figsize=(8, 7))
+    ax = fig.add_subplot(projection="3d")
+    azimuth = np.linspace(0.0, 2.0 * np.pi, 25)  # [rad]
+    polar = np.linspace(0.0, np.pi, 13)  # [rad]
+    ax.plot_wireframe(np.outer(np.cos(azimuth), np.sin(polar)),
+                     np.outer(np.sin(azimuth), np.sin(polar)),
+                     np.outer(np.ones_like(azimuth), np.cos(polar)),
+                     color="0.8", alpha=0.35, linewidth=0.5)
+    switch_label = "Shadow-switch endpoints"
+    for key, label, color, style in [
+        ("default", "Default heuristic", "tab:orange", "--"),
+        ("shortest", r"Shortest path ($h=\theta/4$)", "tab:blue", "-"),
+    ]:
+        principal, segments, switches = _principal_path_segments(comparison[key]["waypoints"])
+        for index, segment in enumerate(segments):
+            ax.plot(*segment.T, linestyle=style, marker="o", markersize=4,
+                    color=color, label=label if index == 0 else None)
+        if len(switches):
+            ax.scatter(*switches.T, marker="s", facecolors="none", edgecolors=color,
+                       s=70, label=switch_label)
+            switch_label = None
+    ax.scatter(*principal[0], color="black", marker="*", s=110, label="Start")
+    ax.scatter(*principal[-1], color="black", marker="X", s=65, label="Goal")
+    ax.set(xlabel=r"$\sigma_1$ [-]", ylabel=r"$\sigma_2$ [-]", zlabel=r"$\sigma_3$ [-]",
+           xlim=(-1.05, 1.05), ylim=(-1.05, 1.05), zlim=(-1.05, 1.05),
+           title="Distance-search grid paths")
+    ax.set_box_aspect((1, 1, 1))
+    ax.view_init(elev=25, azim=-60)
+    ax.legend(loc="upper left", fontsize=9)
+    fig.text(0.5, 0.02, "Unit MRP sphere; connecting lines are omitted at shadow switches.",
+             ha="center", fontsize=9)
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    return fig
+
+
+def plot_search_comparison(comparison, refinement):
+    """Tabulate actual grid distance and node expansions for the two searches."""
+    fig, ax = plt.subplots(figsize=(8, 3))
+    ax.axis("off")
+    rows = [
+        [label, f'{comparison[key]["edgeDistance"]:.5f}', str(comparison[key]["expandedNodeCount"])]
+        for key, label in [("default", "Default heuristic"), ("shortest", r"Shortest path ($h=\theta/4$)")]
+    ]
+    table = ax.table(cellText=rows,
+                     colLabels=["Search mode", "MRP edge distance [-]", "Expanded nodes"],
+                     cellLoc="center", bbox=(0, 0.3, 1, 0.5))
+    table.auto_set_font_size(False)
+    table.set_fontsize(11)
+    for (row, _), cell in table.get_celld().items():
+        if row == 0:
+            cell.set_facecolor("0.9")
+            cell.set_text_props(weight="bold")
+    reduction = 100.0 * (1.0 - comparison["shortest"]["edgeDistance"]
+                        / comparison["default"]["edgeDistance"])
+    ax.set_title(f"Grid distance and search work (N = {refinement})")
+    ax.text(0.5, 0.15, f"{reduction:.1f}% shorter grid path with the optional heuristic",
+            transform=ax.transAxes, ha="center")
+    ax.text(0.5, 0.02, "Grid distance does not measure fitted control effort or continuous cone clearance.",
+            transform=ax.transAxes, ha="center", fontsize=9)
+    fig.tight_layout()
+    return fig
 
 
 # Plotting RW functions
