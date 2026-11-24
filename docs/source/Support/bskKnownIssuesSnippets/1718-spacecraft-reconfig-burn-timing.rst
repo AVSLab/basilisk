@@ -9,3 +9,5 @@
   In Basilisk 2.12.0 through 2.12.2, a gap of more than about 104 days between updates
   could also stall an active plan. On those releases, reset the module when reactivating it
   after such a gap to build a fresh plan from the current navigation inputs.
+  On affected releases, also reset before resuming if a scheduled burn window has passed.
+  Otherwise the module can command the missed impulse at the wrong orbital position.

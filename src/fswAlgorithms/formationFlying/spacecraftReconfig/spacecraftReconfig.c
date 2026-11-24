@@ -168,6 +168,18 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
                     uint64_t callTime,
                     int64_t moduleID)
 {
+    // Later burns assume every earlier impulse was applied. Replan if an entire burn window was missed.
+    for (int i = 0; i < MAX_BURN_CNT; ++i) {
+        const ReconfigBurnInfoMsgPayload* burn = &configData->burnArrayInfoOutMsgBuffer.burnArray[i];
+        if (burn->flag == 1 &&
+            configData->tCurrent >= burn->t + burn->thrustOnTime / (2 * thrustConfigMsgBuffer.numThrusters)) {
+            *attRefOutMsgBuffer =
+                configData->attRefInIsLinked ? attRefInMsgBuffer : AttRefMsg_C_read(&configData->attRefOutMsg);
+            Reset_spacecraftReconfig(configData, callTime, moduleID);
+            return;
+        }
+    }
+
     /* conversion from r,v to classical orbital elements */
     ClassicElements oe_c, oe_d;
     rv2elem(configData->mu, chiefTransMsgBuffer.r_BN_N, chiefTransMsgBuffer.v_BN_N, &oe_c);
