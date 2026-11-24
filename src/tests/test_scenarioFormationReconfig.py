@@ -21,6 +21,7 @@ import os
 import sys
 
 import pytest
+from Basilisk.architecture import bskLogging
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simHelpers
 
@@ -43,15 +44,22 @@ import scenarioFormationReconfig
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
-def test_scenarioFormationReconfig(show_plots, useRefAttitude):
+def test_scenarioFormationReconfig(show_plots, useRefAttitude, capfd):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataPos, dataVel, dataPos2, dataVel2, dataAttErr, numDataPoints, figureList = \
-        scenarioFormationReconfig.run(show_plots, useRefAttitude)
+    previous_log_level = bskLogging.getDefaultLogLevel()
+    try:
+        bskLogging.setDefaultLogLevel(bskLogging.WARNING)
+        dataPos, dataVel, dataPos2, dataVel2, dataAttErr, numDataPoints, figureList = \
+            scenarioFormationReconfig.run(show_plots, useRefAttitude)
+    finally:
+        bskLogging.setDefaultLogLevel(previous_log_level)
+    captured = capfd.readouterr()
+    assert "not properly initialized or written" not in captured.out + captured.err
 
     # Initial deputy-minus-chief offsets relative to the commanded formation.
     initial_errors = (300., -300., -100., 500., 100., 500.)  # [ppm, ppm, µrad, µrad, µrad, µrad]
@@ -130,24 +138,24 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
             , [-3836.64938055, -3914.13722047,  6647.64517290]
             , [ 2478.82436534, -4217.63944939, -4296.20314042]
         ]
-    trueAttErr = []
+    # Attitude error MRPs [-] sampled after guidance runs, including its first update at time zero.
     if useRefAttitude:
         trueAttErr = [
-            [0.00000000e+00,  0.00000000e+00,  0.00000000e+00]
-            , [ 5.21804822e-15,  0.00000000e+00,  0.00000000e+00]
-            , [ 2.65911396e-03,  2.36681599e-03, -1.80444161e-03]
-            , [ 1.44285759e-01,  1.31628282e-02,  1.83033495e-02]
-            , [ 1.44328993e-15,  2.42608910e-16,  1.39828515e-16]
-            , [ 1.96720418e-12,  4.85774354e-12,  7.41408928e-12]
+            [-1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [2.58861076e-03, 2.30655519e-03, -1.75748380e-03],
+            [1.37584085e-01, 1.31436203e-02, 1.66997782e-02],
+            [0.0, 0.0, 0.0],
+            [1.91624494e-12, 4.73143979e-12, 7.22020887e-12],
         ]
     else:
         trueAttErr = [
-            [0.00000000e+00,  0.00000000e+00,  0.00000000e+00]
-            , [ 1.01291777e-15, -2.81104312e-15, -2.10435630e-15]
-            , [-1.06877222e-03,  2.79148299e-03,  9.70789605e-04]
-            , [ 8.77861065e-02,  6.33908188e-02, -3.07211170e-02]
-            , [ 1.06899914e-15,  6.47426427e-16, -4.83988072e-16]
-            , [-5.51346908e-05,  3.10799986e-04, -1.30667867e-04]
+            [-1.68285292e-01, 3.48843823e-01, 4.23586371e-01],
+            [0.0, 0.0, 0.0],
+            [-1.04014638e-03, 2.72015686e-03, 9.45507903e-04],
+            [8.46122885e-02, 5.96738540e-02, -2.92872279e-02],
+            [0.0, 0.0, 0.0],
+            [-5.37244904e-05, 3.02725591e-04, -1.27251173e-04],
         ]
 
     # compare the results to the truth values
