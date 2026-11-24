@@ -70,6 +70,7 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t cal
     configData->burnArrayInfoOutMsgBuffer = ReconfigBurnArrayInfoMsg_C_zeroMsgPayload();
 
     configData->prevCallTime = callTime;
+    configData->planStartTime = callTime;
     configData->tCurrent = 0.0;
     configData->thrustOnFlag = 0;
 
@@ -107,13 +108,13 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t ca
     }
 
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag != 0) {
-        // Keep whole seconds separate so an interval longer than 2^53 ns still advances the plan.
+        // Measure from the integer plan epoch so repeated fractional task intervals cannot delay ignition.
         const uint64_t nanosPerSecond = 1000000000; // [ns/s]
-        const uint64_t previous = configData->prevCallTime;
-        const bool forward = callTime >= previous;
-        const uint64_t gap = forward ? callTime - previous : previous - callTime;
+        const uint64_t start = configData->planStartTime;
+        const bool forward = callTime >= start;
+        const uint64_t gap = forward ? callTime - start : start - callTime;
         const double seconds = (double)(gap / nanosPerSecond) + nanoToSec(gap % nanosPerSecond);
-        configData->tCurrent += forward ? seconds : -seconds;
+        configData->tCurrent = forward ? seconds : -seconds;
     }
     configData->prevCallTime = callTime;
 
@@ -189,6 +190,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 0) {
         configData->resetPeriod = 2 * M_PI / sqrt(configData->mu / pow(oe_c.a, 3)); // one orbital period
         ScheduleDV(configData, oe_c, oe_d, thrustConfigMsgBuffer, vehicleConfigMsgBuffer);
+        configData->planStartTime = callTime;
         configData->tCurrent = 0.0; // [s] Burn times are relative to this navigation sample.
         // sort three burns (dvArray structures) in ascending order
         qsort(configData->burnArrayInfoOutMsgBuffer.burnArray,
@@ -211,8 +213,8 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
         // middle of thruster burn duration time is located at the expected exact timing of impulsive control
-        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
-                         (2 * thrustConfigMsgBuffer.numThrusters) &&
+        if (t_left <= configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
+                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 1) {
             configData->thrustOnFlag = 1; // thrustOnFlag is ON
             configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag =
@@ -241,8 +243,8 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             // in this case, second burn attitude is set at target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
-                         (2 * thrustConfigMsgBuffer.numThrusters) &&
+        if (t_left <= configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
+                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
             configData->thrustOnFlag = 1;
             configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag = 2;
@@ -276,8 +278,8 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             // in this case, third burn attitude is set at target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[2].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
-        if (t_left < configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
-                         (2 * thrustConfigMsgBuffer.numThrusters) &&
+        if (t_left <= configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
+                          (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1) {
             configData->thrustOnFlag = 1;
             configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 2;

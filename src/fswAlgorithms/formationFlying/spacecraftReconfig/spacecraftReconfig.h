@@ -58,7 +58,8 @@ typedef struct
     int attRefInIsLinked;       //!< flag if the attitude reference input message is linked
     ReconfigBurnArrayInfoMsgPayload burnArrayInfoOutMsgBuffer; //!< msg buffer for burn array info
 
-    BSKLogger* bskLogger; //!< BSK Logging
+    BSKLogger* bskLogger;   //!< BSK Logging
+    uint64_t planStartTime; //!< [ns] update that created the active burn schedule
 } spacecraftReconfigConfig;
 
 #ifdef __cplusplus
