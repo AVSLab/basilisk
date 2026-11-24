@@ -281,14 +281,10 @@ def run(show_plots, useRefAttitude):
     samplingTime = simHelpers.samplingTime(simulationTime, dynTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
-    attRefLog = spacecraftReconfigModule.attRefOutMsg.recorder(samplingTime)
-    thrCmdLog = spacecraftReconfigModule.onTimeOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTaskName, dataLog)
     scSim.AddModelToTask(dynTaskName, dataLog2)
-    scSim.AddModelToTask(dynTaskName, attRefLog)
-    scSim.AddModelToTask(dynTaskName, thrCmdLog)
-    scSim.AddModelToTask(dynTaskName, attErrLog)
+    scSim.AddModelToTask(fswTaskName, attErrLog)  # Record after attTrackingError writes at this tick.
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
@@ -343,9 +339,7 @@ def run(show_plots, useRefAttitude):
     figureList[pltName] = plt.figure(1)
     # attitude control error (figure2)
     plt.figure(2)
-    plt.plot(timeData, attErr[:, 0])
-    plt.plot(timeData, attErr[:, 1])
-    plt.plot(timeData, attErr[:, 2])
+    plt.plot(attErrLog.times() * macros.NANO2SEC / orbit_period, attErr)
     plt.xlabel("time [orbit]")
     plt.ylabel("MRP Error")
     pltName = fileName + "2" + str(int(useRefAttitude))

@@ -1,4 +1,4 @@
 - Fixed :ref:`spacecraftReconfig` ignition timing for all three scheduled burns by preserving fractional half-burn durations and measuring elapsed time from the integer planning tick. A tick exactly at the start of a burn window now fires on time (issue #1718). Rebuild native clients that allocate ``spacecraftReconfigConfig`` for the added epoch field.
 - :ref:`spacecraftReconfig` now starts its clock on the first planning update, handles gaps longer than 104 days, and replans if a pending burn window has passed.
-- :ref:`scenarioFormationReconfig` now plots the tracking error for each of the six commanded relative orbital elements.
+- :ref:`scenarioFormationReconfig` now plots the tracking error for each of the six commanded relative orbital elements, samples attitude error after guidance runs, and avoids recording unwritten burn commands.
 - :ref:`spacecraftReconfig` now honors nonzero normalized semimajor-axis targets and accounts for their mean-anomaly drift over the planning orbit. Scripts that supplied the first target in meters must divide it by the chief's semimajor axis in meters.
