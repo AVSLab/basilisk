@@ -23,4 +23,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         aria-label="Beta documentation for the upcoming Basilisk release"
         title="Documentation for the upcoming Basilisk release">BETA</span>
   {% endif %}
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       {% if not bsk_docs_prerelease %}aria-current="true"{% endif %}>Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       {% if bsk_docs_prerelease %}aria-current="true"{% endif %}>Beta</a>
+  </nav>
 {% endblock %}
