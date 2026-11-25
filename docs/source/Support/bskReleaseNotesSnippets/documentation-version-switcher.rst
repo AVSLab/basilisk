@@ -1,0 +1,1 @@
+- Replaced the landing-page version note with compact sidebar links between the latest stable and beta documentation, highlighting the current version.
