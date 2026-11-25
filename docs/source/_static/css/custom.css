@@ -94,6 +94,43 @@ a.el:visited {
     opacity: 1;
 }
 
+/* Keep version navigation compact, with only the inactive text softened. */
+.wy-side-nav-search .bsk-version-switcher {
+    display: flex;
+    margin-top: 6px;
+    overflow: hidden;
+    border: 1px solid #7c6a39;
+    border-radius: 6px;
+}
+
+.wy-side-nav-search .bsk-version-switcher a {
+    flex: 1;
+    margin: 0;
+    padding: 2px 5px;
+    border-radius: 0;
+    font-size: 8.5pt;
+    font-weight: normal;
+    line-height: 1.4;
+    color: rgb(48 43 32 / 75%);
+    background: #e1d1a1;
+    text-align: center;
+    text-decoration: none;
+}
+
+.wy-side-nav-search .bsk-version-switcher a[aria-current="true"] {
+    font-weight: 600;
+    color: #f1e4c3;
+    background: #343131;
+}
+
+@media (pointer: coarse) {
+    .wy-side-nav-search .bsk-version-switcher a {
+        min-height: 44px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
 /* An opaque fallback remains readable when backdrop filtering is unavailable. */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .wy-side-nav-search input[type="text"] {
