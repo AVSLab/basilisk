@@ -371,6 +371,7 @@ img.logo {
     width: 100%;
     height: auto;
     max-height: 300px;
+    margin-bottom: 24px;
     object-fit: cover;
     object-position: center;
 }
