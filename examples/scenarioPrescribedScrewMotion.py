@@ -192,7 +192,8 @@ def run(show_plots):
     one_dof_rotation_profiler_1.setSmoothingDuration(0.75)
     one_dof_rotation_profiler_1.setInitDisplacement(init_displacement)
     one_dof_rotation_profiler_1.setScrewConstant(screw_constant_1)
-    sc_sim.AddModelToTask(dyn_task_name, one_dof_rotation_profiler_1)
+    # Publish both screw profiles before the prescribed bodies sample their commands at this tick.
+    sc_sim.AddModelToTask(dyn_task_name, one_dof_rotation_profiler_1, 1)
 
     # Create the second rotational motion profiler
     one_dof_rotation_profiler_2 = prescribedRotation1DOF.PrescribedRotation1DOF()
@@ -204,7 +205,7 @@ def run(show_plots):
     one_dof_rotation_profiler_2.setSmoothingDuration(0.75)
     one_dof_rotation_profiler_2.setInitDisplacement(init_displacement)
     one_dof_rotation_profiler_2.setScrewConstant(screw_constant_2)
-    sc_sim.AddModelToTask(dyn_task_name, one_dof_rotation_profiler_2)
+    sc_sim.AddModelToTask(dyn_task_name, one_dof_rotation_profiler_2, 1)
 
     # Create the prescribed rotational motion reference message
     prescribed_rotation_msg_data = messaging.HingedRigidBodyMsgPayload()

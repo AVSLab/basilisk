@@ -210,6 +210,9 @@ class LinearTranslationNDOFStateEffector final
     std::string getNameOfRhoDotState() const { return this->nameOfRhoDotState; };
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     static uint64_t effectorID; //!< [] ID number of this effector
     int N = 0;                  //!< number of translating body axes defined in the system
     std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< vector of TB effector structs

@@ -140,6 +140,7 @@ void svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double time
                                        timeStep,
                                        this->flatStorage->scaledDiffusions,
                                        this->flatStorage->threePointIncrements);
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

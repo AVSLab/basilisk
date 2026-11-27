@@ -19,16 +19,41 @@
 
 #include "stateVecIntegrator.h"
 #include "dynamicObject.h"
+#include <algorithm>
+#include <exception>
 
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn)
     : dynPtrs{ dynIn }
 {
 }
 
-void StateVecIntegrator::integrate(double currentTime, double timeStep)
+void StateVecIntegrator::integrate(double currentTime, double timeStep, std::optional<uint64_t> endTick)
 {
+    this->scheduledEndTick = endTick;
     this->ensureIntegrationBinding();
+    // Stochastic methods skip their numerical stages and rollback buffers on zero-duration steps.
+    if (timeStep == 0.0) {
+        this->validateFinalStates();
+    }
     this->integrateImpl(currentTime, timeStep);
+}
+
+void StateVecIntegrator::validateFinalStates() const
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->validateIntegratedState();
+    }
+}
+
+void StateVecIntegrator::restoreDynamicsAfterFailedStep() const
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        try {
+            object->restoreAfterFailedStep();
+        } catch (const std::exception& error) {
+            object->bskLogger.bskLog(BSK_WARNING, "Failed to restore dynamics after a rejected step: %s", error.what());
+        }
+    }
 }
 
 void StateVecIntegrator::ensureIntegrationBinding()
@@ -41,15 +66,50 @@ void StateVecIntegrator::ensureIntegrationBinding()
     }
 }
 
+void StateVecIntegrator::prepareConstraintEndpoints(double time)
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->prepareConstraintEndpoints(time);
+    }
+}
+
 void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
 {
+    this->prepareConstraintEndpoints(time);
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotion(time, timeStep);
     }
 }
 
+void StateVecIntegrator::evaluateFixedStepDerivatives(double startTime, double timeStep, double fraction)
+{
+    this->halfTick = false;
+    if (this->scheduledEndTick) {
+        // After years of simulation, distinct RK stage ticks can round to the same double in seconds.
+        const auto start = this->dynPtrs.front()->timeBeforeNanos;
+        const auto end = *this->scheduledEndTick;
+        if (fraction == 0.0) {
+            this->fixedStageTick = start;
+        } else if (fraction == 0.5) {
+            const auto first = std::min(start, end);
+            const auto span = std::max(start, end) - first; // [ns]
+            this->fixedStageTick = first + span / 2;
+            this->halfTick = span % 2 != 0;
+        } else if (fraction == 1.0) {
+            this->fixedStageTick = end;
+        }
+    }
+    struct ClearStageTick
+    {
+        std::optional<uint64_t>& tick;
+        ~ClearStageTick() { tick.reset(); }
+    } clear{ this->fixedStageTick };
+    this->evaluateDerivatives(startTime + fraction * timeStep, timeStep);
+}
+
 void StateVecIntegrator::evaluateDiffusions(double time, double timeStep)
 {
+    this->prepareConstraintEndpoints(time);
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotionDiffusion(time, timeStep);
     }

@@ -234,6 +234,7 @@ def run(show_plots, rFirst, rSecond):
     gravFactory.createSpiceInterface(time=timeInitString,
                                      epochInMsg=True)
     gravFactory.spiceObject.zeroBase = 'Earth'
+    scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, ModelPriority=2)
     gravFactory.addBodiesTo(scObject)
 
     # Add ephemeris for Hill frame

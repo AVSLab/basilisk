@@ -131,6 +131,9 @@ class SpinningBodyTwoDOFStateEffector final
         override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     void validateConfiguration();
     static uint64_t effectorID; //!< [] ID number of this panel
     double u1 = 0.0;            //!< [N-m] optional motor torque for first axis

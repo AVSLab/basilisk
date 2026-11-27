@@ -24,7 +24,7 @@ provides information on what this message is used for.
     :caption: GravityEffector Module I/O Messages
 
     output centralBodyOutMsg SpicePlanetStateMsgPayload
-        Central planet body state output message.
+        Central planet state. A connected ephemeris is forwarded after its first write and retains its source timestamp.
 
 The gravity effector contains a list of ``GravBodyData`` objects which contain the planet mass and size properties etc.
 The following table lists the Spice planet ephemeris input message that can be connected to a ``GravBodyData`` object.
@@ -159,3 +159,57 @@ evaluated field by a relative error of order :math:`(\omega\,\Delta t)^2`.
 The advanced orientation and its time derivative at the same epoch are stored as the state-engine properties
 ``[planetName].J20002Pfix`` and ``[planetName].J20002Pfix_dot``, both in the :math:`[PN]` convention of the
 planet state message.
+When spacecraft share a ``GravBodyData``, each spacecraft updates the planet position, velocity,
+gravitational parameter, orientation, and orientation derivative in its own state manager.
+
+For spacecraft dynamics, gravity extrapolates planet position and orientation to the signed stage
+time supplied by the integrator in double-precision seconds. SOSRI can evaluate a stage before time
+zero. When the spacecraft accepts a state, the central body is extrapolated to the
+accepted clock tick. Subtracting the integer output and message timestamps before conversion to
+seconds preserves small offsets even years into a mission.
+A synchronized spacecraft can publish between its primary's steps. It republishes its accepted
+inertial state and timestamp even if another spacecraft has since refreshed a shared gravity body.
+Its mass-state message also carries the accepted timestamp.
+Schedule articulated effectors at their parent spacecraft module's rate. Their inertial outputs use
+the spacecraft's accepted pose and timestamp, including when the hub follows a prescribed reference.
+A rejected integration trial leaves the previously published inertial messages available.
+A secondary subscribed to its primary's ``centralBodyOutMsg`` uses the sample forwarded at
+the start of the same integration step, with the original source timestamp.
+
+If a linked planet message is still unwritten during spacecraft reset, the spacecraft defers
+its initial derivatives. On a zero-duration update, the spacecraft applies written attitude
+and translation references and reevaluates the derivatives with the latest available ephemerides
+once all linked planet messages are written. This includes replacements at the same timestamp.
+Synchronized spacecraft apply their written motion references and refresh articulated endpoint positions,
+attitudes, and velocities before evaluating initial constraint loads. The initial derivatives, accepted endpoints,
+and all gravity evaluations during a zero-duration update use the exact integer tick, including at multi-year epochs.
+At reset and during zero-duration updates, the spacecraft stores that tick directly in the double-precision
+nanosecond component of ``systemTime``. Other stages report their signed stage time.
+At each subsequent integrator stage, constraints use endpoint positions and velocities in a common inertial frame.
+A constraint with an unknown central-body origin defers its loads until both endpoints can be located.
+Until its reference is first written, each component of the motion retains
+its configured or integrated state.
+Write every linked ephemeris before advancing simulation time. While a linked central-body input
+is unwritten, the spacecraft and its articulated bodies defer their inertial state messages.
+Mass properties and relative joint states can already be read.
+State-effector reaction forces and torques retain their initial zero values until the spacecraft
+evaluates the derivatives with a complete gravity sample. After a rejected integration trial,
+queries retain the last accepted reaction loads until the next successful update.
+Hinge reaction forces and torques use the accepted hub angular velocity, including a written
+attitude reference, and the hinge acceleration from the last dynamics evaluation.
+A missing perturbing-body input alone does not prevent publication of the inertial state.
+
+In six-degree-of-freedom mode, the spacecraft computes energy from the accepted state after
+applying any prescribed attitude and translation. A direct call to ``spacecraft.computeEnergyMomentum(time)``
+evaluates the gravitational potential of the current state at the supplied time in seconds.
+Its kinetic energy and momentum include prescribed-body commands read at the accepted spacecraft tick.
+At a zero-duration update with a pending ephemeris, ``totOrbEnergy`` and ``orbPotentialEnergyContr``
+are ``NaN``. An advance rejected for a missing ephemeris leaves the stored diagnostics intact.
+Direct energy queries raise ``BasiliskError`` if any required body has an unavailable sample.
+If an integration error leaves effector data at a trial stage, direct spacecraft energy queries
+also raise ``BasiliskError``. The last reported energy remains available until the next successful spacecraft update.
+The public C++ method ``GravityEffector.updateEnergyContributions()`` also checks sample
+availability before adding to the caller's accumulator.
+Spacecraft sharing a ``GravBodyData`` see the same sample validity. After a missing ephemeris
+is written, sampling it on either spacecraft makes that body's data available to both.
+Direct energy queries in ``pointMassTranslationalOnly`` mode also raise ``BasiliskError``.

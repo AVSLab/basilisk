@@ -95,6 +95,49 @@ def test_stateful():
     assert expState.xState.getState()[0][0] == pytest.approx(expected)
 
 
+def test_sosri_signed_stage_clock():
+    """Integrate dx/dt = t across SOSRI's negative launch stage with a zero diffusion coefficient."""
+    from Basilisk.architecture import sysModel
+    from Basilisk.simulation import svIntegrators
+
+    scene = mujoco.MJScene("<mujoco/>")
+    drift_times = []
+    diffusion_times = []
+
+    class Drift(StatefulSysModel.StatefulSysModel):
+        def registerStates(self, registerer):
+            shape = stateArchitecture.MatrixShape()
+            shape.rows = shape.cols = 1
+            spec = stateArchitecture.StateSpec()
+            spec.state = spec.derivative = spec.diffusionTangent = shape
+            spec.noiseCount = 1
+            self.x = registerer.registerStateSpec("x", spec)
+
+        def UpdateState(self, tick):
+            time = scene.getEvaluationTime()
+            drift_times.append((time, tick))
+            self.x.setDerivative([[time]])
+
+    class Diffusion(sysModel.SysModel):
+        def UpdateState(self, tick):
+            diffusion_times.append((scene.getEvaluationTime(), tick))
+            drift.x.setDiffusion([[0.0]], index=0)
+
+    drift, diffusion = Drift(), Diffusion()
+    scene.AddModelToDynamicsTask(drift)
+    scene.AddModelToDiffusionDynamicsTask(diffusion)
+    scene.setIntegrator(svIntegrators.svStochasticIntegratorSOSRI(scene))
+    scene.Reset(0)
+    scene.UpdateState(macros.sec2nano(1.0))  # [ns]
+    assert drift_times[1] == (pytest.approx(-0.04199224421316468), 0)  # [s], [ns]
+    assert drift.x.getState()[0][0] == pytest.approx(0.5, abs=1e-13, rel=0)
+    assert diffusion_times[-1][0] == pytest.approx(0.758661169101175)  # [s]
+    assert scene.getEvaluationTime() == 1.0  # [s] accepted time after the final diffusion stage
+
+    scene.equationsOfMotionDiffusion(-0.125, 1.0)  # [s]
+    assert diffusion_times[-1] == (-0.125, 0)  # [s], [ns]
+
+
 def test_register_state_preserves_legacy_keyword_arguments():
 
     class KeywordRegistrationModel(StatefulSysModel.StatefulSysModel):

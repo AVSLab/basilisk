@@ -154,7 +154,8 @@ def run(show_plots):
     dataRecRate = macros.sec2nano(dataRecStep)  # [ns]
     simProc = scSim.CreateNewProcess(simProcessName)
     simProc.addTask(scSim.CreateNewTask(dynTaskName, dynProcessRate))
-    simProc.addTask(scSim.CreateNewTask(fswTaskName, fswProcessRate))
+    # Publish the current profiler commands before the array elements read them on the dynamics task.
+    simProc.addTask(scSim.CreateNewTask(fswTaskName, fswProcessRate), taskPriority=1)
 
     # Add the spacecraft module
     scObject = spacecraft.Spacecraft()
@@ -375,7 +376,7 @@ def run(show_plots):
     array2Element9PrescribedDataLog = array2RotProfilerList[8].spinningBodyOutMsg.recorder(dataRecRate)
     array2Element10PrescribedDataLog = array2RotProfilerList[9].spinningBodyOutMsg.recorder(dataRecRate)
 
-    scSim.AddModelToTask(fswTaskName, scStateData)
+    scSim.AddModelToTask(dynTaskName, scStateData)
     scSim.AddModelToTask(fswTaskName, array1Element1PrescribedDataLog)
     scSim.AddModelToTask(fswTaskName, array1Element2PrescribedDataLog)
     scSim.AddModelToTask(fswTaskName, array1Element3PrescribedDataLog)

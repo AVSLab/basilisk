@@ -25,6 +25,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <Eigen/Core>
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
@@ -92,6 +93,9 @@ class LinearTranslationOneDOFStateEffector final
     Eigen::Matrix3d getDCM_FB() const { return dcm_FB; };
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     double mass = 1.0;                       //!< [kg] mass of effector
     double k = 0;                            //!< [N/m] linear spring constant
     double c = 0;                            //!< [N-s/m] linear damping term

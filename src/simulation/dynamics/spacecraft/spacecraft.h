@@ -26,8 +26,11 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
+#include <Eigen/Core>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
@@ -46,10 +49,10 @@ class Spacecraft : public DynamicObject
     std::string sysTimePropertyName;               //!< Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg;     //!< (optional) reference attitude input message name
     ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< (optional) reference translation input message name
-    double totOrbEnergy;                           //!< [J] Total orbital kinetic energy
+    double totOrbEnergy;                           //!< [J] Total orbital energy.
     double totRotEnergy;                           //!< [J] Total rotational energy
     double rotEnergyContr;                         //!< [J] Contribution of stateEffector to total rotational energy
-    double orbPotentialEnergyContr;                //!< [J] Contribution of stateEffector to total rotational energy
+    double orbPotentialEnergyContr;                //!< [m^2/s^2] Specific orbital potential.
     BackSubMatrices backSubContributions;          //!< class variable
     Eigen::Vector3d sumForceExternal_N;            //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;            //!< [N] Sum of forces given in the body frame
@@ -68,7 +71,12 @@ class Spacecraft : public DynamicObject
     Eigen::Vector3d rotAngMomPntCContr_B; //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
     HubEffector hub;                      //!< The spacecraft plus needs access to the spacecraft hub
     GravityEffector gravField;            //!< Gravity effector for gravitational field experienced by spacecraft
-    bool pointMassTranslationalOnly = false;     //!< -- If true, integrate only translational point-mass dynamics
+    bool pointMassTranslationalOnly = false; //!< -- If true, integrate only translational point-mass dynamics
+  private:
+    bool stateEffectorDerivativesReady = false; //!< The last dynamics evaluation computed state-effector derivatives.
+    bool useAcceptedEnergyEpoch = false;        //!< Supply the accepted tick to the scheduled virtual energy callback.
+
+  public:
     BSKLogger bskLogger;                         //!< BSK Logging
     Message<SCStatesMsgPayload> scStateOutMsg;   //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg; //!< spacecraft mass properties output message
@@ -98,6 +106,9 @@ class Spacecraft : public DynamicObject
   private:
     std::vector<StateEffector*> states;         //!< Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors; //!< Vector of dynamic effectors attached to dynObject
+    StateBufferSegment rollbackSegment;         //!< Hub and effector states that preparation can change.
+    Eigen::VectorXd stateBeforePreparation;     //!< Accepted state before applying references or joint locks.
+    bool hasPreparationSnapshot = false;        //!< This attempt saved the state before preparation.
 
     template<typename Type>
     /** Assign the state engine state and parameter names to an effector */
@@ -122,7 +133,7 @@ class Spacecraft : public DynamicObject
         effector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
     }
 
-    StateData* hubR_N;                         //!< State data accesss to inertial position for the hub
+    StateData* hubR_N = nullptr;               //!< Hub position state, available after dynamics registration.
     StateData* hubV_N;                         //!< State data access to inertial velocity for the hub
     StateData* hubOmega_BN_B;                  //!< State data access to the attitude rate of the hub
     StateData* hubSigma;                       //!< State data access to sigmaBN for the hub
@@ -139,7 +150,7 @@ class Spacecraft : public DynamicObject
     Eigen::MatrixXd* cDot_B;         //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd* ISCPntBPrime_B; //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd* g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::MatrixXd* sysTime;        //!< [s] System time
+    Eigen::MatrixXd* sysTime;        //!< Integration stage time in rounded nanoseconds and seconds, both signed
     double mDotDynamics = 0.0;       //!< [kg/s] Aggregate mass rate substituted into generic rate-dependent terms
     Eigen::Vector3d cPrimeEffectorDynamics_B = Eigen::Vector3d::Zero(); //!< [m/s] Dynamics effector CoM rate
     Eigen::Matrix3d ISCPntBPrimeDynamics_B = Eigen::Matrix3d::Zero();   //!< [kg m^2/s] Dynamics inertia rate
@@ -155,9 +166,23 @@ class Spacecraft : public DynamicObject
     std::string propName_centerOfMassDotSC;   //!< property name of centerOfMassDotSC
 
   private:
-    void registerDynamics();   //!< Register and link dynamics during Reset
-    void readOptionalRefMsg(); //!< Read the optional attitude or translational reference input message and set the
-                               //!< reference states
+    void registerDynamics();         //!< Register and link dynamics during Reset
+    void refreshAcceptedMassProps(); //!< Recompute stale mass properties at the accepted epoch.
+    void sumMassProps();             //!< Combine the stored hub and effector mass properties.
+    /** @brief Refresh the hub and articulated poses at the accepted epoch. */
+    void updateAcceptedInertialState();
+    void publishIntegratedState(uint64_t tick) final;
+    void writeAcceptedStateMessages();
+    void prepareIntegrationInputs(uint64_t callTimeNanos) final;
+    // A stage callback can connect a reference after the group has sampled its inputs.
+    void validateIntegratedState() final { this->validateAttitudeReference(); }
+    void restoreAfterFailedStep() final;
+    void refreshInitialDerivatives() final;
+    void updateSystemTime(double stageTime);
+    void prepareConstraintEndpoints(double time) final;
+    void refreshArticulatedEndpoints(double time);
+    void validateAttitudeReference();
+    void applyPrescribedMotion();    //!< Apply written attitude and translation references to the hub.
     bool useHubOnlyFastPath() const; //!< Return true if direct fixed-mass hub-only equations can be used
 };
 

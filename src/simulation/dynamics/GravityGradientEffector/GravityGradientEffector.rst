@@ -41,6 +41,9 @@ The spacecraft location relative to the :math:`i^{\text{th}}` planet is
 
     {\bf R}_{C/P_i} = {\bf R}_{C/N} - {\bf R}_{P_i/N}
 
+The effector uses the inertial hub and planet positions at the same integrator stage.
+This also applies when the hub position state is integrated relative to a moving central body.
+
 As a spacecraft leaves the sphere of influence of a planet the gravity gradient torque contribution become
 vanishingly small.  This is equivalent to how gravity accelerations are computed relative to all gravitational
 bodies, regardless of how far away they are.  At every time step the gravity gradient effectors is able to

@@ -21,6 +21,7 @@
 #define STATE_EFFECTOR_H
 
 #include <cstdint>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
@@ -184,10 +185,58 @@ class StateEffector
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::MRPd sigma_BN) = 0; //!< Method for each stateEffector to calculate derivatives
 
+#ifndef SWIG
+    /** @brief Restore relative motion cached outside the registered state after a rejected step.
+     * @param time [s] Restored spacecraft epoch.
+     */
+    virtual void restoreRelativeMotion(double time [[maybe_unused]]) {}
+
+    /** @brief Refresh parent-relative kinematics before coupled loads or initial output.
+     * @param time [s] Epoch of the articulated state.
+     * @param frame Parent frame supplying the accepted epoch and origin validity.
+     * @param sigma_BN Attitude of the parent frame relative to inertial.
+     * @param omega_BN_B [rad/s] Angular velocity of the parent in its own frame.
+     */
+    void updateInertialState(double time,
+                             const DynParamManager::InertialFrame& frame,
+                             const Eigen::MRPd& sigma_BN,
+                             const Eigen::Vector3d& omega_BN_B)
+    {
+        this->inertialFrame = &frame;
+        this->refreshInertialKinematics(time, sigma_BN, omega_BN_B);
+    }
+
+#endif
+
     /** Commit dimension-defining collections after successful registration. */
     virtual void freezeTopology() noexcept { this->topologyFrozen = true; }
 
   protected:
+    /** @brief Update articulated endpoint properties without evaluating forces or writing messages.
+     * @param time [s] Epoch of the articulated state.
+     * @param sigma_BN Attitude of the parent frame relative to inertial.
+     * @param omega_BN_B [rad/s] Angular velocity of the parent in its own frame.
+     */
+    virtual void refreshInertialKinematics(double time [[maybe_unused]],
+                                           const Eigen::MRPd& sigma_BN [[maybe_unused]],
+                                           const Eigen::Vector3d& omega_BN_B [[maybe_unused]])
+    {
+    }
+#ifndef SWIG
+    /** @brief Select the epoch for inertial output. Trial poses and unknown origins have no output epoch.
+     * @param clockTime Scheduled publication time for a standalone effector [ns].
+     * @return Parent's accepted time, or the scheduled time when used standalone [ns].
+     */
+    std::optional<uint64_t> inertialOutputEpoch(uint64_t clockTime) const
+    {
+        if (!this->inertialFrame) {
+            return clockTime;
+        }
+        return this->inertialFrame->originReady ? this->inertialFrame->acceptedTimeNanos : std::nullopt;
+    }
+    const DynParamManager::InertialFrame* inertialFrame = nullptr; //!< Borrowed from the parent state manager.
+#endif
+
     /** Reject collection mutations after this effector has registered states. */
     void requireMutableTopology(const char* operation) const
     {

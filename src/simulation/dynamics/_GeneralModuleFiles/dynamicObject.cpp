@@ -19,6 +19,7 @@
 
 #include "dynamicObject.h"
 #include <algorithm>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -90,17 +91,64 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
     dynPtr->integrationOwner = this;
 }
 
+std::optional<uint64_t> DynamicObject::getFixedStageTick() const noexcept
+{
+    double subTickSeconds;
+    return this->getFixedStageTick(subTickSeconds);
+}
+
+std::optional<uint64_t> DynamicObject::getFixedStageTick(double& subTickSeconds) const noexcept
+{
+    const auto& method = (this->integrationOwner ? this->integrationOwner : this)->integrator;
+    subTickSeconds = method && method->fixedStageTick && method->halfTick ? 0.5e-9 : 0.0; // [s]
+    return method ? method->fixedStageTick : std::nullopt;
+}
+
 void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
 {
     if (this->integrationOwner != nullptr) {
         return;
     }
+    // Fixed-step integrators can evaluate additional stages even when no time elapses.
+    struct ZeroDurationEpoch
+    {
+        const std::vector<DynamicObject*>& objects;
+        bool active;
+        void set(std::optional<uint64_t> epoch) const
+        {
+            if (active) {
+                for (auto* object : objects) {
+                    object->dynManager.inertialFrame.exactStageTimeNanos = epoch;
+                }
+            }
+        }
+        ~ZeroDurationEpoch() { set(std::nullopt); }
+    } stageEpoch{ this->integrator->dynPtrs, integrateToThisTimeNanos == this->timeBeforeNanos };
+    stageEpoch.set(integrateToThisTimeNanos);
+    // A missing ephemeris on one spacecraft must be detected before a peer applies a pending joint lock.
     for (DynamicObject* object : this->integrator->dynPtrs) {
-        object->preIntegration(integrateToThisTimeNanos);
+        object->prepareIntegrationInputs(integrateToThisTimeNanos);
     }
-    this->integrator->integrate(this->timeBefore, this->timeStep);
+    try {
+        for (DynamicObject* object : this->integrator->dynPtrs) {
+            object->preIntegration(integrateToThisTimeNanos);
+        }
+        if (stageEpoch.active) {
+            for (DynamicObject* object : this->integrator->dynPtrs) {
+                object->refreshInitialDerivatives();
+            }
+        }
+        this->integrator->integrate(this->timeBefore, this->timeStep, integrateToThisTimeNanos);
+    } catch (...) {
+        this->integrator->restoreDynamicsAfterFailedStep();
+        throw;
+    }
+    // A callback can read a peer's telemetry or throw. Publish the whole group before the first callback.
     for (DynamicObject* object : this->integrator->dynPtrs) {
-        object->postIntegration(integrateToThisTimeNanos);
+        object->publishIntegratedState(integrateToThisTimeNanos);
+    }
+    for (DynamicObject* object : this->integrator->dynPtrs) {
+        object->runAcceptedStateCallbacks();
     }
 }
 

@@ -39,6 +39,7 @@ void svStochasticIntegratorMayurama::integrateImpl(double currentTime, double ti
             this->gatherStochasticDiffusions();
             this->buildEulerMaruyamaCandidate(timeStep, this->flatDW());
         }
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

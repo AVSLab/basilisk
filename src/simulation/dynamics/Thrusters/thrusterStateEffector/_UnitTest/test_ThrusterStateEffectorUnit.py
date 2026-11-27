@@ -27,7 +27,7 @@ splitPath = path.split('simulation')
 
 from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
-from Basilisk.simulation import spacecraft, thrusterStateEffector
+from Basilisk.simulation import spacecraft, svIntegrators, thrusterStateEffector
 from Basilisk.architecture import messaging
 from Basilisk.architecture import sysModel
 import matplotlib.pyplot as plt
@@ -128,6 +128,146 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
     [testResults, testMessage] = unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle,
                                                lat_angle, location, swirlTorque, rate, attachBody)
     assert testResults < 1, testMessage
+
+
+@pytest.mark.parametrize("mount", ["hub", "hub-message", "external"])
+def test_accepted_thrust_after_rejected_rkf45_step(mount):
+    """Nozzle loads follow the accepted thrust factor and mount pose through rejection and retry."""
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 10.0  # [kg]
+    sc.hub.IHubPntBc_B = (100.0 * np.eye(3)).tolist()  # [kg*m^2]
+    sc.hub.v_CN_NInit = [0, 1, 0]  # [m/s]
+    thrusters = thrusterStateEffector.ThrusterStateEffector()
+    nozzle = thrusterStateEffector.THRSimConfig()
+    nozzle.thrDir_B = [1, 0, 0]  # [-]
+    nozzle.thrLoc_B = [0, 2, 0]  # [m]
+    nozzle.MaxThrust = 2.0  # [N]
+    nozzle.thrusterMagDisp = 0.25  # [-]
+    nozzle.MaxSwirlTorque = 0.3  # [N*m]
+    nozzle.cutoffFrequency = 1.0  # [1/s]
+    nozzle.steadyIsp = 220.0  # [s]
+    force = np.array([2.5, 0, 0])  # [N] at full thrust
+    torque = np.array([0.3, 0, -5])  # [N*m] at full thrust
+    if mount == "external":
+        # Prescribe the hub pose so the expected nozzle loads can be calculated by inspection.
+        position = messaging.TransRefMsgPayload()
+        position.r_RN_N = [10, 0, 0]  # [m]
+        position_msg = messaging.TransRefMsg().write(position)
+        sc.transRefInMsg.subscribeTo(position_msg)
+        attitude = messaging.AttRefMsgPayload()
+        attitude.sigma_RN = [0, 0, math.tan(math.pi / 8)]  # [-] 90 degrees about +Z
+        sc.attRefInMsg.subscribeTo(messaging.AttRefMsg().write(attitude))
+        pose = messaging.SCStatesMsgPayload()
+        pose.r_BN_N = [10, 4, 0]  # [m] mount origin is 4 m along hub +X
+        pose.sigma_BN = [0, 0, 1]  # [-] mount +X points along hub +Y
+        mount_msg = messaging.SCStatesMsg().write(pose)
+        thrusters.addThruster(nozzle, mount_msg)
+        force = np.array([0, 2.5, 0])  # [N]
+        torque = np.array([0, 0.3, 5])  # [N*m] nozzle at (2, 0, 0) m in the hub frame
+    elif mount == "hub-message":
+        # A mount coincident with the moving hub must still have zero offset after a rejected trial.
+        thrusters.addThruster(nozzle, sc.scStateOutMsg)
+    else:
+        thrusters.addThruster(nozzle)
+    thrusters.kappaInit = messaging.DoubleVector([1.0])  # [-]
+    sc.addStateEffector(thrusters)
+    output = thrusters.thrusterOutMsgs[0].addSubscriber()
+    rk = svIntegrators.svIntegratorRKF45(sc)
+    rk.relTol = rk.absTol = 1e-12
+    sc.setIntegrator(rk)
+    thrusters.Reset(0)
+    sc.Reset(0)
+    state = sc.dynManager.getStateObject(thrusters.nameOfKappaState)
+    step = macros.sec2nano(1.0)  # [ns]
+
+    def check(tick):
+        assert sc.timeBeforeNanos == output.timeWritten() == tick
+        factor = state.getState()[0][0]
+        assert factor == pytest.approx(math.exp(-tick * macros.NANO2SEC), abs=1e-9, rel=0)
+        msg = output()
+        assert msg.thrustFactor == factor
+        assert msg.thrustForce == pytest.approx(2.5 * factor)  # [N]
+        np.testing.assert_allclose(msg.thrustForce_B, force * factor, atol=1e-14)  # [N]
+        np.testing.assert_allclose(msg.thrustTorquePntB_B, torque * factor, atol=1e-14)  # [N*m]
+
+    check(0)  # Spacecraft publication before the first scheduled effector update.
+    sc.UpdateState(0)
+    thrusters.UpdateState(0)
+    check(0)
+    if mount == "external":
+        # The older mount sample and the new hub position must not be combined into a different moment arm.
+        position.r_RN_N = [10, 1, 0]  # [m]
+        position_msg.write(position, step)
+    sc.UpdateState(step)
+    check(step)
+    thrusters.UpdateState(step)
+    factors = rk.safetyFactorForNextStepSize, rk.minimumFactorDecreaseForNextStepSize
+    rk.safetyFactorForNextStepSize = rk.minimumFactorDecreaseForNextStepSize = 0.0
+    with pytest.raises(RuntimeError, match="representable forward progress"):
+        sc.UpdateState(2 * step)
+    check(step)
+    if mount == "external":
+        # Even a replacement stamped at the accepted tick cannot be sampled against a rejected hub pose.
+        pose.r_BN_N = [10, 1, 3]  # [m] mount origin is 3 m along hub +Z
+        pose.sigma_BN = [0, 0, 0]  # [-] mount +X now points along hub -Y
+        mount_msg.write(pose, step)
+    thrusters.moduleID += 1  # Distinguish a fresh write at the accepted tick from the previous message.
+    thrusters.UpdateState(step)
+    assert output.moduleID() == thrusters.moduleID
+    check(step)
+    if mount == "external":
+        mount_msg.write(pose, 2 * step)
+        force = np.array([0, -2.5, 0])  # [N]
+        torque = np.array([7.5, -0.3, -5])  # [N*m] nozzle at (2, 0, 3) m in the hub frame
+    rk.safetyFactorForNextStepSize, rk.minimumFactorDecreaseForNextStepSize = factors
+    sc.UpdateState(2 * step)
+    check(2 * step)
+
+
+def test_thruster_first_timestamps_after_rejected_rkf45_step():
+    """A thruster scheduled before its spacecraft publishes the accepted tick through rejection and retry."""
+    step = macros.sec2nano(1.0)  # [ns]
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.CreateNewProcess("dynamics").addTask(sim.CreateNewTask("dynamicsTask", step))
+    sc = spacecraft.Spacecraft()
+    rk = svIntegrators.svIntegratorRKF45(sc)
+    rk.relTol = rk.absTol = 1e-12
+    sc.setIntegrator(rk)
+    thrusters = thrusterStateEffector.ThrusterStateEffector()
+    nozzle = thrusterStateEffector.THRSimConfig()
+    nozzle.thrLoc_B = [0, 0, 0]  # [m]
+    nozzle.thrDir_B = [1, 0, 0]  # [-]
+    nozzle.MaxThrust = 1.0  # [N]
+    nozzle.steadyIsp = 220.0  # [s]
+    nozzle.cutoffFrequency = 1.0  # [1/s]
+    thrusters.addThruster(nozzle)
+    thrusters.kappaInit = messaging.DoubleVector([1.0])  # [-]
+    sc.addStateEffector(thrusters)
+    output = thrusters.thrusterOutMsgs[0].addSubscriber()
+    before_spacecraft = thrusters.thrusterOutMsgs[0].recorder()
+    sim.AddModelToTask("dynamicsTask", thrusters, 3)
+    sim.AddModelToTask("dynamicsTask", before_spacecraft, 2)
+    sim.AddModelToTask("dynamicsTask", sc, 1)
+    sim.InitializeSimulation()
+    sim.TotalSim.SingleStepProcesses()  # Initial tick.
+    sim.TotalSim.SingleStepProcesses()  # First positive step.
+    assert output.timeWritten() == sc.timeBeforeNanos == step
+    accepted_factor = output().thrustFactor
+    assert accepted_factor == pytest.approx(math.exp(-1.0))
+
+    factors = rk.safetyFactorForNextStepSize, rk.minimumFactorDecreaseForNextStepSize
+    rk.safetyFactorForNextStepSize = rk.minimumFactorDecreaseForNextStepSize = 0.0
+    with pytest.raises(RuntimeError, match="representable forward progress"):
+        sim.TotalSim.SingleStepProcesses()
+    assert output.timeWritten() == sc.timeBeforeNanos == step
+    assert output().thrustFactor == accepted_factor
+
+    rk.safetyFactorForNextStepSize, rk.minimumFactorDecreaseForNextStepSize = factors
+    sim.TotalSim.SingleStepProcesses()
+    # The recorder sees the effector's own write before the spacecraft on both attempts.
+    np.testing.assert_array_equal(before_spacecraft.timesWritten(), [0, 0, step, step])
+    assert output.timeWritten() == sc.timeBeforeNanos == 2 * step
+    assert output().thrustFactor == pytest.approx(math.exp(-2.0))
 
 
 # Run the test

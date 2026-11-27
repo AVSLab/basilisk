@@ -15,7 +15,11 @@ Derive from an existing numerical family when possible. A new family implements:
 The private ``integrate()`` entry point prepares storage when needed and reuses it
 while the dynamics group remains unchanged. Model code calls ``DynamicObject::integrateState()``. Numerical methods
 call ``evaluateDerivatives()`` and ``evaluateDiffusions()`` to evaluate the dynamics
-objects in synchronization order.
+objects in synchronization order. After installing the final candidate, call
+``validateFinalStates()`` while the step-entry state is still available for rollback.
+If validation or stage evaluation throws, restore the numerical method's entry
+states and propagate the error. The dynamics group then lets each model undo
+changes made during step preparation and restore its accepted outputs.
 
 Ownership
 ---------

@@ -90,6 +90,7 @@ void svStochasticIntegratorEulerHeun::integrateImpl(double currentTime, double t
                                        timeStep,
                                        this->flatStorage->firstDiffusions,
                                        this->flatDW());
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

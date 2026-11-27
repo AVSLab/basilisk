@@ -170,7 +170,6 @@ def run(show_plots):
     prescribed_truss_1.setOmegaPrime_PM_P(np.array([0.0, 0.0, 0.0]))
     prescribed_truss_1.setSigma_PM(sigma_P0M)
     prescribed_truss_1.setSigma_MB([0.0, 0.0, 0.0])
-    sc_sim.AddModelToTask(dyn_task_name, prescribed_truss_1)
     sc_object.addStateEffector(prescribed_truss_1)
 
     # Create prescribed array boom 2
@@ -188,7 +187,6 @@ def run(show_plots):
     prescribed_truss_2.setSigma_PM(sigma_P0M)
     dcm_MB = np.array([[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]])
     prescribed_truss_2.setSigma_MB(rbk.C2MRP(dcm_MB))
-    sc_sim.AddModelToTask(dyn_task_name, prescribed_truss_2)
     sc_object.addStateEffector(prescribed_truss_2)
 
     # Shared prescribed motion profiler parameters
@@ -262,6 +260,8 @@ def run(show_plots):
     one_dof_translation_profiler_2.linearTranslationRigidBodyInMsg.subscribeTo(prescribed_translation_msg)
     prescribed_truss_1.prescribedTranslationInMsg.subscribeTo(one_dof_translation_profiler_1.prescribedTranslationOutMsg)
     prescribed_truss_2.prescribedTranslationInMsg.subscribeTo(one_dof_translation_profiler_2.prescribedTranslationOutMsg)
+    sc_sim.AddModelToTask(dyn_task_name, prescribed_truss_1)
+    sc_sim.AddModelToTask(dyn_task_name, prescribed_truss_2)
 
     # Shared spinning body parameters
     mass_panel = 1000.0  # [kg]

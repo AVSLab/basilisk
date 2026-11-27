@@ -131,19 +131,20 @@ void SpinningBodyOneDOFStateEffector::validateConfiguration()
  */
 void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computeSpinningBodyInertialStates();
 
     // Write out the spinning body output messages
     if (this->spinningBodyOutMsg.isLinked()) {
         HingedRigidBodyMsgPayload spinningBodyBuffer;
         spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
-        spinningBodyBuffer.theta = this->theta;
-        spinningBodyBuffer.thetaDot = this->thetaDot;
+        spinningBodyBuffer.theta = this->thetaState->stateView()(0, 0);
+        spinningBodyBuffer.thetaDot = this->thetaDotState->stateView()(0, 0);
         this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 
     // Write out the spinning body state config log message
-    if (this->spinningBodyConfigLogOutMsg.isLinked()) {
+    if (epoch && this->spinningBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->spinningBodyConfigLogOutMsg.zeroMsgPayload;
 
@@ -152,7 +153,7 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVector3d2CArray(this->v_ScN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_SN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -223,7 +224,7 @@ void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector* newDyn
 
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
 }
 
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links
@@ -336,8 +337,6 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     this->mTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
 
     if (!this->dynEffectors.empty()) {
-        this->rDot_SB_B = this->omega_BN_B.cross(this->r_SB_B);
-        this->rDot_ScB_B = this->rPrime_ScB_B + this->omega_BN_B.cross(this->r_ScB_B);
         this->computeSpinningBodyInertialStates();
     }
 
@@ -541,6 +540,19 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
                      1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
 }
 
+void SpinningBodyOneDOFStateEffector::refreshInertialKinematics(double time,
+                                                                const Eigen::MRPd& sigma_BN,
+                                                                const Eigen::Vector3d& omega_BN_B)
+{
+    // Accepted joint properties were sampled by the spacecraft. A parent pose update must not apply a pending lock.
+    if (!this->inertialFrame->acceptedTimeNanos) {
+        this->updateEffectorMassProps(time);
+    }
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeSpinningBodyInertialStates();
+}
+
 /*! This method computes the spinning body states relative to the inertial frame */
 void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
 {
@@ -549,6 +561,10 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
         const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
         this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
     }
+
+    this->omega_SN_B = this->omega_SB_B + this->omega_BN_B;
+    this->rDot_SB_B = this->omega_BN_B.cross(this->r_SB_B);
+    this->rDot_ScB_B = this->rPrime_ScB_B + this->omega_BN_B.cross(this->r_ScB_B);
 
     // inertial attitude
     Eigen::Matrix3d dcm_SN;

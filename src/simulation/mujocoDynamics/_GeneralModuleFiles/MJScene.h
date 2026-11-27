@@ -373,16 +373,26 @@ class MJScene : public DynamicObject
      *
      * @warning `SysModel` added to the dynamics task should be memoryless.
      * That is, any output message computed should depend strictly on
-     * input messages and the current time/states. It should save values
-     * internally with the expectation of using them in further calls
-     * to `UpdateState`. The reason for this is that `UpdateState` may
-     * be called at arbitrary simulation times, and not necessarily in
-     * order or with consistent time steps.
+     * input messages and the current time/states. Use getEvaluationTime() for
+     * time-dependent dynamics. Integrator stages can run before zero or out of order.
      *
      * @param model The system model to add.
      * @param priority The priority of the model in the task list.
      */
     void AddModelToDynamicsTask(SysModel* model, int32_t priority = -1);
+
+    /** @brief Read the MuJoCo clock used to evaluate dynamics.
+     * @return Signed stage time during a drift or diffusion callback, or the accepted time after a step [s].
+     */
+    double getEvaluationTime() { return this->getMujocoData()->time; }
+
+    /** @brief Compute the signed age of a message for a dynamics task, or for an ordinary scheduled update.
+     * @param taskTick [ns] Timestamp passed to the model's UpdateState().
+     * @param messageTick [ns] Timestamp of the source message.
+     * @return Elapsed seconds from the message epoch to the evaluation epoch, including fractional
+     * nanoseconds at RK4 midpoints and signed offsets for continuous stages.
+     */
+    static double getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick);
 
     /** @brief Adds a model to the diffusion dynamics task.
      *
@@ -738,6 +748,21 @@ class MJScene : public DynamicObject
   private:
     friend class MJSpec;
     friend class MJFwdKinematics;
+
+    uint64_t stageTimestamp(double time) const;
+    /** @brief Return the signed offset in seconds between a continuous stage and its callback tick.
+     * @param time [s] Integrator stage time.
+     * @param tick [ns] Callback timestamp from stageTimestamp().
+     * @return The stage time minus the callback epoch in seconds.
+     */
+    double stageOffsetFromTick(double time, uint64_t tick) const;
+    void validateIntegratedState() override;
+    void publishIntegratedState(uint64_t tick) override;
+    void runAcceptedStateCallbacks() override;
+    void publishAcceptedState();
+    void restoreAfterFailedStep() override;
+    bool trialStateActive = false;       //!< A stage has exposed trial data since the last accepted publication.
+    bool deferAcceptedCallbacks = false; //!< The integrator runs callbacks after every peer publishes.
 
     /** @brief Committed dimensions and joint kinds that a recompiled model must preserve.
      * These dimensions and addresses must match the fixed state layout.

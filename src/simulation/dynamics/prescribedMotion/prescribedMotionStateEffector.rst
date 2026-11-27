@@ -1,25 +1,19 @@
 
 Executive Summary
 -----------------
-The prescribed motion state effector class is an instantiation of the state effector abstract class. This module
-is used to connect a prescribed motion component to the spacecraft hub. The states of the prescribed component are
-purely prescribed, meaning there are no free degrees of freedom associated with its motion and hence there are no
-states integrated in this module. Instead, the states of the prescribed component are externally profiled using
-a kinematic profiler module and are provided as input messages to the prescribed state effector class.
+This state effector connects a component with prescribed motion to the spacecraft hub.
+It extrapolates the component's relative position and angular velocity from the prescribed
+rates and accelerations and integrates its relative attitude from the angular velocity.
 
 The body frame for the prescribed body is designated by the frame :math:`\mathcal{P}`. The prescribed body is attached
 to the hub through a hub-fixed mount interface described by the mount frame :math:`\mathcal{M}`. The prescribed body
 hub-relative motion is profiled with respect to the mount frame :math:`\mathcal{M}`. The prescribed states are:
 ``r_PM_M``, ``rPrime_PM_M``, ``rPrimePrime_PM_M``, ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``.
 
-The states of the prescribed body are not defined in this module. Therefore, separate kinematic profiler modules must
-be connected to this module's :ref:`PrescribedTranslationMsgPayload` and :ref:`PrescribedRotationMsgPayload`
-input messages to profile the prescribed body's states as a function of time. If neither message is connected to the
-module, the prescribed body will not move with respect to the hub. If the prescribed body should only rotate, then only
-the rotational message needs to be subscribed to the module and the translational message can be ignored. Similarly,
-if the prescribed component should only translate, the rotational message can be ignored. Note that either a single
-profiler module can be used to connect both messages to this module, or two separate profiler modules can be used;
-where one profiles the translational states and the other profiles the rotational states.
+Translation and rotation can be configured independently. Without input messages the component
+propagates from its configured initial state. With the default zero rates and accelerations it
+remains fixed relative to the hub. One or more kinematic profilers can supply updated states
+through the :ref:`PrescribedTranslationMsgPayload` and :ref:`PrescribedRotationMsgPayload` inputs.
 See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
 multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.
 
@@ -56,6 +50,16 @@ Mass is also validated before state registration during spacecraft initializatio
 ``Reset()``. Thus validation does not depend on adding the effector to a task. ``Reset()``
 does not restore initial states or clear prescribed motion values, and it does not access
 parent states. See :ref:`effectorInitialization`.
+
+The initial position, translational velocity, and angular velocity apply at the spacecraft's
+reset epoch. Prescribed accelerations propagate from that epoch until the effector reads a
+translation or rotation command. Each scheduled effector update reapplies the latest written
+sample for each connected input, using the current task time as that component's new epoch.
+On each command tick, let the spacecraft advance to that time before the effector reads the
+new sample. The effector's inertial output at that tick includes the new command, which
+also supplies the initial state for the following integration interval.
+Schedule the profiler to provide a fresh sample before the effector runs. A slower publisher
+causes the same sampled state to restart on intervening ticks.
 
 
 Module Overview
@@ -154,9 +158,11 @@ This section outlines how to set up the prescribed motion module in python using
 
    See :ref:`spacecraft` documentation on how to set up a spacecraft object.
 
-#. Make sure to connect the required messages for this module.
+#. Both motion inputs are optional. Connect ``prescribedTranslationInMsg`` for a translation profile and
+   ``prescribedRotationInMsg`` for a rotation profile. Each unconnected component propagates from its initial state.
 
-#. Add the module to the task list::
+#. Schedule the effector at the spacecraft module's rate, after the spacecraft and its input publishers.
+   If they share a task, give the effector a lower model priority or add it last at the same priority::
 
     unitTestSim.AddModelToTask(unitTaskName, prescribed_body)
 

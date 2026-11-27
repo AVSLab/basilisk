@@ -173,7 +173,7 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
     try {
         if constexpr (numberStages == 1) {
             if (this->flatBinding.updatesAreAllEuclidean()) {
-                this->evaluateDerivatives(currentTime + this->coefficients.cArray[0] * timeStep, timeStep);
+                this->evaluateFixedStepDerivatives(currentTime, timeStep, this->coefficients.cArray[0]);
                 if (this->coefficients.bArray[0] == 0.0) {
                     this->scatterStates(this->baseState);
                 } else {
@@ -189,6 +189,7 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
                         state = base + drift * (timeStep * this->coefficients.bArray[0]);
                     }
                 }
+                this->validateFinalStates();
                 return;
             }
         }
@@ -211,8 +212,7 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
                 }
             }
 
-            const double stageTime = currentTime + this->coefficients.cArray.at(stageIndex) * timeStep;
-            this->evaluateDerivatives(stageTime, timeStep);
+            this->evaluateFixedStepDerivatives(currentTime, timeStep, this->coefficients.cArray.at(stageIndex));
             this->gatherDerivatives(stageIndex);
         }
 
@@ -220,6 +220,7 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
         if (!candidateIsLive) {
             this->scatterStates(this->candidateState);
         }
+        this->validateFinalStates();
     } catch (...) {
         this->scatterStates(this->baseState);
         throw;

@@ -264,6 +264,7 @@ void svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep
         if (coalesceFinalUpdate) {
             this->commitAllEuclideanFinalCandidate();
         }
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

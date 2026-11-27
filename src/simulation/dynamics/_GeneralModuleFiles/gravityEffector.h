@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 /** Container for gravitational body data
@@ -75,22 +76,15 @@ class GravBodyData
      */
     double computePotentialEnergyInertial(const Eigen::Vector3d& r_I, uint64_t simTimeNanos) const;
 
-    /** Read the ephemeris data from planetBodyInMsg if it's linked.
-     * Otherwise, zeros `this->localPlanet`.
+    /** @brief Load a written planet ephemeris or use a zero state for an unlinked input.
+     * @note A linked, unwritten input marks the cached sample unavailable.
      */
     void loadEphemeris();
 
-    /** Creates the following properies in the given statesIn object.
-     *
-     *      - [planetName].r_PN_N
-     *      - [planetName].v_PN_N
-     *      - [planetName].mu
-     *      - [planetName].J20002Pfix
-     *      - [planetName].J20002Pfix_dot
-     *
-     * `vr_PN_N`, `v_PN_N`, and `mu` are initialized to zero, while `J20002Pfix` and `J20002Pfix_dot`
-     * are initialized to the values stored in `this->localPlanet`. This usually means that
-     * `J20002Pfix` is initialized to the identity matrix and `J20002Pfix_dot` to zero.
+    /** @brief Register planet properties for standalone calls to computeGravityInertial().
+     * @param statesIn State manager that will receive orientation updates and must outlive those calls.
+     * @note Position, velocity, and gravitational parameter start at zero. Orientation and its
+     * derivative start at the values in localPlanet. Each spacecraft registers its own properties separately.
      */
     void registerProperties(DynParamManager& statesIn);
 
@@ -118,22 +112,33 @@ class GravBodyData
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
-    /** @brief Extrapolate the planet orientation and its derivative to an evaluation time.
-     * @param simTimeNanos Evaluation time [ns].
+    struct PropertyHandles
+    {
+        Eigen::MatrixXd* r_PN_N = nullptr;         //!< [m] Planet inertial position.
+        Eigen::MatrixXd* v_PN_N = nullptr;         //!< [m/s] Planet inertial velocity.
+        Eigen::MatrixXd* muPlanet = nullptr;       //!< [m^3/s^2] Gravitational parameter.
+        Eigen::MatrixXd* J20002Pfix = nullptr;     //!< [-] Planet orientation [PN].
+        Eigen::MatrixXd* J20002Pfix_dot = nullptr; //!< [1/s] Planet orientation derivative.
+    };
+    PropertyHandles createProperties(DynParamManager& statesIn);
+    PropertyHandles standaloneProperties; //!< Used only by explicitly registered, standalone body queries.
+    double ephemerisOffset(double stageTimeSeconds) const; //!< [s] Stage time relative to the ephemeris message.
+    double ephemerisOffset(uint64_t timeNanos) const;      //!< [s] Integer epoch relative to the ephemeris message.
+    Eigen::Vector3d positionAtOffset(double dt) const;     //!< [m] Inertial position at offset dt [s] from the message.
+    double potentialAtOffset(const Eigen::Vector3d& r_I, double dt) const;
+    Eigen::Vector3d gravityAtOffset(const Eigen::Vector3d& r_I, double dt, const PropertyHandles& properties);
+
+    /** @brief Extrapolate the planet orientation and its derivative from the ephemeris message.
+     * @param dt Signed time since the ephemeris message [s].
      * @param dcmAdvanced_NPfix Output rotation from body-fixed to inertial coordinates [-].
      * @param dcmAdvanced_NPfix_dot Output time derivative of dcmAdvanced_NPfix [1/s].
      */
-    void computePlanetOrientation(uint64_t simTimeNanos,
+    void computePlanetOrientation(double dt,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix,
                                   Eigen::Matrix3d& dcmAdvanced_NPfix_dot) const;
 
-    Eigen::MatrixXd* r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
-    Eigen::MatrixXd* v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd* muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd* J20002Pfix;     /**< [-]      (state engine property) planet attitude [PN] */
-    Eigen::MatrixXd* J20002Pfix_dot; /**< [1/s]    (state engine property) planet attitude rate [PN_dot] */
-
-    uint64_t timeWritten = 0; /**< [ns]     time the input planet state message was written */
+    uint64_t timeWritten = 0;    /**< [ns]     time the input planet state message was written */
+    bool ephemerisReady = false; //!< The cached planet state is available to all spacecraft sharing this body.
 };
 
 /*! @brief gravity effector class */
@@ -150,8 +155,8 @@ class GravityEffector : public SysModel
     /** Links the correlation between times property */
     void linkInStates(DynParamManager& statesIn);
 
-    /** Registers the gravity, inertial position, and inertial velocity properties.
-     * It also calls `registerProperties` for every associated `GravBodyData`.
+    /** @brief Register spacecraft gravity properties and the properties of each associated body.
+     * @param statesIn This spacecraft's state manager.
      */
     void registerProperties(DynParamManager& statesIn);
 
@@ -162,13 +167,21 @@ class GravityEffector : public SysModel
      */
     void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
 
-    /** Updates the inertial position and velocity properties */
+    /** @brief Update inertial position and velocity at the current integration stage. */
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
+
+    /** @brief Update inertial position and velocity at the spacecraft output epoch.
+     * @param r_BF_N Spacecraft position relative to the integration origin, in inertial components [m].
+     * @param rDot_BF_N Spacecraft velocity relative to the integration origin, in inertial components [m/s].
+     * @param outputTimeNanos Accepted spacecraft epoch [ns].
+     */
+    void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N, uint64_t outputTimeNanos);
 
     /** @brief Accumulate specific potential energy from the associated gravity bodies.
      * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin, in inertial coordinates [m].
-     * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     * @param[in,out] orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
      * @param simTimeNanos Evaluation time for planet positions and orientations [ns].
+     * @throws BasiliskError if ephemerides are unavailable. The accumulator retains its input value.
      */
     void updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, uint64_t simTimeNanos);
 
@@ -179,12 +192,24 @@ class GravityEffector : public SysModel
     void addGravBody(std::shared_ptr<GravBodyData> gravBody);
 
   private:
-    /** @brief Extrapolate a planet position with constant velocity.
-     * @param bodyData Planet data supplying the position and velocity.
-     * @param simTimeNanos Evaluation time [ns].
-     * @return Planet position in inertial coordinates [m].
+    friend class Spacecraft;
+
+    double currentEphemerisOffset(const GravBodyData& body) const;
+
+    /** @brief Accumulate specific potential at a time supplied in seconds.
+     * @param r_cF_N Spacecraft center-of-mass position relative to the integration origin [m].
+     * @param orbPotEnergyContr Specific potential energy accumulator [m^2/s^2].
+     * @param time Evaluation time [s].
      */
-    Eigen::Vector3d getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData, uint64_t simTimeNanos);
+    void updateEnergyContributionsAtTime(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, double time);
+
+    template<typename Time>
+    void accumulatePotential(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr, Time time);
+    bool ephemeridesReady() const; //!< Check the current samples, including bodies refreshed by another spacecraft.
+    bool bodiesResolved = false;   //!< The last scan completed and identified the integration origin.
+    bool originReady = false;      //!< The last gravity sample included the integration origin.
+    void loadEphemerides(bool atReset);
+    void updateInertialPosAndVelAtOffset(const Eigen::Vector3d& r_BF_N, const Eigen::Vector3d& rDot_BF_N, double dt);
 
     /** Writes to centralBodyOutMsg if it is linked and there is a central body */
     void writeOutputMessages(uint64_t currentSimNanos);
@@ -203,8 +228,10 @@ class GravityEffector : public SysModel
     BSKLogger bskLogger; /**< -- BSK Logging */
 
   private:
-    Eigen::MatrixXd* gravProperty;             /**< [-] g_N property for output */
-    Eigen::MatrixXd* timeCorr;                 /**< [-] Time correlation property */
+    std::unordered_map<std::shared_ptr<GravBodyData>, GravBodyData::PropertyHandles> bodyProperties;
+    DynParamManager::InertialFrame* inertialFrame = nullptr; //!< Frame of the registered spacecraft.
+    Eigen::MatrixXd* gravProperty;                           /**< [-] g_N property for output */
+    Eigen::MatrixXd* timeCorr;                               /**< [-] Time correlation property */
     Eigen::MatrixXd* inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
                                                   coordinate frame, property for output. */
     Eigen::MatrixXd* inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice

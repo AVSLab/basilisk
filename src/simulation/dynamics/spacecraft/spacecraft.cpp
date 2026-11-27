@@ -22,9 +22,21 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
+#include <cmath>
+#include <limits>
+#include <optional>
+#include <utility>
+
+namespace {
+constexpr double unavailableEnergy = std::numeric_limits<double>::quiet_NaN();
+constexpr double initialDerivativeTimeStep = 1.0; // [s] Nominal step supplied to effectors during initialization.
+} // namespace
 
 /*! This is the constructor, setting variables to default values */
 Spacecraft::Spacecraft()
+    : totOrbEnergy(unavailableEnergy)
+    , orbPotentialEnergyContr(unavailableEnergy)
 {
     // - Set default propery names
     this->sysTimePropertyName = "systemTime";
@@ -61,23 +73,14 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskError("spacecraft: pointMassTranslationalOnly does not support attached state effectors.");
     }
 
+    this->timeBefore = epochSeconds(CurrentSimNanos);
+    this->timeBeforeNanos = CurrentSimNanos;
     this->gravField.Reset(CurrentSimNanos);
-    // - Call method for initializing the dynamics of spacecraft
     this->registerDynamics();
 
-    // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be
-    // defined relative to a planet
-    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
-    this->writeOutputStateMessages(CurrentSimNanos);
-    // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
-    std::vector<StateEffector*>::iterator it;
-    for (it = this->states.begin(); it != this->states.end(); it++) {
-        // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
-    }
+    this->updateAcceptedInertialState();
+    this->writeAcceptedStateMessages();
 
-    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
-    this->timeBeforeNanos = CurrentSimNanos;
     for (StateEffector* stateEffector : this->states) {
         stateEffector->freezeTopology();
     }
@@ -97,12 +100,70 @@ void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
 {
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(true));
+}
+
+void Spacecraft::updateAcceptedInertialState()
+{
+    auto& frame = this->dynManager.inertialFrame;
+    frame.originReady = this->gravField.originReady;
+    frame.acceptedTimeNanos = this->timeBeforeNanos;
+    if (frame.originReady) {
+        this->gravField.updateInertialPosAndVel(
+            this->hubR_N->stateView(), this->hubV_N->stateView(), this->timeBeforeNanos);
+    }
+    this->refreshArticulatedEndpoints(this->timeBefore);
+}
+
+void Spacecraft::updateSystemTime(double stageTime)
+{
+    const auto& tick = this->dynManager.inertialFrame.exactStageTimeNanos;
+    const double nanos = tick ? static_cast<double>(*tick) : std::round(stageTime * SEC2NANO); // [ns]
+    *this->sysTime << nanos, stageTime;
+}
+
+void Spacecraft::prepareConstraintEndpoints(double time)
+{
+    this->dynManager.inertialFrame.acceptedTimeNanos.reset();
+    if (!this->dynManager.hasConstraint) {
+        return;
+    }
+    this->dynManager.inertialFrame.originReady = this->gravField.originReady;
+    if (this->gravField.originReady) {
+        this->updateSystemTime(time);
+        this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
+        this->refreshArticulatedEndpoints(time);
+    }
+}
+
+void Spacecraft::refreshArticulatedEndpoints(double time)
+{
+    if (!this->states.empty()) {
+        const Eigen::MRPd sigma_BN(this->hubSigma->stateView().data());
+        const Eigen::Vector3d omega_BN_B = this->hubOmega_BN_B->stateView();
+        for (StateEffector* effector : this->states) {
+            effector->updateInertialState(time, this->dynManager.inertialFrame, sigma_BN, omega_BN_B);
+        }
+    }
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
 void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 {
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        return;
+    }
+    this->refreshAcceptedMassProps();
+    SCMassPropsMsgPayload massStateOut = this->scMassOutMsg.zeroMsgPayload;
+    massStateOut.massSC = (*this->m_SC)(0, 0);
+    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
+    eigenMatrixXd2CArray(*this->ISCPntB_B, (double*)massStateOut.ISC_PntB_B);
+    this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
+
+    if (!this->dynManager.inertialFrame.originReady) {
+        return;
+    }
+
     // - Populate state output message
     SCStatesMsgPayload stateOut;
     stateOut = this->scStateOutMsg.zeroMsgPayload;
@@ -133,25 +194,20 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
-
-    // - Populate mass state output message
-    SCMassPropsMsgPayload massStateOut;
-    massStateOut = this->scMassOutMsg.zeroMsgPayload;
-    massStateOut.massSC = (*this->m_SC)(0, 0);
-    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    eigenMatrixXd2CArray(*this->ISCPntB_B, (double*)massStateOut.ISC_PntB_B);
-    this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
 }
 
-/*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the
- * hub*/
-void Spacecraft::readOptionalRefMsg()
+void Spacecraft::validateAttitudeReference()
 {
-    if (this->attRefInMsg.isLinked()) {
-        if (this->pointMassTranslationalOnly) {
-            bskLogger.bskError(
-                "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
-        }
+    if (this->pointMassTranslationalOnly && this->attRefInMsg.isLinked()) {
+        bskLogger.bskError(
+            "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
+    }
+}
+
+void Spacecraft::applyPrescribedMotion()
+{
+    this->validateAttitudeReference();
+    if (this->attRefInMsg.isLinked() && this->attRefInMsg.isWritten()) {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
@@ -162,9 +218,10 @@ void Spacecraft::readOptionalRefMsg()
 
         this->hubSigma->setState(sigma_BN.coeffs());
         this->hubOmega_BN_B->setState(omega_BN_B);
+        *this->cDot_B = *this->cPrime_B + omega_BN_B.cross(Eigen::Vector3d(*this->c_B));
     }
 
-    if (this->transRefInMsg.isLinked()) {
+    if (this->transRefInMsg.isLinked() && this->transRefInMsg.isWritten()) {
         Eigen::Vector3d r_RN_N;
         Eigen::Vector3d v_RN_N;
         TransRefMsgPayload transRefMsgBuffer;
@@ -181,26 +238,29 @@ void Spacecraft::readOptionalRefMsg()
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
 void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 {
-    // - Get access to the spice bodies
-    this->gravField.UpdateState(CurrentSimNanos);
+    if (this->getIntegrationOwner()) {
+        this->gravField.writeOutputMessages(CurrentSimNanos);
+        // A synchronized secondary can also publish between integration steps.
+        this->writeAcceptedStateMessages();
+    } else {
+        this->integrateState(CurrentSimNanos);
+    }
+}
 
-    // - Integrate the state forward in time
-    this->integrateState(CurrentSimNanos);
+void Spacecraft::publishIntegratedState(uint64_t tick)
+{
+    this->postIntegration(tick);
+    this->writeAcceptedStateMessages();
+}
 
-    // If set, read in and prescribe attitude reference motion
-    readOptionalRefMsg();
-
-    Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
-    Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
-    this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
-
-    // - Write the state of the vehicle into messages
-    this->writeOutputStateMessages(CurrentSimNanos);
-    // - Loop over stateEffectors to call writeOutputStateMessages
-    std::vector<StateEffector*>::iterator it;
-    for (it = this->states.begin(); it != this->states.end(); it++) {
-        // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
+void Spacecraft::writeAcceptedStateMessages()
+{
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        return; // A failed trial left the state-engine properties at an intermediate stage.
+    }
+    this->writeOutputStateMessages(this->timeBeforeNanos);
+    for (StateEffector* effector : this->states) {
+        effector->writeOutputStateMessages(this->timeBeforeNanos);
     }
 }
 
@@ -286,6 +346,10 @@ void Spacecraft::registerDynamics()
     }
 
     this->dynManager.finalizeStates();
+    const auto& registry = this->dynManager.getStateRegistry();
+    const auto& last = registry.getStateLayouts().back();
+    this->rollbackSegment = registry.getStateSegment(0, last.stateOffset + last.stateCount);
+    this->stateBeforePreparation.resize(static_cast<Eigen::Index>(this->rollbackSegment.count));
 
     // - Link in states for the Spacecraft, gravity and the hub
     this->linkInStates(this->dynManager);
@@ -297,7 +361,7 @@ void Spacecraft::registerDynamics()
         (*this->m_SC)(0, 0) = this->hub.mHub;
         (*this->ISCPntB_B) = this->hub.IHubPntBc_B;
     } else {
-        this->updateSCMassProps(0.0);
+        this->updateSCMassProps(this->timeBefore);
     }
 
     if (!this->pointMassTranslationalOnly) {
@@ -328,15 +392,46 @@ void Spacecraft::registerDynamics()
     }
 
     // If set, read in and prescribe attitude reference motion as initial states
-    readOptionalRefMsg();
+    this->applyPrescribedMotion();
+    this->updateAcceptedInertialState();
 
-    // - Call equations of motion at time zero
-    this->equationsOfMotion(0.0, 1.0);
+    // Reset evaluates derivatives before the first synchronized update.
+    struct ClearInitialEpoch
+    {
+        std::optional<uint64_t>& epoch;
+        ~ClearInitialEpoch() { epoch.reset(); }
+    } clear{ this->dynManager.inertialFrame.exactStageTimeNanos };
+    this->dynManager.inertialFrame.exactStageTimeNanos = this->timeBeforeNanos;
+    this->refreshInitialDerivatives();
+}
+
+void Spacecraft::refreshInitialDerivatives()
+{
+    this->equationsOfMotion(this->timeBefore, initialDerivativeTimeStep);
+}
+
+void Spacecraft::refreshAcceptedMassProps()
+{
+    if (this->dynManager.massPropsChangedByCommand) {
+        // The commanded body has updated its contribution. Re-evaluating other effectors here can apply a
+        // pending joint lock during an energy query or message write.
+        this->sumMassProps();
+    }
 }
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors
  */
 void Spacecraft::updateSCMassProps(double time)
+{
+    this->hub.updateEffectorMassProps(time);
+    for (StateEffector* effector : this->states) {
+        effector->effProps.hasMassPropertyRateDynamics = false;
+        effector->updateEffectorMassProps(time);
+    }
+    this->sumMassProps();
+}
+
+void Spacecraft::sumMassProps()
 {
     // - Zero the properties which will get populated in this method
     (*this->m_SC).setZero();
@@ -351,7 +446,6 @@ void Spacecraft::updateSCMassProps(double time)
     this->ISCPntBPrimeDynamics_B.setZero();
 
     // Add in hubs mass props to the spacecraft mass props
-    this->hub.updateEffectorMassProps(time);
     (*this->m_SC)(0, 0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
     (*this->c_B) += this->hub.effProps.mEff * this->hub.effProps.rEff_CB_B;
@@ -359,8 +453,6 @@ void Spacecraft::updateSCMassProps(double time)
     // - Loop through state effectors to get mass props
     std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
-        (*it)->effProps.hasMassPropertyRateDynamics = false;
-        (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0, 0) += (*it)->effProps.mEff;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
@@ -388,6 +480,7 @@ void Spacecraft::updateSCMassProps(double time)
     Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->stateView();
     Eigen::Vector3d cLocal_B = (*this->c_B);
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
+    this->dynManager.massPropsChangedByCommand = false;
 }
 
 /*! Return true if the spacecraft can use direct rigid-hub equations instead of
@@ -403,10 +496,18 @@ bool Spacecraft::useHubOnlyFastPath() const
  dynParam Manager thus solving for Xdot*/
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
-    // - Update time to the current time
-    uint64_t integTimeNanos = secToNano(integTimeSeconds);
+    this->stateEffectorDerivativesReady = false;
+    this->updateSystemTime(integTimeSeconds);
+    // A planet publisher may run after the spacecraft at reset or on the zero-duration initial tick.
+    if (!this->gravField.ephemeridesReady()) {
+        return;
+    }
+    this->dynManager.inertialFrame.acceptedTimeNanos.reset();
 
-    (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
+    const bool hubOnly = this->useHubOnlyFastPath();
+    if (!hubOnly || !this->dynEffectors.empty()) {
+        this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
+    }
 
     if (this->pointMassTranslationalOnly) {
         Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
@@ -441,7 +542,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         return;
     }
 
-    if (this->useHubOnlyFastPath()) {
+    if (hubOnly) {
         Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
         Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
 
@@ -489,9 +590,6 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     Eigen::Vector3d vLocal_CN_N = this->hubV_N->stateView() + dcm_NB * (*this->cDot_B);
 
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
-
-    // - refresh so effectors publish inertial properties at the current substep
-    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -579,6 +677,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     for (it = states.begin(); it != states.end(); it++) {
         (*it)->computeDerivatives(integTimeSeconds, hubVDeriv, hubOmegaDeriv, sigmaBNLoc);
     }
+    this->stateEffectorDerivativesReady = !this->states.empty();
 }
 
 void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
@@ -586,12 +685,54 @@ void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double time
     this->equationsOfMotion(integTimeSeconds, timeStep);
 }
 
-/*! Prepare for integration process
- @param integrateToThisTimeNanos Time to integrate to
+void Spacecraft::prepareIntegrationInputs(uint64_t integrateToThisTimeNanos)
+{
+    this->validateAttitudeReference();
+    this->gravField.loadEphemerides(false);
+    if (!this->gravField.originReady) {
+        this->dynManager.inertialFrame.originReady = false;
+    }
+    const bool ephemeridesReady = this->gravField.ephemeridesReady();
+    if (!ephemeridesReady && integrateToThisTimeNanos != this->timeBeforeNanos) {
+        this->bskLogger.bskError(
+            "spacecraft: a linked planet ephemeris must be written before advancing the dynamics.");
+    }
+    if (!this->getIntegrationOwner()) {
+        // The primary samples first so that secondaries can read its forwarded ephemeris.
+        this->gravField.writeOutputMessages(integrateToThisTimeNanos);
+    }
+    // Same-tick references and joint locks can change states before the numerical method saves its entry state.
+    this->hasPreparationSnapshot = !this->states.empty() || integrateToThisTimeNanos == this->timeBeforeNanos;
+    if (this->hasPreparationSnapshot) {
+        this->stateBeforePreparation = this->dynManager.getStateRegistry().segmentView(this->rollbackSegment);
+    }
+}
+
+void Spacecraft::restoreAfterFailedStep()
+{
+    if (this->hasPreparationSnapshot) {
+        this->dynManager.getStateRegistry().segmentView(this->rollbackSegment) = this->stateBeforePreparation;
+        this->dynManager.inertialFrame.acceptedTimeNanos.reset(); // Effector caches may still hold trial values.
+        for (StateEffector* effector : this->states) {
+            effector->restoreRelativeMotion(this->timeBefore);
+        }
+    }
+}
+
+/*! @brief Prepare the spacecraft state after the group has sampled its inputs.
+ * @param integrateToThisTimeNanos [ns] Requested end of the step.
  */
 void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
+    if (!this->pointMassTranslationalOnly && !this->useHubOnlyFastPath()) {
+        // Sample current effector motion and mass flow at the start of the delta-v interval.
+        this->updateSCMassProps(this->timeBefore);
+    }
+    if (integrateToThisTimeNanos == this->timeBeforeNanos) {
+        this->applyPrescribedMotion();
+        this->updateAcceptedInertialState();
+    }
     if (this->pointMassTranslationalOnly) {
         return;
     }
@@ -619,12 +760,14 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeBeforeNanos =
         integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
-    this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(integrateToThisTimeNanos);
     if (this->pointMassTranslationalOnly) {
+        this->applyPrescribedMotion();
+        this->updateAcceptedInertialState();
         return;
     }
 
-    double integrateToThisTime = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC; // - convert to seconds
+    const double integrateToThisTime = this->timeBefore; // [s]
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);
@@ -664,11 +807,21 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
         this->omegaDot_BN_B = { 0., 0., .0 };
     }
 
-    // - Compute Energy and Momentum
-    this->computeEnergyMomentum(integrateToThisTime);
-
-    // - Call hubs modify states to allow for switching of MRPs
     this->hub.modifyStates(integrateToThisTime);
+    this->applyPrescribedMotion();
+    this->updateAcceptedInertialState();
+
+    // - Compute Energy and Momentum
+    {
+        // Preserve virtual dispatch for spacecraft subclasses and clear the context if a callback throws.
+        struct ClearEnergyEpoch
+        {
+            bool& active;
+            ~ClearEnergyEpoch() { active = false; }
+        } clear{ this->useAcceptedEnergyEpoch };
+        this->useAcceptedEnergyEpoch = true;
+        this->computeEnergyMomentum(integrateToThisTime);
+    }
 
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
@@ -677,7 +830,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
         (*it)->modifyStates(integrateToThisTime);
     }
     // - Compute force and torque on the body due to stateEffectors
-    this->calcForceTorqueFromStateEffectors(integrateToThisTime, newOmega_BN_B);
+    this->calcForceTorqueFromStateEffectors(integrateToThisTime, this->hubOmega_BN_B->stateView());
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
@@ -685,6 +838,21 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
  for validation purposes. */
 void Spacecraft::computeEnergyMomentum(double time)
 {
+    if (this->pointMassTranslationalOnly) {
+        this->bskLogger.bskError(
+            "spacecraft: computeEnergyMomentum is unavailable in pointMassTranslationalOnly mode.");
+    }
+    const bool atAcceptedEpoch = std::exchange(this->useAcceptedEnergyEpoch, false) && time == this->timeBefore;
+    const bool ephemeridesReady = this->hubR_N != nullptr && this->gravField.ephemeridesReady();
+    if (!atAcceptedEpoch && !ephemeridesReady) {
+        this->bskLogger.bskError("spacecraft: orbital energy requires initialized dynamics and a sample from every "
+                                 "linked planet ephemeris.");
+    }
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos) {
+        this->bskLogger.bskError("spacecraft: energy and momentum require an accepted spacecraft state.");
+    }
+    this->refreshAcceptedMassProps();
+
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = hubR_N->stateView();
     Eigen::Vector3d rDotLocal_BN_N = hubV_N->stateView();
@@ -714,7 +882,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(
-        time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+        this->timeBefore, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -727,7 +895,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(
-            time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+            this->timeBefore, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }
@@ -743,7 +911,13 @@ void Spacecraft::computeEnergyMomentum(double time)
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;
     Eigen::Vector3d rLocal_CN_N = this->hubR_N->stateView() + dcmLocal_NB * (*this->c_B);
-    gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr, secToNano(time));
+    if (!ephemeridesReady) {
+        this->orbPotentialEnergyContr = unavailableEnergy;
+    } else if (atAcceptedEpoch) {
+        this->gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr, this->timeBeforeNanos);
+    } else {
+        this->gravField.updateEnergyContributionsAtTime(rLocal_CN_N, this->orbPotentialEnergyContr, time);
+    }
     this->totOrbEnergy += (*this->m_SC)(0, 0) * this->orbPotentialEnergyContr;
 
     // - Find total rotational energy
@@ -766,6 +940,11 @@ void Spacecraft::computeEnergyMomentum(double time)
  are calculated in the intergrator calls */
 void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
 {
+    // A rejected trial can leave stage derivatives in the state effectors.
+    if (!this->dynManager.inertialFrame.acceptedTimeNanos || !this->stateEffectorDerivativesReady ||
+        !this->gravField.ephemeridesReady()) {
+        return;
+    }
     // - Loop over stateEffectors to get their contributions to energy and momentum
     std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {

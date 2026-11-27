@@ -30,6 +30,13 @@ class DynamicEffector
   public:
     DynamicEffector();          //!< Constructor
     virtual ~DynamicEffector(); //!< Destructor
+#ifndef SWIG
+    /** @brief Return the load interface for the parent whose names were just configured.
+     * @param hub True for a spacecraft hub, false for an articulated parent.
+     * @return Borrowed interface owned by this effector.
+     */
+    virtual DynamicEffector* forAttachment(bool hub [[maybe_unused]]) { return this; }
+#endif
     virtual void computeStateContribution(double integTime);
     virtual void linkInStates(DynParamManager& states) = 0; //!< Method to get access to other states/stateEffectors
     virtual void linkInProperties(

@@ -24,6 +24,7 @@
 #include "StatefulSysModel.h"
 
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 
@@ -33,6 +34,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <unordered_set>
 #include <vector>
@@ -48,6 +50,27 @@ struct MujocoStateSegments
     StateBufferSegment qposDerivative;
     StateBufferSegment qvelDerivative;
 };
+
+// A task receives an unsigned integer tick. Retain the signed time offset it cannot represent.
+struct TaskStage
+{
+    uint64_t tick;
+    double offsetSeconds;
+};
+thread_local const TaskStage* activeStage = nullptr;
+
+void executeDynamicsTask(SysModelTask& task, uint64_t tick, double offsetSeconds)
+{
+    // Restore the outer clock even if a nested scene or a task callback throws.
+    struct RestoreStage
+    {
+        const TaskStage* previous;
+        ~RestoreStage() { activeStage = previous; }
+    } restore{ activeStage };
+    const TaskStage stage{ tick, offsetSeconds };
+    activeStage = &stage;
+    task.ExecuteTaskList(tick);
+}
 
 class ScopedFlag
 {
@@ -163,8 +186,10 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     }
     this->prepareOutputStateMessageStorage(model->nq, model->nv, model->na);
 
-    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(CurrentSimNanos);
     this->timeBeforeNanos = CurrentSimNanos;
+    data->time = this->timeBefore;
+    this->trialStateActive = false;
     this->firstDynamicsCall = true;
     this->registerAndBindDynamicsState(model, data, topologyAlreadyFinalized);
     if (topologyAlreadyFinalized) {
@@ -178,7 +203,6 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     }
     this->populateOutputStateMessagePayload(model->nq, model->nv, model->na);
     this->synchronizeMujocoFromStates(model, data);
-    data->time = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->publishOutputStateMessage(CurrentSimNanos);
 }
 
@@ -328,15 +352,52 @@ void MJScene::configureAdaptiveStateTolerances()
 void MJScene::UpdateState(uint64_t CurrentSimNanos)
 {
     this->integrateState(CurrentSimNanos);
-    this->writeOutputStateMessages(CurrentSimNanos);
-    for (auto&& body : this->spec.getBodies()) {
-        body.writeStateDependentOutputMessages(CurrentSimNanos);
+}
+
+uint64_t MJScene::stageTimestamp(double time) const
+{
+    if (time == this->timeBefore) {
+        return this->timeBeforeNanos;
     }
+    // Task and message timestamps are unsigned. Keep the signed evaluation time in mjData.
+    constexpr uint64_t nanosPerSecond = 1'000'000'000;         // [ns/s]
+    const double nanos = std::max(0.0, time) * nanosPerSecond; // [ns]
+    if (nanos < 0x1p53) { // [ns] doubles represent consecutive integer ticks below this limit
+        return static_cast<uint64_t>(nanos);
+    }
+    constexpr auto maxTick = std::numeric_limits<uint64_t>::max(); // [ns]
+    double wholeSeconds;
+    const double fraction = std::modf(time, &wholeSeconds);
+    if (wholeSeconds > static_cast<double>(maxTick / nanosPerSecond)) {
+        return maxTick;
+    }
+    const auto wholeTicks = static_cast<uint64_t>(wholeSeconds) * nanosPerSecond;
+    return wholeTicks + std::min(maxTick - wholeTicks, static_cast<uint64_t>(fraction * nanosPerSecond));
+}
+
+double MJScene::stageOffsetFromTick(double time, uint64_t tick) const
+{
+    if (time == this->timeBefore) {
+        return 0.0; // [s] stageTimestamp() returned the exact accepted tick
+    }
+    constexpr uint64_t nanosPerSecond = 1'000'000'000; // [ns/s]
+    return (time - static_cast<double>(tick / nanosPerSecond)) -
+           static_cast<double>(tick % nanosPerSecond) / nanosPerSecond;
+}
+
+double MJScene::getDynamicsTimeOffset(uint64_t taskTick, uint64_t messageTick)
+{
+    // Difference the integer epochs first so a half-nanosecond midpoint survives at multi-year epochs.
+    const double dt =
+        taskTick >= messageTick ? epochSeconds(taskTick - messageTick) : -epochSeconds(messageTick - taskTick); // [s]
+    return activeStage && activeStage->tick == taskTick ? dt + activeStage->offsetSeconds : dt;
 }
 
 void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
-    auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    double subTickSeconds;
+    const auto fixedTick = this->getFixedStageTick(subTickSeconds);
+    const uint64_t nanos = fixedTick ? *fixedTick : this->stageTimestamp(t);
 
     // Make sure the model is compiled
     this->spec.recompileUntilStable();
@@ -355,6 +416,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // Keep MuJoCo's internal time in sync with the Basilisk simulation time so
     // diagnostics and MuJoCo warnings report the correct timestamp.
     data->time = t;
+    this->trialStateActive = true;
 
     // On the first dynamics call, zero the CTRL array to prevent NaN/uninitialized
     // actuator commands from triggering instability at t=0.
@@ -374,7 +436,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // which will take the recently updated qpos and qvel data,
     // do the fwd kinematics, and update the state messages.
     // These messages can then be read by the rest of modules.
-    this->dynamicsTask.ExecuteTaskList(nanos);
+    executeDynamicsTask(this->dynamicsTask, nanos, fixedTick ? subTickSeconds : this->stageOffsetFromTick(t, nanos));
 
     // Refresh after task callbacks, including direct StateData writes that
     // cannot mark the scene's explicit stale flag.
@@ -432,7 +494,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 
 void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unused]])
 {
-    auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    const uint64_t nanos = this->stageTimestamp(t);
     this->spec.recompileUntilStable();
     ScopedFlag mutationGuard(this->sceneMutationBlocked);
     MJSpec::NoRecompileGuard recompileGuard(this->spec);
@@ -441,8 +503,9 @@ void MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unuse
     mjData* data = this->spec.getMujocoData();
     this->synchronizeMujocoFromStates(model, data);
     data->time = t;
+    this->trialStateActive = true;
 
-    this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
+    executeDynamicsTask(this->dynamicsDiffusionTask, nanos, this->stageOffsetFromTick(t, nanos));
 }
 
 void MJScene::preIntegration(uint64_t callTime)
@@ -452,22 +515,66 @@ void MJScene::preIntegration(uint64_t callTime)
 
 void MJScene::postIntegration(uint64_t callTimeNanos)
 {
-    this->timeBefore = static_cast<double>(callTimeNanos) * NANO2SEC;
+    this->timeBefore = epochSeconds(callTimeNanos);
     this->timeBeforeNanos = callTimeNanos;
-    double callTime = static_cast<double>(callTimeNanos) * NANO2SEC;
+    this->publishAcceptedState();
+    if (!this->deferAcceptedCallbacks) {
+        this->runAcceptedStateCallbacks();
+    }
+}
 
-    // Copy data from Basilisk state objects to MuJoCo structs
-    updateMujocoArraysFromStates();
+void MJScene::validateIntegratedState()
+{
+    this->validateMujocoMassStates(this->getMujocoModel());
+}
 
-    if (extraEoMCall) {
-        // If asked, this will call the equations of motion one last
-        // time with the final/integrated state. This also calls
-        // MJFwdKinematics::fwdKinematics
-        equationsOfMotion(callTime, 0);
-        equationsOfMotionDiffusion(callTime, 0);
-    } else {
-        // Always forward the kinematics with the final state
-        MJFwdKinematics::fwdKinematics(*this, static_cast<uint64_t>(callTime * SEC2NANO));
+void MJScene::publishIntegratedState(uint64_t callTimeNanos)
+{
+    ScopedFlag defer(this->deferAcceptedCallbacks);
+    this->postIntegration(callTimeNanos);
+}
+
+void MJScene::runAcceptedStateCallbacks()
+{
+    if (this->extraEoMCall) {
+        try {
+            this->equationsOfMotion(this->timeBefore, 0);
+            this->equationsOfMotionDiffusion(this->timeBefore, 0);
+            this->publishAcceptedState();
+        } catch (...) {
+            // Keep joint edits at the accepted tick. Discard masses the native model could not accept.
+            MJSpec::NoRecompileGuard guard(this->spec);
+            auto* model = this->getMujocoModel();
+            try {
+                this->validateMujocoMassStates(model);
+            } catch (const std::invalid_argument&) {
+                std::copy_n(model->body_mass, model->nbody, this->massState->stateView().data());
+            }
+            this->publishAcceptedState();
+            throw;
+        }
+    }
+}
+
+void MJScene::publishAcceptedState()
+{
+    auto* data = this->getMujocoData();
+    this->synchronizeMujocoFromStates(this->getMujocoModel(), data);
+    data->time = this->timeBefore;
+    MJFwdKinematics::fwdKinematics(*this, this->timeBeforeNanos);
+    for (auto&& body : this->spec.getBodies()) {
+        body.writeStateDependentOutputMessages(this->timeBeforeNanos);
+    }
+    this->writeOutputStateMessages(this->timeBeforeNanos);
+    this->trialStateActive = false;
+}
+
+void MJScene::restoreAfterFailedStep()
+{
+    if (this->trialStateActive) {
+        // Restore the compiled scene without running task models or applying pending spec edits.
+        MJSpec::NoRecompileGuard recompileGuard(this->spec);
+        this->publishAcceptedState();
     }
 }
 

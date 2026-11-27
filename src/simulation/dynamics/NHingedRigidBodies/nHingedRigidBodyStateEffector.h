@@ -114,6 +114,9 @@ class NHingedRigidBodyStateEffector final
     std::vector<Message<SCStatesMsgPayload>*> nHingedRigidBodyConfigLogOutMsgs; //!< panel config log messages
 
   private:
+    void refreshInertialKinematics(double time,
+                                   const Eigen::MRPd& sigma_BN,
+                                   const Eigen::Vector3d& omega_BN_B) override;
     double totalMass;                                    //!< [kg] Total mass of effector
     StateData* thetaState;                               //!< state manager of theta for hinged rigid body
     StateData* thetaDotState;                            //!< state manager of thetaDot for hinged rigid body

@@ -124,7 +124,8 @@ def run(show_plots):
     data_rec_rate = macros.sec2nano(data_rec_step)
     sim_proc = sc_sim.CreateNewProcess(sim_process_name)
     sim_proc.addTask(sc_sim.CreateNewTask(dyn_task_name, dyn_process_rate))
-    sim_proc.addTask(sc_sim.CreateNewTask(fsw_task_name, fsw_process_rate))
+    # Publish the rotation and translation profiles before the array elements sample them.
+    sim_proc.addTask(sc_sim.CreateNewTask(fsw_task_name, fsw_process_rate), taskPriority=1)
 
     # Add spacecraft module
     sc_object = spacecraft.Spacecraft()
@@ -307,7 +308,7 @@ def run(show_plots):
 
     # Set up data logging
     sc_state_data = sc_object.scStateOutMsg.recorder(data_rec_rate)
-    sc_sim.AddModelToTask(fsw_task_name, sc_state_data)
+    sc_sim.AddModelToTask(dyn_task_name, sc_state_data)
 
     array1_prescribed_data_log = list()
     array2_prescribed_data_log = list()

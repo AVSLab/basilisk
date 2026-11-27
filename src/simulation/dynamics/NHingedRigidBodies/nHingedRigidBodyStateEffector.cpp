@@ -73,6 +73,7 @@ void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
  */
 void NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentClock);
     this->computePanelInertialStates();
 
     size_t panelIndex = 0;
@@ -80,24 +81,35 @@ void NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
         if (this->nHingedRigidBodyOutMsgs[panelIndex]->isLinked()) {
             HingedRigidBodyMsgPayload panelBuffer = this->nHingedRigidBodyOutMsgs[panelIndex]->zeroMsgPayload;
-            panelBuffer.theta = PanelIt->theta;
-            panelBuffer.thetaDot = PanelIt->thetaDot;
+            const auto stateIndex = static_cast<Eigen::Index>(panelIndex);
+            panelBuffer.theta = this->thetaState->stateView()(stateIndex);
+            panelBuffer.thetaDot = this->thetaDotState->stateView()(stateIndex);
             this->nHingedRigidBodyOutMsgs[panelIndex]->write(&panelBuffer, this->moduleID, CurrentClock);
         }
 
-        if (this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->isLinked()) {
+        if (epoch && this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->isLinked()) {
             SCStatesMsgPayload configLogMsg = this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->zeroMsgPayload;
             // Note, logging the panel frame S is the body frame B of that object
             eigenVector3d2CArray(PanelIt->r_ScN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(PanelIt->v_ScN_N, configLogMsg.v_BN_N);
             eigenMatrixXd2CArray(*PanelIt->sigma_SN, configLogMsg.sigma_BN);
             eigenMatrixXd2CArray(*PanelIt->omega_SN_S, configLogMsg.omega_BN_B);
-            this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
+            this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->write(&configLogMsg, this->moduleID, *epoch);
         }
         panelIndex++;
     }
 
     return;
+}
+
+void NHingedRigidBodyStateEffector::refreshInertialKinematics(double time,
+                                                              const Eigen::MRPd& sigma_BN,
+                                                              const Eigen::Vector3d& omega_BN_B)
+{
+    this->updateEffectorMassProps(time);
+    this->sigma_BN = sigma_BN;
+    this->omegaLoc_BN_B = omega_BN_B;
+    this->computePanelInertialStates();
 }
 
 /*! This method computes the panel states relative to the inertial frame */
@@ -235,7 +247,7 @@ void NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynam
 
     HingedPanel& panel = this->PanelVec[(size_t)(segment - 1)];
     panel.assignStateParamNames<DynamicEffector*>(newDynamicEffector);
-    panel.dynEffectors.push_back(newDynamicEffector);
+    panel.dynEffectors.push_back(newDynamicEffector->forAttachment(false));
     this->hasAttachedEffectors = true;
 }
 

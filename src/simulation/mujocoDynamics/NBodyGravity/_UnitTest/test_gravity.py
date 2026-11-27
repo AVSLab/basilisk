@@ -64,6 +64,150 @@ XML_PATH_BALL = f"{TEST_FOLDER}/test_ball.xml"
 XML_PATH_DUMBBELL = f"{TEST_FOLDER}/test_dumbbell.xml"
 
 
+def _unit_mass_target(gravity, position):
+    """Add an inertially aligned, unit-mass target at the given position in meters."""
+    target = gravity.addGravityTarget("target")
+    mass = messaging.SCMassPropsMsgPayload()
+    mass.massSC = 1.0  # [kg]
+    state = messaging.SCStatesMsgPayload()
+    state.r_BN_N = position
+    target.massPropertiesInMsg.subscribeTo(messaging.SCMassPropsMsg().write(mass))
+    target.centerOfMassStateInMsg.subscribeTo(messaging.SCStatesMsg().write(state))
+    return target
+
+
+def _moving_source(position, velocity, tick):
+    """Write a position-only ephemeris with x in meters and x velocity in meters per second."""
+    state = messaging.SpicePlanetStateMsgPayload()
+    state.PositionVector = [position, 0.0, 0.0]
+    state.VelocityVector = [velocity, 0.0, 0.0]
+    return messaging.SpicePlanetStateMsg().write(state, tick)
+
+
+def test_moving_central_and_third_body():
+    """Both terms of differential gravity use the source and origin at the evaluation epoch."""
+    gravity = NBodyGravity.NBodyGravity()
+    mu_c, mu_p = 1.0e6, 4.0e6  # [m^3/s^2]
+    central = simIncludeGravBody.gravBodyFactory().createCustomGravObject("central", mu_c)
+    central.isCentralBody = True
+    central.planetBodyInMsg.subscribeTo(_moving_source(100.0, 7.0, macros.sec2nano(3.0)))
+    gravity.addGravitySourceFromBody("central", central)
+    model = pointMassGravityModel.PointMassGravityModel()
+    model.muBody = mu_p
+    other = gravity.addGravitySource("perturber", model, False)
+    other.stateInMsg.subscribeTo(_moving_source(2300.0, -11.0, macros.sec2nano(5.0)))
+    radius = 500.0  # [m] relative to the central body
+    target = _unit_mass_target(gravity, [radius, 0.0, 0.0])
+    force = target.massFixedForceOutMsg.addSubscriber()
+    gravity.Reset(0)
+
+    def expected(separation):
+        return [-mu_c / radius**2 + mu_p / (separation - radius)**2 - mu_p / separation**2, 0.0, 0.0]
+
+    for time in (8.0, 1.0, 8.0):  # [s] stages can run backward and repeat
+        tick = macros.sec2nano(time)
+        gravity.UpdateState(tick)
+        separation = (2300.0 - 11.0 * (time - 5.0)) - (100.0 + 7.0 * (time - 3.0))  # [m]
+        np.testing.assert_allclose(force().force_S, expected(separation), rtol=1e-13)
+        assert force.timeWritten() == tick
+    # The untimed public queries still use the messages as written.
+    np.testing.assert_allclose(np.ravel(gravity.computeAccelerationOnTarget(target)), expected(2200.0), rtol=1e-13)
+    direct = gravity.computeAccelerationFromSource(other, [0.0, 0.0, 0.0])
+    np.testing.assert_allclose(np.ravel(direct), [mu_p / 2300.0**2, 0.0, 0.0], rtol=1e-13)
+
+
+def test_rotating_harmonic_source():
+    """A held tesseral field rotates forward and backward from its non-identity sampled attitude."""
+    gravity = NBodyGravity.NBodyGravity()
+    model = sphericalHarmonicsGravityModel.SphericalHarmonicsGravityModel()
+    model.muBody = 1.0e6  # [m^3/s^2]
+    model.radEquator = 500.0  # [m]
+    model.maxDeg = 2
+    model.cBar = [[1.0], [0.0, 0.0], [0.0, 0.0, 0.02]]  # [-]
+    model.sBar = [[0.0], [0.0, 0.0], [0.0, 0.0, 0.0]]
+    source = gravity.addGravitySource("rotating", model, False)
+    theta0, omega = 0.31, 0.12  # [rad], [rad/s]
+    sample_time = 5.0  # [s]
+
+    # Tilt the fixed frame so advancing the rotation on the wrong side changes the field.
+    tilt = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])  # [-]
+
+    def dcm(theta):
+        c, s = np.cos(theta), np.sin(theta)
+        return tilt @ np.array([[c, s, 0], [-s, c, 0], [0, 0, 1]])
+
+    state = messaging.SpicePlanetStateMsgPayload()
+    state.J20002Pfix = dcm(theta0).tolist()
+    state.J20002Pfix_dot = (dcm(theta0) @ (omega * np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 0]]))).tolist()
+    source.stateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(state, macros.sec2nano(sample_time)))
+    position = np.array([1000.0, 200.0, 50.0])  # [m]
+    target = _unit_mass_target(gravity, position.tolist())
+    force = target.massFixedForceOutMsg.addSubscriber()
+    gravity.Reset(0)
+
+    for time in (9.0, 1.0, sample_time):  # [s]
+        gravity.UpdateState(macros.sec2nano(time))
+        rotation = dcm(theta0 + omega * (time - sample_time))
+        expected = rotation.T @ np.ravel(model.computeField((rotation @ position).tolist()))
+        np.testing.assert_allclose(force().force_S, expected, rtol=1e-13)
+
+
+@pytest.mark.parametrize(
+    "solver, start, step",  # start and step in [ns]
+    [
+        ("SOSRI", 0, macros.sec2nano(1.0)),
+        ("RK4", 126_230_400_000_000_003, 6),
+        ("RK4", 0, 5),
+        ("RK4", 126_230_400_000_000_003, 5),
+    ],
+)
+def test_gravity_at_scene_stages(solver, start, step):
+    """Gravity follows signed SOSRI stages and exact RK4 midpoints at launch and after four years."""
+    from Basilisk.architecture import sysModel
+
+    scene = mujoco.MJScene("<mujoco/>")
+    gravity = NBodyGravity.NBodyGravity()
+    model = pointMassGravityModel.PointMassGravityModel()
+    model.muBody = 1.0e6  # [m^3/s^2]
+    source = gravity.addGravitySource("moving", model, False)
+    speed = 10.0  # [m/s]
+    radius = 1000.0  # [m]
+    source.stateInMsg.subscribeTo(_moving_source(0.0, speed, start))
+    target = _unit_mass_target(gravity, [radius, 0.0, 0.0])
+    force = target.massFixedForceOutMsg.addSubscriber()
+    samples = []
+
+    class ForceProbe(sysModel.SysModel):
+        def UpdateState(self, tick):
+            assert force.timeWritten() == tick
+            samples.append((tick, scene.getEvaluationTime(), list(force().force_S)))
+
+    probe = ForceProbe()
+    scene.AddModelToDynamicsTask(gravity, 2)
+    scene.AddModelToDynamicsTask(probe, 1)
+    if solver == "SOSRI":
+        scene.AddModelToDiffusionDynamicsTask(gravity)
+        scene.setIntegrator(svIntegrators.svStochasticIntegratorSOSRI(scene))
+    scene.Reset(start)
+    scene.UpdateState(start + step)
+    if solver == "SOSRI":
+        assert any(tick == 0 and seconds < 0 for tick, seconds, _ in samples)
+        offsets = [seconds for _, seconds, _ in samples]  # [s] start is zero
+    else:
+        assert [tick - start for tick, _, _ in samples] == [0, step // 2, step // 2, step]
+        offsets = [fraction * step * macros.NANO2SEC for fraction in (0, 0.5, 0.5, 1)]  # [s]
+    for dt, (_, _, actual) in zip(offsets, samples):
+        expected = [-model.muBody / (radius - speed * dt)**2, 0.0, 0.0]  # [N]
+        np.testing.assert_allclose(actual, expected, atol=0, rtol=3e-14)
+
+    if solver == "SOSRI":
+        scene.equationsOfMotionDiffusion(-0.25, 1.0)  # [s] diffusion callbacks also receive tick zero
+        expected = -model.muBody / (radius + 0.25 * speed)**2  # [N]
+        assert force().force_S[0] == pytest.approx(expected, rel=3e-14)
+        gravity.UpdateState(0)
+        assert force().force_S[0] == pytest.approx(-model.muBody / radius**2, rel=3e-14)
+
+
 def test_borrowed_gravity_entries_retain_owner():
     gravity = NBodyGravity.NBodyGravity()
     gravity_model = pointMassGravityModel.PointMassGravityModel()

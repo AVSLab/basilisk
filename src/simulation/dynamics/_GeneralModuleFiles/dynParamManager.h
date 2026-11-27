@@ -33,6 +33,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -144,6 +145,20 @@ class DynParamManager
      * @throws BasiliskError If the property does not exist.
      */
     Eigen::MatrixXd* getPropertyReference(std::string propName);
+#ifndef SWIG
+    /** @brief Epoch and integration origin shared by the spacecraft and its attached effectors. */
+    struct InertialFrame
+    {
+        bool originReady = false; //!< True when the integration origin can be located in inertial coordinates.
+        std::optional<uint64_t> acceptedTimeNanos;                //!< [ns] Empty while the endpoint holds a trial pose.
+        std::optional<uint64_t> exactStageTimeNanos;              //!< [ns] Set during reset and zero-duration stages.
+        Eigen::Vector3d originPosition = Eigen::Vector3d::Zero(); //!< [m] Integration origin in inertial coordinates.
+        Eigen::Vector3d originVelocity = Eigen::Vector3d::Zero(); //!< [m/s] Integration origin in inertial coordinates.
+    };
+    InertialFrame inertialFrame; //!< Integration origin and publication epoch for this spacecraft's effectors.
+    bool hasConstraint = false;  //!< Coupled loads require all endpoints to be refreshed before each stage.
+    bool massPropsChangedByCommand = false; //!< A prescribed command changed the accepted mass configuration.
+#endif
     /**
      * @brief Update an existing property without changing its shape.
      * @param propName Previously created property name.

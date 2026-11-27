@@ -24,6 +24,8 @@
 #define stateVecIntegrator_h
 
 #include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
 class DynamicObject;
@@ -66,8 +68,12 @@ class StateVecIntegrator
     void ensureIntegrationBinding();
     /** @brief Evaluate each object's drift at the supplied time and step in seconds. */
     void evaluateDerivatives(double time, double timeStep);
+    /** @brief Evaluate a fixed Runge-Kutta stage with its position in the scheduled interval. */
+    void evaluateFixedStepDerivatives(double startTime, double timeStep, double fraction);
     /** @brief Evaluate each object's diffusion at the supplied time and step in seconds. */
     void evaluateDiffusions(double time, double timeStep);
+    /** @brief Validate every object's final candidate before releasing the entry state. */
+    void validateFinalStates() const;
     /** @brief Borrow dynamics objects in callback order. */
     const std::vector<DynamicObject*>& dynamics() const noexcept { return this->dynPtrs; }
 
@@ -75,10 +81,16 @@ class StateVecIntegrator
     friend class DynamicObject;
     friend class integrator_step_test::StateVecIntegratorTestAccess;
     /** @brief Prepare workspace and execute the numerical method. */
-    void integrate(double currentTime, double timeStep);
+    void integrate(double currentTime, double timeStep, std::optional<uint64_t> endTick = std::nullopt);
+    /** @brief Let each model undo step preparation and restore its accepted outputs after a failure. */
+    void restoreDynamicsAfterFailedStep() const;
+    void prepareConstraintEndpoints(double time);
+    std::optional<uint64_t> scheduledEndTick; ///< [ns] Exact scheduler target when available.
+    std::optional<uint64_t> fixedStageTick;   ///< [ns] Active fixed-step start, midpoint, or end.
 
     std::vector<DynamicObject*> dynPtrs; ///< Borrowed callback targets, with the primary first.
     bool bindingPrepared = false;        ///< True when workspace preparation has succeeded for the current group.
+    bool halfTick = false;               ///< Active fixed stage is half a nanosecond past fixedStageTick.
 };
 
 #endif /* stateVecIntegrator_h */

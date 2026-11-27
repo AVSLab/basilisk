@@ -125,9 +125,10 @@ following sequence::
         forward kinematics (10000) -> ephemeris (75) -> NBodyGravity (-1)
 
 MuJoCo's adaptive integrator evaluates dynamics between top-level task ticks.
-The ephemeris must therefore run in the scene dynamics task before
-``NBodyGravity`` so that every force evaluation uses planet positions for the
-current integrator time::
+With a slower ephemeris publisher, ``NBodyGravity`` advances the latest source
+positions and orientations using constant velocity and spin. This example runs
+the ephemeris publisher before gravity on the scene dynamics task so each stage
+gets a fresh Earth-Moon ephemeris::
 
     scene.AddModelToDynamicsTask(
         ephemeris, EPHEMERIS_PRIORITY

@@ -23,11 +23,15 @@ import numpy as np
 import pytest
 
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
+from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedMotionStateEffector
 from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.simulation import spacecraft
+from Basilisk.simulation import spinningBodyOneDOFStateEffector
+from Basilisk.simulation import svIntegrators
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -38,6 +42,361 @@ splitPath = path.split('simulation')
 
 matplotlib.rc('xtick', labelsize=16)
 matplotlib.rc('ytick', labelsize=16)
+
+
+@pytest.mark.parametrize("command", [None, "translation", "rotation"])
+def test_prescribed_motion_starts_at_spacecraft_reset_epoch(command):
+    """Motion starts at spacecraft reset and a command only updates its own component."""
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 100.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    arm = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    arm.setIPntPc_P(np.zeros((3, 3)).tolist())  # massless reference frame
+    arm.setR_PM_M([1.0, 0.0, 0.0])  # [m]
+    arm.setRPrime_PM_M([0.2, 0.0, 0.0])  # [m/s]
+    arm.setRPrimePrime_PM_M([0.001, 0.0, 0.0])  # [m/s^2]
+    arm.setOmega_PM_P([0.0, 0.0, 0.3])  # [rad/s]
+    arm.setOmegaPrime_PM_P([0.0, 0.0, 0.1])  # [rad/s^2]
+    sc.addStateEffector(arm)
+    state = arm.prescribedMotionConfigLogOutMsg.addSubscriber()
+    epoch = 120_000_000_123_456_789  # [ns]
+    sc.Reset(epoch)
+    for seconds in (0, 1, 2):
+        time = epoch + macros.sec2nano(seconds)  # [ns]
+        if seconds:
+            sc.UpdateState(time)
+        assert state.isWritten() and state.timeWritten() == time
+        x = 1 + 0.2 * seconds + 0.0005 * seconds**2  # [m]
+        speed = 0.2 + 0.001 * seconds  # [m/s]
+        rate = 0.3 + 0.1 * seconds  # [rad/s]
+        if seconds == 2 and command == "translation":
+            x, speed = 4.5, 0.5  # [m], [m/s]
+        if seconds == 2 and command == "rotation":
+            rate = 0.75  # [rad/s]
+        np.testing.assert_allclose(state().r_BN_N, [x, 0, 0], rtol=0, atol=1e-12)
+        np.testing.assert_allclose(state().v_BN_N, [speed, 0, 0], rtol=0, atol=1e-12)
+        np.testing.assert_allclose(state().omega_BN_B, [0, 0, rate], rtol=0, atol=1e-12)
+        if seconds == 1 and command == "translation":
+            translation = messaging.PrescribedTranslationMsgPayload()
+            translation.r_PM_M = [4.0, 0.0, 0.0]  # [m]
+            translation.rPrime_PM_M = [0.5, 0.0, 0.0]  # [m/s]
+            source = messaging.PrescribedTranslationMsg().write(translation, time)
+            arm.prescribedTranslationInMsg.subscribeTo(source)
+        if seconds == 1 and command == "rotation":
+            rotation = messaging.PrescribedRotationMsgPayload()
+            rotation.omega_PM_P = [0.0, 0.0, 0.75]  # [rad/s]
+            source = messaging.PrescribedRotationMsg().write(rotation, time)
+            arm.prescribedRotationInMsg.subscribeTo(source)
+        arm.UpdateState(time)
+        if seconds == 1 and command == "translation":
+            np.testing.assert_allclose(state().r_BN_N, translation.r_PM_M, rtol=0, atol=1e-12)
+            np.testing.assert_allclose(state().v_BN_N, translation.rPrime_PM_M, rtol=0, atol=1e-12)
+
+
+def test_scheduled_rotation_applies_to_following_interval():
+    """The spacecraft reaches the sample epoch before the rotation command sets the next interval's state."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(1.0)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 10.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    arm = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    arm.setMass(0.0)  # [kg]
+    arm.setIPntPc_P(np.zeros((3, 3)).tolist())  # [kg*m^2]
+    sc.addStateEffector(arm)
+    before_command = arm.prescribedMotionConfigLogOutMsg.recorder()
+    sim.AddModelToTask("task", sc, 3)
+    sim.AddModelToTask("task", before_command, 2)
+    sim.AddModelToTask("task", arm, 1)
+    command = messaging.PrescribedRotationMsgPayload()
+    source = messaging.PrescribedRotationMsg()
+    arm.prescribedRotationInMsg.subscribeTo(source)
+    state = arm.prescribedMotionConfigLogOutMsg.addSubscriber()
+    relative = arm.prescribedRotationOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    # At one second the command corrects the propagated attitude as well as the rate.
+    samples = [(0.0, 0.0, 0.2), (0.2, 0.45, 0.4), (0.85, 0.85, 0.4)]  # [rad], [rad], [rad/s]
+    for index, (propagated_angle, angle, rate) in enumerate(samples):
+        tick = index * step  # [ns]
+        command.sigma_PM = [0.0, 0.0, np.tan(angle / 4)]
+        command.omega_PM_P = [0.0, 0.0, rate]
+        source.write(command, tick)
+        sim.ConfigureStopTime(tick)
+        sim.ExecuteSimulation()
+        assert before_command.timesWritten()[-1] == tick
+        np.testing.assert_allclose(before_command.sigma_BN[-1, 2], np.tan(propagated_angle / 4), rtol=0, atol=1e-6)
+        assert state.timeWritten() == relative.timeWritten() == tick
+        np.testing.assert_allclose(relative().sigma_PM, command.sigma_PM, rtol=0, atol=1e-14)
+        np.testing.assert_array_equal(relative().omega_PM_P, command.omega_PM_P)
+        np.testing.assert_allclose(state().sigma_BN, command.sigma_PM, rtol=0, atol=1e-6)
+        np.testing.assert_allclose(state().omega_BN_B, command.omega_PM_P, rtol=0, atol=1e-14)
+
+    # A command between spacecraft steps cannot revise the preceding inertial measurement.
+    accepted = state()
+    command.sigma_PM = [0.0, 0.0, 0.0]
+    source.write(command, tick + step // 2)
+    arm.UpdateState(tick + step // 2)
+    np.testing.assert_array_equal(relative().sigma_PM, command.sigma_PM)
+    assert state.timeWritten() == tick
+    np.testing.assert_array_equal(state().sigma_BN, accepted.sigma_BN)
+
+
+def _spacecraft_with_prescribed_body():
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    arm = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    arm.setMass(1.0)  # [kg]
+    arm.setIPntPc_P(np.diag([1.0, 2.0, 3.0]).tolist())  # [kg*m^2]
+    sc.addStateEffector(arm)
+    return sc, arm
+
+
+@pytest.mark.parametrize("gravity_query_time", [1.0, 5.0])  # [s]
+def test_direct_energy_after_prescribed_motion_command(gravity_query_time):
+    """An energy query uses the commanded body inertia and center-of-mass velocity at the accepted tick."""
+    sc, arm = _spacecraft_with_prescribed_body()
+    sc.Reset(0)
+    tick = macros.sec2nano(1.0)  # [ns]
+    sc.UpdateState(tick)
+
+    rotation = messaging.PrescribedRotationMsgPayload()
+    rotation.sigma_PM = [0.0, 0.0, np.tan(np.pi / 8)]  # +90 deg about z maps body x to inertial y
+    rotation.omega_PM_P = [1.0, 0.0, 0.0]  # [rad/s]
+    rotation_source = messaging.PrescribedRotationMsg().write(rotation, tick)
+    arm.prescribedRotationInMsg.subscribeTo(rotation_source)
+    translation = messaging.PrescribedTranslationMsgPayload()
+    translation.rPrime_PM_M = [0.0, 0.0, 2.0]  # [m/s]
+    translation.rPrimePrime_PM_M = [0.0, 0.0, 1.0]  # [m/s^2]
+    translation_source = messaging.PrescribedTranslationMsg().write(translation, tick)
+    arm.prescribedTranslationInMsg.subscribeTo(translation_source)
+    arm.UpdateState(tick)
+
+    sc.computeEnergyMomentum(gravity_query_time)
+    # The two 1 kg bodies have a center-of-mass speed of 1 m/s. Spinning about the arm's x axis adds 0.5 J.
+    assert sc.totRotEnergy == pytest.approx(1.5)  # [J]
+    assert sc.totOrbEnergy == pytest.approx(1.0)  # [J]
+    np.testing.assert_allclose(np.ravel(sc.totRotAngMomPntC_N), [0.0, 1.0, 0.0], atol=1e-14)  # [kg*m^2/s]
+
+
+@pytest.mark.parametrize("query_energy", [False, True])
+@pytest.mark.parametrize("republish_at_command_tick", [False, True])
+def test_prescribed_command_telemetry_is_independent_of_energy_query(query_energy, republish_at_command_tick):
+    """Publication and the next step use the same commanded center of mass with or without an energy query."""
+    sc, arm = _spacecraft_with_prescribed_body()
+    state = sc.scStateOutMsg.addSubscriber()
+    sc.Reset(0)
+    step = macros.sec2nano(1.0)  # [ns]
+    sc.UpdateState(step)
+
+    translation = messaging.PrescribedTranslationMsgPayload()
+    translation.r_PM_M = [0.0, 0.0, 2.0]  # [m]
+    translation.rPrime_PM_M = [0.0, 0.0, 2.0]  # [m/s]
+    source = messaging.PrescribedTranslationMsg().write(translation, step)
+    arm.prescribedTranslationInMsg.subscribeTo(source)
+    arm.UpdateState(step)
+    if query_energy:
+        sc.computeEnergyMomentum(1.0)  # [s]
+    if republish_at_command_tick:
+        sc.writeOutputStateMessages(step)
+        assert state.timeWritten() == step
+        np.testing.assert_allclose(state().r_CN_N, [0.0, 0.0, 1.0])  # [m]
+        np.testing.assert_allclose(state().v_CN_N, [0.0, 0.0, 1.0])  # [m/s]
+
+    sc.UpdateState(2 * step)
+    assert state.timeWritten() == 2 * step
+    np.testing.assert_allclose(state().v_CN_N, [0.0, 0.0, 1.0])  # [m/s]
+    # Constant velocity over the post-command interval contributes zero delta-v in both frames.
+    np.testing.assert_allclose(state().TotalAccumDV_CN_N, np.zeros(3), atol=1e-14)  # [m/s]
+    np.testing.assert_allclose(state().TotalAccumDVBdy, np.zeros(3), atol=1e-14)  # [m/s]
+
+
+@pytest.mark.parametrize("query_energy", [False, True])
+@pytest.mark.parametrize(
+    "arm_connected, arm_speed", [(True, 2.0), (True, 0.0), (False, 0.0)],  # [m/s]
+    ids=["moving", "zero-command", "disconnected"],
+)
+def test_prescribed_command_delta_v_with_fuel_leak(query_energy, arm_connected, arm_speed):
+    """The tank and arm set the delta-v baseline for connected and disconnected inputs, with or without a query."""
+    sim = SimulationBaseClass.SimBaseClass()
+    step = macros.sec2nano(1.0)  # [ns]
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", step))
+    sc, arm = _spacecraft_with_prescribed_body()
+    tank = fuelTank.FuelTank()
+    model = fuelTank.FuelTankModelConstantVolume()
+    model.propMassInit = 1.0  # [kg]
+    model.radiusTankInit = 0.3  # [m]
+    tank.setTankModel(model)
+    tank.setR_TB_B([[3.0], [0.0], [0.0]])  # [m]
+    sc.addStateEffector(tank)
+    for module in (sc, arm, tank):
+        sim.AddModelToTask("task", module)
+
+    motion = messaging.PrescribedTranslationMsgPayload()
+    source = messaging.PrescribedTranslationMsg().write(motion)
+    if arm_connected:
+        arm.prescribedTranslationInMsg.subscribeTo(source)
+    flow = messaging.MassFlowRateMsgPayload()
+    leak = messaging.MassFlowRateMsg().write(flow)
+    tank.fuelLeakRateInMsg.subscribeTo(leak)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    motion.rPrime_PM_M = [0.0, 0.0, arm_speed]  # [m/s]
+    source.write(motion, step)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    if query_energy:
+        sc.computeEnergyMomentum(1.0)  # [s]
+    flow.massFlowRate = 0.1  # [kg/s]
+    leak.write(flow, 2 * step)
+    sim.ConfigureStopTime(2 * step)
+    sim.ExecuteSimulation()
+
+    # At leak onset the tank is 2 m from the center of mass. Only the 1 kg arm contributes momentum along z.
+    initial_mass = 3.0  # [kg]
+    final_mass = initial_mass - flow.massFlowRate * (step * macros.NANO2SEC)  # [kg]
+    initial_velocity = np.array([-2.0 * flow.massFlowRate, 0.0, arm_speed]) / initial_mass  # [m/s]
+    # Both mass and first moment are linear in time, so center-of-mass velocity scales as 1 / mass**2.
+    expected_delta_v = initial_velocity * ((initial_mass / final_mass)**2 - 1.0)  # [m/s]
+    state = sc.scStateOutMsg.read()
+    np.testing.assert_allclose(state.TotalAccumDV_CN_N, expected_delta_v, rtol=0, atol=1e-12)
+    np.testing.assert_allclose(state.TotalAccumDVBdy, expected_delta_v, rtol=0, atol=1e-12)
+
+
+@pytest.mark.parametrize("diagnostic", ["energy", "publication"])
+@pytest.mark.parametrize("joint_on_arm", [False, True], ids=["hub-joint", "arm-joint"])
+def test_diagnostic_preserves_pending_joint_lock(diagnostic, joint_on_arm):
+    """At the same task rate, diagnostics preserve the accepted joint rate until the next dynamics step."""
+    sim = SimulationBaseClass.SimBaseClass()
+    step = macros.sec2nano(1.0)  # [ns]
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", step))
+    sc, arm = _spacecraft_with_prescribed_body()
+    joint = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    joint.mass = 1.0  # [kg]
+    joint.IPntSc_S = np.eye(3).tolist()  # [kg*m^2]
+    joint.sHat_S = [[0.0], [0.0], [1.0]]
+    joint.thetaDotInit = 1.0  # [rad/s]
+    parent = arm if joint_on_arm else sc
+    parent.addStateEffector(joint)
+    for module in (sc, joint, arm):
+        sim.AddModelToTask("task", module)
+    lock = messaging.ArrayEffectorLockMsgPayload()
+    lock_source = messaging.ArrayEffectorLockMsg().write(lock)
+    joint.motorLockInMsg.subscribeTo(lock_source)
+    motion = messaging.PrescribedTranslationMsgPayload()
+    motion_source = messaging.PrescribedTranslationMsg().write(motion)
+    arm.prescribedTranslationInMsg.subscribeTo(motion_source)
+    joint_output = joint.spinningBodyOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    lock.effectorLockFlag = [1]
+    lock_source.write(lock, step)
+    motion.r_PM_M = [0.0, 0.0, 3.0]  # [m]
+    motion_source.write(motion, step)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    rate = sc.dynManager.getStateObject(joint.nameOfThetaDotState)
+    assert np.asarray(rate.getState()).item() == pytest.approx(joint.thetaDotInit)
+    if diagnostic == "energy":
+        sc.computeEnergyMomentum(1.0)  # [s]
+        assert sc.totRotEnergy == pytest.approx(0.5)  # [J]
+    else:
+        sc.writeOutputStateMessages(step)
+        expected_z = 2.0 if joint_on_arm else 1.0  # [m]
+        assert sc.scStateOutMsg.read().r_CN_N[2] == pytest.approx(expected_z)
+    assert np.asarray(rate.getState()).item() == pytest.approx(joint.thetaDotInit)
+    joint.writeOutputStateMessages(step)
+    assert joint_output().thetaDot == pytest.approx(joint.thetaDotInit)
+
+    sim.ConfigureStopTime(2 * step)
+    sim.ExecuteSimulation()
+    assert joint_output.timeWritten() == 2 * step
+    assert np.asarray(rate.getState()).item() == joint_output().thetaDot == 0.0  # [rad/s]
+
+
+def test_energy_query_recovers_after_rejected_rkf45_step():
+    """A rejected RKF45 trial preserves relative telemetry and stored energy until retry."""
+    sc, arm = _spacecraft_with_prescribed_body()
+    arm.setRPrimePrime_PM_M([1.0, 0.0, 0.0])  # [m/s^2]
+    arm.setOmega_PM_P([1.0, 0.0, 0.0])  # [rad/s]
+    arm.setOmegaPrime_PM_P([0.5, 0.0, 0.0])  # [rad/s^2]
+    translation = arm.prescribedTranslationOutMsg.addSubscriber()
+    rotation = arm.prescribedRotationOutMsg.addSubscriber()
+    integrator = svIntegrators.svIntegratorRKF45(sc)
+    integrator.relTol = integrator.absTol = 1e-12
+    sc.setIntegrator(integrator)
+    sc.Reset(0)
+    sc.UpdateState(0)
+    step = macros.sec2nano(1.0)  # [ns]
+    sc.UpdateState(step)
+    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 1.0625], atol=1e-12)  # [J]
+    accepted_sigma = rotation().sigma_PM
+    np.testing.assert_allclose(accepted_sigma, [np.tan(1.25 / 4), 0, 0], rtol=0, atol=1e-9)  # 1.25 rad about x
+
+    # Force the embedded error check to reject the trial and prevent a smaller retry.
+    factors = integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize
+    integrator.safetyFactorForNextStepSize = integrator.minimumFactorDecreaseForNextStepSize = 0.0
+    with pytest.raises(RuntimeError, match="representable forward progress"):
+        sc.UpdateState(2 * step)
+    with pytest.raises(BasiliskError, match="accepted spacecraft state"):
+        sc.computeEnergyMomentum(1.0)  # [s]
+    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 1.0625], atol=1e-12)  # [J]
+
+    arm.moduleID += 1  # Distinguish a fresh publication at the accepted tick from the previous messages.
+    arm.UpdateState(step)
+    for reader in (translation, rotation):
+        assert reader.timeWritten() == step and reader.moduleID() == arm.moduleID
+    np.testing.assert_allclose(translation().r_PM_M, [0.5, 0, 0])  # [m]
+    np.testing.assert_allclose(translation().rPrime_PM_M, [1, 0, 0])  # [m/s]
+    np.testing.assert_allclose(translation().rPrimePrime_PM_M, [1, 0, 0])  # [m/s^2]
+    np.testing.assert_array_equal(rotation().sigma_PM, accepted_sigma)
+    np.testing.assert_allclose(rotation().omega_PM_P, [1.5, 0, 0])  # [rad/s]
+    np.testing.assert_allclose(rotation().omegaPrime_PM_P, [0.5, 0, 0])  # [rad/s^2]
+
+    integrator.safetyFactorForNextStepSize, integrator.minimumFactorDecreaseForNextStepSize = factors
+    sc.UpdateState(2 * step)
+    sc.computeEnergyMomentum(2.0)  # [s]
+    # The center of mass stays at rest. At 2 s relative translation contributes 1 J and spin contributes 1.25 J.
+    np.testing.assert_allclose([sc.totOrbEnergy, sc.totRotEnergy], [0.0, 2.25], rtol=0, atol=1e-12)  # [J]
+    np.testing.assert_allclose(sc.scStateOutMsg.read().TotalAccumDV_CN_N, np.zeros(3), atol=1e-12)  # [m/s]
+
+
+def test_branch_follows_accepted_attitude_reference():
+    """A fixed mount must follow a new hub attitude at the end of a positive step."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("process")
+    step = macros.sec2nano(1.0)  # [ns]
+    process.addTask(sim.CreateNewTask("task", step))
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 5.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    platform = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    platform.setR_MB_B([2.0, 0.0, 0.0])  # [m]
+    sc.addStateEffector(platform)
+    platform_state = platform.prescribedMotionConfigLogOutMsg.addSubscriber()
+    ref = messaging.AttRefMsgPayload()
+    source = messaging.AttRefMsg().write(ref)
+    sc.attRefInMsg.subscribeTo(source)
+    sim.AddModelToTask("task", sc, 2)
+    sim.AddModelToTask("task", platform, 1)
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+    np.testing.assert_array_equal(platform_state().r_BN_N, [2.0, 0.0, 0.0])  # [m]
+
+    ref.sigma_RN = [0.0, 0.0, np.tan(np.pi / 8)]  # MRP for 90 degrees about +z
+    source.write(ref, step)
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    assert platform_state.timeWritten() == step
+    np.testing.assert_allclose(platform_state().sigma_BN, ref.sigma_RN, atol=1e-14)
+    np.testing.assert_allclose(platform_state().r_BN_N, [0.0, 2.0, 0.0], atol=1e-14)  # [m]
 
 
 @pytest.mark.parametrize("theta_init", [0.0, macros.D2R * 10.0, macros.D2R * -5.0])

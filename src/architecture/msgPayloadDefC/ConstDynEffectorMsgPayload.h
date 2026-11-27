@@ -23,7 +23,7 @@
 /*! @brief Structure used to Constraint Dynamic Effector output message */
 typedef struct
 {
-    double Fc_N[3];         //!< [N] Constraint force applied in Inertial frame
+    double Fc_N[3];         //!< [N] Constraint force on endpoint 1 in inertial frame components
     double L1_B1[3];        //!< [N.m] Constraint torque applied on s/c 1 in B1 frame
     double L2_B2[3];        //!< [N.m] Constraint torque applied on s/c 2 in B2 frame
     double psi_N[3];        //!< [m] Direction constraint violation

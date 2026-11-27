@@ -137,9 +137,10 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     effectorStatusMsg = messaging.DeviceStatusMsg().write(effectorStatusMsgPayload)
     constraintEffector.effectorStatusInMsg.subscribeTo(effectorStatusMsg)
 
-#. (Optional) Setup Low Pass Filtering for the Constraint Forces and Torques acting on the two satellites. Define a positive cut-off frequency wc for the low-pass filter. If not set, defaults to 0::
+#. To filter the constraint force and torque magnitudes, specify the positive cutoff frequency
+   ``wc`` in rad/s, the filter sampling interval ``h`` in seconds, and the damping coefficient ``k`` in 1/s::
 
-    constraintEffector.setFilterData(wc)
+    constraintEffector.setFilter_Data(wc, h, k)
 
 #. The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable ``constraintElements``.
 
@@ -177,6 +178,27 @@ Each gain without an explicit override is derived as ``k_d = k_a = alpha**2`` or
 This setup occurs while the parent states or properties are linked, so it does not depend on separately
 scheduling the effector.
 
+For endpoints on different synchronized spacecraft, each vehicle receives the force and torque
+for its own endpoint, including when a delayed gravity input defers the other vehicle's initial derivatives.
+For two hubs with the same integration-origin position and velocity, the constraint subtracts
+their integrated states directly. A distant central body's inertial position therefore does
+not reduce the precision of the hub separation.
+For distinct origins or articulated endpoints, the separation is limited by the precision of
+the inertial parent positions and velocities. In both cases the constraint adds the attachment
+offsets after subtracting the parent states.
+Time-zero reference updates and subsequent integrator stages refresh both endpoints before evaluating either load.
+While either central-body ephemeris is unwritten, the constraint applies zero load and defers its output
+message. Once both origins are known, the next dynamics evaluation uses both updated endpoints.
+The output uses the two accepted poses and their common spacecraft timestamp. If a load changes at that
+same tick, its filtered magnitude is recomputed using the preceding samples. The filter history advances
+once per accepted timestamp.
+When scheduling the constraint for telemetry or status commands, use the spacecraft module's rate.
+Between accepted dynamics steps, its output retains the force, torques, violation, filtered values,
+and timestamp. A status command takes effect at the next dynamics evaluation.
+A rejected integration trial leaves the previous constraint message available.
+``Fc_N`` is the force on endpoint 1 in inertial frame components. Endpoint 2 receives its negative.
+The torques ``L1_B1`` and ``L2_B2`` are expressed in their respective endpoint frames.
+
 The effector records which individual gain setters have been called. Changing ``alpha`` or ``beta``
 and then calling ``Reset()`` refreshes every derived gain while preserving explicit overrides, even
 when an override equals a previously derived value. Individual gain setters take effect immediately;
@@ -205,9 +227,13 @@ endpoints, and either or both of them may be a state effector rather than a hub:
 
 The endpoint added first becomes body 1 of the constraint and the one added second becomes body 2,
 so ``r_P1B1_B1`` and ``r_P2B2_B2`` are each measured in the frame their own endpoint belongs to, the
-parent segment's frame for a state effector and the hub body frame for a spacecraft. Adding two
+parent segment's frame for a state effector and the hub body frame for a spacecraft. This also
+applies when a hub and its own articulated branch form the two endpoints. Adding two
 state effectors connects two appendages directly, with no hub as an endpoint. The ``segment``
 argument is omitted for a parent with a single degree of freedom.
 
 Both the parent and the child are still added to the task in the usual way, the same as when the
 child is attached to the hub.
+
+Custom C++ parents that support dynamic effectors assign the parent property names and then store
+the pointer returned by ``forAttachment(false)`` for linking and force evaluation.

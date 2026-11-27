@@ -26,6 +26,7 @@ cover the sign and reference-frame corrections in issue 1689.
 """
 
 from collections import Counter
+from fractions import Fraction
 from types import SimpleNamespace
 
 import numpy as np
@@ -33,7 +34,8 @@ import pytest
 
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.architecture import messaging
-from Basilisk.simulation import gravityEffector, spacecraft, stateArchitecture, svIntegrators
+from Basilisk.simulation import extForceTorque, gravityEffector, meanRevertingNoiseStateEffector
+from Basilisk.simulation import linearTranslationOneDOFStateEffector, spacecraft, stateArchitecture, svIntegrators
 from Basilisk.simulation.gravityModel import GravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
@@ -45,6 +47,8 @@ from Basilisk.utilities.supportDataTools.dataFetcher import DataFile, get_path
 
 SIDE_LENGTH = 1000.0  # [m]
 MU = 4.46e5  # [m^3/s^2]
+# Five Julian years plus a few nanoseconds that a double absolute epoch cannot retain.
+MISSION_EPOCH_NS = 5 * 31_557_600 * 1_000_000_000 + 3  # [ns]
 
 
 def _make_mesh(cells):
@@ -384,9 +388,10 @@ def test_inertial_potential_uses_requested_orientation(c_shape, orientation, off
         np.asarray(body.computeGravityInertial(position.tolist(), evaluation_time)).ravel(),
         expected_acceleration, rtol=1e-13, atol=0.0,
     )
+    np.testing.assert_allclose(manager.getPropertyReference("energy_test.J20002Pfix"), dcm_PN, rtol=0, atol=1e-13)
 
 
-def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, moving_body, time_step):
+def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, moving_body, time_step, initialize=True):
     """Configure a spacecraft and an analytic, once-written planet ephemeris.
 
     :param model_kind: Polyhedral, point-mass, or degree-zero spherical-harmonic model.
@@ -395,6 +400,7 @@ def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, movin
     :param spin_rate: Constant planet spin about the inertial z axis [rad/s].
     :param moving_body: Whether to translate the planet with a constant velocity.
     :param time_step: Simulation task period [s].
+    :param initialize: Whether to initialize at the default simulation epoch.
     :return: Simulation, model, ephemeris, and logger handles.
     """
     if model_kind == "polyhedral":
@@ -458,7 +464,8 @@ def _make_energy_simulation(model_kind, frame, integrator_name, spin_rate, movin
         "energy": lambda _: sc.totOrbEnergy,
     })
     sim.AddModelToTask("task", log)
-    sim.InitializeSimulation()
+    if initialize:
+        sim.InitializeSimulation()
     return SimpleNamespace(
         sim=sim, sc=sc, body=body, model=model, bodies=bodies, log=log,
         message=message, payload=payload, angle=angle, spin_rate=spin_rate, integrator=integrator,
@@ -499,6 +506,601 @@ def test_reported_energy_uses_body_frame_and_output_epoch(model_kind, frame, int
         expected_energy = result.sc.hub.mHub * (0.5 * velocity.dot(velocity) + potential)
         absolute_tolerance = 1e-8  # [J]
         assert energy == pytest.approx(expected_energy, rel=1e-12, abs=absolute_tolerance)
+
+
+@pytest.mark.parametrize("epoch_ns", [0, MISSION_EPOCH_NS])
+def test_gravity_at_negative_sosri_stage(epoch_ns):
+    """Evaluate a moving, rotating body at SOSRI's second drift stage at launch and five years later."""
+    spin_rate = 0.2  # [rad/s]
+    step = 1.0  # [s]
+    stage_time = epoch_ns / 1_000_000_000 - 0.04199224421316468 * step  # [s] second SOSRI drift stage
+    result = _make_energy_simulation("polyhedral", "inertial", "svStochasticIntegratorSOSRI", spin_rate, True, step)
+    result.message.write(result.payload, epoch_ns)
+    result.sc.gravField.UpdateState(epoch_ns)
+    result.sc.equationsOfMotion(stage_time, step)
+
+    # Subtract the exact values of the integrator's double and the message's integer timestamp.
+    dt = float(Fraction(stage_time) - Fraction(epoch_ns, 1_000_000_000))  # [s]
+    position = np.asarray(result.payload.PositionVector) + dt * np.asarray(result.payload.VelocityVector)
+    dcm = _body_rotation(result.angle + spin_rate * dt)
+    relative = np.asarray(result.sc.hub.r_CN_NInit).ravel() - position
+    acceleration = dcm.T @ np.asarray(result.model.computeField((dcm @ relative).tolist())).ravel()
+    manager = result.sc.dynManager
+    body_position = np.ravel(manager.getPropertyReference("energy_body.r_PN_N"))
+    np.testing.assert_allclose(body_position, position, rtol=0, atol=1e-12)
+    np.testing.assert_allclose(manager.getPropertyReference("energy_body.J20002Pfix"), dcm, rtol=0, atol=1e-13)
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), acceleration, rtol=1e-11, atol=1e-14)
+    clock = np.ravel(manager.getPropertyReference("systemTime"))
+    np.testing.assert_array_equal(clock, [round(stage_time * 1e9), stage_time])
+
+
+@pytest.mark.parametrize("epoch_ns", [0, MISSION_EPOCH_NS])
+def test_sosri_spacecraft_output_epoch(epoch_ns, capfd):
+    """Check the published state and orbital potential at exact clock ticks during a noisy SOSRI step."""
+    step_ns = 1_000_000_001  # [ns]
+    result = _make_energy_simulation(
+        "point_mass", "central", "svStochasticIntegratorSOSRI", 0.0, True, 1.0, initialize=False
+    )
+    sc = result.sc
+    noise = meanRevertingNoiseStateEffector.MeanRevertingNoiseStateEffector()
+    noise.setTimeConstant(100.0)  # [s]
+    noise.setStationaryStd(1.0)  # [-]
+    sc.addStateEffector(noise)
+    result.integrator.setRNGSeed(1)
+
+    # The fixed secondary also exercises a five-year offset from its default ephemeris at zero.
+    secondary = gravityEffector.GravBodyData()
+    secondary.planetName = "secondary"
+    secondary.mu = 1.0e6  # [m^3/s^2]
+    sc.gravField.addGravBody(secondary)
+    result.payload.VelocityVector = [1500.0, -500.0, 200.0]  # [m/s]
+    message_ns = epoch_ns + 7  # [ns]
+    result.message.write(result.payload, message_ns)
+    sc.Reset(epoch_ns)
+    velocity = np.array(result.payload.VelocityVector)
+    for output_ns in (epoch_ns, epoch_ns + step_ns):
+        if output_ns != epoch_ns:
+            sc.UpdateState(output_ns)
+        dt = (output_ns - message_ns) * macros.NANO2SEC  # [s]
+        central = np.array(result.payload.PositionVector) + dt * velocity
+        relative = np.ravel(sc.dynManager.getStateObject(sc.hub.nameOfHubPosition).getState())
+        relative_velocity = np.ravel(sc.dynManager.getStateObject(sc.hub.nameOfHubVelocity).getState())
+        output = sc.scStateOutMsg.read()
+        np.testing.assert_allclose(output.r_BN_N, relative + central, rtol=0, atol=1e-10)
+        np.testing.assert_allclose(output.v_BN_N, relative_velocity + velocity, rtol=0, atol=1e-12)
+
+    expected_potential = (
+        -result.body.mu / np.linalg.norm(relative)
+        - secondary.mu / np.linalg.norm(central)
+        - secondary.mu / np.linalg.norm(relative + central)
+    )
+    assert sc.orbPotentialEnergyContr == pytest.approx(expected_potential, rel=1e-13)
+    assert "Negative time value" not in capfd.readouterr().err
+
+
+@pytest.mark.parametrize("shared_body", [False, True])
+def test_synchronized_secondary_output_epoch(shared_body):
+    """Publish the accepted state even if another spacecraft refreshes the shared planet between steps."""
+    result = _make_energy_simulation("point_mass", "central", "svIntegratorRK4", 0.0, True, 1.0, initialize=False)
+    primary = spacecraft.Spacecraft()
+    primary.ModelTag = "primary"
+    primary.hub.mHub = 1.0  # [kg]
+    primary.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    primary.syncDynamicsIntegration(result.sc)
+    period = 2_000_000_000  # [ns]
+    result.sim.procList[0].addTask(result.sim.CreateNewTask("primaryTask", period), 10)
+    result.sim.AddModelToTask("primaryTask", primary)
+    if shared_body:
+        independent = spacecraft.Spacecraft()
+        independent.ModelTag = "independent"
+        independent.hub.mHub = 1.0  # [kg]
+        independent.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+        independent.hub.r_CN_NInit = [7000.0, 2500.0, 1300.0]  # [m]
+        independent.gravField.addGravBody(result.body)
+        result.sim.AddModelToTask("task", independent, 10)
+    state = result.sc.scStateOutMsg.recorder()
+    mass = result.sc.scMassOutMsg.recorder()
+    planet = result.sc.gravField.centralBodyOutMsg.recorder()
+    result.sim.AddModelToTask("task", state)
+    result.sim.AddModelToTask("task", mass)
+    result.sim.AddModelToTask("task", planet)
+    result.sim.InitializeSimulation()
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+
+    # A revised ephemeris and a prescribed translation arrive between the primary's steps.
+    result.payload.PositionVector = [8500.0, 1250.0, -400.0]  # [m] at t = 1 s
+    result.payload.VelocityVector = [5.0, 2.0, -1.0]  # [m/s]
+    result.message.write(result.payload, period // 2)
+    reference = messaging.TransRefMsgPayload()
+    reference.r_RN_N = [7000.0, 2500.0, 1300.0]  # [m]
+    ref_message = messaging.TransRefMsg().write(reference, period // 2)
+    result.sc.transRefInMsg.subscribeTo(ref_message)
+    result.sim.ConfigureStopTime(period)
+    result.sim.ExecuteSimulation()
+    np.testing.assert_array_equal(state.timesWritten(), [0, 0, period])
+    np.testing.assert_array_equal(mass.timesWritten(), [0, 0, period])
+    np.testing.assert_array_equal(planet.timesWritten(), [0, period // 2, period // 2])
+    np.testing.assert_array_equal(planet.PositionVector[1:], [result.payload.PositionVector] * 2)
+    np.testing.assert_array_equal(state.r_BN_N[1], state.r_BN_N[0])
+    np.testing.assert_array_equal(state.v_BN_N[1], state.v_BN_N[0])
+    np.testing.assert_array_equal(result.log.position[2], reference.r_RN_N)
+    central = np.array(result.payload.PositionVector) + (period // 2 * macros.NANO2SEC) * np.array(
+        result.payload.VelocityVector
+    )
+    np.testing.assert_allclose(state.r_BN_N[2], result.log.position[2] + central, rtol=0, atol=1e-10)
+    np.testing.assert_array_equal(state.v_BN_N[2], result.payload.VelocityVector)
+    expected_energy = -result.sc.hub.mHub * result.body.mu / np.linalg.norm(reference.r_RN_N)  # [J]
+    assert result.log.energy[2] == pytest.approx(expected_energy, rel=1e-13)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+def test_synchronized_ephemeris_rejection_preserves_pending_lock(integrator_name):
+    """A secondary's missing ephemeris defers the primary's slider lock until a successful retry."""
+    sim = SimulationBaseClass.SimBaseClass()
+    step = macros.sec2nano(1.0)  # [ns]
+    sim.CreateNewProcess("process").addTask(sim.CreateNewTask("task", step))
+    primary, secondary = spacecraft.Spacecraft(), spacecraft.Spacecraft()
+    mass = 1.0  # [kg] for each hub and the slider
+    for sc in (primary, secondary):
+        sc.hub.mHub = mass
+        sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    primary.setIntegrator(getattr(svIntegrators, integrator_name)(primary))
+    primary.syncDynamicsIntegration(secondary)
+
+    slider = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    rate = 1.0  # [m/s] along the primary's x axis
+    slider.setMass(mass)
+    slider.setRhoDotInit(rate)
+    primary.addStateEffector(slider)
+    lock = messaging.ArrayEffectorLockMsgPayload()
+    lock.effectorLockFlag = [1]
+    command = messaging.ArrayEffectorLockMsg().write(lock)
+    slider.motorLockInMsg.subscribeTo(command)
+    planet = gravityEffector.GravBodyData()
+    planet.planetName = "secondaryPlanet"
+    planet.mu = 1.0  # [m^3/s^2]
+    planet.isCentralBody = True
+    ephemeris = messaging.SpicePlanetStateMsg()
+    planet.planetBodyInMsg.subscribeTo(ephemeris)
+    secondary.gravField.addGravBody(planet)
+    secondary.hub.r_CN_NInit = [1000.0, 0.0, 0.0]  # [m]
+
+    sim.AddModelToTask("task", primary, 3)
+    sim.AddModelToTask("task", secondary, 2)
+    sim.AddModelToTask("task", slider, 1)
+    joint = slider.translatingBodyOutMsg.addSubscriber()
+    state = primary.scStateOutMsg.addSubscriber()
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
+
+    def check_primary(tick, expected_rate, expected_vx):
+        assert primary.timeBeforeNanos == tick
+        primary.computeEnergyMomentum(tick * macros.NANO2SEC)
+        primary.writeOutputStateMessages(tick)
+        slider.writeOutputStateMessages(tick)
+        assert joint().rhoDot == pytest.approx(expected_rate)
+        np.testing.assert_allclose(state().v_CN_N, [expected_vx, 0.0, 0.0], rtol=0, atol=1e-14)  # [m/s]
+        # Two equal masses have total mass 2m and reduced mass m/2.
+        assert primary.totOrbEnergy == pytest.approx(mass * expected_vx**2)
+        assert primary.totRotEnergy == pytest.approx(mass * expected_rate**2 / 4)
+
+    check_primary(0, rate, 0.0)
+    stored_energies = primary.totOrbEnergy, primary.totRotEnergy
+    published_rate = joint().rhoDot
+    published_velocity = tuple(state().v_CN_N)
+    with pytest.raises(BasiliskError, match="ephemeris must be written"):
+        primary.UpdateState(step)
+    assert (primary.totOrbEnergy, primary.totRotEnergy) == stored_energies
+    assert joint().rhoDot == published_rate
+    np.testing.assert_array_equal(state().v_CN_N, published_velocity)
+    assert joint.timeWritten() == state.timeWritten() == 0
+    check_primary(0, rate, 0.0)
+
+    ephemeris.write(messaging.SpicePlanetStateMsgPayload())
+    sim.ConfigureStopTime(step)
+    sim.ExecuteSimulation()
+    check_primary(step, 0.0, -rate / 2)
+    assert joint().rho == pytest.approx(0.0)  # [m] locked from the start of the interval
+
+
+@pytest.mark.parametrize("initially_written", [True, False])
+def test_synchronized_secondary_integrates_with_forwarded_ephemeris(initially_written):
+    """Use a corrected or newly available primary ephemeris in the secondary's first Euler step."""
+    primary = _make_energy_simulation("point_mass", "central", "svIntegratorEuler", 0.0, True, 1.0, initialize=False)
+    source = messaging.SpicePlanetStateMsg()
+    primary.body.planetBodyInMsg.subscribeTo(source)
+    if initially_written:
+        source.write(primary.payload)
+
+    secondary = spacecraft.Spacecraft()
+    secondary.ModelTag = "secondary"
+    secondary.hub.mHub = 1.0  # [kg]
+    secondary.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    position = np.array([16000.0, 3000.0, 1500.0])  # [m] inertial
+    secondary.hub.r_CN_NInit = position.tolist()
+    body = gravityEffector.GravBodyData()
+    body.planetName = "forwarded"
+    body.mu = primary.body.mu
+    body.planetBodyInMsg.subscribeTo(primary.sc.gravField.centralBodyOutMsg)
+    secondary.gravField.addGravBody(body)
+    primary.sc.syncDynamicsIntegration(secondary)
+    primary.sim.AddModelToTask("task", secondary, -1)
+    primary.sim.InitializeSimulation()
+    primary.sim.ConfigureStopTime(0)
+    primary.sim.ExecuteSimulation()
+
+    sample_time = 0.75  # [s]
+    step = 1.0  # [s]
+    primary.payload.PositionVector = [11000.0, -2000.0, 500.0]  # [m]
+    primary.payload.VelocityVector = [120.0, -20.0, 8.0]  # [m/s]
+    source.write(primary.payload, macros.sec2nano(sample_time))
+    primary.sim.ConfigureStopTime(macros.sec2nano(step))
+    primary.sim.ExecuteSimulation()
+
+    planet_at_start = np.array(primary.payload.PositionVector) - sample_time * np.array(primary.payload.VelocityVector)
+    displacement = planet_at_start - position
+    expected_velocity = step * body.mu * displacement / np.linalg.norm(displacement)**3  # [m/s]
+    assert body.planetBodyInMsg.timeWritten() == macros.sec2nano(sample_time)
+    np.testing.assert_allclose(secondary.scStateOutMsg.read().v_BN_N, expected_velocity, rtol=1e-12, atol=0)
+
+
+@pytest.mark.parametrize("initially_written", [(), (0,), (1,), (0, 1)])
+def test_reset_waits_for_planet_ephemerides(initially_written):
+    """Initialize derivatives once the central and perturbing body positions are both available."""
+    result = _make_energy_simulation("point_mass", "central", "svIntegratorEuler", 0.0, False, 1.0, initialize=False)
+    spin_rate = 0.2  # [rad/s] about a principal axis
+    result.sc.hub.omega_BN_BInit = [0, 0, spin_rate]
+    moon = gravityEffector.GravBodyData()
+    moon.planetName = "moon"
+    moon.mu = 4.9e12  # [m^3/s^2]
+    result.sc.gravField.addGravBody(moon)
+    payloads = [result.payload, messaging.SpicePlanetStateMsgPayload()]
+    payloads[0].PositionVector = [8000.0, 1000.0, -500.0]  # [m]
+    payloads[1].PositionVector = [384.4e6, 0.0, 0.0]  # [m]
+    messages = [messaging.SpicePlanetStateMsg(), messaging.SpicePlanetStateMsg()]
+    for i, body in enumerate([result.body, moon]):
+        body.planetBodyInMsg.subscribeTo(messages[i])
+        if i in initially_written:
+            messages[i].write(payloads[i])
+    state = result.sc.scStateOutMsg.addSubscriber()
+    mass = result.sc.scMassOutMsg.addSubscriber()
+    planet = result.sc.gravField.centralBodyOutMsg.addSubscriber()
+    result.sim.InitializeSimulation()
+    central_written = 0 in initially_written
+    assert state.isWritten() == central_written
+    assert mass.isWritten()
+    if len(initially_written) < 2:
+        assert np.isnan(result.sc.totOrbEnergy)
+        assert np.isnan(result.sc.orbPotentialEnergyContr)
+    manager = result.sc.dynManager
+    relative = np.ravel(result.sc.hub.r_CN_NInit)
+    central = np.array(payloads[0].PositionVector)  # [m]
+    separation = np.array(payloads[1].PositionVector) - central
+    expected = (
+        -result.body.mu * relative / np.linalg.norm(relative)**3
+        + moon.mu * (separation - relative) / np.linalg.norm(separation - relative)**3
+        - moon.mu * separation / np.linalg.norm(separation)**3
+    )
+    initial = expected if len(initially_written) == 2 else np.zeros(3)
+    velocity_state = manager.getStateObject(result.sc.hub.nameOfHubVelocity)
+    np.testing.assert_allclose(np.ravel(velocity_state.getStateDeriv()), initial, rtol=1e-12, atol=1e-15)
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), initial, rtol=1e-12, atol=1e-15)
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+    assert state.isWritten() == central_written
+    assert planet.isWritten() == central_written
+    if central_written:
+        np.testing.assert_array_equal(result.sc.scStateOutMsg.read().r_BN_N, relative + central)
+    assert result.sc.scMassOutMsg.read().massSC == result.sc.hub.mHub
+    if len(initially_written) < 2:
+        assert np.isnan(result.log.energy[0])
+        assert np.isnan(result.sc.orbPotentialEnergyContr)
+        expected_rotation = 0.5 * result.sc.hub.IHubPntBc_B[2][2] * spin_rate**2  # [J]
+        assert result.sc.totRotEnergy == pytest.approx(expected_rotation)
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            result.sc.computeEnergyMomentum(0.0)
+        with pytest.raises(BasiliskError, match="ephemeris must be written"):
+            result.sc.UpdateState(macros.sec2nano(1.0))
+    for msg, payload in zip(messages, payloads):
+        msg.write(payload)
+    result.sim.ConfigureStopTime(macros.sec2nano(1.0))
+    result.sim.ExecuteSimulation()
+    assert state.isWritten() and state.timeWritten() == macros.sec2nano(1.0)
+    assert planet.isWritten() and planet.timeWritten() == 0
+    np.testing.assert_allclose(
+        result.sc.scStateOutMsg.read().r_BN_N, result.log.position[-1] + central, rtol=0, atol=1e-12
+    )
+    # Euler evaluates gravity at the initial position for the first one-second step.
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), expected, rtol=1e-12, atol=1e-15)
+    expected_velocity = np.ravel(result.sc.hub.v_CN_NInit) + expected
+    np.testing.assert_allclose(result.log.velocity[-1], expected_velocity, rtol=0, atol=1e-12)
+    position = result.log.position[-1]
+    potential = (
+        -result.body.mu / np.linalg.norm(position)
+        - moon.mu / np.linalg.norm(separation)
+        - moon.mu / np.linalg.norm(position - separation)
+    )
+    energy = result.sc.hub.mHub * (0.5 * expected_velocity.dot(expected_velocity) + potential)  # [J]
+    assert result.log.energy[-1] == pytest.approx(energy, rel=1e-12)
+    result.sc.computeEnergyMomentum(1.0)  # [s]
+    assert result.sc.totOrbEnergy == pytest.approx(energy, rel=1e-12)
+    assert result.sc.orbPotentialEnergyContr == pytest.approx(potential, rel=1e-12)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("prescribed", [False, True], ids=["initial-state", "prescribed-state"])
+def test_deferred_derivatives_at_zero_duration_update(integrator_name, prescribed):
+    """Initialize gravity at the published time-zero state even when the integrator skips the step."""
+    result = _make_energy_simulation("point_mass", "inertial", integrator_name, 0.0, True, 1.0, initialize=False)
+    source = messaging.SpicePlanetStateMsg()
+    result.body.planetBodyInMsg.subscribeTo(source)
+    reference = messaging.TransRefMsg()
+    if prescribed:
+        result.sc.transRefInMsg.subscribeTo(reference)
+    result.sim.InitializeSimulation()
+    manager = result.sc.dynManager
+    velocity_state = manager.getStateObject(result.sc.hub.nameOfHubVelocity)
+    np.testing.assert_array_equal(np.ravel(velocity_state.getStateDeriv()), np.zeros(3))
+    source.write(result.payload)
+    position = np.ravel(result.sc.hub.r_CN_NInit)
+    velocity = np.ravel(result.sc.hub.v_CN_NInit)
+    if prescribed:
+        position = np.array([20000.0, 7000.0, 1500.0])  # [m]
+        velocity = np.array([3.0, 2.0, -1.0])  # [m/s]
+        payload = messaging.TransRefMsgPayload()
+        payload.r_RN_N = position.tolist()
+        payload.v_RN_N = velocity.tolist()
+        reference.write(payload)
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+
+    np.testing.assert_array_equal(result.log.position[0], position)
+    np.testing.assert_array_equal(result.log.velocity[0], velocity)
+    output = result.sc.scStateOutMsg.read()
+    np.testing.assert_array_equal(output.r_BN_N, position)
+    np.testing.assert_array_equal(output.v_BN_N, velocity)
+    displacement = result.payload.PositionVector - position
+    expected = result.body.mu * displacement / np.linalg.norm(displacement)**3  # [m/s^2]
+    np.testing.assert_allclose(np.ravel(velocity_state.getStateDeriv()), expected, rtol=1e-12, atol=0)
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), expected, rtol=1e-12, atol=0)
+    position_state = manager.getStateObject(result.sc.hub.nameOfHubPosition)
+    np.testing.assert_array_equal(np.ravel(position_state.getStateDeriv()), velocity)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+def test_time_zero_ephemeris_replacement_refreshes_derivatives(integrator_name):
+    """Check the initial acceleration when a valid planet position is replaced at the same epoch."""
+    result = _make_energy_simulation("point_mass", "inertial", integrator_name, 0.0, True, 1.0)
+    position = np.ravel(result.sc.hub.r_CN_NInit)
+    displacement = result.payload.PositionVector - position  # [m] from the spacecraft to the planet
+    gravity = result.body.mu * displacement / np.linalg.norm(displacement)**3  # [m/s^2]
+    manager = result.sc.dynManager
+    velocity = manager.getStateObject(result.sc.hub.nameOfHubVelocity)
+    np.testing.assert_allclose(np.ravel(velocity.getStateDeriv()), gravity, rtol=1e-12, atol=0)
+
+    # Halving the separation quadruples gravity. Both writes are at time zero.
+    result.payload.PositionVector = (position + displacement / 2).tolist()
+    result.message.write(result.payload, 0)
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+
+    np.testing.assert_allclose(np.ravel(velocity.getStateDeriv()), 4 * gravity, rtol=1e-12, atol=0)
+    np.testing.assert_allclose(np.ravel(manager.getPropertyReference("g_N")), 4 * gravity, rtol=1e-12, atol=0)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRK4", "svIntegratorRKF45", "svStochasticIntegratorSOSRI"])
+@pytest.mark.parametrize("reference", ["first-write", "changed-attitude", "changed-translation"])
+def test_time_zero_references_with_ready_gravity(integrator_name, reference):
+    """Use the latest time-zero reference even when gravity was available at reset."""
+    result = _make_energy_simulation("point_mass", "central", integrator_name, 0.0, False, 1.0, initialize=False)
+    sc = result.sc
+    position = np.ravel(sc.hub.r_CN_NInit)
+    velocity = np.ravel(sc.hub.v_CN_NInit)
+    yaw = np.pi / 6  # [rad]
+    sc.hub.sigma_BNInit = [0.0, 0.0, np.tan(yaw / 4)]
+    rate = 0.01  # [rad/s]
+    sc.hub.omega_BN_BInit = [0.0, 0.0, rate]
+    accel = 0.1  # [m/s^2] along body x
+    force = extForceTorque.ExtForceTorque()
+    force.extForce_B = [sc.hub.mHub * accel, 0.0, 0.0]
+    sc.addDynamicEffector(force)
+
+    translation, attitude = messaging.TransRefMsg(), messaging.AttRefMsg()
+    sc.transRefInMsg.subscribeTo(translation)
+    sc.attRefInMsg.subscribeTo(attitude)
+    trans, att = messaging.TransRefMsgPayload(), messaging.AttRefMsgPayload()
+    if reference != "first-write":
+        trans.r_RN_N, trans.v_RN_N = position.tolist(), velocity.tolist()
+        att.sigma_RN, att.omega_RN_N = [0.0, 0.0, np.tan(yaw / 4)], [0.0, 0.0, rate]
+        translation.write(trans)
+        attitude.write(att)
+    result.sim.InitializeSimulation()
+    output = sc.scStateOutMsg.read()
+    np.testing.assert_array_equal(output.r_BN_N, position)
+    np.testing.assert_array_equal(output.v_BN_N, velocity)
+    np.testing.assert_array_equal(output.sigma_BN, [0.0, 0.0, np.tan(yaw / 4)])
+    np.testing.assert_allclose(output.omega_BN_B, [0.0, 0.0, rate], rtol=1e-14, atol=0)
+
+    # All writes have timestamp zero, including replacements for already-written references.
+    if reference != "changed-attitude":
+        position = np.array([7000.0, 0.0, 0.0])  # [m]
+        velocity = np.array([0.0, 7.0, 0.0])  # [m/s]
+        trans.r_RN_N, trans.v_RN_N = position.tolist(), velocity.tolist()
+        translation.write(trans)
+    if reference != "changed-translation":
+        yaw = np.pi / 2  # [rad]
+        rate = 0.02  # [rad/s]
+        att.sigma_RN, att.omega_RN_N = [0.0, 0.0, np.tan(yaw / 4)], [0.0, 0.0, rate]
+        attitude.write(att)
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+
+    def derivative(name):
+        return np.ravel(sc.dynManager.getStateObject(name).getStateDeriv())
+
+    output = sc.scStateOutMsg.read()
+    np.testing.assert_array_equal(output.r_BN_N, position)
+    np.testing.assert_array_equal(output.v_BN_N, velocity)
+    np.testing.assert_array_equal(output.sigma_BN, [0.0, 0.0, np.tan(yaw / 4)])
+    np.testing.assert_allclose(output.omega_BN_B, [0.0, 0.0, rate], rtol=1e-14, atol=0)
+    np.testing.assert_array_equal(derivative(sc.hub.nameOfHubPosition), velocity)
+    gravity = -result.body.mu * position / np.linalg.norm(position)**3
+    np.testing.assert_allclose(np.ravel(sc.dynManager.getPropertyReference("g_N")), gravity, rtol=1e-12, atol=1e-15)
+    expected = gravity + accel * np.array([np.cos(yaw), np.sin(yaw), 0.0])
+    np.testing.assert_allclose(derivative(sc.hub.nameOfHubVelocity), expected, rtol=1e-12, atol=1e-15)
+    expected_sigma_dot = [0.0, 0.0, rate * (1 + np.tan(yaw / 4)**2) / 4]  # [1/s]
+    np.testing.assert_allclose(derivative(sc.hub.nameOfHubSigma), expected_sigma_dot, rtol=1e-14, atol=0)
+    np.testing.assert_allclose(output.TotalAccumDV_CN_N, np.zeros(3), rtol=0, atol=1e-14)
+    result.sim.ConfigureStopTime(macros.sec2nano(1.0))
+    result.sim.ExecuteSimulation()
+    assert np.all(np.isfinite(sc.scStateOutMsg.read().TotalAccumDV_CN_N))
+
+
+@pytest.mark.parametrize("sample_via_spacecraft", [True, False], ids=["spacecraft", "gravity-effector"])
+def test_direct_energy_after_incomplete_sample(sample_via_spacecraft):
+    """Both spacecraft reject incomplete shared samples and recover when either resamples the bodies."""
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorEuler", 0.0, False, 1.0, initialize=False)
+    other = gravityEffector.GravBodyData()
+    other.planetName = "other"
+    other.mu = 1.0e6  # [m^3/s^2]
+    other_payload = messaging.SpicePlanetStateMsgPayload()
+    original = messaging.SpicePlanetStateMsg().write(other_payload)
+    other.planetBodyInMsg.subscribeTo(original)
+    result.sc.gravField.addGravBody(other)
+    peer = spacecraft.Spacecraft()
+    peer.ModelTag = "peer"
+    peer.hub.mHub = result.sc.hub.mHub
+    peer.hub.IHubPntBc_B = result.sc.hub.IHubPntBc_B
+    peer.hub.r_CN_NInit = result.sc.hub.r_CN_NInit
+    peer.gravField.gravBodies = spacecraft.GravBodyVector([result.body, other])
+    result.sim.AddModelToTask("task", peer)
+    result.sc.gravField.UpdateState(0)
+    with pytest.raises(BasiliskError, match="orbital energy"):
+        result.sc.computeEnergyMomentum(0.0)
+    result.sim.InitializeSimulation()
+    result.sc.computeEnergyMomentum(0.0)
+    initial_potential = result.sc.orbPotentialEnergyContr
+    peer.computeEnergyMomentum(0.0)
+    assert peer.orbPotentialEnergyContr == initial_potential
+
+    result.payload.PositionVector = [12000.0, 3000.0, 200.0]  # [m]
+    result.message.write(result.payload)
+    replacement = messaging.SpicePlanetStateMsg()
+    other.planetBodyInMsg.subscribeTo(replacement)
+    if sample_via_spacecraft:
+        with pytest.raises(BasiliskError, match="ephemeris must be written"):
+            result.sc.UpdateState(macros.sec2nano(1.0))
+    else:
+        result.sc.gravField.UpdateState(0)
+    for sc in (result.sc, peer):
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            sc.computeEnergyMomentum(0.0)
+        assert sc.orbPotentialEnergyContr == initial_potential
+
+    other_payload.PositionVector = [-4000.0, 0.0, 0.0]  # [m]
+    replacement.write(other_payload)
+    for sc in (result.sc, peer):
+        with pytest.raises(BasiliskError, match="orbital energy.*ephemeris"):
+            sc.computeEnergyMomentum(0.0)
+    if sample_via_spacecraft:
+        result.sc.UpdateState(0)
+    else:
+        peer.gravField.UpdateState(0)
+    position = np.ravel(result.sc.hub.r_CN_NInit)
+    expected = (
+        -result.body.mu / np.linalg.norm(position - result.payload.PositionVector)
+        - other.mu / np.linalg.norm(position - other_payload.PositionVector)
+    )
+    for sc in (result.sc, peer):
+        sc.computeEnergyMomentum(0.0)
+        assert sc.orbPotentialEnergyContr == pytest.approx(expected, rel=1e-12)
+
+
+def test_multi_year_stage_origin():
+    """Reset and subsequent Euler steps start at the nearest representable time in seconds."""
+    whole = 4 * 31_557_600  # [s] exactly representable four-year epoch
+    step_ns = 125_000_000  # [ns]
+    epoch_ns = whole * 1_000_000_000  # [ns]
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorEuler", 0.0, True, 0.125, initialize=False)
+    result.payload.VelocityVector = [30_000.0, 0.0, 0.0]  # [m/s]
+    result.message.write(result.payload, epoch_ns)
+    result.sc.Reset(epoch_ns)
+
+    def check_stage(offset):
+        clock = np.ravel(result.sc.dynManager.getPropertyReference("systemTime"))
+        assert clock[1] == whole + offset
+        position = np.ravel(result.sc.dynManager.getPropertyReference("energy_body.r_PN_N"))
+        expected = result.payload.PositionVector + offset * np.array(result.payload.VelocityVector)
+        np.testing.assert_array_equal(position, expected)
+
+    check_stage(0.0)
+    result.sc.UpdateState(epoch_ns)
+    result.sc.UpdateState(epoch_ns + step_ns)
+    result.sc.UpdateState(epoch_ns + 2 * step_ns)
+    check_stage(0.125)
+
+
+@pytest.mark.parametrize("integrator_name", ["svIntegratorRK4", "svIntegratorEuler"])
+def test_zero_duration_system_clock(integrator_name):
+    """The nanosecond clock can represent this exact tick even though a round-trip through seconds loses 16 ns."""
+    tick = 140_000_000_123_456_016  # [ns]
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 1.0  # [kg]
+    sc.hub.IHubPntBc_B = np.eye(3).tolist()  # [kg*m^2]
+    sc.setIntegrator(getattr(svIntegrators, integrator_name)(sc))
+    for update in (sc.Reset, sc.UpdateState):
+        update(tick)
+        nanos, seconds = np.ravel(sc.dynManager.getPropertyReference("systemTime"))
+        assert int(nanos) == tick
+        assert seconds == tick / 1_000_000_000
+    sc.UpdateState(tick + 1_000_000_000)  # [ns]
+    nanos, seconds = np.ravel(sc.dynManager.getPropertyReference("systemTime"))
+    assert int(nanos) == round(seconds * 1_000_000_000)
+
+
+def test_direct_energy_query_epoch():
+    """An explicit query can differ from the accepted clock even when both round to the same double."""
+    query_ns = MISSION_EPOCH_NS - 3  # [ns] whole second
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorRK4", 0.0, True, 1.0, initialize=False)
+    result.payload.VelocityVector = [30_000.0, 0.0, 0.0]  # [m/s]
+    result.message.write(result.payload, query_ns)
+    result.sc.Reset(MISSION_EPOCH_NS)
+    result.sc.UpdateState(MISSION_EPOCH_NS)
+    relative = np.ravel(result.sc.hub.r_CN_NInit) - result.payload.PositionVector
+    displacement = 3e-9 * np.array(result.payload.VelocityVector)  # [m] since the ephemeris write
+    planet_position = result.sc.dynManager.getPropertyReference("energy_body.r_PN_N")
+    np.testing.assert_array_equal(np.ravel(planet_position), result.payload.PositionVector + displacement)
+    accepted = relative - displacement  # [m]
+    assert result.sc.orbPotentialEnergyContr == pytest.approx(-result.body.mu / np.linalg.norm(accepted), rel=1e-13)
+    for offset in (0.0, 0.03125):  # [s] exactly representable query offsets
+        result.sc.computeEnergyMomentum(query_ns // 1_000_000_000 + offset)
+        displacement = relative - offset * np.array(result.payload.VelocityVector)
+        expected = -result.body.mu / np.linalg.norm(displacement)
+        assert result.sc.orbPotentialEnergyContr == pytest.approx(expected, rel=1e-13)
+
+
+def test_energy_uses_prescribed_angular_rate_at_offset_center():
+    """Check orbital energy and center velocity when a reference changes the hub angular rate."""
+    result = _make_energy_simulation("point_mass", "inertial", "svIntegratorRK4", 0.0, False, 1.0, initialize=False)
+    offset = np.array([2.0, 0.0, 0.0])  # [m] center of mass relative to the hub origin
+    result.sc.hub.r_BcB_B = offset.tolist()
+    result.sim.InitializeSimulation()
+    result.sim.ConfigureStopTime(0)
+    result.sim.ExecuteSimulation()
+    reference = messaging.AttRefMsgPayload()
+    reference.omega_RN_N = [0.0, 0.0, 0.2]  # [rad/s] with identity reference attitude
+    message = messaging.AttRefMsg().write(reference, macros.sec2nano(1.0))
+    result.sc.attRefInMsg.subscribeTo(message)
+    result.sim.ConfigureStopTime(macros.sec2nano(1.0))
+    result.sim.ExecuteSimulation()
+    output = result.sc.scStateOutMsg.read()
+    velocity = np.array(output.v_BN_N) + np.cross(reference.omega_RN_N, offset)
+    np.testing.assert_allclose(output.v_CN_N, velocity, rtol=0, atol=1e-12)
+    potential = -result.body.mu / np.linalg.norm(np.array(output.r_BN_N) + offset)
+    expected_energy = result.sc.hub.mHub * (0.5 * velocity.dot(velocity) + potential)  # [J]
+    assert result.sc.totOrbEnergy == pytest.approx(expected_energy, rel=1e-13)
 
 
 @pytest.mark.parametrize("spin_rate", [0.0, 0.0004])  # [rad/s]

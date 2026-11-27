@@ -24,7 +24,10 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include <array>
+#include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "architecture/messaging/messaging.h"
@@ -51,8 +54,18 @@ class ConstraintDynamicEffector final
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();
     void Reset(uint64_t CurrentSimNanos) override;
+    /** @brief Link the next hub endpoint.
+     * @param states State manager of the attached spacecraft.
+     */
     void linkInStates(DynParamManager& states) override;
+    /** @brief Link the next articulated endpoint.
+     * @param properties State manager containing the parent's inertial properties.
+     */
     void linkInProperties(DynParamManager& properties) override;
+    /** @brief Evaluate the load for the next endpoint in a direct force query.
+     * @param integTime [s] Integration time.
+     * @param timeStep [s] Integration step.
+     */
     void computeForceTorque(double integTime, double timeStep) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessage(uint64_t CurrentClock);
@@ -82,10 +95,6 @@ class ConstraintDynamicEffector final
     void setC_a(double c_a);
     /** setter for `a,b,s,c,d,e` coefficients of low pass filter */
     void setFilter_Data(double wc, double h, double k);
-    /** setter for `stateNameOfPosition` property */
-    void setStateNameOfPosition(std::string value) override;
-    /** setter for `stateNameOfVelocity` property */
-    void setStateNameOfVelocity(std::string value) override;
     /** setter for `stateNameOfSigma` property */
     void setStateNameOfSigma(std::string value) override;
     /** setter for `stateNameOfOmega` property */
@@ -135,15 +144,46 @@ class ConstraintDynamicEffector final
     uint64_t effectorStatus = 1;                             //!< effector toggle on/off (1-active, 0-inactive)
 
   private:
+#ifndef SWIG
+    // Each parent registers and requests loads through the same endpoint, independent of traversal order.
+    struct Endpoint final : DynamicEffector
+    {
+        Endpoint(ConstraintDynamicEffector& owner, std::size_t index)
+            : owner(owner)
+            , index(index)
+        {
+        }
+        void linkInStates(DynParamManager& states) override;
+        void linkInProperties(DynParamManager& states) override;
+        void computeForceTorque(double time, double timeStep) override;
+        void linkTranslation(DynParamManager& states);
+        Eigen::MRPd attitude() const;
+        Eigen::Vector3d angularVelocity() const;
+
+        ConstraintDynamicEffector& owner;
+        const std::size_t index;
+        const Eigen::MatrixXd* position = nullptr;
+        const Eigen::MatrixXd* velocity = nullptr;
+        const StateData* hubPosition = nullptr;
+        const StateData* hubVelocity = nullptr;
+        const StateData* hubAttitude = nullptr;
+        const StateData* hubRate = nullptr;
+        const Eigen::MatrixXd* branchAttitude = nullptr;
+        const Eigen::MatrixXd* branchRate = nullptr;
+        const DynParamManager::InertialFrame* frame = nullptr;
+    };
+    DynamicEffector* forAttachment(bool hub) override;
+    std::array<Endpoint, 2> endpoints{ { { *this, 0 }, { *this, 1 } } };
+#endif
+    void evaluateConstraint();
+    void writeConstraintMessage(uint64_t epoch);
+    std::optional<uint64_t> telemetryEpoch(uint64_t clock) const;
+    bool bothLinked() const;
     void validateConfiguration(); //!< Validate the user-supplied gain configuration
     void initializeGains();       //!< Refresh derived gains while preserving explicit individual gains
 
-    // Counters and flags
-    int scInitCounter = 0; //!< counter to kill simulation if more than two spacecraft initialized
-    int scID = 1;          //!< 0,1 alternating spacecraft toggle to output appropriate force/torque
-    parentID parent1, parent2;
-    int hubCounter = 0;
-    int effectorCounter = 0;
+    std::size_t attachmentCount = 0; //!< Number of configured parents.
+    std::size_t directEndpoint = 0;  //!< Alternating endpoint for direct computeForceTorque calls.
 
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 =
@@ -173,51 +213,33 @@ class ConstraintDynamicEffector final
     double d = 0.0;           //!< coefficient in numerical low pass filter
     double e = 0.0;           //!< coefficient in numerical low pass filter
 
-    double F_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint force at t-2 time step
-    double F_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint force at t-1 time step
-    double F_mag_t = 0.0;                //!< Magnitude of unfiltered constraint force at t time step
-    double F_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint force at t time step
-    double F_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint force at t-1 time step
-    double F_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint force at t-2 time step
+    struct LoadSample
+    {
+        double magnitude = 0.0;
+        double filtered = 0.0;
+    };
+    struct LoadFilter
+    {
+        std::optional<uint64_t> epoch; //!< [ns] Timestamp of the current sample.
+        LoadSample current, previous, previous2;
+    };
+    void updateFilter(LoadFilter& filter, uint64_t epoch, double magnitude) const;
+    LoadFilter forceFilter;   //!< [N] Constraint force magnitude.
+    LoadFilter torque1Filter; //!< [N*m] Endpoint 1 torque magnitude.
+    LoadFilter torque2Filter; //!< [N*m] Endpoint 2 torque magnitude.
 
-    double T1_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 1 at t-2 time step
-    double T1_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 1 at t-1 time step
-    double T1_mag_t = 0.0;                //!< Magnitude of unfiltered constraint torque on s/c 1 at t time step
-    double T1_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint torque on s/c 1 at t time step
-    double T1_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint torque on s/c 1 at t-1 time step
-    double T1_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 1 at t-2 time step
-
-    double T2_mag_tminus2 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 2 at t-2 time step
-    double T2_mag_tminus1 = 0.0;          //!< Magnitude of unfiltered constraint torque on s/c 2at t-1 time step
-    double T2_mag_t = 0.0;                //!< Magnitude of unfiltered constraint torque on s/c 2 at t time step
-    double T2_filtered_mag_t = 0.0;       //!< Magnitude of filtered constraint torque on s/c 2 at t time step
-    double T2_filtered_mag_tminus1 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-1 time step
-    double T2_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-2 time step
+    uint64_t appliedStatus = 1;                 //!< Status used by the most recent dynamics evaluation.
+    std::optional<uint64_t> lastPublishedEpoch; //!< [ns] Accepted epoch of the most recent constraint message.
 
     // Simulation variable pointers
-    std::vector<std::string>
-        stateNameOfPosition; //!< state engine name of the parent rigid body inertial position vector
-    std::vector<std::string>
-        stateNameOfVelocity;                   //!< state engine name of the parent rigid body inertial velocity vector
     std::vector<std::string> stateNameOfSigma; //!< state engine name of the parent rigid body inertial attitude
     std::vector<std::string>
         stateNameOfOmega; //!< state engine name of the parent rigid body inertial angular velocity vector
-    std::vector<StateData*> hubPosition; //!< [m] parent inertial position vector
-    std::vector<StateData*> hubVelocity; //!< [m/s] parent inertial velocity vector
-    std::vector<StateData*> hubSigma;    //!< parent attitude Modified Rodrigues Parameters (MRPs)
-    std::vector<StateData*> hubOmega;    //!< [rad/s] parent inertial angular velocity vector
-
     // Parent body inertial properties
-    std::vector<std::string> propName_inertialPosition;     //!< property name of inertialPosition
-    std::vector<std::string> propName_inertialVelocity;     //!< property name of inertialVelocity
-    std::vector<std::string> propName_inertialAttitude;     //!< property name of inertialAttitude
-    std::vector<std::string> propName_inertialAngVelocity;  //!< property name of inertialAngVelocity
-    std::vector<Eigen::MatrixXd*> inertialPositionProperty; //!< [m] position relative to inertial frame
-    std::vector<Eigen::MatrixXd*> inertialVelocityProperty; //!< [m/s] velocity relative to inertial frame
-    std::vector<Eigen::MatrixXd*> inertialAttitudeProperty; //!< attitude relative to inertial frame
-    std::vector<Eigen::MatrixXd*>
-        inertialAngVelocityProperty; //!< [rad/s] inertial angular velocity relative to inertial frame
-
+    std::vector<std::string> propName_inertialPosition;    //!< property name of inertialPosition
+    std::vector<std::string> propName_inertialVelocity;    //!< property name of inertialVelocity
+    std::vector<std::string> propName_inertialAttitude;    //!< property name of inertialAttitude
+    std::vector<std::string> propName_inertialAngVelocity; //!< property name of inertialAngVelocity
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
     Eigen::Vector3d psiPrime_N =

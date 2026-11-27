@@ -31,6 +31,7 @@
 #include "stateEffector.h"
 #include "stateVecIntegrator.h"
 #include <memory>
+#include <optional>
 #include <stdint.h>
 #include <vector>
 
@@ -152,6 +153,41 @@ class DynamicObject : public SysModel
     DynamicObject* integrationOwner = nullptr;      ///< Borrowed primary object, or null for independent integration.
 
   protected:
+    /** @brief Return the scheduled start, midpoint, or end tick during a fixed Runge-Kutta stage. */
+    std::optional<uint64_t> getFixedStageTick() const noexcept;
+    /** @brief Read the integer callback tick and fractional offset of a fixed Runge-Kutta stage.
+     * @param subTickSeconds [s] Receives the offset past the callback tick, or zero outside a fixed stage.
+     * @return The callback tick in nanoseconds, if available.
+     */
+    std::optional<uint64_t> getFixedStageTick(double& subTickSeconds) const noexcept;
+
+    /** @brief Prepare coupled constraint geometry before any object evaluates this stage.
+     * @param time [s] Signed integrator stage time.
+     */
+    virtual void prepareConstraintEndpoints(double time [[maybe_unused]]) {}
+
+    /** @brief Refresh derivatives after every synchronized object has prepared its initial state. */
+    virtual void refreshInitialDerivatives() {}
+
+    /** @brief Sample and validate inputs before any synchronized object runs preIntegration().
+     * @param callTimeNanos [ns] Requested end of the step.
+     */
+    virtual void prepareIntegrationInputs(uint64_t callTimeNanos [[maybe_unused]]) {}
+
+    /** @brief Check the live final candidate while the numerical method can still roll it back. */
+    virtual void validateIntegratedState() {}
+
+    /** @brief Publish this object's accepted state before synchronized models run optional callbacks.
+     * @param tick [ns] Accepted simulation time.
+     */
+    virtual void publishIntegratedState(uint64_t tick) { this->postIntegration(tick); }
+
+    /** @brief Run optional callbacks after the entire dynamics group has published. */
+    virtual void runAcceptedStateCallbacks() {}
+
+    /** @brief Undo changes from step preparation or trial evaluation after a rejected step. */
+    virtual void restoreAfterFailedStep() {}
+
     /** @brief Reject changes that would invalidate the fixed state layout. */
     void requireMutableTopology(const char* operation) const;
 };

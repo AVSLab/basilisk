@@ -232,6 +232,7 @@ void svStochasticIntegratorW2Ito::integrateImpl(double currentTime, double timeS
             this->combineDiffusion(k, c.beta1, s);
         }
         this->applyStochasticDiffusionUpdateInPlace(this->combinedDiffusion, this->diagonalIntegral);
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

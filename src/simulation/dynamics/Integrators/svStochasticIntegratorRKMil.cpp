@@ -152,6 +152,7 @@ void svStochasticIntegratorRKMil::integrateImpl(double currentTime, double timeS
                              this->flatStorage->ggPrime,
                              this->flatStorage->milsteinPseudoSteps,
                              this->flatStorage->kState);
+        this->validateFinalStates();
     } catch (...) {
         this->restoreStochasticStates();
         throw;

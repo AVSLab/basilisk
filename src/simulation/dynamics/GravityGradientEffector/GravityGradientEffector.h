@@ -24,9 +24,12 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include <Eigen/Dense>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
@@ -50,7 +53,7 @@ class GravityGradientEffector final
   public:
     Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient
     StateData* hubSigma;                                      //!< Hub/Inertial attitude represented by MRP
-    StateData* r_BN_N;                      //!< Hub/Inertial position vector in inertial frame components
+    StateData* r_BN_N;                      //!< [m] Hub position state relative to the integration origin.
     Eigen::MatrixXd* ISCPntB_B;             //!< [kg m^2] current spacecraft inertia about point B, B-frame components
     Eigen::MatrixXd* c_B;                   //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd* m_SC;                  //!< [kg] mass of spacecraft
@@ -60,6 +63,7 @@ class GravityGradientEffector final
     BSKLogger bskLogger; //!< BSK Logging
 
   private:
+    const Eigen::MatrixXd* inertialHubPosition = nullptr; //!< [m] Hub position relative to the inertial origin.
     void validateConfiguration();
     std::vector<std::string> planetPropertyNames; //!< Names of planets we want to track
 };

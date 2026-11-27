@@ -127,7 +127,7 @@ class ThrusterStateEffector final
     std::string nameOfKappaState;  //!< Identifier for the kappa state data container
 
     // State structures
-    StateData* hubSigma;                       //!< pointer to hub attitude states
+    StateData* hubSigma = nullptr;             //!< pointer to hub attitude states
     StateData* hubOmega;                       //!< pointer to hub angular velocity states
     StateData* kappaState = nullptr;           //!< Registered thrust-factor state, absent for an empty effector.
     Eigen::MatrixXd* inertialPositionProperty; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
@@ -144,7 +144,8 @@ class ThrusterStateEffector final
     void validateConfiguration();   //!< Validate dimensions before accessing thruster data or commands
     void validateRegisteredCount(); //!< Reject changes to the number of registered thrust-factor states
     std::optional<std::size_t> registeredThrusterCount; //!< Thruster count after successful state registration
-    std::vector<THROutputMsgPayload> thrusterOutBuffer; //!< Message buffer for thruster data
+    std::vector<BodyToHubInfo> acceptedMounts;          //!< Last accepted mount-to-hub transforms for nozzle telemetry.
+    uint64_t outputTimeNanos = 0;                       //!< [ns] Last published epoch, retained after a rejected step.
 
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer; //!< One-time allocation for savings
 
@@ -152,6 +153,7 @@ class ThrusterStateEffector final
         attachedBodyInMsgs; //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
+    void sampleMounts(std::vector<BodyToHubInfo>& mounts, std::optional<uint64_t> epoch = std::nullopt);
 
     double prevCommandTime;     //!< [s] Time for previous valid thruster firing
     static uint64_t effectorID; //!< [] ID number of this panel

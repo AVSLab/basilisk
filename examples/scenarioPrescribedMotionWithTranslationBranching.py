@@ -176,7 +176,6 @@ def run(show_plots):
     prescribed_platform.setOmegaPrime_PM_P(np.array([0.0, 0.0, 0.0]))
     prescribed_platform.setSigma_PM(sigma_P0M)
     prescribed_platform.setSigma_MB([0.0, 0.0, 0.0])
-    sc_sim.AddModelToTask(dyn_task_name, prescribed_platform)
     sc_object.addStateEffector(prescribed_platform)
 
     # Shared prescribed motion profiler parameters
@@ -220,6 +219,7 @@ def run(show_plots):
     prescribed_translation_msg = messaging.LinearTranslationRigidBodyMsg().write(prescribed_translation_msg_data)
     one_dof_translation_profiler.linearTranslationRigidBodyInMsg.subscribeTo(prescribed_translation_msg)
     prescribed_platform.prescribedTranslationInMsg.subscribeTo(one_dof_translation_profiler.prescribedTranslationOutMsg)
+    sc_sim.AddModelToTask(dyn_task_name, prescribed_platform)
 
     # Shared translating body parameters
     mass_teles = 50.0  # [kg]

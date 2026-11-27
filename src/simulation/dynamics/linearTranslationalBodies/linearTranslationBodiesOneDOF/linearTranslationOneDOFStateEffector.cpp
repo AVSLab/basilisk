@@ -209,7 +209,7 @@ void LinearTranslationOneDOFStateEffector::addDynamicEffector(DynamicEffector* n
 
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectors.push_back(newDynamicEffector->forAttachment(false));
 }
 
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links
@@ -259,17 +259,19 @@ void LinearTranslationOneDOFStateEffector::readInputMessages()
  */
 void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
+    const auto epoch = this->inertialOutputEpoch(CurrentSimNanos);
     this->computeTranslatingBodyInertialStates();
 
     if (this->translatingBodyOutMsg.isLinked()) {
         LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
         translatingBodyBuffer = this->translatingBodyOutMsg.zeroMsgPayload;
-        translatingBodyBuffer.rho = this->rho;
-        translatingBodyBuffer.rhoDot = this->rhoDot;
+        // A rejected step restores the joint states while the last mass-property evaluation can be a trial.
+        translatingBodyBuffer.rho = this->rhoState->stateView()(0, 0);
+        translatingBodyBuffer.rhoDot = this->rhoDotState->stateView()(0, 0);
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, CurrentSimNanos);
     }
 
-    if (this->translatingBodyConfigLogOutMsg.isLinked()) {
+    if (epoch && this->translatingBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->translatingBodyConfigLogOutMsg.zeroMsgPayload;
 
@@ -278,7 +280,7 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
         eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_FN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentSimNanos);
+        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, *epoch);
     }
 }
 
@@ -288,14 +290,13 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
  */
 void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    this->rho = this->rhoState->stateView()(0, 0);
-    this->rhoDot = this->rhoDotState->stateView()(0, 0);
-
     if (this->isAxisLocked) {
         Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
         this->rhoDotState->setState(zeroMatrix);
     }
 
+    this->rho = this->rhoState->stateView()(0, 0);
+    this->rhoDot = this->rhoDotState->stateView()(0, 0);
     this->r_FcF0_B = this->dcm_FB.transpose() * this->r_FcF_F + this->rho * this->fHat_B;
     this->r_FcB_B = this->r_F0B_B + this->r_FcF0_B;
     this->rTilde_FcB_B = eigenTilde(this->r_FcB_B);
@@ -482,6 +483,19 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [
     rhoDDot(0, 0) = this->aRho.dot(rDDot_BN_B) + this->bRho.dot(omegaDot_BN_B) + this->cRho;
     this->rhoDotState->setDerivative(rhoDDot);
     this->rhoState->setDerivative(this->rhoDotState->stateView());
+}
+
+void LinearTranslationOneDOFStateEffector::refreshInertialKinematics(double time,
+                                                                     const Eigen::MRPd& sigma_BN,
+                                                                     const Eigen::Vector3d& omega_BN_B)
+{
+    // Accepted joint properties were sampled by the spacecraft. A parent pose update must not apply a pending lock.
+    if (!this->inertialFrame->acceptedTimeNanos) {
+        this->updateEffectorMassProps(time);
+    }
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    this->computeTranslatingBodyInertialStates();
 }
 
 /*! @brief Update the effector energy and momentum contributions.
