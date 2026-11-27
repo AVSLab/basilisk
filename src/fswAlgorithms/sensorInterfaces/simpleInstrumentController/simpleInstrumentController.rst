@@ -1,8 +1,10 @@
 Executive Summary
 -----------------
 This module generates a command in the form of a :ref:`DeviceCmdMsgPayload` that turns on a :ref:`simpleInstrument`
-if the spacecraft a.) has access to a :ref:`groundLocation` and b.) the associated attitude error and attitude rate
-error from an attitude guidance message is within the given tolerance.
+if the spacecraft has access to a ground or spacecraft target and the attitude
+and optional attitude-rate errors are within tolerance. Optional constraints
+include target illumination, message freshness, capture readiness, and either
+continuous or cumulative acquisition hold. The default remains immediate imaging.
 
 Message Connection Descriptions
 -------------------------------
@@ -14,11 +16,15 @@ description provides information on what this message is used for.
     :caption: Module I/O Messages
 
     input locationAccessInMsg AccessMsgPayload
-        Input msg containing the ground location access
+        Input message containing ground or spacecraft target access
     input attGuidInMsg AttGuidMsgPayload
         Input message containing the attitude guidance
     input deviceStatusInMsg DeviceStatusMsgPayload
         (optional) input message containing the device status
+    input captureReadyInMsg DeviceStatusMsgPayload
+        (optional) capture readiness, such as sufficient instrument storage
+    input illuminationInMsg EclipseMsgPayload
+        (optional) target illumination; required when useIlluminationConstraint is enabled
     output deviceCmdOutMsg DeviceCmdMsgPayload
         Output message with the device command
 
@@ -69,4 +75,65 @@ current duration-based imaging attempt. This value is accessible from Python and
 not complete. If ``acquisitionTime`` is less than or equal to ``allowedTime``, the image will be captured once the
 required duration is met. If ``acquisitionTime`` exceeds ``allowedTime``, the image will not be captured, although the
 system will continue attempting for the full ``allowedTime`` period. If either ``acquisitionTime`` or ``allowedTime``
-is negative or not set, the value is automatically capped to zero.
+is negative, the value is automatically capped to zero. Unset duration values
+are zero. Nonfinite duration values are rejected during reset.
+
+Sampled acquisition holds
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With ``useDurationImaging=1``, a sampled interval contributes to ``elapsedTime``
+only if its two endpoints satisfy all enabled acquisition constraints. By
+default, an invalid sample clears the continuous hold. Set ``useCumulativeHold=1``
+to preserve previously accumulated valid intervals across interruptions. The
+first valid sample after an interruption starts a new interval; it cannot count
+the preceding invalid interval. ``acquisitionTime``, ``allowedTime``, and
+``elapsedTime`` are all in nanoseconds. ``allowedTime`` limits accumulated valid
+duration, including any wait for a capture window or readiness. A mission-level
+wall-clock deadline remains the responsibility of the task scheduler.
+
+Reset the controller before switching targets or starting a new acquisition.
+``Reset()`` clears hold state, ``imaged``, capture diagnostics, and the output
+command. Configuration settings and ``controllerStatus`` are preserved. Once
+an image command is issued, subsequent updates write zero commands until the
+controller is rearmed. The command is a single update pulse, so the instrument
+must run at the same rate or faster and read the command after the controller.
+
+Target illumination and freshness
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Connect ``illuminationInMsg`` to the target's eclipse output. Set
+``useIlluminationConstraint=1`` and ``illuminationThreshold`` in [0, 1] to require
+a minimum illuminated fraction. The threshold comparison is inclusive. The
+legacy message field ``shadowFactor`` and its ``illuminationFactor`` alias both
+mean zero for full shadow and one for full illumination.
+
+Even with illumination gating disabled, a connected illumination message is
+used to record quality. ``captureIllumination`` is the trapezoidal mean over valid
+hold intervals, or the instantaneous fraction for a zero-duration hold.
+``captureTime`` records the image-command timestamp in nanoseconds. These are
+command diagnostics; storage must confirm the resulting image independently.
+
+The controller starts accumulating quality at the first qualifying sample.
+``lastCallTime`` supplies the actual interval length, and ``previousIllumination``
+supplies the previous endpoint for trapezoidal averaging. ``illuminationIntegral``
+sums illumination times valid interval length. At capture, dividing by
+``elapsedTime`` gives ``captureIllumination``, which is then frozen so later
+updates cannot alter the acquired image's quality. An invalid sample adds no
+duration or illumination. Continuous mode clears both sums; cumulative mode
+retains them and starts a new interval when the constraints qualify again.
+
+Set ``requireFreshMessages=1`` to reject unwritten or future-dated guidance,
+access, and connected illumination inputs. Guidance must have been written
+strictly after the most recent reset. ``maximumGuidanceAge`` bounds guidance
+age, while ``maximumAccessAge`` bounds access and illumination age, in
+nanoseconds. Zero permits only a sample written at the current controller time.
+Freshness checking is disabled by default for existing ground-imaging scenarios.
+
+Capture readiness
+~~~~~~~~~~~~~~~~~
+
+An optional ``captureReadyInMsg`` can defer the image command until an instrument
+can accept it, for example when storage has enough free capacity. A linked input
+must be written and have nonzero ``deviceStatus``. Readiness does not count as a
+pointing/access constraint and does not clear an accumulated hold. Unlinked
+readiness inputs preserve the previous behavior.
