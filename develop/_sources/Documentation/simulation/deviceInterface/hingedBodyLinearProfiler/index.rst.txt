@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_hingedBodyLinearProfiler:
+
+hingedBodyLinearProfiler
+========================
+
+:doc:`Module documentation <hingedBodyLinearProfiler>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

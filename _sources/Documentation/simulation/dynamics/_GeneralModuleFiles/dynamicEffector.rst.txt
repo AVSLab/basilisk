@@ -1,0 +1,43 @@
+.. _dynamicEffector:
+
+:module-type:`C++` Module: dynamicEffector
+==========================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`_UnitTestDynamics <_UnitTestDynamics/index>`
+   * :doc:`BodyToHubInfo <BodyToHubInfo>`
+   * :doc:`extendedStateVector <extendedStateVector>`
+   * :doc:`fuelSlosh <fuelSlosh>`
+   * :doc:`gravityModel <gravityModel>`
+   * :doc:`interpolator <interpolator>`
+   * :doc:`pointMassGravityModel <pointMassGravityModel>`
+   * :doc:`RWConfigPayload <RWConfigPayload>`
+   * :doc:`stateVecStochasticIntegrator <stateVecStochasticIntegrator>`
+   * :doc:`stochasticNoiseGenerator <stochasticNoiseGenerator>`
+   * :doc:`stochasticRKIntegratorBase <stochasticRKIntegratorBase>`
+   * :doc:`stochasticWeakRandomVariables <stochasticWeakRandomVariables>`
+   * :doc:`svIntegratorAdaptiveRungeKutta <svIntegratorAdaptiveRungeKutta>`
+   * :doc:`svIntegratorRungeKutta <svIntegratorRungeKutta>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRA <svIntegratorStrongStochasticRungeKuttaSRA>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRI <svIntegratorStrongStochasticRungeKuttaSRI>`
+   * :doc:`svIntegratorWeakSIESME <svIntegratorWeakSIESME>`
+   * :doc:`THROperation <THROperation>`
+   * :doc:`THRSimConfig <THRSimConfig>`
+   * :doc:`THRTimePair <THRTimePair>`
+
+
+Abstract class that is used to implement an effector impacting a dynamic body that does not itself maintain a
+state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.)
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: dynamicEffector.h
+   :project: _GeneralModuleFiles4
+

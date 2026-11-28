@@ -1,0 +1,15 @@
+.. _test_gravityRotatingPlanet:
+
+test_gravityRotatingPlanet
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_gravityRotatingPlanet
+   :members:
+   :show-inheritance:
+

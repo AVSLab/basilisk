@@ -1,0 +1,49 @@
+.. _MJQuaternionStatePolicy:
+
+:module-type:`C++` Module: MJQuaternionStatePolicy
+==================================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`Unit tests <_UnitTest/index>`
+   * :doc:`MJActuator <MJActuator>`
+   * :doc:`MJBody <MJBody>`
+   * :doc:`MJEquality <MJEquality>`
+   * :doc:`MJFwdKinematics <MJFwdKinematics>`
+   * :doc:`MJGeomInfo <MJGeomInfo>`
+   * :doc:`MJInterpolators <MJInterpolators>`
+   * :doc:`MJJoint <MJJoint>`
+   * :doc:`MJObject <MJObject>`
+   * :doc:`MJScene <MJScene>`
+   * :doc:`MJSite <MJSite>`
+   * :doc:`MJSpec <MJSpec>`
+   * :doc:`MJUtils <MJUtils>`
+   * :doc:`PIDController <PIDController>`
+   * :doc:`statefulNumbaModel <statefulNumbaModel>`
+   * :doc:`StatefulSysModel <StatefulSysModel>`
+
+These immutable policies connect MuJoCo quaternion states to the generic integrator.
+Both store scalar-first quaternions with shape ``4 x 1`` and apply ``3 x 1`` angular
+diffusion tangents through MuJoCo's exponential-map update.
+
+``MJNativeQuaternionStatePolicy`` also uses a ``3 x 1`` body-rate drift.
+``MJHighOrderQuaternionStatePolicy`` uses a ``4 x 1`` quaternion derivative, adds the
+weighted derivative to the base, and normalizes the candidate. ``MJJoint`` selects
+the policy during registration according to the scene's attitude-integration setting.
+Changing that setting after topology is established is not permitted.
+
+The registry owns each policy. Repeated registration compares policy topology by
+value, and integrator descriptors borrow the committed policy. See
+:ref:`integratorArchitecture` for joint layout and stage evaluation.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJQuaternionStatePolicy.h
+   :project: _GeneralModuleFiles6
+

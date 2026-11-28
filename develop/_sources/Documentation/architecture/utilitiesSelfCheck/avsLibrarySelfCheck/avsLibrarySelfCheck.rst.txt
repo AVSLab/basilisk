@@ -1,0 +1,10 @@
+.. _avsLibrarySelfCheck:
+
+avsLibrarySelfCheck
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: avsLibrarySelfCheck.h
+   :project: avsLibrarySelfCheck
+

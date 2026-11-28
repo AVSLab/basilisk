@@ -1,0 +1,15 @@
+.. _scenarioAerobrake:
+
+scenarioAerobrake
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioAerobrake
+   :members:
+   :show-inheritance:
+

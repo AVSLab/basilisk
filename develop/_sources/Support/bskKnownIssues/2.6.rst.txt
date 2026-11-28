@@ -1,0 +1,36 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.6 Known Issues
+========================
+
+.. _bsk-known-issues-2-6-0:
+
+Version 2.6.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
+- When using `senNoiseStd()` to set the sensor noise standard deviations
+  in :ref:`magnetometer` and :ref:`coarsesunsensor`
+  the value was being multiplied by 1.5 when creating the diagonal noise matrix.
+  This 1.5x multiplier has now been removed. This is corrected in current release.
+- SWIG wrapper does not fully support all array types in message payloads. This affects custom message
+  payloads that use these types for array members. Workaround is to add them to ``swig_conly_data.i``.
+- A bug was fixed in the :ref:`facetSRPDynamicEffector` module. A transpose was required to be added to a dcm
+  in order to correctly express rotated facet normals in the spacecraft body frame.
+- The ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
+  include file in ``MtbEffector.i``. This is fixed in the current release, however it remains unknown why
+  the dynamics engine is re-swigged for every individual effector/dynamics related class.
+- This release uses ``conan`` version 2.x which creates a new folder ``.conan2`` in
+  the home folder.  Thus, the first time Basilisk is build the project dependencies will
+  be downloaded again into ``.conan2``
+- If configuring and building Basilisk directly with ``conan install`` and ``build`` commands,
+  the ``-if dist3/conan`` argument is no longer needed.  The Basilisk install location is
+  setup with ``conan 2`` arguments inside ``conanfile.py``.
+- :ref:`simIncludeGravBody` set the moon radius in km, not meters, and was thus 1000x too small when visualized.
+- In the python library :ref:`RigidBodyKinematics` the ``subMRP()`` routine didn't compute the expected
+  result if the denominator was small.  This is now corrected.
+- :ref:`groundLocation` was not respecting the case where ``maximumRange == -1.0`` in the method ``checkInstrumentFOV``.
+- Sensor noise models were not being initialized correctly in sensor models such as
+  :ref:`magnetometer` and :ref:`simpleVoltEstimator` modules. This is now fixed in the current release.
+- Propagation matrices were private in the :ref:`simpleVoltEstimator` and :ref:`starTracker` modules.
+  This is now fixed in the current release by the addition of public methods to set and get the propagation matrices.

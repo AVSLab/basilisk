@@ -1,0 +1,93 @@
+.. _spiceInterface:
+
+:module-type:`C++` Module: spiceInterface
+=========================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+The SPICE interface class gets time and planetary or spacecraft body information from the JPL ephemeris library
+
+
+The module
+:download:`PDF Description </../../src/simulation/environment/spiceInterface/_Documentation/Basilisk-SPICE_INTERFACE20170712.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: spiceInterface
+    :caption: Module I/O Messages
+
+    output spiceTimeOutMsg SpiceTimeMsgPayload
+        spice time sampling output message.
+    input epochInMsg EpochMsgPayload
+        (optional) input epoch message.
+    output planetStateOutMsgs SpicePlanetStateMsgPayload
+        vector of planet state output messages.
+    output scStateOutMsgs SCStatesMsgPayload
+        vector of spacecraft state messages.
+    output attRefStateOutMsgs AttRefMsgPayload
+        vector of spacecraft attitude reference state output messages.
+    output transRefStateOutMsgs TransRefMsgPayload
+        vector of spacecraft translation reference state output messages.
+
+
+User Guide
+----------
+This module uses the JPL Spice software to determine the position and orientation of both a celestial body, or a spacecraft.
+The appropriate Spice kernel must be loaded up to provide the state information for the selected body names.
+
+To setup a celestial body, use the module method ``addPlanetNames(vector<string>)`` in python.  Multiple object names can be
+provided by providing a list of names.  With each module update cycle, the corresponding celestial body
+states are provided in the vector of output messages ``planetStateOutMsgs[]``.  Note that the vector elements are in
+the order that the celestial body names were added.
+
+To use this module to read in spacecraft states from a spice kernel, then the spacecraft Spice name is added using
+the method ``addSpacecraftNames(vector<string>)``.  The module provides a vector out corresponding spacecraft state output
+messages in three different formats.
+
+- ``scStateOutMsgs[]``: these are the :ref:`SCStatesMsgPayload` state output messages that the :ref:`spacecraft` module provides
+- ``attRefStateOutMsgs[]``: these are the attitude reference messages :ref:`AttRefMsgPayload`.  These are useful to
+  only prescribe the spacecraft attitude motion.
+- ``transRefStateOutMsgs[]``: these are the translational reference message :ref:`TransRefMsgPayload`.  These are useful to only
+  prescribe the translational motion and leave the attitude motion free.
+
+The time output message ``spiceTimeOutMsg`` of type :ref:`SpiceTimeMsgPayload` provides the current time in
+the following time scales:
+
+- ``J2000Current``: the ephemeris time (TDB) in seconds past J2000.
+- ``JulianDateCurrent``: the UTC Julian date.  Following the SPICE JDUTC convention, this value is held
+  at the following midnight during an inserted leap second.  Use ``J2000Current`` or the GPS fields to
+  distinguish instants within that second.
+- ``GPSWeek``, ``GPSSeconds`` and ``GPSRollovers``: the GPS week modulo 1024, the seconds of week and the number of
+  1024 week rollovers.  GPS time is atomic time (TAI - 19 s) elapsed since the GPS epoch 1980 January 6,
+  00:00:00 UTC, and therefore includes the leap seconds introduced since that epoch.  Negative GPS time is not
+  modeled: if the simulation starts before the GPS epoch, the module emits a warning at reset and the GPS outputs
+  are held at zero until the GPS epoch is reached.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: spiceInterface.h
+   :project: spiceInterface
+

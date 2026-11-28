@@ -1,0 +1,185 @@
+.. _polyhedralGravityModel:
+
+:module-type:`C++` Module: polyhedralGravityModel
+=================================================
+
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+   * :doc:`gravCoeffOps <gravCoeffOps>`
+   * :doc:`sphericalHarmonicsGravityModel <sphericalHarmonicsGravityModel>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+   gravCoeffOps <gravCoeffOps>
+   sphericalHarmonicsGravityModel <sphericalHarmonicsGravityModel>
+
+Executive Summary
+-----------------
+This module encodes the polyhedron gravity model as described in `Werner and Scheeres 1996 <https://doi.org/10.1007/BF00053511>`__. It inherits from the abstract class ``gravityModel`` and computes the gravity acceleration and potential with the constant density polyhedron equations.
+
+The gravity acceleration is evaluated as
+
+.. math::
+    :label: eq:acc_poly
+
+    \mathbf{a}^{P}=\frac{\mu}{V}\left(-\sum_{e\in\text{edges}}\mathbf{E}_e\mathbf{r}_eL_e
+    +\sum_{f\in\text{faces}}\mathbf{F}_f\mathbf{r}_fw_f\right)
+
+and the positive gravitational potential of the Werner and Scheeres formulation as
+
+.. math::
+    :label: eq:U_poly
+
+    U=\frac{\mu}{2V}\left(\sum_{e\in\text{edges}}\mathbf{r}^T_e\mathbf{E}_e\mathbf{r}_e
+    -\sum_{f\in\text{faces}}\mathbf{r}^T_f\mathbf{F}_f\mathbf{r}_f\right)
+
+``computePotentialEnergy()`` returns the specific potential energy
+:math:`\Phi=-U`, in :math:`\mathrm{m^2/s^2}`, with zero at infinity. Thus
+:math:`\Phi\rightarrow-\mu/r` far from the body and
+:math:`\mathbf{a}=-\nabla\Phi`. Multiplying :math:`\Phi` by spacecraft mass gives
+potential energy in joules. This sign agrees with the point-mass model and the
+potential term in ``Spacecraft.totOrbEnergy``.
+
+Module Assumptions and Limitations
+----------------------------------
+The evaluation point is referred to geographical coordinates with respect to the polyhedron gravity body. In other words, the input position is expressed in the planet centred rotating frame. The output gravity acceleration is also expressed in the previous frame.
+
+The module assumes the polyhedron body has constant density.
+
+The polyhedron shape must be a closed surface defined by non-degenerate triangular
+faces with consistently outward-pointing normals. Each edge must belong to two
+faces with opposite traversal directions. Vertex positions are measured from the
+body's center of mass, and ``orderFacet`` uses one-based vertex indices.
+
+The body need not be convex or star-shaped about its center of mass. Individual
+tetrahedra formed by a face and the origin may have negative signed volumes.
+
+The module requires the standard gravity parameter to be provided by the user. Then, the body volume is internally computed from the polyhedron data to ensure consistency with the shape.
+
+Initialization rejects a non-finite, zero, or negative total signed volume. For a
+closed, consistently oriented surface, a negative total indicates inward-pointing
+normals. A positive total alone does not establish mesh validity: callers remain
+responsible for closure, non-degenerate faces, and consistent local winding.
+
+Detailed Module Description
+---------------------------
+The ``polyhedralGravityModel`` module handles the following behavior:
+
+#. Vertexes positions and faces indexes (corresponding to vertexes) are loaded from a polyhedron shape file.
+#. The module initializes and stores all the variables that have no dependency with the evaluation point: edge-facet dyad matrices, facet normals, facet centers and length of edges.
+#. By looping over edges and faces at the same time, the gravity acceleration and potential can be computed for an evaluation point.
+
+The volume used to normalize both acceleration and potential is
+
+.. math::
+
+    V = \frac{1}{6}\sum_{f\in\text{faces}}
+        \mathbf{r}_{f,1}\cdot
+        \left(\mathbf{r}_{f,2}\times\mathbf{r}_{f,3}\right)
+
+where the three vertex positions follow the outward winding of each face.
+The contributions are summed with their signs so overlapping tetrahedra cancel.
+Taking the absolute value of each contribution overestimates the volume of bodies
+that are not star-shaped about the origin and weakens both acceleration and
+potential by the ratio of the true volume to that overestimate (issue 1681).
+
+User Guide
+----------
+
+To use the polyhedron gravity model, instantiate the ``simIncludeGravBody.gravBodyFactory()`` and use the corresponding method to create a custom gravity body (Eros in this example). Then, use the gravity body method to attach a polyhedron gravity model and set the path to the polyhedron shape file as input argument.
+
+.. code-block:: python
+
+    mu = 4.46275472004e5  # [m^3/s^2] Eros gravitational parameter
+    file_poly = 'eros007790.tab'  # Path to a shape file of Eros
+    gravFactory = simIncludeGravBody.gravBodyFactory() # Instantiate gravity factory
+    erosGravBody = gravFactory.createCustomGravObject('eros_poly', mu=mu) # Create Eros gravity body
+    erosGravBody.isCentralBody = True # (Optional) If the body is to be central
+    erosGravBody.usePolyhedralGravityModel(file_poly) # Declare the use of a polyhedron model for Eros and set the shape file
+
+For orbital propagation, the list of gravity bodies have to be appended to a spacecraft as
+
+.. code-block:: python
+
+    scObject = spacecraft.Spacecraft() # Creates spacecraft instance
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values())) # Attach list of created gravity bodies to spacecraft
+
+
+For direct gravity evaluations, initialize the attached polyhedral model and check
+the returned error before evaluating it. In Python, ``initializeParameters()``
+returns ``None`` on success or an error string on failure. Simulation initialization
+performs this check through ``GravBodyData`` and reports a Basilisk error on failure.
+After correcting a rejected mesh, initialize the same model again before evaluating
+gravity. Each attempt discards previous facet and edge dyads, so successful retries
+use only the corrected mesh data.
+
+.. code-block:: python
+
+    poly = erosGravBody.poly
+    poly.muBody = erosGravBody.mu
+    error = poly.initializeParameters()
+    if error is not None:
+        raise ValueError(error)
+    pos = [40e3, 30e3, 10e3]  # [m] Evaluation point in the body-fixed frame
+    acc = poly.computeField(pos)  # [m/s^2]
+    potential = poly.computePotentialEnergy(pos)  # [m^2/s^2]
+
+Both direct model calls require a position relative to the gravity body in its
+body-fixed frame. For an inertial relative position, use
+``erosGravBody.computePotentialEnergyInertial(position, timeNanos)`` after
+initializing the body and loading its ephemeris. The gravity effector uses this
+conversion automatically, extrapolating the planet orientation to the energy
+evaluation time with the same rotation model used for acceleration.
+
+Before the fix for issue 1689, ``computePotentialEnergy()`` returned :math:`+U`,
+and spacecraft energy calculations used the inertial position without rotating
+it into the body frame. Callers that previously negated the returned potential
+to obtain specific potential energy should remove that extra negation.
+
+Supported polyhedron shape files
+--------------------------------
+Polyhedron shape files contain vertexes coordinates and the vertexes indexes that form each triangular face. The vertexes coordinates are assumed to be expressed in kilometers. The following file formats .tab, .obj and .txt are supported as inputs:
+
+The .tab files do not have a header and have 4 columns where the first one denotes if the row refers to a vertex (v) coordinates or the face (f) composed of three vertexes
+
+.. _glPixelSketchTab:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_tab_example.jpg
+    :align: center
+    :width: 400px
+
+    Figure 1: Example of .tab polyhedron shape file
+
+The .obj files content is equivalent to the .tab extension but they admit comments (#) and separate the vertexes and faces content with an empty line
+
+.. _glPixelSketchObj:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_obj_example.jpg
+    :align: center
+    :width: 400px
+
+    Figure 2: Example of .obj polyhedron shape file
+
+The .txt file has a first line as a header where the number of vertexes (first column) and faces (second column) are indicated. Then, it has 3 columns where vertexes coordinates and subsequently the faces correspondence with vertexes are provided
+
+.. _glPixelSketchTxt:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_txt_example.jpg
+    :align: center
+    :width: 400px
+
+    Figure 3: Example of .txt polyhedron shape file
+
+Additional file formats could be added to the function ``loadPolyFromFileToList(fileName: str)`` under ``gravCoeffOpps.py``.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: polyhedralGravityModel.h
+   :project: gravityEffector
+

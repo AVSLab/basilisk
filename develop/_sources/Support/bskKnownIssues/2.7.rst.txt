@@ -1,0 +1,49 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.7 Known Issues
+========================
+
+.. _bsk-known-issues-2-7-0:
+
+Version 2.7.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
+- When using C++ wrapped sensor objects (CSS, thrusters, reaction wheels), Python references
+  must be explicitly retained to prevent premature garbage collection. The recommended approach
+  is to store these objects directly on your simulation object. For example:
+
+  .. code-block:: python
+     :linenos:
+
+     # Create and configure a CSS device
+     cssDevice = coarseSunSensor.CoarseSunSensor()
+     cssDevice.ModelTag = "css1"
+
+     # Store it on the simulation object to keep it alive
+     scSim.cssDevice = cssDevice  # Prevents garbage collection
+
+  Alternatively, for multiple devices, you can use a list or registry:
+
+  .. code-block:: python
+     :linenos:
+
+     # Store multiple devices
+     scSim.css_devices = []
+     for i in range(4):
+         cssDevice = coarseSunSensor.CoarseSunSensor()
+         cssDevice.ModelTag = f"css{i}"
+         scSim.css_devices.append(cssDevice)
+
+  See specific documentation for:
+
+  - :ref:`coarsesunsensor`
+  - :ref:`reactionWheelStateEffector`
+  - :ref:`thrusterDynamicEffector`
+
+  For working examples, refer to these scenarios:
+
+  - :ref:`scenarioAttitudeFeedback`
+  - :ref:`scenarioCSS`
+
+  Failure to retain references will cause segmentation faults when accessing collected objects.

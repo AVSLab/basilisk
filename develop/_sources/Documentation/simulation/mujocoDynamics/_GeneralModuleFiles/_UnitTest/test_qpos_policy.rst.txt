@@ -1,0 +1,15 @@
+.. _test_qpos_policy:
+
+test_qpos_policy
+================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_qpos_policy
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _interpolator:
+
+interpolator
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: interpolator.h
+   :project: _GeneralModuleFiles4
+

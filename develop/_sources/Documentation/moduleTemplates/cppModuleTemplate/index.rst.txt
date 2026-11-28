@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_cppModuleTemplate:
+
+cppModuleTemplate
+=================
+
+:doc:`Module documentation <cppModuleTemplate>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,15 @@
+.. _scenarioAttLocPoint:
+
+scenarioAttLocPoint
+===================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioAttLocPoint
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,15 @@
+.. _test_msisApparentSolarTime:
+
+test_msisApparentSolarTime
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_msisApparentSolarTime
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _SwDataMsgPayload:
+
+SwDataMsgPayload
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SwDataMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,547 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_sphericalHarmonicsGravityModel &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_sphericalHarmonicsGravityModel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_sphericalHarmonicsGravityModel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Validate spherical-harmonic table bounds and initialization (issue 1682).</span>
+
+<span class="sd">Malformed coefficient tables must produce recoverable errors through direct</span>
+<span class="sd">calls and ``GravBodyData``. Evaluation checks also cover public configuration</span>
+<span class="sd">changes after initialization. Degree-zero results are compared with point-mass</span>
+<span class="sd">gravity, degree-two results with a stored baseline, and reinitialized models</span>
+<span class="sd">with freshly initialized models using the same coefficients.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.sphericalHarmonicsGravityModel</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SphericalHarmonicsGravityModel</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">MU</span> <span class="o">=</span> <span class="mf">3.986004415e14</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="n">REFERENCE_RADIUS</span> <span class="o">=</span> <span class="mf">6378136.3</span>  <span class="c1"># [m]</span>
+<span class="n">POSITION</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.0e6</span><span class="p">,</span> <span class="mf">1.0e6</span><span class="p">,</span> <span class="mf">2.0e6</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="n">C_BAR</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.84e-4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.44e-6</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+<span class="n">S_BAR</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.40e-6</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+<span class="c1"># Reference acceleration from develop e5eddcb99d before the validation changes.</span>
+<span class="n">DEGREE_TWO_FIELD</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">7.0369155911816765</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.005316093907567</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.015474299531327</span><span class="p">]</span>  <span class="c1"># [m/s^2]</span>
+<span class="n">MAX_SIZE_T</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uintp</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_model</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure a degree-two coefficient table without initializing caches.</span>
+
+<span class="sd">    :param degree: Requested maximum degree; may intentionally exceed the table.</span>
+<span class="sd">    :return: Configured spherical-harmonic model.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SphericalHarmonicsGravityModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="n">C_BAR</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">sBar</span> <span class="o">=</span> <span class="n">S_BAR</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">REFERENCE_RADIUS</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="n">degree</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_initializer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">through_body</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return an initializer retaining the same model and optional body.</span>
+
+<span class="sd">    :param model: Model to initialize.</span>
+<span class="sd">    :param through_body: Whether to use ``GravBodyData.initBody``.</span>
+<span class="sd">    :return: Callable returning ``None`` on success.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">through_body</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"spherical_harmonics_test"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">REFERENCE_RADIUS</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_damage_table</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">defect</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Remove required coefficient storage and return the expected error text.</span>
+
+<span class="sd">    :param model: Model whose public table is changed.</span>
+<span class="sd">    :param table_name: Either ``cBar`` or ``sBar``.</span>
+<span class="sd">    :param defect: Missing storage configuration to create.</span>
+<span class="sd">    :return: Regular expression identifying the malformed table and row.</span>
+<span class="sd">    """</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">defect</span> <span class="o">==</span> <span class="s2">"empty"</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="n">defect</span> <span class="o">==</span> <span class="s2">"missing_row"</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">defect</span> <span class="o">==</span> <span class="s2">"short_row"</span><span class="p">:</span>
+        <span class="n">table</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">defect</span> <span class="o">==</span> <span class="s2">"short_row"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">table_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">" row 2.*3 entries"</span>
+    <span class="k">if</span> <span class="n">defect</span> <span class="o">==</span> <span class="s2">"empty_zero_row"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">table_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">" row 0.*1 entries"</span>
+    <span class="k">return</span> <span class="n">table_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">".*row for degree 2"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_assert_initialization_error</span><span class="p">(</span><span class="n">initialize</span><span class="p">,</span> <span class="n">through_body</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check the documented error contract for the selected entry point.</span>
+
+<span class="sd">    :param initialize: Initialization callable.</span>
+<span class="sd">    :param through_body: Whether the callable raises ``BasiliskError``.</span>
+<span class="sd">    :param message: Expected regular expression in the diagnostic.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">through_body</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">message</span><span class="p">):</span>
+            <span class="n">initialize</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">error</span><span class="p">),</span> <span class="n">error</span>
+
+
+<div class="viewcode-block" id="test_rejects_invalid_tables">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_rejects_invalid_tables">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"table_name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"cBar"</span><span class="p">,</span> <span class="s2">"sBar"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"defect"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"empty"</span><span class="p">,</span> <span class="s2">"missing_row"</span><span class="p">,</span> <span class="s2">"short_row"</span><span class="p">,</span> <span class="s2">"empty_zero_row"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rejects_invalid_tables</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">defect</span><span class="p">,</span> <span class="n">through_body</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject missing rows and entries in either coefficient table.</span>
+
+<span class="sd">    :param table_name: Coefficient table to damage.</span>
+<span class="sd">    :param defect: Missing storage configuration.</span>
+<span class="sd">    :param through_body: Whether initialization uses ``GravBodyData``.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">_damage_table</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">defect</span><span class="p">)</span>
+    <span class="n">_assert_initialization_error</span><span class="p">(</span>
+        <span class="n">_initializer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">through_body</span><span class="p">),</span> <span class="n">through_body</span><span class="p">,</span> <span class="n">message</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_rejects_degree_beyond_tables">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_rejects_degree_beyond_tables">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"degree"</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">MAX_SIZE_T</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"boundary"</span><span class="p">,</span> <span class="s2">"40"</span><span class="p">,</span> <span class="s2">"maximum_size"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rejects_degree_beyond_tables</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">through_body</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject excessive degrees before any degree-dependent allocation or addition.</span>
+
+<span class="sd">    :param degree: Invalid degree for a three-row table.</span>
+<span class="sd">    :param through_body: Whether initialization uses ``GravBodyData``.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+    <span class="n">_assert_initialization_error</span><span class="p">(</span>
+        <span class="n">_initializer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">through_body</span><span class="p">),</span> <span class="n">through_body</span><span class="p">,</span>
+        <span class="s2">"cBar.*row for degree "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">degree</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_evaluation_requires_initialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_evaluation_requires_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"explicit_degree"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_evaluation_requires_initialization</span><span class="p">(</span><span class="n">explicit_degree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject evaluation before a successful initialization.</span>
+
+<span class="sd">    :param explicit_degree: Whether to use the explicit-degree overload.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">explicit_degree</span> <span class="k">else</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"not initialized"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_evaluation_rechecks_table_dimensions">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_evaluation_rechecks_table_dimensions">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"table_name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"cBar"</span><span class="p">,</span> <span class="s2">"sBar"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"defect"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"empty"</span><span class="p">,</span> <span class="s2">"missing_row"</span><span class="p">,</span> <span class="s2">"short_row"</span><span class="p">,</span> <span class="s2">"empty_zero_row"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"explicit_degree"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_evaluation_rechecks_table_dimensions</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">defect</span><span class="p">,</span> <span class="n">explicit_degree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject public table mutations that would cause out-of-bounds reads.</span>
+
+<span class="sd">    :param table_name: Coefficient table to damage after initialization.</span>
+<span class="sd">    :param defect: Missing storage configuration.</span>
+<span class="sd">    :param explicit_degree: Whether to use the explicit-degree overload.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">_damage_table</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">defect</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">explicit_degree</span> <span class="k">else</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">message</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_evaluation_rejects_unprepared_degree">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_evaluation_rejects_unprepared_degree">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"degree"</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">MAX_SIZE_T</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"explicit_degree"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_evaluation_rejects_unprepared_degree</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">explicit_degree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject higher degrees even after public configuration allows them.</span>
+
+<span class="sd">    :param degree: Degree exceeding the initialized recurrence storage.</span>
+<span class="sd">    :param explicit_degree: Whether to use the explicit-degree overload.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="n">degree</span>
+    <span class="c1"># Supply degree-three coefficients to isolate the recurrence bound in that case.</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="n">C_BAR</span> <span class="o">+</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">sBar</span> <span class="o">=</span> <span class="n">S_BAR</span> <span class="o">+</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">explicit_degree</span> <span class="k">else</span> <span class="p">(</span><span class="n">POSITION</span><span class="p">,)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"exceeds initialized degree 2"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_evaluation_preserves_configured_degree_limit">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_evaluation_preserves_configured_degree_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_evaluation_preserves_configured_degree_limit</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Retain the existing limit even when larger recurrence tables are available."""</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"greater than maximum degree"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_valid_fields_are_unchanged">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_valid_fields_are_unchanged">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"degree"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"layout"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"triangular"</span><span class="p">,</span> <span class="s2">"padded"</span><span class="p">,</span> <span class="s2">"unused_rows"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"include_zero_degree"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_valid_fields_are_unchanged</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">include_zero_degree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve point-mass and degree-two results with supported table layouts.</span>
+
+<span class="sd">    :param degree: Highest degree retained from the degree-two input tables.</span>
+<span class="sd">    :param layout: Triangular, padded, or extra unused rows.</span>
+<span class="sd">    :param include_zero_degree: Whether to include the point-mass contribution.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"cBar"</span><span class="p">,</span> <span class="s2">"sBar"</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">"padded"</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span> <span class="o">+</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table</span><span class="p">]</span>  <span class="c1"># [-] Unused entries.</span>
+        <span class="k">elif</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">"unused_rows"</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">point_mass</span> <span class="o">=</span> <span class="o">-</span><span class="n">MU</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">DEGREE_TWO_FIELD</span><span class="p">)</span> <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">point_mass</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">include_zero_degree</span><span class="p">:</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">expected</span> <span class="o">-</span> <span class="n">point_mass</span>
+    <span class="n">absolute_tolerance</span> <span class="o">=</span> <span class="mf">1e-13</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">include_zero_degree</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+        <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">absolute_tolerance</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_reinitialization_rebuilds_recurrence_tables">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_reinitialization_rebuilds_recurrence_tables">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reinitialization_rebuilds_recurrence_tables</span><span class="p">(</span><span class="n">through_body</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Match fresh models after growing, shrinking, and repeating the degree.</span>
+
+<span class="sd">    :param through_body: Whether all reinitializations use ``GravBodyData``.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">initialize</span> <span class="o">=</span> <span class="n">_initializer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">through_body</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="n">degree</span>
+        <span class="k">assert</span> <span class="n">initialize</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">fresh</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">fresh</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span> <span class="n">fresh</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_retry_after_failed_initialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_retry_after_failed_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"through_body"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"previous_degree"</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"failure"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"table"</span><span class="p">,</span> <span class="s2">"degree"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_retry_after_failed_initialization</span><span class="p">(</span><span class="n">through_body</span><span class="p">,</span> <span class="n">previous_degree</span><span class="p">,</span> <span class="n">failure</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Invalidate failed attempts and recover using only the rebuilt caches.</span>
+
+<span class="sd">    :param through_body: Whether initialization uses ``GravBodyData``.</span>
+<span class="sd">    :param previous_degree: Optional degree of an earlier successful initialization.</span>
+<span class="sd">    :param failure: Invalid table or degree configuration.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">initialize</span> <span class="o">=</span> <span class="n">_initializer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">through_body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">previous_degree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="n">previous_degree</span>
+        <span class="k">assert</span> <span class="n">initialize</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">failure</span> <span class="o">==</span> <span class="s2">"table"</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">_damage_table</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">"sBar"</span><span class="p">,</span> <span class="s2">"short_row"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">"cBar.*row for degree 40"</span>
+    <span class="n">_assert_initialization_error</span><span class="p">(</span><span class="n">initialize</span><span class="p">,</span> <span class="n">through_body</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"not initialized"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">sBar</span> <span class="o">=</span> <span class="n">S_BAR</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"not initialized"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">initialize</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">fresh</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">fresh</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span> <span class="n">fresh</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_body_parameter_invalidates_initialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_invalid_body_parameter_invalidates_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"invalid_mu"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)])</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_body_parameter_invalidates_initialization</span><span class="p">(</span><span class="n">invalid_mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Invalidate caches even when the body overload rejects its GM first.</span>
+
+<span class="sd">    :param invalid_mu: Invalid gravitational parameter in m^3/s^2.</span>
+<span class="sd">    """</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"invalid_mu_test"</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">gravityModel</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">invalid_mu</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">"GravBodyData\.mu.*finite and positive"</span><span class="p">):</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"not initialized"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">MU</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">initBody</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">DEGREE_TWO_FIELD</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_coefficient_values_can_change_without_reinitialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_coefficient_values_can_change_without_reinitialization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_coefficient_values_can_change_without_reinitialization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Read updated coefficients when their table dimensions remain valid."""</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">updated_c</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">C_BAR</span><span class="p">]</span>
+    <span class="n">updated_c</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">2.0</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="n">updated_c</span>
+    <span class="n">fresh</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="n">fresh</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="n">updated_c</span>
+    <span class="k">assert</span> <span class="n">fresh</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span> <span class="n">fresh</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_truncated_evaluation_ignores_unused_rows">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.html#test_sphericalHarmonicsGravityModel.test_truncated_evaluation_ignores_unused_rows">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_truncated_evaluation_ignores_unused_rows</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Check only the coefficient prefix required by an explicit lower degree."""</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[]]</span>  <span class="c1"># [-]</span>
+    <span class="n">fresh</span> <span class="o">=</span> <span class="n">_make_model</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">fresh</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="n">fresh</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">),</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"cBar row 2"</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">computeField</span><span class="p">(</span><span class="n">POSITION</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+.. _MassFlowRateMsgPayload:
+
+MassFlowRateMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MassFlowRateMsgPayload.h
+   :project: msgPayloadDefC
+

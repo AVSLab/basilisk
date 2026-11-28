@@ -1,0 +1,2029 @@
+{
+  "base_commit": "f539f81d5d",
+  "date": "2026-10-01",
+  "experiments": {
+    "simulation": {
+      "schema_version": 1,
+      "group": "simulation",
+      "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "parallel": 12,
+      "original_layout": "combined",
+      "cache_settings": {
+        "CMAKE_GENERATOR": "Ninja",
+        "CMAKE_BUILD_TYPE": "Release",
+        "PY_LIMITED_API": "0x03090000",
+        "BSK_STRICT_WARNINGS": "ON",
+        "BUILD_OPNAV": "ON",
+        "BUILD_MUJOCO": "ON",
+        "BUILD_VIZINTERFACE": "ON",
+        "BUILD_RUST_MODULES": "ON"
+      },
+      "measurements": [
+        {
+          "layout": "separate",
+          "label": "settle",
+          "seconds": 38.58529820898548,
+          "compiles": 111,
+          "swig": 110,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-0",
+          "seconds": 54.54542429104913,
+          "compiles": 230,
+          "swig": 110,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-0-cold",
+          "seconds": 12.471267041983083,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-0-warm",
+          "seconds": 0.2921315840212628,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-1",
+          "seconds": 53.21752508310601,
+          "compiles": 230,
+          "swig": 110,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-1-cold",
+          "seconds": 12.431563708931208,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-1-warm",
+          "seconds": 0.2936484580859542,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-2",
+          "seconds": 53.73415070795454,
+          "compiles": 230,
+          "swig": 110,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-2-cold",
+          "seconds": 12.14344350004103,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-simulation-2-warm",
+          "seconds": 0.3079792499775067,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "single-import-relink",
+          "seconds": 2.7791076669236645,
+          "compiles": 0,
+          "swig": 0,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "one-simulation-cold",
+          "seconds": 0.4792492500273511,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "one-simulation-warm",
+          "seconds": 0.01872345805168152,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "relink-0",
+          "seconds": 2.7661254999693483,
+          "compiles": 0,
+          "swig": 0,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-0",
+          "seconds": 3.7636569580063224,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-0",
+          "seconds": 5.495616916916333,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-1",
+          "seconds": 2.692812417051755,
+          "compiles": 0,
+          "swig": 0,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-1",
+          "seconds": 3.698511915979907,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-1",
+          "seconds": 5.2884906670078635,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-2",
+          "seconds": 2.8148240839364007,
+          "compiles": 0,
+          "swig": 0,
+          "links": 110
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-2",
+          "seconds": 3.8630143330665305,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-2",
+          "seconds": 5.690214209025726,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "no-change",
+          "seconds": 1.6763553339987993,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "separate",
+          "label": "native-size",
+          "bytes": 46801784
+        },
+        {
+          "layout": "separate",
+          "label": "prepare-collection",
+          "seconds": 7.94446174998302,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "separate",
+          "label": "all-native-relink",
+          "seconds": 3.623706249985844,
+          "compiles": 0,
+          "swig": 0,
+          "links": 114
+        },
+        {
+          "layout": "separate",
+          "label": "pytest-cold",
+          "seconds": 27.775981903076172,
+          "workers": 16,
+          "workers_summary": [
+            {
+              "worker": "gw2",
+              "ready_seconds": 27.764750957489014,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.408209001412615
+            },
+            {
+              "worker": "controller",
+              "ready_seconds": null,
+              "selected_items": null,
+              "exit_code": 5,
+              "basilisk_native_initializations": 0,
+              "basilisk_native_modules": 0,
+              "basilisk_native_files": 0,
+              "basilisk_native_seconds": 0
+            },
+            {
+              "worker": "gw3",
+              "ready_seconds": 27.758769989013672,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.418112759827636
+            },
+            {
+              "worker": "gw8",
+              "ready_seconds": 27.775981903076172,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.1347486958839
+            },
+            {
+              "worker": "gw4",
+              "ready_seconds": 27.75963592529297,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.458986464189366
+            },
+            {
+              "worker": "gw11",
+              "ready_seconds": 27.770444869995117,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.861487795598805
+            },
+            {
+              "worker": "gw10",
+              "ready_seconds": 27.76478385925293,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.90486979263369
+            },
+            {
+              "worker": "gw5",
+              "ready_seconds": 27.76132106781006,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.233709672582336
+            },
+            {
+              "worker": "gw9",
+              "ready_seconds": 27.763307094573975,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.026158379856497
+            },
+            {
+              "worker": "gw13",
+              "ready_seconds": 27.763234853744507,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.777525292243809
+            },
+            {
+              "worker": "gw6",
+              "ready_seconds": 27.76799488067627,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.24436238547787
+            },
+            {
+              "worker": "gw7",
+              "ready_seconds": 27.76256012916565,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.16732162120752
+            },
+            {
+              "worker": "gw12",
+              "ready_seconds": 27.772336959838867,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.778479337808676
+            },
+            {
+              "worker": "gw15",
+              "ready_seconds": 27.762006759643555,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.640406500780955
+            },
+            {
+              "worker": "gw0",
+              "ready_seconds": 27.76555609703064,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.46609654580243
+            },
+            {
+              "worker": "gw1",
+              "ready_seconds": 27.762355089187622,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 11.401438124477863
+            },
+            {
+              "worker": "gw14",
+              "ready_seconds": 27.75701379776001,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 10.768934137537144
+            }
+          ]
+        },
+        {
+          "layout": "separate",
+          "label": "pytest-warm",
+          "seconds": 15.731069803237915,
+          "workers": 16,
+          "workers_summary": [
+            {
+              "worker": "gw2",
+              "ready_seconds": 15.721938133239746,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6025372541043907
+            },
+            {
+              "worker": "controller",
+              "ready_seconds": null,
+              "selected_items": null,
+              "exit_code": 5,
+              "basilisk_native_initializations": 0,
+              "basilisk_native_modules": 0,
+              "basilisk_native_files": 0,
+              "basilisk_native_seconds": 0
+            },
+            {
+              "worker": "gw3",
+              "ready_seconds": 15.717881917953491,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6104593336349353
+            },
+            {
+              "worker": "gw8",
+              "ready_seconds": 15.718528985977173,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.5926485480740666
+            },
+            {
+              "worker": "gw4",
+              "ready_seconds": 15.72380518913269,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6173520145239308
+            },
+            {
+              "worker": "gw11",
+              "ready_seconds": 15.709326028823853,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.5968044046312571
+            },
+            {
+              "worker": "gw10",
+              "ready_seconds": 15.720115184783936,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.5964901613770053
+            },
+            {
+              "worker": "gw5",
+              "ready_seconds": 15.726864099502563,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6118323853006586
+            },
+            {
+              "worker": "gw9",
+              "ready_seconds": 15.720618963241577,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.5994653787929565
+            },
+            {
+              "worker": "gw13",
+              "ready_seconds": 15.717519998550415,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6016296072630212
+            },
+            {
+              "worker": "gw6",
+              "ready_seconds": 15.731069803237915,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6059920896077529
+            },
+            {
+              "worker": "gw7",
+              "ready_seconds": 15.725157976150513,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6160192564129829
+            },
+            {
+              "worker": "gw12",
+              "ready_seconds": 15.725789785385132,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6160662637557834
+            },
+            {
+              "worker": "gw15",
+              "ready_seconds": 15.720587015151978,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.5949604437919334
+            },
+            {
+              "worker": "gw0",
+              "ready_seconds": 15.715095043182373,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6037529193563387
+            },
+            {
+              "worker": "gw1",
+              "ready_seconds": 15.723897933959961,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.6238600850338116
+            },
+            {
+              "worker": "gw14",
+              "ready_seconds": 15.72731900215149,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 137,
+              "basilisk_native_seconds": 0.600101591902785
+            }
+          ]
+        },
+        {
+          "layout": "combined",
+          "label": "settle",
+          "seconds": 37.369503542082384,
+          "compiles": 110,
+          "swig": 110,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-0",
+          "seconds": 53.39677441702224,
+          "compiles": 230,
+          "swig": 110,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-0-cold",
+          "seconds": 1.3394590839743614,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-0-warm",
+          "seconds": 0.2232758750906214,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-1",
+          "seconds": 55.97711374994833,
+          "compiles": 230,
+          "swig": 110,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-1-cold",
+          "seconds": 1.211828959058039,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-1-warm",
+          "seconds": 0.14643700001761317,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-2",
+          "seconds": 56.44143924990203,
+          "compiles": 230,
+          "swig": 110,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-2-cold",
+          "seconds": 1.1662696249550208,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-simulation-2-warm",
+          "seconds": 0.15267391700763255,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "single-import-relink",
+          "seconds": 1.6651892500231043,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "one-simulation-cold",
+          "seconds": 0.29739312501624227,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "one-simulation-warm",
+          "seconds": 0.01657749991863966,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "relink-0",
+          "seconds": 1.8346663339762017,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-0",
+          "seconds": 3.8043699159752578,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-0",
+          "seconds": 5.338286999962293,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-1",
+          "seconds": 1.554354834021069,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-1",
+          "seconds": 3.8839625410037115,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-1",
+          "seconds": 5.3776689999504015,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-2",
+          "seconds": 1.5636684170458466,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-2",
+          "seconds": 3.901816957979463,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-2",
+          "seconds": 5.248088499996811,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "no-change",
+          "seconds": 1.4477397910086438,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "combined",
+          "label": "native-size",
+          "bytes": 31566136
+        },
+        {
+          "layout": "combined",
+          "label": "prepare-collection",
+          "seconds": 7.738923541968688,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "combined",
+          "label": "all-native-relink",
+          "seconds": 2.7565993749303743,
+          "compiles": 0,
+          "swig": 0,
+          "links": 16
+        },
+        {
+          "layout": "combined",
+          "label": "pytest-cold",
+          "seconds": 21.1077880859375,
+          "workers": 16,
+          "workers_summary": [
+            {
+              "worker": "gw2",
+              "ready_seconds": 21.090054988861084,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.420543661923148
+            },
+            {
+              "worker": "controller",
+              "ready_seconds": null,
+              "selected_items": null,
+              "exit_code": 5,
+              "basilisk_native_initializations": 0,
+              "basilisk_native_modules": 0,
+              "basilisk_native_files": 0,
+              "basilisk_native_seconds": 0
+            },
+            {
+              "worker": "gw3",
+              "ready_seconds": 21.092225074768066,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.3961047971388325
+            },
+            {
+              "worker": "gw8",
+              "ready_seconds": 21.094527006149292,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.8955211692955345
+            },
+            {
+              "worker": "gw4",
+              "ready_seconds": 21.092665910720825,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.220443584723398
+            },
+            {
+              "worker": "gw11",
+              "ready_seconds": 21.09398889541626,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.7247993734199554
+            },
+            {
+              "worker": "gw10",
+              "ready_seconds": 21.09781002998352,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.7790410190355033
+            },
+            {
+              "worker": "gw5",
+              "ready_seconds": 21.097290992736816,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.125551639357582
+            },
+            {
+              "worker": "gw9",
+              "ready_seconds": 21.091437101364136,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.8605704720830545
+            },
+            {
+              "worker": "gw13",
+              "ready_seconds": 21.10641312599182,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.6278716364176944
+            },
+            {
+              "worker": "gw6",
+              "ready_seconds": 21.1077880859375,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.129365969332866
+            },
+            {
+              "worker": "gw7",
+              "ready_seconds": 21.091958045959473,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.961246325285174
+            },
+            {
+              "worker": "gw12",
+              "ready_seconds": 21.097980976104736,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.6636454209219664
+            },
+            {
+              "worker": "gw15",
+              "ready_seconds": 21.089441061019897,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.5742013469571248
+            },
+            {
+              "worker": "gw0",
+              "ready_seconds": 21.094808101654053,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.425065833260305
+            },
+            {
+              "worker": "gw1",
+              "ready_seconds": 21.099969148635864,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 4.416435792343691
+            },
+            {
+              "worker": "gw14",
+              "ready_seconds": 21.1043221950531,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 3.558767587528564
+            }
+          ]
+        },
+        {
+          "layout": "combined",
+          "label": "pytest-warm",
+          "seconds": 16.729196071624756,
+          "workers": 16,
+          "workers_summary": [
+            {
+              "worker": "gw2",
+              "ready_seconds": 15.496830940246582,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.1939801707630977
+            },
+            {
+              "worker": "controller",
+              "ready_seconds": null,
+              "selected_items": null,
+              "exit_code": 5,
+              "basilisk_native_initializations": 0,
+              "basilisk_native_modules": 0,
+              "basilisk_native_files": 0,
+              "basilisk_native_seconds": 0
+            },
+            {
+              "worker": "gw3",
+              "ready_seconds": 15.498321771621704,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19685687904711813
+            },
+            {
+              "worker": "gw8",
+              "ready_seconds": 15.884070873260498,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.20027362427208573
+            },
+            {
+              "worker": "gw4",
+              "ready_seconds": 15.497673988342285,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.1943542065564543
+            },
+            {
+              "worker": "gw11",
+              "ready_seconds": 16.108214616775513,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.20239720540121198
+            },
+            {
+              "worker": "gw10",
+              "ready_seconds": 15.883609771728516,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19651904748752713
+            },
+            {
+              "worker": "gw5",
+              "ready_seconds": 15.494120836257935,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.1927734890487045
+            },
+            {
+              "worker": "gw9",
+              "ready_seconds": 15.883251905441284,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.20404641202185303
+            },
+            {
+              "worker": "gw13",
+              "ready_seconds": 16.107277870178223,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.20002124353777617
+            },
+            {
+              "worker": "gw6",
+              "ready_seconds": 15.884185791015625,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19720112346112728
+            },
+            {
+              "worker": "gw7",
+              "ready_seconds": 15.883992671966553,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19548636570107192
+            },
+            {
+              "worker": "gw12",
+              "ready_seconds": 16.10839295387268,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19989154022186995
+            },
+            {
+              "worker": "gw15",
+              "ready_seconds": 16.729196071624756,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.2017183443531394
+            },
+            {
+              "worker": "gw0",
+              "ready_seconds": 15.502067804336548,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.1937610092572868
+            },
+            {
+              "worker": "gw1",
+              "ready_seconds": 15.508753776550293,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19708294270094484
+            },
+            {
+              "worker": "gw14",
+              "ready_seconds": 16.10819983482361,
+              "selected_items": 8421,
+              "exit_code": 5,
+              "basilisk_native_initializations": 397,
+              "basilisk_native_modules": 397,
+              "basilisk_native_files": 28,
+              "basilisk_native_seconds": 0.19725166354328394
+            }
+          ]
+        },
+        {
+          "layout": "combined",
+          "label": "restore",
+          "seconds": 1.7305348330410197,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        }
+      ],
+      "modules": [
+        "simulation.ExtPulsedTorque",
+        "simulation.GravityGradientEffector",
+        "simulation.MtbEffector",
+        "simulation.RWConfigPayload",
+        "simulation.ReactionWheelPower",
+        "simulation.THRSimConfig",
+        "simulation.albedo",
+        "simulation.antennaPower",
+        "simulation.arrayMotorTorqueToSingleActuators",
+        "simulation.boreAngCalc",
+        "simulation.cannonballDrag",
+        "simulation.coarseSunSensor",
+        "simulation.constraintDynamicEffector",
+        "simulation.dataFileToViz",
+        "simulation.dentonFluxModel",
+        "simulation.downlinkHandling",
+        "simulation.dragDynamicEffector",
+        "simulation.dualHingedRigidBodyStateEffector",
+        "simulation.dynParamManager",
+        "simulation.dynamicObject",
+        "simulation.earthRadiationModel",
+        "simulation.eclipse",
+        "simulation.encoder",
+        "simulation.ephemerisConverter",
+        "simulation.exponentialAtmosphere",
+        "simulation.extForceTorque",
+        "simulation.facetDragDynamicEffector",
+        "simulation.facetSRPDynamicEffector",
+        "simulation.facetedSRPEffector",
+        "simulation.facetedSpacecraftModel",
+        "simulation.facetedSpacecraftProjectedArea",
+        "simulation.fuelTank",
+        "simulation.gravityEffector",
+        "simulation.gravityModel",
+        "simulation.groundLocation",
+        "simulation.groundMapping",
+        "simulation.hingedBodyLinearProfiler",
+        "simulation.hingedRigidBodyMotor",
+        "simulation.hingedRigidBodyMotorSensor",
+        "simulation.hingedRigidBodyStateEffector",
+        "simulation.igbmNoiseStateEffector",
+        "simulation.imuSensor",
+        "simulation.jointArrayRefProfiler",
+        "simulation.linearSpringMassDamper",
+        "simulation.linearTranslationNDOFStateEffector",
+        "simulation.linearTranslationOneDOFStateEffector",
+        "simulation.linkBudget",
+        "simulation.magneticFieldCenteredDipole",
+        "simulation.magneticFieldWMM",
+        "simulation.magnetometer",
+        "simulation.mappingInstrument",
+        "simulation.meanRevertingNoiseStateEffector",
+        "simulation.motorThermal",
+        "simulation.motorVoltageInterface",
+        "simulation.msisAtmosphere",
+        "simulation.msmForceTorque",
+        "simulation.nHingedRigidBodyStateEffector",
+        "simulation.orbElemConvert",
+        "simulation.partitionedStorageUnit",
+        "simulation.pinholeCamera",
+        "simulation.planetEphemeris",
+        "simulation.planetHeading",
+        "simulation.planetNav",
+        "simulation.pointMassGravityModel",
+        "simulation.polyhedralGravityModel",
+        "simulation.prescribedLinearTranslation",
+        "simulation.prescribedMotionStateEffector",
+        "simulation.prescribedRotation1DOF",
+        "simulation.radiationPressure",
+        "simulation.reactionWheelStateEffector",
+        "simulation.saturationSingleActuator",
+        "simulation.scalarJointStatesToRWSpeed",
+        "simulation.sensorThermal",
+        "simulation.simSynch",
+        "simulation.simpleAntenna",
+        "simulation.simpleBattery",
+        "simulation.simpleInstrument",
+        "simulation.simpleMassProps",
+        "simulation.simpleNav",
+        "simulation.simplePowerMonitor",
+        "simulation.simplePowerSink",
+        "simulation.simpleSolarPanel",
+        "simulation.simpleStorageUnit",
+        "simulation.simpleTransmitter",
+        "simulation.simpleVoltEstimator",
+        "simulation.solarFlux",
+        "simulation.spaceToGroundTransmitter",
+        "simulation.spaceWeatherData",
+        "simulation.spacecraft",
+        "simulation.spacecraftChargingDynamics",
+        "simulation.spacecraftChargingEquilibrium",
+        "simulation.spacecraftLocation",
+        "simulation.sphericalHarmonicsGravityModel",
+        "simulation.sphericalPendulum",
+        "simulation.spiceInterface",
+        "simulation.spinningBodyNDOFStateEffector",
+        "simulation.spinningBodyOneDOFStateEffector",
+        "simulation.spinningBodyTwoDOFStateEffector",
+        "simulation.starTracker",
+        "simulation.stateArchitecture",
+        "simulation.stepperMotor",
+        "simulation.stripLocation",
+        "simulation.svIntegrators",
+        "simulation.tabularAtmosphere",
+        "simulation.tempMeasurement",
+        "simulation.thrusterDynamicEffector",
+        "simulation.thrusterStateEffector",
+        "simulation.twoHingeDamper",
+        "simulation.vscmgStateEffector",
+        "simulation.zeroWindModel"
+      ],
+      "restored_original_layout": true,
+      "initial_binding_groups": {
+        "fsw": true,
+        "simulation": true,
+        "mujoco": true,
+        "opnav": true
+      }
+    },
+    "mujoco": {
+      "schema_version": 1,
+      "group": "mujoco",
+      "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "parallel": 12,
+      "original_layout": "combined",
+      "cache_settings": {
+        "CMAKE_GENERATOR": "Ninja",
+        "CMAKE_BUILD_TYPE": "Release",
+        "PY_LIMITED_API": "0x03090000",
+        "BSK_STRICT_WARNINGS": "ON",
+        "BUILD_OPNAV": "ON",
+        "BUILD_MUJOCO": "ON",
+        "BUILD_VIZINTERFACE": "ON",
+        "BUILD_RUST_MODULES": "ON"
+      },
+      "measurements": [
+        {
+          "layout": "separate",
+          "label": "settle",
+          "seconds": 10.668758832965977,
+          "compiles": 30,
+          "swig": 16,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-0",
+          "seconds": 10.793276541051455,
+          "compiles": 30,
+          "swig": 16,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-0-cold",
+          "seconds": 1.9604169590165839,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-0-warm",
+          "seconds": 0.31654604198411107,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-1",
+          "seconds": 11.288818000000902,
+          "compiles": 30,
+          "swig": 16,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-1-cold",
+          "seconds": 2.0968890000367537,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-1-warm",
+          "seconds": 0.2845218749716878,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-2",
+          "seconds": 10.619356833980419,
+          "compiles": 30,
+          "swig": 16,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-2-cold",
+          "seconds": 2.004357500001788,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-mujoco-2-warm",
+          "seconds": 0.2806807910092175,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "single-import-relink",
+          "seconds": 2.3133775420719758,
+          "compiles": 0,
+          "swig": 0,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "one-mujoco-cold",
+          "seconds": 0.04786558402702212,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "one-mujoco-warm",
+          "seconds": 0.006560374982655048,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "relink-0",
+          "seconds": 2.391989666968584,
+          "compiles": 0,
+          "swig": 0,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-0",
+          "seconds": 2.892686542007141,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-0",
+          "seconds": 4.488686166936532,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-1",
+          "seconds": 2.404434208991006,
+          "compiles": 0,
+          "swig": 0,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-1",
+          "seconds": 3.083998000016436,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-1",
+          "seconds": 4.596163875074126,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-2",
+          "seconds": 2.4135407500434667,
+          "compiles": 0,
+          "swig": 0,
+          "links": 16
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-2",
+          "seconds": 3.6964960829354823,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-2",
+          "seconds": 4.247885124990717,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "no-change",
+          "seconds": 2.3559342090738937,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "separate",
+          "label": "native-size",
+          "bytes": 3300760
+        },
+        {
+          "layout": "combined",
+          "label": "settle",
+          "seconds": 9.604941166937351,
+          "compiles": 16,
+          "swig": 16,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-0",
+          "seconds": 10.333400000003166,
+          "compiles": 30,
+          "swig": 16,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-0-cold",
+          "seconds": 0.6039371669758111,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-0-warm",
+          "seconds": 0.24603029096033424,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-1",
+          "seconds": 10.420361416065134,
+          "compiles": 30,
+          "swig": 16,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-1-cold",
+          "seconds": 0.6032775409985334,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-1-warm",
+          "seconds": 0.24236537504475564,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-2",
+          "seconds": 10.45137199992314,
+          "compiles": 30,
+          "swig": 16,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-2-cold",
+          "seconds": 0.49461383395828307,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-mujoco-2-warm",
+          "seconds": 0.23347266705241054,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "single-import-relink",
+          "seconds": 2.044273208011873,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "one-mujoco-cold",
+          "seconds": 0.07695449993479997,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "one-mujoco-warm",
+          "seconds": 0.008311250014230609,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "relink-0",
+          "seconds": 2.1518137080129236,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-0",
+          "seconds": 3.0398745420388877,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-0",
+          "seconds": 4.524019374977797,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-1",
+          "seconds": 2.126827207976021,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-1",
+          "seconds": 3.067950625088997,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-1",
+          "seconds": 4.463286333018914,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-2",
+          "seconds": 2.0973062500124797,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-2",
+          "seconds": 2.954796083038673,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-2",
+          "seconds": 4.536916458979249,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "no-change",
+          "seconds": 2.023637584061362,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "combined",
+          "label": "native-size",
+          "bytes": 2125808
+        },
+        {
+          "layout": "combined",
+          "label": "restore",
+          "seconds": 2.08732254197821,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        }
+      ],
+      "modules": [
+        "simulation.JointPIDController",
+        "simulation.MJJointReactionForces",
+        "simulation.MJSystemCoM",
+        "simulation.MJSystemMassMatrix",
+        "simulation.NBodyGravity",
+        "simulation.StatefulSysModel",
+        "simulation.cmdForceInertialToForceAtSite",
+        "simulation.igbmAtmDensity",
+        "simulation.inhomogeneousGeometricBrownianMotion",
+        "simulation.linearTimeInvariantSystem",
+        "simulation.meanRevertingNoise",
+        "simulation.mujoco",
+        "simulation.pyStatefulNumbaModel",
+        "simulation.stochasticAtmDensity",
+        "simulation.stochasticDragCoeff",
+        "simulation.thrOnTimeToForce"
+      ],
+      "restored_original_layout": true,
+      "initial_binding_groups": {
+        "fsw": true,
+        "simulation": true,
+        "mujoco": true,
+        "opnav": true
+      }
+    },
+    "opnav": {
+      "schema_version": 1,
+      "group": "opnav",
+      "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "parallel": 12,
+      "original_layout": "combined",
+      "cache_settings": {
+        "CMAKE_GENERATOR": "Ninja",
+        "CMAKE_BUILD_TYPE": "Release",
+        "PY_LIMITED_API": "0x03090000",
+        "BSK_STRICT_WARNINGS": "ON",
+        "BUILD_OPNAV": "ON",
+        "BUILD_MUJOCO": "ON",
+        "BUILD_VIZINTERFACE": "ON",
+        "BUILD_RUST_MODULES": "ON"
+      },
+      "measurements": [
+        {
+          "layout": "separate",
+          "label": "settle",
+          "seconds": 4.979767125099897,
+          "compiles": 8,
+          "swig": 4,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-0",
+          "seconds": 4.888936375034973,
+          "compiles": 8,
+          "swig": 4,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-0-cold",
+          "seconds": 0.6064414579886943,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-0-warm",
+          "seconds": 0.018203999963589013,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-1",
+          "seconds": 4.952402500086464,
+          "compiles": 8,
+          "swig": 4,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-1-cold",
+          "seconds": 0.5569009580649436,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-1-warm",
+          "seconds": 0.016690082964487374,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "rebuild-2",
+          "seconds": 4.923714000033215,
+          "compiles": 8,
+          "swig": 4,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-2-cold",
+          "seconds": 0.5011265000794083,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "all-opnav-2-warm",
+          "seconds": 0.018271500011906028,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "single-import-relink",
+          "seconds": 2.244955708971247,
+          "compiles": 0,
+          "swig": 0,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "one-opnav-cold",
+          "seconds": 0.11445304192602634,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "one-opnav-warm",
+          "seconds": 0.010176457930356264,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "separate",
+          "label": "relink-0",
+          "seconds": 2.228305457974784,
+          "compiles": 0,
+          "swig": 0,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-0",
+          "seconds": 3.4670299170538783,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-0",
+          "seconds": 4.7914097079774365,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-1",
+          "seconds": 2.2519058330217376,
+          "compiles": 0,
+          "swig": 0,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-1",
+          "seconds": 3.423586625023745,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-1",
+          "seconds": 4.810178583022207,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "relink-2",
+          "seconds": 2.1716481250477955,
+          "compiles": 0,
+          "swig": 0,
+          "links": 4
+        },
+        {
+          "layout": "separate",
+          "label": "change-cpp-2",
+          "seconds": 3.484631958999671,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "change-i-2",
+          "seconds": 4.739962749998085,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "separate",
+          "label": "no-change",
+          "seconds": 2.0000061659375206,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "separate",
+          "label": "native-size",
+          "bytes": 26191944
+        },
+        {
+          "layout": "combined",
+          "label": "settle",
+          "seconds": 5.011741625028662,
+          "compiles": 4,
+          "swig": 4,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-0",
+          "seconds": 4.917923124972731,
+          "compiles": 8,
+          "swig": 4,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-0-cold",
+          "seconds": 0.3519438330549747,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-0-warm",
+          "seconds": 0.015767166041769087,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-1",
+          "seconds": 4.917397291981615,
+          "compiles": 8,
+          "swig": 4,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-1-cold",
+          "seconds": 0.24106408294755965,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-1-warm",
+          "seconds": 0.01428254193160683,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "rebuild-2",
+          "seconds": 4.887247374979779,
+          "compiles": 8,
+          "swig": 4,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-2-cold",
+          "seconds": 0.21086216601543128,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "all-opnav-2-warm",
+          "seconds": 0.015192124992609024,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "single-import-relink",
+          "seconds": 2.1969972499646246,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "one-opnav-cold",
+          "seconds": 0.21895858296193182,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "one-opnav-warm",
+          "seconds": 0.012672416982240975,
+          "python_version": "3.14.6 (v3.14.6:c63aec69bd5, Jun 10 2026, 08:07:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+        },
+        {
+          "layout": "combined",
+          "label": "relink-0",
+          "seconds": 2.177755083073862,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-0",
+          "seconds": 3.486091124941595,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-0",
+          "seconds": 4.729505915893242,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-1",
+          "seconds": 2.1813573339022696,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-1",
+          "seconds": 3.4557851660065353,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-1",
+          "seconds": 4.732263165991753,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "relink-2",
+          "seconds": 2.150751458015293,
+          "compiles": 0,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-cpp-2",
+          "seconds": 3.5621825830312446,
+          "compiles": 1,
+          "swig": 0,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "change-i-2",
+          "seconds": 4.734462624997832,
+          "compiles": 1,
+          "swig": 1,
+          "links": 1
+        },
+        {
+          "layout": "combined",
+          "label": "no-change",
+          "seconds": 2.0568565420107916,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        },
+        {
+          "layout": "combined",
+          "label": "native-size",
+          "bytes": 10817696
+        },
+        {
+          "layout": "combined",
+          "label": "restore",
+          "seconds": 1.9860346249770373,
+          "compiles": 0,
+          "swig": 0,
+          "links": 0
+        }
+      ],
+      "modules": [
+        "fswAlgorithms.centerRadiusCNN",
+        "fswAlgorithms.houghCircles",
+        "fswAlgorithms.limbFinding",
+        "simulation.camera"
+      ],
+      "restored_original_layout": true,
+      "initial_binding_groups": {
+        "fsw": true,
+        "simulation": true,
+        "mujoco": true,
+        "opnav": true
+      }
+    }
+  }
+}

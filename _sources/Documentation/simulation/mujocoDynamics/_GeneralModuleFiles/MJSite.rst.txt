@@ -1,0 +1,10 @@
+.. _MJSite:
+
+MJSite
+======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJSite.h
+   :project: _GeneralModuleFiles6
+

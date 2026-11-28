@@ -1,0 +1,62 @@
+.. _tabularAtmosphere:
+
+:module-type:`C++` Module: tabularAtmosphere
+============================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+The purpose of this module is to implement a tabular atmospheric model that returns density and
+temperature values at a specified altitude and planet. The module linearly interpolates tables
+and is a child of the base class Atmosphere.
+
+The module is a sub-class of the :ref:`atmosphereBase` base class.  See that class for the
+nominal messages used and general instructions.
+
+
+Detailed Module Description
+---------------------------
+Within the configured altitude reach, the module returns the tabulated density and temperature
+at either endpoint and linearly interpolates between adjacent rows.
+An altitude that falls just outside the table by roundoff in the spacecraft radius uses the nearest endpoint.
+
+Module Assumptions and Limitations
+----------------------------------
+Returns density = 0 kg/m^3 and temperature = 0 K when altitude is outside range of provided data
+OR if outside range set by (envMinReach, envMaxReach) if those module parameters are defined.
+This module uses a python helper function as access to different atmospheric tables for various planets.
+See ``Basilisk\supportData\AtmosphereData\support\README.txt`` for more detail on python
+helper function and currently provided data tables.
+
+User Guide
+----------
+Required variables are ``altList``, ``rhoList``, and ``tempList``, each a standard vector of doubles.
+The lists must be sorted corresponding to ascending altitude, and be of the same nonzero length.
+Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvin.
+
+For the Venus, Uranus, Titan, and Jupiter GRAM CSV readers, the header may be followed by a units
+row such as ``[km],[kg/m3],[K]`` for height, density, and temperature, respectively.
+Unit labels may be bare or enclosed in matching brackets or parentheses. The temperature
+label may also be written as ``kelvin``.
+Each row must have the same number of fields as the header. Additional named columns are allowed.
+The readers convert heights from kilometers to meters. Height, density, and temperature must contain finite numbers.
+Invalid samples raise ``ValueError``.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: tabularAtmosphere.h
+   :project: TabularAtmosphere
+

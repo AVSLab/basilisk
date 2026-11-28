@@ -1,0 +1,15 @@
+.. _scenarioCompareVariableMass:
+
+scenarioCompareVariableMass
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioCompareVariableMass
+   :members:
+   :show-inheritance:
+

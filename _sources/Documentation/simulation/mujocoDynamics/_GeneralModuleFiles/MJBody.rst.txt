@@ -1,0 +1,10 @@
+.. _MJBody:
+
+MJBody
+======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJBody.h
+   :project: _GeneralModuleFiles6
+

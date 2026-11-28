@@ -1,0 +1,10 @@
+.. _StepperMotorMsgPayload:
+
+StepperMotorMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: StepperMotorMsgPayload.h
+   :project: msgPayloadDefC
+

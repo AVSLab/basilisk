@@ -1,0 +1,183 @@
+.. _arcLineHoldRef:
+
+:module-type:`Python` Module: arcLineHoldRef
+============================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+``arcLineHoldRef`` publishes a time-varying inertial translation reference for
+a specific arc-to-line-to-hold maneuver.  The reference follows a circular
+arc in a plane tilted 45 degrees out of the inertial ``x-y`` plane, blends
+smoothly onto the inertial ``y`` axis, moves along that axis to a final
+position, and then remains stationary.  The module publishes position,
+velocity, and acceleration; it does not calculate control forces or move a
+spacecraft.
+
+The radius, phase durations, blend endpoint, and final position are
+configurable.  The path topology, circle plane, line axis, and terminal hold
+are fixed.  This is not a general-purpose trajectory generator.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list the module output messages.
+
+.. bsk-module-io:: ArcLineHoldRef
+    :caption: Module I/O Messages
+
+    output transRefOutMsg TransRefMsgPayload
+        Output inertial reference position, velocity, and acceleration.
+
+
+Module Assumptions and Limitations
+----------------------------------
+
+The arc satisfies :math:`r_x=r_z`, fixing its plane at 45 degrees out of the
+inertial ``x-y`` plane.  The subsequent straight segment changes only
+:math:`r_y`.  Both ``blendEndPosition`` and ``finalPosition`` must therefore
+be finite three-component vectors with *exactly zero* inertial ``x`` and
+``z`` components.  ``Reset()`` rejects incompatible endpoints with
+``BSK_ERROR`` (a ``BasiliskError`` in Python), rather than allowing a position
+jump at the blend-to-line or line-to-hold boundary.
+
+``radius``, ``tCircle``, ``tTransition``, and ``tLinear`` must all be finite.
+``Reset()`` rejects NaN and positive or negative infinity with ``BSK_ERROR``
+(a ``BasiliskError`` in Python) before computing trajectory boundary states.
+It also requires ``tTransition > 0``, ``tLinear > 0``, and
+``tCircle + tTransition > 0``.  For the intended arc-then-blend sequence,
+configure a nonnegative ``tCircle`` and a positive radius.  The latter two
+conditions are recommendations, not additional checks performed by the
+module.
+
+The phase clock is the absolute simulation time, measured from simulation
+time zero.  Calling ``Reset()`` at a later time does not restart the maneuver.
+All parameters should be set before ``Reset()``: it precomputes the blend
+boundary states, so changing configuration while the module is running can
+make adjacent segments inconsistent.
+
+The last moving segment is a quintic curve confined to the ``y`` axis with
+zero terminal velocity and acceleration.  For arbitrary choices of the two
+``y`` endpoints and phase duration, the intermediate motion is not
+guaranteed to be monotonic or to slow down at every instant.
+
+
+Mathematical Modeling
+---------------------
+
+Let :math:`R` be ``radius``, :math:`t_c` be ``tCircle``, :math:`T_b` be
+``tTransition``, and :math:`T_l` be ``tLinear``.  The angular rate of the
+initial arc is
+
+.. math::
+
+    \omega = \frac{\pi}{t_c + T_b}.
+
+For :math:`0 \leq t < t_c`, the inertial reference position is
+
+.. math::
+
+    \boldsymbol{r}_R(t) = R
+    \begin{bmatrix}
+        \sin(\omega t)/\sqrt{2} \\
+        \cos(\omega t) \\
+        \sin(\omega t)/\sqrt{2}
+    \end{bmatrix}.
+
+The module evaluates its analytic first and second time derivatives for the
+velocity and acceleration references.  In particular,
+:math:`\boldsymbol{a}_R=-\omega^2\boldsymbol{r}_R` on the arc.
+
+For :math:`t_c \leq t < t_c+T_b`, a separate quintic polynomial in each
+coordinate joins the arc to the line.  At its start, position, velocity,
+and acceleration equal the arc states at :math:`t_c`.  At its end, they are
+
+.. math::
+
+    \boldsymbol{r}_b = [0,\,y_b,\,0]^\mathsf{T},\qquad
+    \boldsymbol{v}_b = [0,\,\omega R,\,0]^\mathsf{T},\qquad
+    \boldsymbol{a}_b = \boldsymbol{0},
+
+where :math:`y_b` is the ``y`` component of ``blendEndPosition``.  Matching
+all three states at both ends makes the reference continuous through
+acceleration at the arc-to-blend and blend-to-line boundaries.
+
+During the final moving segment, let
+:math:`\tau=t-t_c-T_b`, :math:`\Delta y=y_f-y_b`, and
+:math:`v_b=\omega R`, where :math:`y_f` is the ``y`` component of
+``finalPosition``.  For :math:`0 \leq \tau < T_l`, the reference has
+:math:`r_x=r_z=0` and
+
+.. math::
+
+    y(\tau) &= y_b + v_b\tau + a_3\tau^3 + a_4\tau^4 + a_5\tau^5, \\
+    a_3 &= \frac{10\Delta y-6v_bT_l}{T_l^3}, \\
+    a_4 &= \frac{-15\Delta y+8v_bT_l}{T_l^4}, \\
+    a_5 &= \frac{6\Delta y-3v_bT_l}{T_l^5}.
+
+The velocity and acceleration are the analytic derivatives of this
+polynomial.  At :math:`t=t_c+T_b+T_l`, the output switches to the final
+hold: :math:`\boldsymbol{r}_R=[0,\,y_f,\,0]^\mathsf{T}` and
+:math:`\boldsymbol{v}_R=\boldsymbol{a}_R=\boldsymbol{0}`.
+
+
+User Guide
+----------
+
+This section is to outline the steps needed to setup the ``arcLineHoldRef`` module in Python using Basilisk.
+
+#. Import the module::
+
+    from Basilisk.fswAlgorithms import arcLineHoldRef
+
+#. Create an instance::
+
+    module = arcLineHoldRef.ArcLineHoldRef()
+
+#. Set the arc radius and the three phase durations::
+
+    module.setRadius(20.0)  # [m]
+    module.setTCircle(5.0 * 3600.0)  # [s]
+    module.setTTransition(1.0 * 3600.0)  # [s]
+    module.setTLinear(110.0 * 60.0)  # [s]
+
+#. Set the blend endpoint and final hold position.  Their inertial ``x`` and
+   ``z`` components must be zero::
+
+    module.setBlendEndPosition([0.0, -16.0, 0.0])  # [m]
+    module.setFinalPosition([0.0, -5.0, 0.0])  # [m]
+
+#. Add the module to a task at the rate needed by the reference consumer::
+
+    sim.AddModelToTask(taskName, module)
+
+These example values are also the module defaults, so steps 3 and 4 can be
+omitted when those values are desired.  The arc begins at
+:math:`[0,R,0]^\mathsf{T}` at simulation time zero.
+The blend starts at ``tCircle``, the straight segment starts at
+``tCircle + tTransition``, and the stationary hold starts at
+``tCircle + tTransition + tLinear``.
+
+
+----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: arcLineHoldRef
+   :members:
+   :show-inheritance:
+

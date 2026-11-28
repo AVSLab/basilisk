@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrusterStateEffector:
+
+thrusterStateEffector
+=====================
+
+:doc:`Module documentation <thrusterStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

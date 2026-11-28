@@ -1,0 +1,10 @@
+.. _sim_model:
+
+sim_model
+=========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: sim_model.h
+   :project: system_model
+

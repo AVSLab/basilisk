@@ -1,0 +1,1307 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: constrainedAttitudeManeuver &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="test_celestialTwoBodyPoint" href="../celestialTwoBodyPoint/_UnitTest/test_celestialTwoBodyPoint.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../attRefCorrection/attRefCorrection.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../attTrackingError/attTrackingError.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../celestialTwoBodyPoint/celestialTwoBodyPoint.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eulerRotation/eulerRotation.html">eulerRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillPoint/hillPoint.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3D/inertial3D.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3DSpin/inertial3DSpin.html">inertial3DSpin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../locationPointing/locationPointing.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpRotation/mrpRotation.html">mrpRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../oneAxisSolarArrayPoint/oneAxisSolarArrayPoint.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../opNavPoint/opNavPoint.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rasterManager/rasterManager.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleDeadband/simpleDeadband.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunSafePoint/sunSafePoint.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../velocityPoint/velocityPoint.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../waypointReference/waypointReference.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transGuidance/index.html">transGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attGuidance</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: constrainedAttitudeManeuver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-constrainedattitudemaneuver">
+<span id="constrainedattitudemaneuver"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: constrainedAttitudeManeuver<a class="headerlink" href="#c-module-constrainedattitudemaneuver" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTest/index.html"><span class="doc">Unit tests</span></a></p></li>
+</ul>
+<p><strong>Example usage</strong></p>
+<ul class="bsk-module-examples simple">
+<li><p><a class="reference internal" href="../../../../examples/scenarioAttitudeConstrainedManeuver.html">scenario<wbr>Attitude<wbr>Constrained<wbr>Maneuver</a></p></li>
+</ul>
+</aside>
+<div class="toctree-wrapper compound">
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module searches a grid of spacecraft attitudes for a path subject to keep-in and keep-out
+pointing cones. It fits a spline to the selected waypoints and publishes an attitude reference
+for a tracking controller. A fitted reference can cross a cone boundary even when every
+waypoint satisfies the pointing constraints.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-17f90e509d9a06f20263502549a32ac371fb273b.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">constrainedAttitudeManeuver module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>attRefOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>Output Attitude Reference Message.</p></td>
+</tr>
+<tr class="row-odd"><td><p>attRefOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>C-wrapped Output Attitude Reference Message.</p></td>
+</tr>
+<tr class="row-even"><td><p>scStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Required spacecraft state. Its source must have written a message before reset.</p></td>
+</tr>
+<tr class="row-odd"><td><p>vehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Required vehicle configuration supplying the inertia tensor. Its source must have written a message before reset.</p></td>
+</tr>
+<tr class="row-even"><td><p>keepOutCelBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>Optional keep-out planet state.</p></td>
+</tr>
+<tr class="row-odd"><td><p>keepInCelBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>Optional keep-in planet state.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The module, in its current form, allows to only include one keep-out and one keep-in celestial object(s). Multiple boresights (up to 10) can be specified as either
+keep-in or keep-out body directions. Each category has ten slots. Appending beyond that limit raises an error.
+Both append methods normalize finite, nonzero body-frame directions. Cone half-angles
+are measured from the boresight and must be in <span class="math notranslate nohighlight">\([0, \pi]\)</span> radians, including both endpoints.
+Both cone types include their rim within angular roundoff. A point on the rim satisfies
+a keep-in constraint and violates a keep-out constraint.
+When setting the public boresight arrays directly, supply unit vectors. The planner
+checks the active entries when reading inputs and when building the grid.
+The keep-out constraint is considered respected when all the keep-out body-fixed boresights are outside of the keep-out zone
+simultaneously. The keep-in constraint is satisfied when at least one keep-in body-fixed
+direction is inside the keep-in zone. Each category is active only when it has a boresight
+and its celestial-body message is linked. An active category requires a written message at reset
+and a finite, nonzero separation between the spacecraft and the celestial body.
+Inertial cone axes supplied directly must also be finite and nonzero.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GenerateGrid()</span></code> reclassifies both endpoint attitudes using the current boresights and the
+last-read celestial-body directions. Call <code class="docutils literal notranslate"><span class="pre">ReadInputs()</span></code> before a direct rebuild after enabling
+or disabling a category, after replacing a source even if it stays linked, or to use updated
+spacecraft or celestial-body positions. Reading inputs invalidates the previous grid and reference.
+<code class="docutils literal notranslate"><span class="pre">effortBasedAStar()</span></code>, <code class="docutils literal notranslate"><span class="pre">spline()</span></code>, and <code class="docutils literal notranslate"><span class="pre">effortEvaluation()</span></code> use cached spacecraft inputs
+and require a successful <code class="docutils literal notranslate"><span class="pre">ReadInputs()</span></code>. If a read fails, correct the input and read again.
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> refreshes the inputs automatically.</p>
+<p>A target attitude that violates a pointing constraint causes planning to fail. An initially
+noncompliant attitude raises a warning so the planner can search for a path out of the violation.
+The remaining waypoints satisfy the cones evaluated with the directions read at reset.
+The User Guide describes how these checks apply to the fitted reference.</p>
+<p>The supported grid refinement range is <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">&lt;=</span> <span class="pre">N</span> <span class="pre">&lt;=</span> <span class="pre">20</span></code>. With the no-argument constructor,
+set <code class="docutils literal notranslate"><span class="pre">N</span></code> before building the grid. Its initial value is zero (unset). Grid generation validates the current
+value, including changes made after construction, and raises an error outside this range.
+The planner also raises an error rather than overflowing its fixed storage if a node would have
+more than 52 neighbors. Search and path storage grow dynamically with the graph.
+<code class="docutils literal notranslate"><span class="pre">NodeList.N</span></code> is the read-only active node count in Python. Use <code class="docutils literal notranslate"><span class="pre">append()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">clear()</span></code> to change the entries. Python <code class="docutils literal notranslate"><span class="pre">append()</span></code> requires a Python-owned node.
+The list retains it until its last entry is removed. The search sets each node’s predecessor,
+<code class="docutils literal notranslate"><span class="pre">backPointer</span></code>, which is read-only in Python.
+For C++ callers, <code class="docutils literal notranslate"><span class="pre">NodeList::list</span></code> is now a <code class="docutils literal notranslate"><span class="pre">std::vector&lt;Node*&gt;</span></code>. Use the list methods to
+populate it. Indexed access to active entries is unchanged; use <code class="docutils literal notranslate"><span class="pre">list.data()</span></code> where a raw
+pointer to the entries is required. Do not retain pointers to the entry storage across list changes.
+You can assign a path containing only Python-owned nodes to another planner. A generated path borrows
+nodes from its planner’s grid, so copying it raises an error. Use <code class="docutils literal notranslate"><span class="pre">returnPathCoord()</span></code> to copy its coordinates.
+<code class="docutils literal notranslate"><span class="pre">NodeList.pop()</span></code> and <code class="docutils literal notranslate"><span class="pre">NodeList.swap()</span></code> require indices within the active list.
+<code class="docutils literal notranslate"><span class="pre">returnPathCoord()</span></code> returns 1000 for an invalid waypoint index or coordinate axis.</p>
+<p>When grid generation clears the previous grid and path, it also resets the endpoint keys
+(<code class="docutils literal notranslate"><span class="pre">keyS</span></code> and <code class="docutils literal notranslate"><span class="pre">keyG</span></code>). Each component is <code class="docutils literal notranslate"><span class="pre">invalidGridIndex</span></code> from construction until an
+endpoint pair is selected, and again if a rebuild finds no constraint-free node.
+In that case, initialization raises an error before graph search.
+This means the sampled grid cannot support planning; it does not prove that no continuous maneuver
+exists. Review the constraints or choose another supported refinement level.
+Direct calls to <code class="docutils literal notranslate"><span class="pre">AStar()</span></code> and <code class="docutils literal notranslate"><span class="pre">effortBasedAStar()</span></code> require a successful grid build.
+After changing <code class="docutils literal notranslate"><span class="pre">N</span></code>, call <code class="docutils literal notranslate"><span class="pre">GenerateGrid()</span></code> again before running either search directly.
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> rebuilds the grid automatically.</p>
+<p>Rebuilding the grid or starting a search discards previously prepared waypoints and fitted output.
+The planner also discards them when a <code class="docutils literal notranslate"><span class="pre">NodeList</span></code> method or assignment to <code class="docutils literal notranslate"><span class="pre">path</span></code> changes the node sequence.
+After a direct search or path-list edit, call <code class="docutils literal notranslate"><span class="pre">pathHandle()</span></code> and then <code class="docutils literal notranslate"><span class="pre">spline()</span></code> to fit the new path.
+Changing a node’s <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code> in place bypasses the list, so call both methods before querying that path.
+When editing <code class="docutils literal notranslate"><span class="pre">Input</span></code> directly, supply one value per waypoint in each coordinate array and in
+any explicit time array. Supply elapsed seconds starting at zero, with finite, strictly increasing times.
+Distance-based timing requires distinct consecutive waypoints. A least-squares fit reserves one
+control point for each endpoint position and prescribed derivative. The remaining control points
+cannot outnumber the interior waypoints. Each prescribed endpoint acceleration requires velocity
+at that same endpoint. If weights are supplied, provide one per waypoint. Interior weights
+must be finite and nonnegative. A zero interior weight omits that waypoint’s residual from
+the least-squares objective. The remaining weighted waypoints must still determine all free control points.
+<code class="docutils literal notranslate"><span class="pre">Output.getData()</span></code> and <code class="docutils literal notranslate"><span class="pre">Output.getStates()</span></code> raise an error if the fit has been cleared.
+<code class="docutils literal notranslate"><span class="pre">computeTorque()</span></code> and <code class="docutils literal notranslate"><span class="pre">computeTorqueNorm()</span></code> require an index in the current fitted samples.
+<code class="docutils literal notranslate"><span class="pre">effortEvaluation()</span></code> requires at least two time samples and one value per time sample in
+each attitude, first-derivative, and second-derivative component. The cached <code class="docutils literal notranslate"><span class="pre">pathCost</span></code>
+is NaN until <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> accepts a fitted reference.</p>
+<p>The start and goal must represent different physical attitudes, including when expressed
+in different MRP sets. They must also map to different sampled attitudes. Antipodal
+nodes on the MRP unit sphere represent the same sampled attitude. If the endpoints
+map to the same sampled attitude, initialization raises an error before graph search.
+A finer grid may separate distinct but nearby endpoints.</p>
+<p>Even when both endpoints are free, the sampled grid can be disconnected. Both search
+methods raise an error if they exhaust the reachable nodes. The default distance search
+also raises an error after <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">N</span> <span class="pre">*</span> <span class="pre">N</span></code> expansions, and the effort search after 100 expansions,
+unless the goal is selected. A search that reaches its limit may still have unexplored nodes.
+The optional shortest-path search runs until it selects the goal or exhausts the reachable graph.
+Starting a reset, rebuilding the grid, running either search,
+preparing the waypoints, or refitting the spline invalidates the previous reference.
+Only a successful reset enables <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> to write either attitude output.
+The maneuver starts at the simulation time passed to that reset. Output messages retain
+absolute simulation timestamps.</p>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>A detailed explanation of the method implemented in this module can be found in <a class="reference external" href="https://arc.aiaa.org/doi/abs/10.2514/1.A35294">R. Calaon and H. Schaub, “Constrained Attitude Maneuvering via Modified-Rodrigues-Parameter-Based
+Motion Planning Algorithms”</a>. To summarize, this module builds a 3D grid in MRP space, whose density is regulated by the input
+parameter <code class="docutils literal notranslate"><span class="pre">N</span></code>. Each grid node corresponds to an attitude. An undirected graph is built with all the nodes that are constraint compliant. Two nodes are added to the graph:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">startNode</span></code> whose coordinates <span class="math notranslate nohighlight">\(\sigma_{BN,S}\)</span> are the spacecraft attitude from <code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">goalNode</span></code> whose coordinates <span class="math notranslate nohighlight">\(\sigma_{BN,G}\)</span> correspond to the desired target attitude at the end of the maneuver.</p></li>
+</ul>
+<p>The distance-based search ranks paths by their accumulated MRP distance plus an estimate of the
+distance to the goal. By default, the estimate can exceed the remaining graph distance, so the selected path
+can be longer than the shortest grid path. Setting <code class="docutils literal notranslate"><span class="pre">useShortestPath</span> <span class="pre">=</span> <span class="pre">True</span></code> selects the consistent
+lower bound <span class="math notranslate nohighlight">\(h = \theta/4\)</span>, where <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span> is the principal relative rotation
+angle to the goal in radians. For any edge, its MRP distance <span class="math notranslate nohighlight">\(d(u,v)\)</span> satisfies
+<span class="math notranslate nohighlight">\(\theta(u,v) \leq 4d(u,v)\)</span>: along a straight segment between either pair of MRP representations,
+<span class="math notranslate nohighlight">\(\|\boldsymbol{\omega}\| = 4\|\dot{\boldsymbol{\sigma}}\|/(1+\|\boldsymbol{\sigma}\|^2)\)</span>.
+Together with the triangle inequality for rotation angles, this gives
+<span class="math notranslate nohighlight">\(h(u) \leq d(u,v) + h(v)\)</span>. The optional search therefore expands each reachable node at most once
+and returns a path with minimum accumulated edge distance when it selects the goal.</p>
+<p>The effort-based search ranks candidate splines by
+the integral of the control torque norm. It keeps one predecessor per node even though the effort
+depends on the entire path, so another feasible path can have lower effort.</p>
+<p>The module fits the selected path using <a class="reference internal" href="../../../architecture/utilities/BSpline.html#bspline"><span class="std std-ref">BSpline</span></a>. When the path contains only the start and goal waypoints,
+both fitting modes use a cubic determined by the endpoint attitudes and rates.
+When refitting with <code class="docutils literal notranslate"><span class="pre">spline()</span></code>, prescribing an MRP second derivative at one endpoint
+with <code class="docutils literal notranslate"><span class="pre">Input.setXDDot_0()</span></code> or <code class="docutils literal notranslate"><span class="pre">Input.setXDDot_N()</span></code> gives a quartic. Prescribing both gives a quintic.
+Longer paths use a quartic spline. Endpoint angular rates are converted using the MRP
+set selected for each waypoint. The planner selects the MRP sequence with the smallest peak norm over the entire short
+rotation between each pair of waypoints. At a relative rotation of 180 degrees both
+directions are eligible. A tie between starting sets within roundoff favors a principal-set
+start. If every sequence reaches an MRP singularity, split the maneuver.</p>
+<p>The planner also bounds the total fitted angular travel on each waypoint interval,
+including reversals. It accepts a fit only when this bound is less than the short
+waypoint separation plus one full revolution. A conservative bound can reject a fit
+near this limit. If this occurs, split the maneuver and replan. The effort-based
+search skips such candidate paths, as well as candidates with invalid waypoint
+intervals or nonfinite control effort. A nonfinite final effort causes reset to raise an error.</p>
+<p>Note that this module does not implement the constant angular rate norm routine described in <a class="reference external" href="https://arc.aiaa.org/doi/abs/10.2514/1.A35294">R. Calaon and H. Schaub</a>.
+The attitude, rates and accelerations provided to the Attitude Reference Message are those obtained directly from the BSpline interpolation.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>To request a shortest path on the generated graph, configure the planner before reset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">planner</span><span class="o">.</span><span class="n">costFcnType</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">useShortestPath</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">useShortestPath</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> and also applies to direct <code class="docutils literal notranslate"><span class="pre">AStar()</span></code> calls.
+It has no effect on <code class="docutils literal notranslate"><span class="pre">effortBasedAStar()</span></code> or <code class="docutils literal notranslate"><span class="pre">costFcnType</span> <span class="pre">=</span> <span class="pre">1</span></code>. The optional mode shares
+the default distance search’s graph and edge costs, but can explore substantially more nodes.
+It uses a priority queue and has no expansion cap; allow additional planning time and memory,
+especially at higher refinement. <code class="docutils literal notranslate"><span class="pre">expandedNodeCount</span></code> reports the last search’s expansions,
+excluding the selected goal, and is read-only in Python. Building a new grid resets the count.</p>
+<p>The guarantee is limited to the sum of MRP edge distances on the generated graph, including its
+endpoint connections and shadow-set links. Equally short paths can have different waypoints.
+It does not guarantee the shortest continuous maneuver, minimum control effort, or continuous
+cone clearance along the fitted reference. <code class="docutils literal notranslate"><span class="pre">pathCost</span></code> continues to report the fitted reference’s
+control effort in N m s, not grid distance. An unreachable goal means that the generated graph
+has no route; a continuous maneuver may still exist.</p>
+<p>A maneuver can start at any simulation time. Waypoint times are elapsed seconds from the
+planner’s most recent successful reset. For example, after a reset at 3600 s, waypoint times
+of 0 s and 5 s correspond to simulation times of 3600 s and 3605 s. The attitude reference
+messages carry absolute simulation timestamps.</p>
+<p>When refitting with <code class="docutils literal notranslate"><span class="pre">spline()</span></code>, supply finite attitude components at every waypoint,
+including zero-weight waypoints. The planner uses each attitude to bound angular travel.
+Only the standalone <code class="docutils literal notranslate"><span class="pre">BSpline.approximate()</span></code> accepts missing coordinates at zero-weight
+interior waypoints, and only when you supply explicit waypoint times.</p>
+<p>This example slews from rest at the identity attitude about the inertial z-axis. The body
+x-axis must stay outside a 20-degree cone around a fixed celestial direction. Write the
+state, inertia, and celestial-body messages before initialization so the planner can read
+them at reset. The recorder runs after the planner on the same task.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">constrainedAttitudeManeuver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+<span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+<span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"guidance"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+<span class="n">vehicle</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+<span class="n">vehicle</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicle</span><span class="p">)</span>
+<span class="n">body</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+<span class="n">body</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">]</span>  <span class="c1"># [m] same inertial frame and origin as the spacecraft position</span>
+<span class="n">body_state</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+<span class="n">planner</span> <span class="o">=</span> <span class="n">constrainedAttitudeManeuver</span><span class="o">.</span><span class="n">ConstrainedAttitudeManeuver</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">sigma_BN_goal</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>  <span class="c1"># MRPs [-]</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">avgOmega</span> <span class="o">=</span> <span class="mf">0.04</span>  <span class="c1"># [rad/s]</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">costFcnType</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># distance-based search</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">BSplineType</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># interpolation</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">vehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">appendKeepOutDirection</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># [-], [rad]</span>
+<span class="n">planner</span><span class="o">.</span><span class="n">keepOutCelBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">body_state</span><span class="p">)</span>
+
+<span class="n">recorder</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"guidance"</span><span class="p">,</span> <span class="n">planner</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"guidance"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">))</span>  <span class="c1"># [s]</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">sigma_RN</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">planner</span><span class="o">.</span><span class="n">sigma_BN_goal</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Cone compliance.</strong> The planner holds each celestial direction fixed at its reset value.
+Interpolation passes through the selected attitudes and can cross a cone boundary between
+waypoints. Least-squares approximation can also miss an interior waypoint at its assigned time.
+Increasing <code class="docutils literal notranslate"><span class="pre">N</span></code> changes the sampled path and computational cost. No grid refinement guarantees
+continuous clearance. If the maneuver requires it, verify clearance along the full fitted reference
+using the expected time-varying celestial directions and a margin for tracking error.</p>
+<p>See <a class="reference internal" href="../../../../examples/scenarioAttitudeConstrainedManeuver.html#scenarioattitudeconstrainedmaneuver"><span class="std std-ref">scenarioAttitudeConstrainedManeuver</span></a> for a closed-loop spacecraft example with both cone types.
+Its optional <code class="docutils literal notranslate"><span class="pre">compareSearchModes=True</span></code> run with attitude case 4 overlays the default and shortest
+grid paths and compares their accumulated MRP edge distances and node expansions. The example then
+simulates the shortest-path reference; existing calls retain effort-based planning.</p>
+<p>The module is configurable with the following parameters:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 34.0%" />
+<col style="width: 66.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">N</span></code></p></td>
+<td><p>grid refinement level, an integer from 2 through 20 inclusive</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_BN_goal</span></code></p></td>
+<td><p>Required finite goal attitude in MRPs. In Python, assign a sequence of exactly three components. Zero MRPs specify the identity attitude.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">omega_BN_B_goal</span></code></p></td>
+<td><p>Desired body-frame angular rate at the goal in rad/s. Defaults to zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">avgOmega</span></code></p></td>
+<td><p>Required finite, positive timing parameter in rad/s. The planner sets each waypoint interval to four times the MRP distance between its endpoints divided by <code class="docutils literal notranslate"><span class="pre">avgOmega</span></code>. The physical mean and peak angular speeds depend on the fitted trajectory.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSplineType</span></code></p></td>
+<td><p>Required before reset. Set to 0 for interpolation or 1 for least-squares approximation. The initial value is -1 (unset).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">costFcnType</span></code></p></td>
+<td><p>Required before reset. Set to 0 for total MRP distance or 1 for control effort. The initial value is -1 (unset).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">useShortestPath</span></code></p></td>
+<td><p>Optional distance-search flag, initially <code class="docutils literal notranslate"><span class="pre">False</span></code>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to minimize total MRP edge distance on the generated graph using the rotation-angle lower bound and no expansion cap. Ignored in effort mode.</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414mirrorFunctionAL3E_iAL8E_AL3E_i">
+<span id="_CPPv314mirrorFunctionAL3E_iAL8E_AL3E_i"></span><span id="_CPPv214mirrorFunctionA3_iA8_A3_i"></span><span id="mirrorFunction__iA.iAA"></span><span class="target" id="constrained_attitude_maneuver_8h_1a5275f95684ec15fd4f3909374ce54e14"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mirrorFunction</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">indices</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mirrorIndices</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">8</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414mirrorFunctionAL3E_iAL8E_AL3E_i" title="Link to this definition"></a><br /></dt>
+<dd><p>This helper function returns the coordinates of the 8 symmetrical points to a point in 3D cartesian space. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416neighboringNodesAL3E_iAL26E_AL3E_i">
+<span id="_CPPv316neighboringNodesAL3E_iAL26E_AL3E_i"></span><span id="_CPPv216neighboringNodesA3_iA26_A3_i"></span><span id="neighboringNodes__iA.iAA"></span><span class="target" id="constrained_attitude_maneuver_8h_1aa3823b372755ada3842d628bb7d777d5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">neighboringNodes</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">indices</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">neighbors</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">26</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416neighboringNodesAL3E_iAL26E_AL3E_i" title="Link to this definition"></a><br /></dt>
+<dd><p>For a set of indices, this helper function returns the indices of the 26 immediate neighbors. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48distance4Node4Node">
+<span id="_CPPv38distance4Node4Node"></span><span id="_CPPv28distance4Node4Node"></span><span id="distance__Node.Node"></span><span class="target" id="constrained_attitude_maneuver_8h_1a7154302ea6295ea82d2ecd8b286387cd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">distance</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">n1</span></span>, <a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">n2</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48distance4Node4Node" title="Link to this definition"></a><br /></dt>
+<dd><p>This function implements the MRP cartesian distance between 2 nodes. </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416constraintStruct">
+<span id="_CPPv316constraintStruct"></span><span id="_CPPv216constraintStruct"></span><span id="constraintStruct"></span><span class="target" id="structconstraint_struct"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">constraintStruct</span></span></span><a class="headerlink" href="#_CPPv416constraintStruct" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constrainedAttitudeManeuver.h&gt;</em></div>
+<p>The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16constraintStruct12keepOutDir_NE">
+<span id="_CPPv3N16constraintStruct12keepOutDir_NE"></span><span id="_CPPv2N16constraintStruct12keepOutDir_NE"></span><span id="constraintStruct::keepOutDir_N__doubleA"></span><span class="target" id="structconstraint_struct_1a42595bcd6c4ca04f2a3d92fe835fc76f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutDir_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N16constraintStruct12keepOutDir_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>Inertial direction of keepOut celestial bodies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16constraintStruct11keepInDir_NE">
+<span id="_CPPv3N16constraintStruct11keepInDir_NE"></span><span id="_CPPv2N16constraintStruct11keepInDir_NE"></span><span id="constraintStruct::keepInDir_N__doubleA"></span><span class="target" id="structconstraint_struct_1ae7a5d45bc3bfee806ea521af40449af2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInDir_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N16constraintStruct11keepInDir_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>Inertial direction of keepIn celestial bodies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16constraintStruct7keepOutE">
+<span id="_CPPv3N16constraintStruct7keepOutE"></span><span id="_CPPv2N16constraintStruct7keepOutE"></span><span id="constraintStruct::keepOut__b"></span><span class="target" id="structconstraint_struct_1a025adea3b26bcdace9437402431d6f71"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOut</span></span></span><a class="headerlink" href="#_CPPv4N16constraintStruct7keepOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag to assess whether keepOut constraints are being considered. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16constraintStruct6keepInE">
+<span id="_CPPv3N16constraintStruct6keepInE"></span><span id="_CPPv2N16constraintStruct6keepInE"></span><span id="constraintStruct::keepIn__b"></span><span class="target" id="structconstraint_struct_1afea4cf4de8dee7bc4e4e28f876d408f4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepIn</span></span></span><a class="headerlink" href="#_CPPv4N16constraintStruct6keepInE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag to assess whether keepIn constraints are being considered. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417scBoresightStruct">
+<span id="_CPPv317scBoresightStruct"></span><span id="_CPPv217scBoresightStruct"></span><span id="scBoresightStruct"></span><span class="target" id="structsc_boresight_struct"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scBoresightStruct</span></span></span><a class="headerlink" href="#_CPPv417scBoresightStruct" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constrainedAttitudeManeuver.h&gt;</em></div>
+<p>The scBoresightStruc structure is used to store the body frame directions and fields of view of the instruments. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct18keepOutBoresight_BE">
+<span id="_CPPv3N17scBoresightStruct18keepOutBoresight_BE"></span><span id="_CPPv2N17scBoresightStruct18keepOutBoresight_BE"></span><span id="scBoresightStruct::keepOutBoresight_B__doubleAA"></span><span class="target" id="structsc_boresight_struct_1a3c9075c2c922832c06fdf8ca90dcde20"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutBoresight_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct18keepOutBoresight_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>Unit vectors containing body frame directions of keepOut instruments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct17keepInBoresight_BE">
+<span id="_CPPv3N17scBoresightStruct17keepInBoresight_BE"></span><span id="_CPPv2N17scBoresightStruct17keepInBoresight_BE"></span><span id="scBoresightStruct::keepInBoresight_B__doubleAA"></span><span class="target" id="structsc_boresight_struct_1ab0ee17085ddb54f88a443b80f2322c08"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInBoresight_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct17keepInBoresight_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>Unit vectors containing body frame directions of keepIn instruments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct10keepOutFovE">
+<span id="_CPPv3N17scBoresightStruct10keepOutFovE"></span><span id="_CPPv2N17scBoresightStruct10keepOutFovE"></span><span id="scBoresightStruct::keepOutFov__doubleA"></span><span class="target" id="structsc_boresight_struct_1a238dff6c8501b0ada8e0c0b3c25e1f06"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutFov</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct10keepOutFovE" title="Link to this definition"></a><br /></dt>
+<dd><p>Fields of view of the keepOut instruments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct9keepInFovE">
+<span id="_CPPv3N17scBoresightStruct9keepInFovE"></span><span id="_CPPv2N17scBoresightStruct9keepInFovE"></span><span id="scBoresightStruct::keepInFov__doubleA"></span><span class="target" id="structsc_boresight_struct_1ad38487d9bf0692f2b2964b1dd7f6b5ec"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInFov</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct9keepInFovE" title="Link to this definition"></a><br /></dt>
+<dd><p>Fields of view of the keepIn instruments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct21keepOutBoresightCountE">
+<span id="_CPPv3N17scBoresightStruct21keepOutBoresightCountE"></span><span id="_CPPv2N17scBoresightStruct21keepOutBoresightCountE"></span><span id="scBoresightStruct::keepOutBoresightCount__i"></span><span class="target" id="structsc_boresight_struct_1a2239171c73b7553f6e69e6ecb121e17a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutBoresightCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct21keepOutBoresightCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of keepOut sensitive instruments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17scBoresightStruct20keepInBoresightCountE">
+<span id="_CPPv3N17scBoresightStruct20keepInBoresightCountE"></span><span id="_CPPv2N17scBoresightStruct20keepInBoresightCountE"></span><span id="scBoresightStruct::keepInBoresightCount__i"></span><span class="target" id="structsc_boresight_struct_1a2fa3a9ac733077c52c754480eaef8cdb"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInBoresightCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N17scBoresightStruct20keepInBoresightCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of keepIn instruments. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv44Node">
+<span id="_CPPv34Node"></span><span id="_CPPv24Node"></span><span id="Node"></span><span class="target" id="class_node"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><a class="headerlink" href="#_CPPv44Node" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constrainedAttitudeManeuver.h&gt;</em></div>
+<p>The <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> class is used to create nodes in the 3D MRP graph. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4NodeEv">
+<span id="_CPPv3N4Node4NodeEv"></span><span id="_CPPv2N4Node4NodeEv"></span><span id="Node::Node"></span><span class="target" id="class_node_1ad7a34779cad45d997bfd6d3d8043c75f"></span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Node4NodeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct an unclassified grid node. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4NodeEAL3E_d16constraintStruct17scBoresightStruct">
+<span id="_CPPv3N4Node4NodeEAL3E_d16constraintStruct17scBoresightStruct"></span><span id="_CPPv2N4Node4NodeEA3_d16constraintStruct17scBoresightStruct"></span><span id="Node::Node__doubleA.constraintStruct.scBoresightStruct"></span><span class="target" id="class_node_1a1af2a8eba65c69396355a2d30cef313a"></span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <a class="reference internal" href="#_CPPv416constraintStruct" title="constraintStruct"><span class="n"><span class="pre">constraintStruct</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">constraints</span></span>, <a class="reference internal" href="#_CPPv417scBoresightStruct" title="scBoresightStruct"><span class="n"><span class="pre">scBoresightStruct</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">boresights</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Node4NodeEAL3E_d16constraintStruct17scBoresightStruct" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor requires the MRP set, the constraint structure and the sc boresight structure </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4NodeD0Ev">
+<span id="_CPPv3N4NodeD0Ev"></span><span id="_CPPv2N4NodeD0Ev"></span><span id="Node::~Node"></span><span class="target" id="class_node_1aa0840c3cb5c7159be6d992adecd2097c"></span><span class="sig-name descname"><span class="n"><span class="pre">~Node</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4NodeD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node14appendNeighborEP4Node">
+<span id="_CPPv3N4Node14appendNeighborEP4Node"></span><span id="_CPPv2N4Node14appendNeighborEP4Node"></span><span id="Node::appendNeighbor__NodeP"></span><span class="target" id="class_node_1a33679f58e4bd98058323c411ba0bd84b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendNeighbor</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Node14appendNeighborEP4Node" title="Link to this definition"></a><br /></dt>
+<dd><p>This method appends a pointer to neighboring node to the neighbors class variable </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node8sigma_BNE">
+<span id="_CPPv3N4Node8sigma_BNE"></span><span id="_CPPv2N4Node8sigma_BNE"></span><span id="Node::sigma_BN__doubleA"></span><span class="target" id="class_node_1a3502e6e0a3fc8d2713fcd5421eeb9728"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N4Node8sigma_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP set corresponding to the node. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node10isBoundaryE">
+<span id="_CPPv3N4Node10isBoundaryE"></span><span id="_CPPv2N4Node10isBoundaryE"></span><span id="Node::isBoundary__b"></span><span class="target" id="class_node_1a7bf10372b4dfdc459bab526e9f8807ef"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isBoundary</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N4Node10isBoundaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>If true, the node lies on the |sigma| = 1 boundary surface. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node6isFreeE">
+<span id="_CPPv3N4Node6isFreeE"></span><span id="_CPPv2N4Node6isFreeE"></span><span id="Node::isFree__b"></span><span class="target" id="class_node_1a16bb76608b79cb5f53a268433b7614f5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFree</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N4Node6isFreeE" title="Link to this definition"></a><br /></dt>
+<dd><p>True once the attitude is classified as constraint-compliant. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node9heuristicE">
+<span id="_CPPv3N4Node9heuristicE"></span><span id="_CPPv2N4Node9heuristicE"></span><span id="Node::heuristic__double"></span><span class="target" id="class_node_1a86c42e974ec5d75969bafa29fc67be7b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heuristic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N4Node9heuristicE" title="Link to this definition"></a><br /></dt>
+<dd><p>Heuristic value used by Cartesian distance A*. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node8priorityE">
+<span id="_CPPv3N4Node8priorityE"></span><span id="_CPPv2N4Node8priorityE"></span><span id="Node::priority__double"></span><span class="target" id="class_node_1abd42217049ea96860a06c5b9dc85d6a4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">priority</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N4Node8priorityE" title="Link to this definition"></a><br /></dt>
+<dd><p>Priority of the node in A*. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node9neighborsE">
+<span id="_CPPv3N4Node9neighborsE"></span><span id="_CPPv2N4Node9neighborsE"></span><span id="Node::neighbors__NodePA"></span><span class="target" id="class_node_1a75687689b00b7fa320d2203300b6d10c"></span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">neighbors</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">52</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N4Node9neighborsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Container of pointers to neighboring nodes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node13neighborCountE">
+<span id="_CPPv3N4Node13neighborCountE"></span><span id="_CPPv2N4Node13neighborCountE"></span><span id="Node::neighborCount__i"></span><span class="target" id="class_node_1a09f110294404f74ec368916089fc634c"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">neighborCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4Node13neighborCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of neighboring nodes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node11backPointerE">
+<span id="_CPPv3N4Node11backPointerE"></span><span id="_CPPv2N4Node11backPointerE"></span><span id="Node::backPointer__NodeP"></span><span class="target" id="class_node_1a520402f2050563b42dc4cf1960b8db73"></span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">backPointer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N4Node11backPointerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Pointer to the previous node in the path computed by A*. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv48NodeList">
+<span id="_CPPv38NodeList"></span><span id="_CPPv28NodeList"></span><span id="NodeList"></span><span class="target" id="class_node_list"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NodeList</span></span></span><a class="headerlink" href="#_CPPv48NodeList" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constrainedAttitudeManeuver.h&gt;</em></div>
+<p>The <a class="reference internal" href="#class_node_list"><span class="std std-ref">NodeList</span></a> class is used in the A* algorithm to handle Open and Closed lists O and C. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList8NodeListEv">
+<span id="_CPPv3N8NodeList8NodeListEv"></span><span id="_CPPv2N8NodeList8NodeListEv"></span><span id="NodeList::NodeList"></span><span class="target" id="class_node_list_1a7cf92e8316f291e0a4e4ad608756887f"></span><span class="sig-name descname"><span class="n"><span class="pre">NodeList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList8NodeListEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the <a class="reference internal" href="#class_node_list"><span class="std std-ref">NodeList</span></a> class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList8NodeListERK8NodeList">
+<span id="_CPPv3N8NodeList8NodeListERK8NodeList"></span><span id="_CPPv2N8NodeList8NodeListERK8NodeList"></span><span id="NodeList::NodeList__NodeListCR"></span><span class="target" id="class_node_list_1ae9e5ac8190888b24d26c00376b6c63b6"></span><span class="sig-name descname"><span class="n"><span class="pre">NodeList</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N8NodeList8NodeListERK8NodeList" title="NodeList::NodeList"><span class="n"><span class="pre">NodeList</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList8NodeListERK8NodeList" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy a list whose active nodes all have retained owners. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> – List to copy. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeListaSERK8NodeList">
+<span id="_CPPv3N8NodeListaSERK8NodeList"></span><span id="_CPPv2N8NodeListaSERK8NodeList"></span><span id="NodeList::assign-operator__NodeListCR"></span><span class="target" id="class_node_list_1acfcd3b55dc42b20bc7b8e317928cd08e"></span><a class="reference internal" href="#_CPPv48NodeList" title="NodeList"><span class="n"><span class="pre">NodeList</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv48NodeList" title="NodeList"><span class="n"><span class="pre">NodeList</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeListaSERK8NodeList" title="Link to this definition"></a><br /></dt>
+<dd><p>Replace the list after checking ownership of all source entries. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> – List to copy. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The destination list. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeListD0Ev">
+<span id="_CPPv3N8NodeListD0Ev"></span><span id="_CPPv2N8NodeListD0Ev"></span><span id="NodeList::~NodeList"></span><span class="target" id="class_node_list_1a77b664c0c6c93d1c6eccbd10581396af"></span><span class="sig-name descname"><span class="n"><span class="pre">~NodeList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeListD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Class Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList6appendEP4NodeNSt10shared_ptrIvEE">
+<span id="_CPPv3N8NodeList6appendEP4NodeNSt10shared_ptrIvEE"></span><span id="_CPPv2N8NodeList6appendEP4NodeNSt10shared_ptrIvEE"></span><span id="NodeList::append__NodeP.std::shared_ptr:void:"></span><span class="target" id="class_node_list_1a29c83f2c8d64b530ddaf96628f79a6b9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">append</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">node</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">owner</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList6appendEP4NodeNSt10shared_ptrIvEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Append a node and retain its optional storage owner until its last entry is removed. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> – Pointer to the node to append. </p></li>
+<li><p><strong>owner</strong> – Optional handle keeping the node alive. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList3popEi">
+<span id="_CPPv3N8NodeList3popEi"></span><span id="_CPPv2N8NodeList3popEi"></span><span id="NodeList::pop__i"></span><span class="target" id="class_node_list_1a2a5b718b9378c5990e11ba7896cb6edd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">M</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList3popEi" title="Link to this definition"></a><br /></dt>
+<dd><p>This method removes the pointer at index M from the node list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList5clearEv">
+<span id="_CPPv3N8NodeList5clearEv"></span><span id="_CPPv2N8NodeList5clearEv"></span><span id="NodeList::clear"></span><span class="target" id="class_node_list_1a036e517ea3194bfcac5d4abe4668d8a3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the list counter to 0, effectively clearing the list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList4swapEii">
+<span id="_CPPv3N8NodeList4swapEii"></span><span id="_CPPv2N8NodeList4swapEii"></span><span id="NodeList::swap__i.i"></span><span class="target" id="class_node_list_1a5abac40b4e56711c9a19cd7a4169e667"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">swap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList4swapEii" title="Link to this definition"></a><br /></dt>
+<dd><p>This method swaps the two pointers at indices m and n. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList4sortEv">
+<span id="_CPPv3N8NodeList4sortEv"></span><span id="_CPPv2N8NodeList4sortEv"></span><span id="NodeList::sort"></span><span class="target" id="class_node_list_1ab3cdb45ce993f0980907f93c890bc7e3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sort</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList4sortEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method sorts the nodes in the list according to their priority. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList8containsEP4Node">
+<span id="_CPPv3N8NodeList8containsEP4Node"></span><span id="_CPPv2N8NodeList8containsEP4Node"></span><span id="NodeList::contains__NodeP"></span><span class="target" id="class_node_list_1ac79b21396286d1b152a1a4574da17959"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">contains</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8NodeList8containsEP4Node" title="Link to this definition"></a><br /></dt>
+<dd><p>This method returns true if a node is contained in the list, false otherwise. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList4listE">
+<span id="_CPPv3N8NodeList4listE"></span><span id="_CPPv2N8NodeList4listE"></span><span id="NodeList::list__std::vector:NodeP:"></span><span class="target" id="class_node_list_1a131d2b7792f309aa8daf0040b787a46d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">list</span></span></span><a class="headerlink" href="#_CPPv4N8NodeList4listE" title="Link to this definition"></a><br /></dt>
+<dd><p>Dynamically sized pointers to the active nodes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList1NE">
+<span id="_CPPv3N8NodeList1NE"></span><span id="_CPPv2N8NodeList1NE"></span><span id="NodeList::N__i"></span><span class="target" id="class_node_list_1a59b88389fd644d100bb4e84bdac70a24"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N</span></span></span><a class="headerlink" href="#_CPPv4N8NodeList1NE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of nodes in the list. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8NodeList12notifyChangeEv">
+<span id="_CPPv3NK8NodeList12notifyChangeEv"></span><span id="_CPPv2NK8NodeList12notifyChangeEv"></span><span id="NodeList::notifyChangeC"></span><span class="target" id="class_node_list_1a023f5fae6870905edd1c4e822e80c97c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">notifyChange</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8NodeList12notifyChangeEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList8onChangeE">
+<span id="_CPPv3N8NodeList8onChangeE"></span><span id="_CPPv2N8NodeList8onChangeE"></span><span class="target" id="class_node_list_1a815981064769536fb26310b971257247"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">onChange</span></span></span><a class="headerlink" href="#_CPPv4N8NodeList8onChangeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Invalidates waypoints when this list is the planner’s path. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8NodeList6ownersE">
+<span id="_CPPv3N8NodeList6ownersE"></span><span id="_CPPv2N8NodeList6ownersE"></span><span id="NodeList::owners__std::map:NodeP.std::shared_ptr:void::"></span><span class="target" id="class_node_list_1a389884c5ef94762e0ff3f6e45f98b6cb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">owners</span></span></span><a class="headerlink" href="#_CPPv4N8NodeList6ownersE" title="Link to this definition"></a><br /></dt>
+<dd><p>Storage owners for nodes appended from Python. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<span class="property"><span class="pre">friend</span> <span class="pre">class</span></span> <span class="pre">ConstrainedAttitudeManeuver</span></dt>
+</dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv427ConstrainedAttitudeManeuver">
+<span id="_CPPv327ConstrainedAttitudeManeuver"></span><span id="_CPPv227ConstrainedAttitudeManeuver"></span><span id="ConstrainedAttitudeManeuver"></span><span class="target" id="class_constrained_attitude_maneuver"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConstrainedAttitudeManeuver</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv427ConstrainedAttitudeManeuver" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constrainedAttitudeManeuver.h&gt;</em></div>
+<p>waypoint reference module class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEv"></span><span id="ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver"></span><span class="target" id="class_constrained_attitude_maneuver_1a473555c6f2dea9b0fed600f9da4c8826"></span><span class="sig-name descname"><span class="n"><span class="pre">ConstrainedAttitudeManeuver</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEi">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEi"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEi"></span><span id="ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver__i"></span><span class="target" id="class_constrained_attitude_maneuver_1aea8f64fe7ee1b3457f64eb0cf8c35b75"></span><span class="sig-name descname"><span class="n"><span class="pre">ConstrainedAttitudeManeuver</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver27ConstrainedAttitudeManeuverEi" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuverD0Ev">
+<span id="_CPPv3N27ConstrainedAttitudeManeuverD0Ev"></span><span id="_CPPv2N27ConstrainedAttitudeManeuverD0Ev"></span><span id="ConstrainedAttitudeManeuver::~ConstrainedAttitudeManeuver"></span><span class="target" id="class_constrained_attitude_maneuver_1aed54d1dac3ae2270f740da2bd45f0e7a"></span><span class="sig-name descname"><span class="n"><span class="pre">~ConstrainedAttitudeManeuver</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuverD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver8SelfInitEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver8SelfInitEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver8SelfInitEv"></span><span id="ConstrainedAttitudeManeuver::SelfInit"></span><span class="target" id="class_constrained_attitude_maneuver_1a0d9d2f53f13a7e2cd04e1531eeaa0279"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Self initialization for C-wrapped messages. </p>
+<p>Initialize C-wrapped output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver5ResetE8uint64_t">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver5ResetE8uint64_t"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver5ResetE8uint64_t"></span><span id="ConstrainedAttitudeManeuver::Reset__uint64_t"></span><span class="target" id="class_constrained_attitude_maneuver_1a4518d43390820f3c4e7002f9f5c45cf7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. The input messages are read here, the grid is generated and the graph search is performed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver11UpdateStateE8uint64_t">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver11UpdateStateE8uint64_t"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver11UpdateStateE8uint64_t"></span><span id="ConstrainedAttitudeManeuver::UpdateState__uint64_t"></span><span class="target" id="class_constrained_attitude_maneuver_1af6663210bde903617edb062c48a9bc9c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is the state update. It reads the information from the interpolated trajectory and writes the output message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time for system </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver10ReadInputsEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver10ReadInputsEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver10ReadInputsEv"></span><span id="ConstrainedAttitudeManeuver::ReadInputs"></span><span class="target" id="class_constrained_attitude_maneuver_1a4cab805a293796f7fdd25fe2659408ad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver10ReadInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the input messages in from the system and sets the appropriate parameters </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver12GenerateGridE4Node4Node">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver12GenerateGridE4Node4Node"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver12GenerateGridE4Node4Node"></span><span id="ConstrainedAttitudeManeuver::GenerateGrid__Node.Node"></span><span class="target" id="class_constrained_attitude_maneuver_1af3ac1647f4ae3d5d014b8b9ce773c949"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GenerateGrid</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">startNode</span></span>, <a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">goalNode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver12GenerateGridE4Node4Node" title="Link to this definition"></a><br /></dt>
+<dd><p>Rebuild the MRP grid and connect the free neighboring nodes. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requires a refinement level from 2 through 20, distinct endpoint nodes and a constraint-compliant goal. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startNode</strong> – <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> supplying the initial attitude. </p></li>
+<li><p><strong>goalNode</strong> – <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> supplying the target attitude. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver22appendKeepOutDirectionEAL3E_dd">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver22appendKeepOutDirectionEAL3E_dd"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver22appendKeepOutDirectionEA3_dd"></span><span id="ConstrainedAttitudeManeuver::appendKeepOutDirection__doubleA.double"></span><span class="target" id="class_constrained_attitude_maneuver_1a01600778200d09d2ee321e09aa51d0c1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendKeepOutDirection</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">direction</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Fov</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver22appendKeepOutDirectionEAL3E_dd" title="Link to this definition"></a><br /></dt>
+<dd><p>Add keep-out body-frame direction </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver21appendKeepInDirectionEAL3E_dd">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver21appendKeepInDirectionEAL3E_dd"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver21appendKeepInDirectionEA3_dd"></span><span id="ConstrainedAttitudeManeuver::appendKeepInDirection__doubleA.double"></span><span class="target" id="class_constrained_attitude_maneuver_1a0d44eb8df6afb213180cb4705c392490"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendKeepInDirection</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">direction</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Fov</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver21appendKeepInDirectionEAL3E_dd" title="Link to this definition"></a><br /></dt>
+<dd><p>Add keep-in body-frame direction </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver5AStarEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver5AStarEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver5AStarEv"></span><span id="ConstrainedAttitudeManeuver::AStar"></span><span class="target" id="class_constrained_attitude_maneuver_1aec6325480bd8f20ca50ffc9dbedc597a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AStar</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver5AStarEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Search the generated graph using accumulated MRP edge distance. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>With useShortestPath, the heuristic is one quarter of the principal rotation angle to the goal. This consistent lower bound guarantees a shortest grid path on completion. Otherwise, the legacy heuristic, ordering and expansion budget are retained. </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16effortBasedAStarEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16effortBasedAStarEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16effortBasedAStarEv"></span><span id="ConstrainedAttitudeManeuver::effortBasedAStar"></span><span class="target" id="class_constrained_attitude_maneuver_1a7ddbaf53976802282fe5d96edf677dfa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effortBasedAStar</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16effortBasedAStarEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method applies the effort-based A* to find a valid path </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver10pathHandleEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver10pathHandleEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver10pathHandleEv"></span><span id="ConstrainedAttitudeManeuver::pathHandle"></span><span class="target" id="class_constrained_attitude_maneuver_1a9a74181f7dc508d0af9f5983daf14d4f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pathHandle</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver10pathHandleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Prepare the current path for spline fitting. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver6splineEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver6splineEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver6splineEv"></span><span id="ConstrainedAttitudeManeuver::spline"></span><span class="target" id="class_constrained_attitude_maneuver_1adb8fcc0d1903f58f1b01aa9d9d66a4a1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spline</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver6splineEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the BSpline interpolation/approximation and outputs an Output structure </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13computeTorqueEiAL9E_dAL3E_d">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13computeTorqueEiAL9E_dAL3E_d"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13computeTorqueEiA9_dA3_d"></span><span id="ConstrainedAttitudeManeuver::computeTorque__i.doubleA.doubleA"></span><span class="target" id="class_constrained_attitude_maneuver_1a59f6cb90e31ea93ba34ce6e492a938d8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTorque</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">I</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">L</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13computeTorqueEiAL9E_dAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the torque vector required at time step with index n </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver17computeTorqueNormEiAL9E_d">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver17computeTorqueNormEiAL9E_d"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver17computeTorqueNormEiA9_d"></span><span id="ConstrainedAttitudeManeuver::computeTorqueNorm__i.doubleA"></span><span class="target" id="class_constrained_attitude_maneuver_1a10dae96b4df53bc3cdcf50103369c461"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTorqueNorm</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">I</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver17computeTorqueNormEiAL9E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute the torque norm at a fitted sample using the supplied inertia. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – Fitted sample index. </p></li>
+<li><p><strong>I</strong> – Body-frame inertia tensor in row-major order [kg m^2]. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Torque norm [N m]. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16effortEvaluationEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16effortEvaluationEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16effortEvaluationEv"></span><span id="ConstrainedAttitudeManeuver::effortEvaluation"></span><span class="target" id="class_constrained_attitude_maneuver_1adb8f21d9661285908ac59088a97596a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effortEvaluation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16effortEvaluationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method integrates the control torque norm over maneuver time and returns the cost for the effort-based A*. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver15returnNodeCoordEAL3E_ii">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver15returnNodeCoordEAL3E_ii"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver15returnNodeCoordEA3_ii"></span><span id="ConstrainedAttitudeManeuver::returnNodeCoord__iA.i"></span><span class="target" id="class_constrained_attitude_maneuver_1a4562eaaf9f7fdf8b67cda2b309869403"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">returnNodeCoord</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nodeCoord</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver15returnNodeCoordEAL3E_ii" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows to access the coordinates of a <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> in NodesMap without swigging the C++ Map. It is designed to be used in the UnitTest primarily. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver15returnNodeStateEAL3E_i">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver15returnNodeStateEAL3E_i"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver15returnNodeStateEA3_i"></span><span id="ConstrainedAttitudeManeuver::returnNodeState__iA"></span><span class="target" id="class_constrained_attitude_maneuver_1a9e796b7ea72b7264f1c3391ac9404ac3"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">returnNodeState</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver15returnNodeStateEAL3E_i" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows to access the state of a <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> (free or not free) in NodesMap without swigging the C++ Map. It is designed to be used in the UnitTest primarily. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver15returnPathCoordEii">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver15returnPathCoordEii"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver15returnPathCoordEii"></span><span id="ConstrainedAttitudeManeuver::returnPathCoord__i.i"></span><span class="target" id="class_constrained_attitude_maneuver_1ac04add72eb4d21d8ab277ea1981d8513"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">returnPathCoord</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nodeCoord</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver15returnPathCoordEii" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows to access the coordinates of path Nodes in without swigging NodesList C++. It is designed to be used in the UnitTest primarily. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver1NE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver1NE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver1NE"></span><span id="ConstrainedAttitudeManeuver::N__i"></span><span class="target" id="class_constrained_attitude_maneuver_1a3f6d5725a76ca5284d31ee37604e0256"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver1NE" title="Link to this definition"></a><br /></dt>
+<dd><p>Grid refinement level, zero until configured. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver11BSplineTypeE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver11BSplineTypeE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver11BSplineTypeE"></span><span id="ConstrainedAttitudeManeuver::BSplineType__i"></span><span class="target" id="class_constrained_attitude_maneuver_1a69d9f12b40c1b4a6422bf6d7bc0a7ad3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BSplineType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver11BSplineTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Unset until configured to 0 for interpolation or 1 for least-squares approximation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver11costFcnTypeE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver11costFcnTypeE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver11costFcnTypeE"></span><span id="ConstrainedAttitudeManeuver::costFcnType__i"></span><span class="target" id="class_constrained_attitude_maneuver_1a4e7a9392cd46cee69d0be80114b66094"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">costFcnType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver11costFcnTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Unset until configured to 0 for distance-based search or 1 for effort-based search. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver15useShortestPathE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver15useShortestPathE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver15useShortestPathE"></span><span id="ConstrainedAttitudeManeuver::useShortestPath__b"></span><span class="target" id="class_constrained_attitude_maneuver_1a74d800a5e777a2231059840aae401124"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useShortestPath</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver15useShortestPathE" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the consistent rotation-angle lower bound in distance-based A*. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver17expandedNodeCountE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver17expandedNodeCountE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver17expandedNodeCountE"></span><span id="ConstrainedAttitudeManeuver::expandedNodeCount__std::s"></span><span class="target" id="class_constrained_attitude_maneuver_1a9c3ecf2245f37f5739962b30ffc64651"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">expandedNodeCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver17expandedNodeCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Nodes expanded by the last search, excluding the selected goal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13sigma_BN_goalE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13sigma_BN_goalE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13sigma_BN_goalE"></span><span id="ConstrainedAttitudeManeuver::sigma_BN_goal__doubleA"></span><span class="target" id="class_constrained_attitude_maneuver_1a976c7642b4c449af53a59a3ea521c244"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN_goal</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13sigma_BN_goalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Required goal attitude in MRPs, initially NaN </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver15omega_BN_B_goalE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver15omega_BN_B_goalE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver15omega_BN_B_goalE"></span><span id="ConstrainedAttitudeManeuver::omega_BN_B_goal__doubleA"></span><span class="target" id="class_constrained_attitude_maneuver_1a552d87f71152d5e6b216a8bd0cb10afe"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_B_goal</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver15omega_BN_B_goalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Desired body-frame angular rate at the goal, initially zero </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver8avgOmegaE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver8avgOmegaE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver8avgOmegaE"></span><span id="ConstrainedAttitudeManeuver::avgOmega__double"></span><span class="target" id="class_constrained_attitude_maneuver_1aedf9e341bd670bde4728856f9abc9bc6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">avgOmega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver8avgOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Positive rate used to set waypoint intervals from MRP distance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver10keepOutFovE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver10keepOutFovE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver10keepOutFovE"></span><span id="ConstrainedAttitudeManeuver::keepOutFov__double"></span><span class="target" id="class_constrained_attitude_maneuver_1a1c9729c8419c73552dddb861cd14d932"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutFov</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver10keepOutFovE" title="Link to this definition"></a><br /></dt>
+<dd><p>Field of view of the sensitive instrument. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13keepOutBore_BE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13keepOutBore_BE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13keepOutBore_BE"></span><span id="ConstrainedAttitudeManeuver::keepOutBore_B__doubleA"></span><span class="target" id="class_constrained_attitude_maneuver_1a5f78ed66d775da4a26c5db004371716b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutBore_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13keepOutBore_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>Body-frame direction of the boresight of the sensitive instrument. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver11constraintsE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver11constraintsE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver11constraintsE"></span><span id="ConstrainedAttitudeManeuver::constraints__constraintStruct"></span><span class="target" id="class_constrained_attitude_maneuver_1afeaac4ded0a798de078edb04a5bd5105"></span><a class="reference internal" href="#_CPPv416constraintStruct" title="constraintStruct"><span class="n"><span class="pre">constraintStruct</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">constraints</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver11constraintsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constraint directions in inertial coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver10boresightsE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver10boresightsE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver10boresightsE"></span><span id="ConstrainedAttitudeManeuver::boresights__scBoresightStruct"></span><span class="target" id="class_constrained_attitude_maneuver_1a4eda1cb0eb4f52eec29d647a32311244"></span><a class="reference internal" href="#_CPPv417scBoresightStruct" title="scBoresightStruct"><span class="n"><span class="pre">scBoresightStruct</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">boresights</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver10boresightsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Instrument boresight directions in body-frame coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver8NodesMapE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver8NodesMapE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver8NodesMapE"></span><span id="ConstrainedAttitudeManeuver::NodesMap__std::map:i.std::map:i.std::map:i.Node:::"></span><span class="target" id="class_constrained_attitude_maneuver_1a08370a409ff06d5902ac8d32856c55ee"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NodesMap</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver8NodesMapE" title="Link to this definition"></a><br /></dt>
+<dd><p>C++ map from node indices to <a class="reference internal" href="#class_node"><span class="std std-ref">Node</span></a> class. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver4keySE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver4keySE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver4keySE"></span><span id="ConstrainedAttitudeManeuver::keyS__iA"></span><span class="target" id="class_constrained_attitude_maneuver_1a5b7163a9eedd663ff7ffb796935b9ec3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keyS</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver4keySE" title="Link to this definition"></a><br /></dt>
+<dd><p>Start node key in NodesMap. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver4keyGE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver4keyGE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver4keyGE"></span><span id="ConstrainedAttitudeManeuver::keyG__iA"></span><span class="target" id="class_constrained_attitude_maneuver_1a231594f31d609b30b854666d1366bcf5"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keyG</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="ConstrainedAttitudeManeuver::invalidGridIndex"><span class="n"><span class="pre">invalidGridIndex</span></span></a><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver4keyGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Goal node key in NodesMap. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver4pathE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver4pathE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver4pathE"></span><span id="ConstrainedAttitudeManeuver::path__NodeList"></span><span class="target" id="class_constrained_attitude_maneuver_1a8bb32bacaa717f8bf862e6f5f5ceb930"></span><a class="reference internal" href="#_CPPv48NodeList" title="NodeList"><span class="n"><span class="pre">NodeList</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver4pathE" title="Link to this definition"></a><br /></dt>
+<dd><p>Path of nodes from start to goal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver8pathCostE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver8pathCostE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver8pathCostE"></span><span id="ConstrainedAttitudeManeuver::pathCost__double"></span><span class="target" id="class_constrained_attitude_maneuver_1ab0a4d019edc902829029da41dac70566"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pathCost</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">numeric_limits</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">quiet_NaN</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver8pathCostE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N m s] Effort of the reference accepted by Reset </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver5InputE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver5InputE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver5InputE"></span><span id="ConstrainedAttitudeManeuver::Input__InputDataSet"></span><span class="target" id="class_constrained_attitude_maneuver_1a48ba4f571f3f56253ed6cc0107c27251"></span><a class="reference internal" href="../../../architecture/utilities/BSpline.html#_CPPv412InputDataSet" title="InputDataSet"><span class="n"><span class="pre">InputDataSet</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Input</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver5InputE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input structure for the BSpline interpolation/approximation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver6OutputE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver6OutputE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver6OutputE"></span><span id="ConstrainedAttitudeManeuver::Output__OutputDataSet"></span><span class="target" id="class_constrained_attitude_maneuver_1ae29ea4da3ce74b0d584e15c3c1a2ec18"></span><a class="reference internal" href="../../../architecture/utilities/BSpline.html#_CPPv413OutputDataSet" title="OutputDataSet"><span class="n"><span class="pre">OutputDataSet</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Output</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver6OutputE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output structure of the BSpline interpolation/approximation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver12scStateInMsgE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver12scStateInMsgE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver12scStateInMsgE"></span><span id="ConstrainedAttitudeManeuver::scStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_constrained_attitude_maneuver_1a28a1869a66f16db0631385d592f38e1e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver12scStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Spacecraft state input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver18vehicleConfigInMsgE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver18vehicleConfigInMsgE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver18vehicleConfigInMsgE"></span><span id="ConstrainedAttitudeManeuver::vehicleConfigInMsg__ReadFunctor:VehicleConfigMsgPayload:"></span><span class="target" id="class_constrained_attitude_maneuver_1a19b88b419b2568f7ce7be9f945f235dd"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver18vehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>FSW vehicle configuration input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver19keepOutCelBodyInMsgE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver19keepOutCelBodyInMsgE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver19keepOutCelBodyInMsgE"></span><span id="ConstrainedAttitudeManeuver::keepOutCelBodyInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_constrained_attitude_maneuver_1a5a3e1e294b08fe392a02cbeef9d1e86d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutCelBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver19keepOutCelBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Celestial body state msg - keep out direction. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver18keepInCelBodyInMsgE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver18keepInCelBodyInMsgE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver18keepInCelBodyInMsgE"></span><span id="ConstrainedAttitudeManeuver::keepInCelBodyInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_constrained_attitude_maneuver_1aab5dd293e3519e62fe493f7c3f9b20ae"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInCelBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver18keepInCelBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Celestial body state msg - keep in direction. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver12attRefOutMsgE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver12attRefOutMsgE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver12attRefOutMsgE"></span><span id="ConstrainedAttitudeManeuver::attRefOutMsg__Message:AttRefMsgPayload:"></span><span class="target" id="class_constrained_attitude_maneuver_1a040a746e5dd20f991d46f8afd5ce74d7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#_CPPv416AttRefMsgPayload" title="AttRefMsgPayload"><span class="n"><span class="pre">AttRefMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver12attRefOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Attitude reference output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13attRefOutMsgCE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13attRefOutMsgCE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13attRefOutMsgCE"></span><span id="ConstrainedAttitudeManeuver::attRefOutMsgC__AttRefMsg_C"></span><span class="target" id="class_constrained_attitude_maneuver_1ae07d809c429130f800e0c6d56284690f"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13attRefOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped attitude reference output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver9bskLoggerE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver9bskLoggerE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver9bskLoggerE"></span><span id="ConstrainedAttitudeManeuver::bskLogger__BSKLogger"></span><span class="target" id="class_constrained_attitude_maneuver_1a5934da4e266609004605e75132939a34"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16invalidGridIndexE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16invalidGridIndexE"></span><span id="ConstrainedAttitudeManeuver::invalidGridIndex__i"></span><span class="target" id="class_constrained_attitude_maneuver_1a4bbc1c88e648f49b4596ff43a6031bbc"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invalidGridIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">INT_MAX</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16invalidGridIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>Grid index used when an endpoint has not been selected. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver17keepOutConfiguredEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver17keepOutConfiguredEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver17keepOutConfiguredEv"></span><span id="ConstrainedAttitudeManeuver::keepOutConfigured"></span><span class="target" id="class_constrained_attitude_maneuver_1a09f5f709f93394b63b08c6c700449d7f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutConfigured</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver17keepOutConfiguredEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16keepInConfiguredEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16keepInConfiguredEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16keepInConfiguredEv"></span><span id="ConstrainedAttitudeManeuver::keepInConfigured"></span><span class="target" id="class_constrained_attitude_maneuver_1ac2b77985ac9397effc8438d0dc61e8ea"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInConfigured</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16keepInConfiguredEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13requireInputsEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13requireInputsEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13requireInputsEv"></span><span id="ConstrainedAttitudeManeuver::requireInputs"></span><span class="target" id="class_constrained_attitude_maneuver_1a96add40a97302a3461fc64d031fc3908"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">requireInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13requireInputsEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver13invalidateFitEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver13invalidateFitEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver13invalidateFitEv"></span><span id="ConstrainedAttitudeManeuver::invalidateFit"></span><span class="target" id="class_constrained_attitude_maneuver_1ac8af07d3ddd2d1488b9a946647fd3b36"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invalidateFit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver13invalidateFitEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver19invalidateWaypointsEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver19invalidateWaypointsEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver19invalidateWaypointsEv"></span><span id="ConstrainedAttitudeManeuver::invalidateWaypoints"></span><span class="target" id="class_constrained_attitude_maneuver_1a753cfd3d7f09d11a8d9b74e0b9435bec"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invalidateWaypoints</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver19invalidateWaypointsEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver9clearPathEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver9clearPathEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver9clearPathEv"></span><span id="ConstrainedAttitudeManeuver::clearPath"></span><span class="target" id="class_constrained_attitude_maneuver_1ae98156dfdb43380256b8dffc1bd3c975"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearPath</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver9clearPathEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver9clearGridEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver9clearGridEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver9clearGridEv"></span><span id="ConstrainedAttitudeManeuver::clearGrid"></span><span class="target" id="class_constrained_attitude_maneuver_1a4725e2521ce35f8da6ca093f8bc4fdce"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearGrid</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver9clearGridEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver12gridEndpointEAL3E_Ki">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver12gridEndpointEAL3E_Ki"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver12gridEndpointEA3_Ki"></span><span id="ConstrainedAttitudeManeuver::gridEndpoint__iCA"></span><span class="target" id="class_constrained_attitude_maneuver_1ac4125ac932e4a1d9ad61c938cc9aef7a"></span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">gridEndpoint</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver12gridEndpointEAL3E_Ki" title="Link to this definition"></a><br /></dt>
+<dd><p>Look up an endpoint in the generated grid. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – Three grid indices identifying the endpoint. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to the stored endpoint node. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver9backtrackEP4Node">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver9backtrackEP4Node"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver9backtrackEP4Node"></span><span id="ConstrainedAttitudeManeuver::backtrack__NodeP"></span><span class="target" id="class_constrained_attitude_maneuver_1a791ec4c8ffa418919135eccc0ad280fc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">backtrack</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44Node" title="Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver9backtrackEP4Node" title="Link to this definition"></a><br /></dt>
+<dd><p>Append the predecessor chain in start-to-goal order without recursive calls. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> – Last node of the path to reconstruct. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver20validateManeuverRateEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver20validateManeuverRateEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver20validateManeuverRateEv"></span><span id="ConstrainedAttitudeManeuver::validateManeuverRate"></span><span class="target" id="class_constrained_attitude_maneuver_1a8330a7306a7a29ab5ab98585d7e9aade"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateManeuverRate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver20validateManeuverRateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Require a finite, positive rate for maneuver timing. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16prepareWaypointsEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16prepareWaypointsEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16prepareWaypointsEv"></span><span id="ConstrainedAttitudeManeuver::prepareWaypoints"></span><span class="target" id="class_constrained_attitude_maneuver_1ac338414c1155442cce0082bfbbf41a95"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prepareWaypoints</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16prepareWaypointsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Convert the path to time-tagged MRP waypoints. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Null on success, or a description of why the path cannot be fitted. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver9fitSplineEv">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver9fitSplineEv"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver9fitSplineEv"></span><span id="ConstrainedAttitudeManeuver::fitSpline"></span><span class="target" id="class_constrained_attitude_maneuver_1a1e3651cdafe4a28707dc1e7ce0530c4e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fitSpline</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver9fitSplineEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27ConstrainedAttitudeManeuver22computeTorqueUncheckedEiAL9E_dAL3E_d">
+<span id="_CPPv3NK27ConstrainedAttitudeManeuver22computeTorqueUncheckedEiAL9E_dAL3E_d"></span><span id="_CPPv2NK27ConstrainedAttitudeManeuver22computeTorqueUncheckedEiA9_dA3_d"></span><span id="ConstrainedAttitudeManeuver::computeTorqueUnchecked__i.doubleA.doubleAC"></span><span class="target" id="class_constrained_attitude_maneuver_1acb599b8c47e3293e831aa341a9fb2267"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTorqueUnchecked</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">I</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">L</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27ConstrainedAttitudeManeuver22computeTorqueUncheckedEiAL9E_dAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver16scStateMsgBufferE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver16scStateMsgBufferE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver16scStateMsgBufferE"></span><span id="ConstrainedAttitudeManeuver::scStateMsgBuffer__SCStatesMsgPayload"></span><span class="target" id="class_constrained_attitude_maneuver_1a601041537cc35d799f544be4d1b98bca"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver16scStateMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver22vehicleConfigMsgBufferE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver22vehicleConfigMsgBufferE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver22vehicleConfigMsgBufferE"></span><span id="ConstrainedAttitudeManeuver::vehicleConfigMsgBuffer__VehicleConfigMsgPayload"></span><span class="target" id="class_constrained_attitude_maneuver_1a1d49465184e9e03cc1cce9c553386558"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehicleConfigMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver22vehicleConfigMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver23keepOutCelBodyMsgBufferE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver23keepOutCelBodyMsgBufferE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver23keepOutCelBodyMsgBufferE"></span><span id="ConstrainedAttitudeManeuver::keepOutCelBodyMsgBuffer__SpicePlanetStateMsgPayload"></span><span class="target" id="class_constrained_attitude_maneuver_1a7e2eb94787cd5f6f55020be9fd085959"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepOutCelBodyMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver23keepOutCelBodyMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver22keepInCelBodyMsgBufferE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver22keepInCelBodyMsgBufferE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver22keepInCelBodyMsgBufferE"></span><span id="ConstrainedAttitudeManeuver::keepInCelBodyMsgBuffer__SpicePlanetStateMsgPayload"></span><span class="target" id="class_constrained_attitude_maneuver_1aaeb59413f977d6bfdca6a96b5ca66fba"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keepInCelBodyMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver22keepInCelBodyMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver14resetTimeNanosE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver14resetTimeNanosE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver14resetTimeNanosE"></span><span id="ConstrainedAttitudeManeuver::resetTimeNanos__uint64_t"></span><span class="target" id="class_constrained_attitude_maneuver_1a33ae3f45b38a7929e143772e4d54c5f2"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetTimeNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver14resetTimeNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Simulation time at the start of the planned maneuver </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver14referenceReadyE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver14referenceReadyE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver14referenceReadyE"></span><span id="ConstrainedAttitudeManeuver::referenceReady__b"></span><span class="target" id="class_constrained_attitude_maneuver_1a87331490c01ab433039cf1071aaea5ba"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">referenceReady</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver14referenceReadyE" title="Link to this definition"></a><br /></dt>
+<dd><p>True once Reset has completed planning the attitude reference. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27ConstrainedAttitudeManeuver11inputsReadyE">
+<span id="_CPPv3N27ConstrainedAttitudeManeuver11inputsReadyE"></span><span id="_CPPv2N27ConstrainedAttitudeManeuver11inputsReadyE"></span><span id="ConstrainedAttitudeManeuver::inputsReady__b"></span><span class="target" id="class_constrained_attitude_maneuver_1a4f69cb7cabf7e0d074c94c70b4cb9bdc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inputsReady</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N27ConstrainedAttitudeManeuver11inputsReadyE" title="Link to this definition"></a><br /></dt>
+<dd><p>True after the most recent <a class="reference internal" href="#class_constrained_attitude_maneuver_1a4cab805a293796f7fdd25fe2659408ad"><span class="std std-ref">ReadInputs()</span></a> completes successfully. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../celestialTwoBodyPoint/_UnitTest/test_celestialTwoBodyPoint.html" class="btn btn-neutral float-left" title="test_celestialTwoBodyPoint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

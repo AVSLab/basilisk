@@ -1,0 +1,593 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_swigCArray &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_swigCArray</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_swigCArray</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">thrForceMapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">starTracker</span>
+
+
+<span class="n">ARRAY_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"i16TestArray2"</span><span class="p">,</span> <span class="s2">"ui16TestArray2"</span><span class="p">,</span> <span class="s2">"i32TestArray2"</span><span class="p">,</span> <span class="s2">"ui32TestArray2"</span><span class="p">,</span>
+    <span class="s2">"i64TestArray2"</span><span class="p">,</span> <span class="s2">"ui64TestArray2"</span><span class="p">,</span> <span class="s2">"f32TestArray2"</span><span class="p">,</span> <span class="s2">"f64TestArray2"</span><span class="p">,</span>
+    <span class="s2">"uint8TestArray2"</span><span class="p">,</span> <span class="s2">"ucharTestArray2"</span><span class="p">,</span> <span class="s2">"int8TestArray2"</span><span class="p">,</span> <span class="s2">"scharTestArray2"</span><span class="p">,</span>
+    <span class="s2">"boolTestArray2"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">ARRAY1_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">ARRAY_FIELDS</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ConversionFailure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.ConversionFailure">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConversionFailure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Raise from conversions that support Python numeric protocols."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__float__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"conversion failed"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__index__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"conversion failed"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"conversion failed"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SequenceFailure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.SequenceFailure">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SequenceFailure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Raise while obtaining a sequence length or one of its items."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s2">"length"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"length failed"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">"item failed"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ResizingList">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.ResizingList">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResizingList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Change length on the first item access to exercise cached bounds."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">grow</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grow</span> <span class="o">=</span> <span class="n">grow</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grow</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_scalar_types">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_scalar_types">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="n">ARRAY1_FIELDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_scalar_types</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Supported scalar arrays preserve full inputs and zero-pad short ones."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"boolTestArray"</span> <span class="k">else</span> <span class="n">values</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_sequences">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_sequences">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"container"</span><span class="p">,</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_sequences</span><span class="p">(</span><span class="n">container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Lists, tuples and NumPy arrays remain valid inputs."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="n">container</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">==</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_conversion_failure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_conversion_failure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="n">ARRAY1_FIELDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_conversion_failure</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Numeric conversion errors preserve the destination and release items."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">ConversionFailure</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="ne">TypeError</span> <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"ui"</span><span class="p">,</span> <span class="s2">"uchar"</span><span class="p">))</span> <span class="k">else</span> <span class="ne">RuntimeError</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">count</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_invalid_elements">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_invalid_elements">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field,value,error"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"f64TestArray"</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">1000</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"i64TestArray"</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">100</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ui64TestArray"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"f64TestArray"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_invalid_elements</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Overflow and invalid pointer elements cannot partially update arrays."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">])</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_invalid_pointer_reference">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_invalid_pointer_reference">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_invalid_pointer_reference</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Invalid pointer elements cannot modify arrays or leak references."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">==</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">count</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_sequence_failure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_sequence_failure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"values,error"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">),</span>
+    <span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">SequenceFailure</span><span class="p">(</span><span class="s2">"length"</span><span class="p">),</span> <span class="ne">RuntimeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">SequenceFailure</span><span class="p">(</span><span class="s2">"item"</span><span class="p">),</span> <span class="ne">IndexError</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_sequence_failure</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sequence validation and access errors leave the destination intact."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">==</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_pointer_proxy">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_pointer_proxy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_pointer_proxy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Valid numeric pointer proxies work; null proxies are rejected."""</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">PointerProxy</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pointer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">this</span> <span class="o">=</span> <span class="n">pointer</span>
+
+    <span class="n">pointer</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">doubleArray_setitem</span><span class="p">(</span><span class="n">pointer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">PointerProxy</span><span class="p">(</span><span class="n">pointer</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">proxy</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">==</span> <span class="p">[</span><span class="mf">3.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">this</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">proxy</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray</span> <span class="o">==</span> <span class="p">[</span><span class="mf">3.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span> <span class="o">==</span> <span class="n">count</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">delete_doubleArray</span><span class="p">(</span><span class="n">pointer</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_array1_resizing_sequence">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array1_resizing_sequence">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"grow"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"struct_array"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array1_resizing_sequence</span><span class="p">(</span><span class="n">grow</span><span class="p">,</span> <span class="n">struct_array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sequence resizing cannot bypass bounds or copy partial data."""</span>
+    <span class="k">if</span> <span class="n">struct_array</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="s2">"cssVals"</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSUnitConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">CBias</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># [-]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="s2">"f64TestArray"</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="mf">3.5</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">ResizingList</span><span class="p">([</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span><span class="p">,</span> <span class="n">grow</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grow</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">IndexError</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">struct_array</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">CBias</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">CBias</span>
+    <span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="p">([</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span> <span class="k">if</span> <span class="n">grow</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_struct_array_failure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_struct_array_failure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"failure,error"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"length"</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"item"</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"invalid"</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"null"</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"oversized"</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"nonsequence"</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_struct_array_failure</span><span class="p">(</span><span class="n">failure</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Struct arrays share safe sequence handling and pointer cleanup."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">css</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSUnitConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">css</span><span class="o">.</span><span class="n">CBias</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># [-]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span> <span class="o">=</span> <span class="p">[</span><span class="n">css</span><span class="p">]</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">CBias</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span><span class="p">]</span>
+    <span class="n">invalid</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"length"</span><span class="p">:</span> <span class="n">SequenceFailure</span><span class="p">(</span><span class="s2">"length"</span><span class="p">),</span>
+        <span class="s2">"item"</span><span class="p">:</span> <span class="n">SequenceFailure</span><span class="p">(</span><span class="s2">"item"</span><span class="p">),</span>
+        <span class="s2">"invalid"</span><span class="p">:</span> <span class="p">[</span><span class="n">css</span><span class="p">,</span> <span class="n">invalid</span><span class="p">],</span>
+        <span class="s2">"null"</span><span class="p">:</span> <span class="p">[</span><span class="n">css</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="s2">"oversized"</span><span class="p">:</span> <span class="p">[</span><span class="n">css</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"nonsequence"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">css</span><span class="p">,</span> <span class="n">invalid</span><span class="p">)]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">failure</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">CBias</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">cssVals</span><span class="p">]</span> <span class="o">==</span> <span class="n">initial</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">css</span><span class="p">,</span> <span class="n">invalid</span><span class="p">)]</span> <span class="o">==</span> <span class="n">counts</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_scalar_types">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_scalar_types">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="n">ARRAY_FIELDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_scalar_types</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""All supported payload scalar types accept full and partial matrices."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="n">values</span> <span class="k">if</span> <span class="n">field</span> <span class="o">!=</span> <span class="s2">"boolTestArray2"</span>
+                <span class="k">else</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_sequences_and_padding">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_sequences_and_padding">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"shape"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"container"</span><span class="p">,</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_sequences_and_padding</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Lists, tuples and NumPy arrays preserve values and zero-pad unused cells."""</span>
+    <span class="n">rows</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">shape</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">container</span><span class="p">([</span><span class="n">container</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">9</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="n">matrix</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">expected</span><span class="p">[:</span><span class="n">rows</span><span class="p">,</span> <span class="p">:</span><span class="n">columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_invalid_shapes">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_invalid_shapes">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"matrix"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="kc">None</span><span class="p">,</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">]],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+    <span class="p">[[],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[]],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_invalid_shapes</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Malformed and oversized matrices raise without modifying the payload."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">9</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="n">initial</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="n">matrix</span>
+    <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">==</span> <span class="n">initial</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_conversion_failure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_conversion_failure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="n">ARRAY_FIELDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_conversion_failure</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Conversion errors propagate without mutation or leaked references."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">initial</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">ConversionFailure</span><span class="p">()</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">]</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">value</span><span class="p">)]</span>
+    <span class="c1"># Unsigned converters require a Python integer and do not call __index__.</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="ne">TypeError</span> <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"ui"</span><span class="p">,</span> <span class="s2">"uchar"</span><span class="p">))</span> <span class="k">else</span> <span class="ne">RuntimeError</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="n">initial</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">value</span><span class="p">)]</span> <span class="o">==</span> <span class="n">counts</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_builtin_conversion_errors">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_builtin_conversion_errors">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field,value,error"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"f64TestArray2"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"f64TestArray2"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"i64TestArray2"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"i64TestArray2"</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">100</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ui64TestArray2"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_builtin_conversion_errors</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Built-in conversion failures leave existing values intact."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">initial</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">]])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="n">initial</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_negative_one">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_negative_one">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"i64TestArray2"</span><span class="p">,</span> <span class="s2">"f64TestArray2"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_negative_one</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A valid converter result of minus one is not mistaken for an error."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_sequence_failure">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_sequence_failure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"operation,error"</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"length"</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">),</span> <span class="p">(</span><span class="s2">"item"</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"as_row"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_sequence_failure</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">as_row</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sequence protocol failures propagate and release acquired references."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TypesTestMsgPayload</span><span class="p">()</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">9</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="n">initial</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="n">SequenceFailure</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">sequence</span><span class="p">]</span> <span class="k">if</span> <span class="n">as_row</span> <span class="k">else</span> <span class="n">sequence</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> failed"</span><span class="p">):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">=</span> <span class="n">matrix</span>
+    <span class="k">assert</span> <span class="n">payload</span><span class="o">.</span><span class="n">f64TestArray2</span> <span class="o">==</span> <span class="n">initial</span>
+    <span class="k">assert</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span> <span class="o">==</span> <span class="n">count</span></div>
+
+
+
+<div class="viewcode-block" id="test_array2_module_members_and_arguments">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigCArray.html#test_swigCArray.test_array2_module_members_and_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_array2_module_members_and_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Check module members and rectangular function arguments too."""</span>
+    <span class="n">tracker</span> <span class="o">=</span> <span class="n">starTracker</span><span class="o">.</span><span class="n">StarTracker</span><span class="p">()</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="n">dcm_CB</span> <span class="o">=</span> <span class="n">initial</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">tracker</span><span class="o">.</span><span class="n">dcm_CB</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">tracker</span><span class="o">.</span><span class="n">dcm_CB</span> <span class="o">==</span> <span class="n">initial</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">thrForceMapping</span><span class="o">.</span><span class="n">thrForceMapping</span><span class="p">()</span>
+    <span class="n">locations</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">mapping</span><span class="o">.</span><span class="n">rThruster_B</span> <span class="o">=</span> <span class="n">locations</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">locations</span> <span class="o">+</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">rThruster_B</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">mapping</span><span class="o">.</span><span class="n">rThruster_B</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">mapping</span><span class="o">.</span><span class="n">rThruster_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="k">assert</span> <span class="n">mapping</span><span class="o">.</span><span class="n">rThruster_B</span> <span class="o">==</span> <span class="n">expected</span>
+
+    <span class="c1"># No requested torque: exercise the 3-by-MAX_EFF_CNT argument conversion.</span>
+    <span class="k">assert</span> <span class="n">thrForceMapping</span><span class="o">.</span><span class="n">computeTorqueAngErr</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">thrForceMapping</span><span class="o">.</span><span class="n">computeTorqueAngErr</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

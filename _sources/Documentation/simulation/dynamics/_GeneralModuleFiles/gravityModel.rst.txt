@@ -1,0 +1,10 @@
+.. _gravityModel:
+
+gravityModel
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: gravityModel.h
+   :project: _GeneralModuleFiles4
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_constraintEffector:
+
+constraintEffector
+==================
+
+:doc:`Module documentation <constraintDynamicEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

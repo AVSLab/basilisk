@@ -1,0 +1,367 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_sphericalHarmonicsGravityModel &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="Validation_code" href="Validation_code/index.html" />
+    <link rel="prev" title="test_polyhedralGravityModel" href="test_polyhedralGravityModel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="../polyhedralGravityModel.html"><span class="module-type-label module-type-cpp">C++</span> Module: polyhedralGravityModel</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_sphericalHarmonicsGravityModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_sphericalHarmonicsGravityModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-sphericalharmonicsgravitymodel">
+<span id="id1"></span><h1>test_sphericalHarmonicsGravityModel<a class="headerlink" href="#test-sphericalharmonicsgravitymodel" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_sphericalHarmonicsGravityModel">Validate spherical-harmonic table bounds and initialization (issue 1682).</p>
+<p>Malformed coefficient tables must produce recoverable errors through direct
+calls and <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>. Evaluation checks also cover public configuration
+changes after initialization. Degree-zero results are compared with point-mass
+gravity, degree-two results with a stored baseline, and reinitialized models
+with freshly initialized models using the same coefficients.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_coefficient_values_can_change_without_reinitialization">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_coefficient_values_can_change_without_reinitialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_coefficient_values_can_change_without_reinitialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_coefficient_values_can_change_without_reinitialization" title="Link to this definition"></a></dt>
+<dd><p>Read updated coefficients when their table dimensions remain valid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_evaluation_preserves_configured_degree_limit">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_evaluation_preserves_configured_degree_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_evaluation_preserves_configured_degree_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_evaluation_preserves_configured_degree_limit" title="Link to this definition"></a></dt>
+<dd><p>Retain the existing limit even when larger recurrence tables are available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_evaluation_rechecks_table_dimensions">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_evaluation_rechecks_table_dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit_degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_evaluation_rechecks_table_dimensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_evaluation_rechecks_table_dimensions" title="Link to this definition"></a></dt>
+<dd><p>Reject public table mutations that would cause out-of-bounds reads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – Coefficient table to damage after initialization.</p></li>
+<li><p><strong>defect</strong> – Missing storage configuration.</p></li>
+<li><p><strong>explicit_degree</strong> – Whether to use the explicit-degree overload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_evaluation_rejects_unprepared_degree">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_evaluation_rejects_unprepared_degree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit_degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_evaluation_rejects_unprepared_degree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_evaluation_rejects_unprepared_degree" title="Link to this definition"></a></dt>
+<dd><p>Reject higher degrees even after public configuration allows them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>degree</strong> – Degree exceeding the initialized recurrence storage.</p></li>
+<li><p><strong>explicit_degree</strong> – Whether to use the explicit-degree overload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_evaluation_requires_initialization">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_evaluation_requires_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">explicit_degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_evaluation_requires_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_evaluation_requires_initialization" title="Link to this definition"></a></dt>
+<dd><p>Reject evaluation before a successful initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>explicit_degree</strong> – Whether to use the explicit-degree overload.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_invalid_body_parameter_invalidates_initialization">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_invalid_body_parameter_invalidates_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invalid_mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_invalid_body_parameter_invalidates_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_invalid_body_parameter_invalidates_initialization" title="Link to this definition"></a></dt>
+<dd><p>Invalidate caches even when the body overload rejects its GM first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>invalid_mu</strong> – Invalid gravitational parameter in m^3/s^2.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_reinitialization_rebuilds_recurrence_tables">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_reinitialization_rebuilds_recurrence_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_reinitialization_rebuilds_recurrence_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_reinitialization_rebuilds_recurrence_tables" title="Link to this definition"></a></dt>
+<dd><p>Match fresh models after growing, shrinking, and repeating the degree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>through_body</strong> – Whether all reinitializations use <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_rejects_degree_beyond_tables">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_rejects_degree_beyond_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_rejects_degree_beyond_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_rejects_degree_beyond_tables" title="Link to this definition"></a></dt>
+<dd><p>Reject excessive degrees before any degree-dependent allocation or addition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>degree</strong> – Invalid degree for a three-row table.</p></li>
+<li><p><strong>through_body</strong> – Whether initialization uses <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_rejects_invalid_tables">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_rejects_invalid_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_rejects_invalid_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_rejects_invalid_tables" title="Link to this definition"></a></dt>
+<dd><p>Reject missing rows and entries in either coefficient table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – Coefficient table to damage.</p></li>
+<li><p><strong>defect</strong> – Missing storage configuration.</p></li>
+<li><p><strong>through_body</strong> – Whether initialization uses <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_retry_after_failed_initialization">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_retry_after_failed_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">through_body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_degree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_retry_after_failed_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_retry_after_failed_initialization" title="Link to this definition"></a></dt>
+<dd><p>Invalidate failed attempts and recover using only the rebuilt caches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>through_body</strong> – Whether initialization uses <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p></li>
+<li><p><strong>previous_degree</strong> – Optional degree of an earlier successful initialization.</p></li>
+<li><p><strong>failure</strong> – Invalid table or degree configuration.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_truncated_evaluation_ignores_unused_rows">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_truncated_evaluation_ignores_unused_rows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_truncated_evaluation_ignores_unused_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_truncated_evaluation_ignores_unused_rows" title="Link to this definition"></a></dt>
+<dd><p>Check only the coefficient prefix required by an explicit lower degree.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_sphericalHarmonicsGravityModel.test_valid_fields_are_unchanged">
+<span class="sig-prename descclassname"><span class="pre">test_sphericalHarmonicsGravityModel.</span></span><span class="sig-name descname"><span class="pre">test_valid_fields_are_unchanged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_zero_degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_sphericalHarmonicsGravityModel.html#test_valid_fields_are_unchanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_sphericalHarmonicsGravityModel.test_valid_fields_are_unchanged" title="Link to this definition"></a></dt>
+<dd><p>Preserve point-mass and degree-two results with supported table layouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>degree</strong> – Highest degree retained from the degree-two input tables.</p></li>
+<li><p><strong>layout</strong> – Triangular, padded, or extra unused rows.</p></li>
+<li><p><strong>include_zero_degree</strong> – Whether to include the point-mass contribution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_polyhedralGravityModel.html" class="btn btn-neutral float-left" title="test_polyhedralGravityModel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Validation_code/index.html" class="btn btn-neutral float-right" title="Validation_code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

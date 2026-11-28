@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_earthRadiationModel:
+
+earthRadiationModel
+===================
+
+:doc:`Module documentation <earthRadiationModel>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

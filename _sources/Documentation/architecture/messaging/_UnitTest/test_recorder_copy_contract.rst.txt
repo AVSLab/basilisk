@@ -1,0 +1,7 @@
+.. _test_recorder_copy_contract:
+
+test_recorder_copy_contract
+===========================
+
+.. bsk-module-guide-end::
+

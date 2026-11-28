@@ -1,0 +1,412 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>astroFunctions &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="bskExamples" href="bskExamples.html" />
+    <link rel="prev" title="utilities" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">astroFunctions</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ommHandling.html">ommHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematicsNumba.html">RigidBodyKinematicsNumba</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simHelpers.html">simHelpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preCommitTools/index.html">preCommitTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">astroFunctions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/astroFunctions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="astrofunctions">
+<span id="id1"></span><h1>astroFunctions<a class="headerlink" href="#astrofunctions" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-astroFunctions">
+<dt class="sig sig-object py" id="astroFunctions.Earth_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Earth_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Earth_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Earth_RV" title="Link to this definition"></a></dt>
+<dd><p>return Earth (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.GregorianDate">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">GregorianDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#GregorianDate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.GregorianDate" title="Link to this definition"></a></dt>
+<dd><p>Return the proleptic Gregorian calendar date containing a Julian date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>JDE</strong> – Julian date in days within Gregorian years 1 through 9999</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>NumPy integer array <code class="docutils literal notranslate"><span class="pre">[year,</span> <span class="pre">month,</span> <span class="pre">day]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.JulianDate">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">JulianDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#JulianDate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.JulianDate" title="Link to this definition"></a></dt>
+<dd><p>Convert a proleptic Gregorian calendar date to a Julian date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>GDE</strong> – <code class="docutils literal notranslate"><span class="pre">[year,</span> <span class="pre">month,</span> <span class="pre">day]</span></code> with integer year (1 through 9999) and
+month (1 through 12). The day may be a scalar or an array, with its
+fractional part measured from midnight.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Julian date in days, as a scalar or an array matching the shape
+of the input days. Integer Julian dates denote noon.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Jupiter_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Jupiter_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Jupiter_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Jupiter_RV" title="Link to this definition"></a></dt>
+<dd><p>return Jupiter (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Mars_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Mars_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Mars_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Mars_RV" title="Link to this definition"></a></dt>
+<dd><p>return Mars (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Neptune_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Neptune_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Neptune_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Neptune_RV" title="Link to this definition"></a></dt>
+<dd><p>return Neptune (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.OE2RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">OE2RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#OE2RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.OE2RV" title="Link to this definition"></a></dt>
+<dd><p>OE to (r,v) conversion</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Pluto_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Pluto_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Pluto_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Pluto_RV" title="Link to this definition"></a></dt>
+<dd><p>return Pluto (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.RV2OE">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">RV2OE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_IJK</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_IJK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#RV2OE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.RV2OE" title="Link to this definition"></a></dt>
+<dd><p>Convert an inertial Cartesian state to classical orbital elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – positive gravitational parameter (L^3/s^2)</p></li>
+<li><p><strong>r_IJK</strong> – nonzero inertial position vector (L)</p></li>
+<li><p><strong>v_IJK</strong> – inertial velocity vector (L/s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">e,</span> <span class="pre">i,</span> <span class="pre">Omega,</span> <span class="pre">omega,</span> <span class="pre">nu)</span></code> with <code class="docutils literal notranslate"><span class="pre">a</span></code> in L and angles in radians</p>
+</dd>
+</dl>
+<p>Zero angular momentum gives <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">=</span> <span class="pre">0</span></code>. A zero node vector defaults
+<code class="docutils literal notranslate"><span class="pre">Omega</span></code> and <code class="docutils literal notranslate"><span class="pre">omega</span></code> to zero, and zero eccentricity defaults <code class="docutils literal notranslate"><span class="pre">omega</span></code>
+and <code class="docutils literal notranslate"><span class="pre">nu</span></code> to zero. Legacy quadrant adjustments can express zero as <code class="docutils literal notranslate"><span class="pre">2*pi</span></code>.
+These placeholders can discard orientation information for singular orbits.
+Outside the radial case, the node and eccentricity tests use exact zeros.</p>
+<p>Motion is radial when the transverse speed is at most eight machine epsilons
+of the working precision times the total speed. Radial states have unit
+eccentricity and <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">pi</span></code>. Their semimajor axis is positive below escape
+speed and negative above it. For any state whose
+specific orbital energy is zero to roundoff, the parabolic convention
+is <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">1</span></code>. <code class="docutils literal notranslate"><span class="pre">OE2RV</span></code> does not reconstruct unit-eccentricity states.
+All inputs use a common working precision of at least <code class="docutils literal notranslate"><span class="pre">float64</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Saturn_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Saturn_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Saturn_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Saturn_RV" title="Link to this definition"></a></dt>
+<dd><p>return Saturn (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Uranus_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Uranus_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Uranus_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Uranus_RV" title="Link to this definition"></a></dt>
+<dd><p>return Uranus (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.Venus_RV">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">Venus_RV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#Venus_RV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.Venus_RV" title="Link to this definition"></a></dt>
+<dd><p>return Venus (r,v)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.computeCOE">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">computeCOE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#computeCOE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.computeCOE" title="Link to this definition"></a></dt>
+<dd><p>Convert mean planetary elements using the fifth-order equation of center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> – mean longitude in degrees</p></li>
+<li><p><strong>a</strong> – semimajor axis in astronomical units</p></li>
+<li><p><strong>e</strong> – dimensionless eccentricity</p></li>
+<li><p><strong>i</strong> – inclination in degrees</p></li>
+<li><p><strong>Omega</strong> – longitude of the ascending node in degrees</p></li>
+<li><p><strong>Pi</strong> – longitude of perihelion in degrees</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">e,</span> <span class="pre">i,</span> <span class="pre">Omega,</span> <span class="pre">omega,</span> <span class="pre">nu)</span></code> in the input reference frame,
+with semimajor axis in km and angles in radians. The last two angles
+are the argument of perihelion and the approximate true anomaly.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.ephemeridesMeeus">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">ephemeridesMeeus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JDE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celestialBody</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#ephemeridesMeeus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.ephemeridesMeeus" title="Link to this definition"></a></dt>
+<dd><p>Approximate heliocentric orbital elements in the mean ecliptic and equinox of J2000.0.</p>
+<p>The planetary <code class="docutils literal notranslate"><span class="pre">*_RV</span></code> helpers use these elements to return positions in km
+and velocities in km/s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>JDE</strong> – Julian Ephemeris Day (TT), with J2000.0 at 2451545.0 days</p></li>
+<li><p><strong>celestialBody</strong> – uppercase planet name (VENUS, EARTH, MARS, JUPITER,
+SATURN, URANUS, NEPTUNE, or PLUTO)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">e,</span> <span class="pre">i,</span> <span class="pre">Omega,</span> <span class="pre">omega,</span> <span class="pre">nu)</span></code> with semimajor axis in km,
+dimensionless eccentricity and angles in radians</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.exactGregorianDate">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">exactGregorianDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">JD</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#exactGregorianDate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.exactGregorianDate" title="Link to this definition"></a></dt>
+<dd><p>Format the proleptic Gregorian date and time to whole seconds.</p>
+<p>Fractional seconds are discarded. To recover a whole second that rounded
+down in a binary floating-point Julian date, the conversion allows a
+tolerance of half the spacing at the working precision (at least binary64).
+Decimal and rational inputs are treated as exact.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>JD</strong> – Julian date in days within Gregorian years 1 through 9999</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>String <code class="docutils literal notranslate"><span class="pre">[year,</span> <span class="pre">month,</span> <span class="pre">day,</span> <span class="pre">hour:minute:second]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.normalize">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.normalize" title="Link to this definition"></a></dt>
+<dd><p>normalize a vector</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.orbitalPeriod">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">orbitalPeriod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#orbitalPeriod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.orbitalPeriod" title="Link to this definition"></a></dt>
+<dd><p>Return the orbit period</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.orbitalSMA">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">orbitalSMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#orbitalSMA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.orbitalSMA" title="Link to this definition"></a></dt>
+<dd><p>Return the semi-major axis</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astroFunctions.rotationMatrix">
+<span class="sig-prename descclassname"><span class="pre">astroFunctions.</span></span><span class="sig-name descname"><span class="pre">rotationMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astroFunctions.html#rotationMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroFunctions.rotationMatrix" title="Link to this definition"></a></dt>
+<dd><p>Return the active rotation matrix about the positive z axis for <code class="docutils literal notranslate"><span class="pre">alpha</span></code> radians.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bskExamples.html" class="btn btn-neutral float-right" title="bskExamples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

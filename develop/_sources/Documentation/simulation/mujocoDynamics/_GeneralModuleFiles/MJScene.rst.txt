@@ -1,0 +1,10 @@
+.. _MJScene:
+
+MJScene
+=======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJScene.h
+   :project: _GeneralModuleFiles6
+

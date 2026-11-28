@@ -1,0 +1,15 @@
+.. _simIncludeThruster:
+
+simIncludeThruster
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: simIncludeThruster
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _CSSRawDataMsgPayload:
+
+CSSRawDataMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CSSRawDataMsgPayload.h
+   :project: msgPayloadDefC
+

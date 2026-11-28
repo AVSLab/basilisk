@@ -1,0 +1,10 @@
+.. _MotorStepCommandMsgPayload:
+
+MotorStepCommandMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MotorStepCommandMsgPayload.h
+   :project: msgPayloadDefC
+

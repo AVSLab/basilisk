@@ -1,0 +1,10 @@
+.. _TorqueAtSiteMsgPayload:
+
+TorqueAtSiteMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TorqueAtSiteMsgPayload.h
+   :project: msgPayloadDefC
+

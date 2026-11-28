@@ -1,0 +1,731 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_ConstrainedAttitudeManeuver &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=76b26ab1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=d885a88b"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="test_constrainedShortestPath" href="test_constrainedShortestPath.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+  <nav class="bsk-version-switcher" aria-label="Documentation version">
+    <a href="https://avslab.github.io/basilisk/"
+       >Latest stable</a>
+    <a href="https://avslab.github.io/basilisk/develop/"
+       aria-current="true">Beta</a>
+  </nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../attRefCorrection/attRefCorrection.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../attTrackingError/attTrackingError.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../celestialTwoBodyPoint/celestialTwoBodyPoint.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../constrainedAttitudeManeuver.html">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eulerRotation/eulerRotation.html">eulerRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillPoint/hillPoint.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3D/inertial3D.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3DSpin/inertial3DSpin.html">inertial3DSpin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../locationPointing/locationPointing.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mrpRotation/mrpRotation.html">mrpRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../oneAxisSolarArrayPoint/oneAxisSolarArrayPoint.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../opNavPoint/opNavPoint.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../rasterManager/rasterManager.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../simpleDeadband/simpleDeadband.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sunSafePoint/sunSafePoint.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../velocityPoint/velocityPoint.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../waypointReference/waypointReference.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transGuidance/index.html">transGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">attGuidance</a></li>
+          <li class="breadcrumb-item"><a href="../constrainedAttitudeManeuver.html"><span class="module-type-label module-type-cpp">C++</span> Module: constrainedAttitudeManeuver</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_ConstrainedAttitudeManeuver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/fswAlgorithms/attGuidance/constrainedAttitudeManeuver/_UnitTest/test_ConstrainedAttitudeManeuver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-constrainedattitudemaneuver">
+<span id="id1"></span><h1>test_ConstrainedAttitudeManeuver<a class="headerlink" href="#test-constrainedattitudemaneuver" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_ConstrainedAttitudeManeuver">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_antipodal_boundary_node_collision">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_antipodal_boundary_node_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_antipodal_boundary_node_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_antipodal_boundary_node_collision" title="Link to this definition"></a></dt>
+<dd><p>Reject distinct endpoints mapped to the same sampled half-turn for either goal sign.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_backtrack_is_private">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_backtrack_is_private</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_backtrack_is_private"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_backtrack_is_private" title="Link to this definition"></a></dt>
+<dd><p>Only the planner’s searches can follow predecessor pointers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_blocked_goal">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_blocked_goal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_blocked_goal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_blocked_goal" title="Link to this definition"></a></dt>
+<dd><p>Reject a forbidden goal even when nearby free nodes support a maneuver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_boresight_capacity">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_boresight_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_boresight_capacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_boresight_capacity" title="Link to this definition"></a></dt>
+<dd><p>Accept the final boresight slot and reject invalid counts before array access.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_chart_selection_near_mrp_pole">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_chart_selection_near_mrp_pole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_chart_selection_near_mrp_pole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_chart_selection_near_mrp_pole" title="Link to this definition"></a></dt>
+<dd><p>Score the closest approach between waypoints even when the final axis is tilted.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_coincident_endpoint_keys">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_coincident_endpoint_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">goal_z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_coincident_endpoint_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_coincident_endpoint_keys" title="Link to this definition"></a></dt>
+<dd><p>Reject a maneuver whose start and goal occupy the same grid node.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_cone_boundary">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_cone_boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_arrays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_cone_boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_cone_boundary" title="Link to this definition"></a></dt>
+<dd><p>Include the rim in either cone and distinguish goals just to either side.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_constrainedAttitudeManeuver">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_constrainedAttitudeManeuver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepOutFov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepInFov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">costFcnType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_constrainedAttitudeManeuver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_constrainedAttitudeManeuver" title="Link to this definition"></a></dt>
+<dd><p><strong>Validation Test Description</strong></p>
+<p>This unit test script tests the correctness of the path computed by the ConstrainedAttitudeManeuver module.
+The module is tested against Python scripts that mirror the same functions contained in the module. Tests are run for
+different grid coarseness levels, different keep-out fields of view, and one keep-in field of view.</p>
+<p><strong>Test Parameters</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>int</em>) – grid coarseness;</p></li>
+<li><p><strong>keepOutFov</strong> (<em>float</em>) – Field of View (in radiants) of the keep-out boresight;</p></li>
+<li><p><strong>keepInFov</strong> (<em>float</em>) – Field of View (in radiants) of the keep-in boresight;</p></li>
+<li><p><strong>costFcnType</strong> (<em>int</em>) – 0 for the MRP distance-based graph search, 1 for the effort-based graph search.</p></li>
+<li><p><strong>accuracy</strong> (<em>float</em>) – absolute accuracy value used in the validation tests</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The tests to show the correctness of the module are the following:</p>
+<ul class="simple">
+<li><p>First of all, an equivalent grid is built in python. The first test consists in comparing the nodes generated
+in Python versus the nodes generated in C++. The check consists in verifying whether the same key indices
+<span class="math notranslate nohighlight">\((i,j,k)\)</span> generate the same node coordinates <span class="math notranslate nohighlight">\(\sigma_{BN}\)</span>. Secondly, it is checked whether
+the same node is constraint-compliant or -incompliant both in Python and in C++.</p></li>
+<li><p>After running the graph-search algorithm, a check is conduced to ensure the equivalence of the computed paths.
+Note that this unit test does not run the effort-based version of A*, due to the slow nature of the Python
+implementation. If the user wishes, it is possible to uncomment line 429 to also test the effort-based
+graph-search algorithm.</p></li>
+<li><p>The interpolated trajectory obtained in Python is checked versus the interpolated trajectory
+obtained in C++. The Python code uses the BSK-native <a class="reference internal" href="../../../../architecture/utilities/BSpline.html#bspline"><span class="std std-ref">BSpline</span></a> library, which has its own unit test.</p></li>
+<li><p>Lastly, a check is run on the norm of the required control torque for each time step of the
+interpolated trajectory.  The correctness of this check should imply the correctness of the
+functions used in the effort-based graph-search algorithm as well.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_default_constructor_requires_grid_refinement">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_default_constructor_requires_grid_refinement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_default_constructor_requires_grid_refinement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_default_constructor_requires_grid_refinement" title="Link to this definition"></a></dt>
+<dd><p>Require an explicit refinement level when using the no-argument constructor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_direct_planning_requires_successful_input_read">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_direct_planning_requires_successful_input_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failed_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_direct_planning_requires_successful_input_read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_direct_planning_requires_successful_input_read" title="Link to this definition"></a></dt>
+<dd><p>Only a complete input read makes cached rates and inertia available to direct calls.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_direct_replanning_invalidates_reference">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_direct_replanning_invalidates_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_direct_replanning_invalidates_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_direct_replanning_invalidates_reference" title="Link to this definition"></a></dt>
+<dd><p>Each public replanning step blocks publication of the previously accepted reference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_disconnected_grid">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_disconnected_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shortest_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_disconnected_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_disconnected_grid" title="Link to this definition"></a></dt>
+<dd><p>Reject a disconnected grid and resume publishing only after a successful reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_effort_requires_fitted_samples">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_effort_requires_fitted_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_effort_requires_fitted_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_effort_requires_fitted_samples" title="Link to this definition"></a></dt>
+<dd><p>Reject effort evaluation before a fit and accept samples from a completed fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_equivalent_shadow_endpoints">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_equivalent_shadow_endpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_equivalent_shadow_endpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_equivalent_shadow_endpoints" title="Link to this definition"></a></dt>
+<dd><p>Reject opposite boundary nodes that describe the same physical attitude.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_extra_revolutions_reject_fit">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_extra_revolutions_reject_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_extra_revolutions_reject_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_extra_revolutions_reject_fit" title="Link to this definition"></a></dt>
+<dd><p>A finite spline that adds a full turn inside a leg must be discarded.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_failed_refit_discards_previous_output">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_failed_refit_discards_previous_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_failed_refit_discards_previous_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_failed_refit_discards_previous_output" title="Link to this definition"></a></dt>
+<dd><p>A failed refit clears the old spline while preserving the waypoints for a retry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_feasible_half_turn_direction">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_feasible_half_turn_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_feasible_half_turn_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_feasible_half_turn_direction" title="Link to this definition"></a></dt>
+<dd><p>Take the finite short arc at a half-turn when the other choice runs into a pole.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_full_sphere_keep_in_roundoff">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_full_sphere_keep_in_roundoff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_full_sphere_keep_in_roundoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_full_sphere_keep_in_roundoff" title="Link to this definition"></a></dt>
+<dd><p>Include antipodal nodes whose computed unit-vector dot products fall below -1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_goal_defaults">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_goal_defaults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_goal_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_goal_defaults" title="Link to this definition"></a></dt>
+<dd><p>Require a finite goal, accept an explicit identity, and default to rest at the goal.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_grid_backed_path_copy">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_grid_backed_path_copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_grid_backed_path_copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_grid_backed_path_copy" title="Link to this definition"></a></dt>
+<dd><p>Reject borrowed and mixed paths before replacing the destination, while allowing self-assignment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_grid_refinement_boundaries">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_grid_refinement_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_grid_refinement_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_grid_refinement_boundaries" title="Link to this definition"></a></dt>
+<dd><p>Build grids at both supported limits and select valid endpoint keys.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_grid_reset_and_recovery">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_grid_reset_and_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_grid_reset_and_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_grid_reset_and_recovery" title="Link to this definition"></a></dt>
+<dd><p>Rebuild without stale nodes, reject changed constraints, and recover after failure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_grid_without_free_nodes">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_grid_without_free_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_grid_without_free_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_grid_without_free_nodes" title="Link to this definition"></a></dt>
+<dd><p>Reject fully blocked grids, including nodes affected by rotation-matrix roundoff.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_half_turn_endpoint_with_free_interior_sample">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_half_turn_endpoint_with_free_interior_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_half_turn_endpoint_with_free_interior_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_half_turn_endpoint_with_free_interior_sample" title="Link to this definition"></a></dt>
+<dd><p>Reach either representation of a half-turn whose closest free sample is an interior node.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_half_turn_goal_with_both_interior_cells_free">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_half_turn_goal_with_both_interior_cells_free</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_half_turn_goal_with_both_interior_cells_free"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_half_turn_goal_with_both_interior_cells_free" title="Link to this definition"></a></dt>
+<dd><p>Keep the same interior sample for either goal sign even when its mirror is free.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_invalid_boresight_cone">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_invalid_boresight_cone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_invalid_boresight_cone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_invalid_boresight_cone" title="Link to this definition"></a></dt>
+<dd><p>Reject an invalid append and detect the same cone when set through the public arrays.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_invalid_grid_refinement">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_invalid_grid_refinement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change_after_construction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_invalid_grid_refinement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_invalid_grid_refinement" title="Link to this definition"></a></dt>
+<dd><p>Reject invalid refinement through both entry points, including public N changes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_invalid_maneuver_rate">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_invalid_maneuver_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg_omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_invalid_maneuver_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_invalid_maneuver_rate" title="Link to this definition"></a></dt>
+<dd><p>Reject invalid timing without exposing a trial path or publishing a reference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_model_path_node_lifetime">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_model_path_node_lifetime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_model_path_node_lifetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_model_path_node_lifetime" title="Link to this definition"></a></dt>
+<dd><p>A path view keeps its model alive and native grid cleanup releases the appended node.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_narrow_keep_out_cone">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_narrow_keep_out_cone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">separation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocked</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_narrow_keep_out_cone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_narrow_keep_out_cone" title="Link to this definition"></a></dt>
+<dd><p>An accepted public boresight length must not change the angular separation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_near_identity_reference_from_equivalent_starts">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_near_identity_reference_from_equivalent_starts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shadow_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_near_identity_reference_from_equivalent_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_near_identity_reference_from_equivalent_starts" title="Link to this definition"></a></dt>
+<dd><p>Fit the smaller-norm waypoint sequence and publish the same maneuver from either MRP set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_neighbor_capacity">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_neighbor_capacity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_neighbor_capacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_neighbor_capacity" title="Link to this definition"></a></dt>
+<dd><p>Allow the last available slot and reject overflow without changing the count.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_back_pointer_is_read_only">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_back_pointer_is_read_only</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_back_pointer_is_read_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_back_pointer_is_read_only" title="Link to this definition"></a></dt>
+<dd><p>A failed predecessor assignment preserves ownership and leaves both nodes usable.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_list_growth">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_list_growth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_list_growth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_list_growth" title="Link to this definition"></a></dt>
+<dd><p>Grow beyond the former capacity and preserve ownership through a path copy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_list_index_bounds">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_list_index_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_list_index_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_list_index_bounds" title="Link to this definition"></a></dt>
+<dd><p>Reject invalid removals and swaps without changing the count or node order.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_list_rejects_borrowed_node">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_list_rejects_borrowed_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_list_rejects_borrowed_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_list_rejects_borrowed_node" title="Link to this definition"></a></dt>
+<dd><p>Reject a non-owning proxy before changing the path or its fitted cost.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_list_retains_python_nodes">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_list_retains_python_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_list_retains_python_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_list_retains_python_nodes" title="Link to this definition"></a></dt>
+<dd><p>Retain duplicate entries across a path copy and release each node after its final removal.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_node_list_sorts_large_priorities">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_node_list_sorts_large_priorities</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_node_list_sorts_large_priorities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_node_list_sorts_large_priorities" title="Link to this definition"></a></dt>
+<dd><p>Sort nodes on both sides of the former 100,000 priority cutoff.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_nonfinite_fit_rejects_publication">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_nonfinite_fit_rejects_publication</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_nonfinite_fit_rejects_publication"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_nonfinite_fit_rejects_publication" title="Link to this definition"></a></dt>
+<dd><p>Keep a fit with a nonfinite endpoint rate from becoming publishable.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_nonunit_boresight_on_grid_rebuild">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_nonunit_boresight_on_grid_rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_nonunit_boresight_on_grid_rebuild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_nonunit_boresight_on_grid_rebuild" title="Link to this definition"></a></dt>
+<dd><p>A direct rebuild must recheck stored unit vectors after inputs were read.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_off_axis_peak_tie">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_off_axis_peak_tie</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_off_axis_peak_tie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_off_axis_peak_tie" title="Link to this definition"></a></dt>
+<dd><p>Keep the principal start for a symmetric off-axis path in either goal representation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_optional_constraint_source">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_optional_constraint_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_optional_constraint_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_optional_constraint_source" title="Link to this definition"></a></dt>
+<dd><p>Recompute active cones after disconnecting, replacing, and restoring a source.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_optional_spline_values_survive_input_copy">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_optional_spline_values_survive_input_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_optional_spline_values_survive_input_copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_optional_spline_values_survive_input_copy" title="Link to this definition"></a></dt>
+<dd><p>Both constructors zero optional values and copying a partial input preserves its settings.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_path_coordinate_index_bounds">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_path_coordinate_index_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_path_coordinate_index_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_path_coordinate_index_bounds" title="Link to this definition"></a></dt>
+<dd><p>Return the existing missing-coordinate sentinel for either invalid index.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_path_crossing_both_mrp_poles">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_path_crossing_both_mrp_poles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_path_crossing_both_mrp_poles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_path_crossing_both_mrp_poles" title="Link to this definition"></a></dt>
+<dd><p>Reject a path that crosses both poles between successive waypoints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_path_edit_invalidates_reference">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_path_edit_invalidates_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_path_edit_invalidates_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_path_edit_invalidates_reference" title="Link to this definition"></a></dt>
+<dd><p>Editing an accepted path discards its waypoints, fit, and publishable reference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_python_goal_requires_three_components">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_python_goal_requires_three_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_python_goal_requires_three_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_python_goal_requires_three_components" title="Link to this definition"></a></dt>
+<dd><p>Reject incomplete or oversized Python goals and preserve the previous attitude.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_rebuild_after_source_replacement">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_rebuild_after_source_replacement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_rebuild_after_source_replacement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_rebuild_after_source_replacement" title="Link to this definition"></a></dt>
+<dd><p>Use the cached direction until ReadInputs samples the replacement source.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_rebuild_reclassifies_endpoints">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_rebuild_reclassifies_endpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capfd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_rebuild_reclassifies_endpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_rebuild_reclassifies_endpoints" title="Link to this definition"></a></dt>
+<dd><p>Reuse a formerly free start and a formerly blocked goal after changing the boresight.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_recovery_uses_replacement_inertia">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_recovery_uses_replacement_inertia</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_recovery_uses_replacement_inertia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_recovery_uses_replacement_inertia" title="Link to this definition"></a></dt>
+<dd><p>Doubling the inertia after a failed read doubles effort on the same distance-based path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_reference_path_waypoints">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_reference_path_waypoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_reference_path_waypoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_reference_path_waypoints" title="Link to this definition"></a></dt>
+<dd><p>Check both choices of the continuous MRP sequence against known waypoints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_repeated_path_waypoint">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_repeated_path_waypoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_repeated_path_waypoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_repeated_path_waypoint" title="Link to this definition"></a></dt>
+<dd><p>A repeated node cannot supply a time interval. Removing it restores the fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_required_input_must_be_written">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_required_input_must_be_written</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_plan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_required_input_must_be_written"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_required_input_must_be_written" title="Link to this definition"></a></dt>
+<dd><p>Reject a missing state or inertia before using any previously buffered value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_reset_rejects_extra_turn_and_recovers">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_reset_rejects_extra_turn_and_recovers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_reset_rejects_extra_turn_and_recovers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_reset_rejects_extra_turn_and_recovers" title="Link to this definition"></a></dt>
+<dd><p>Both searches discard excessive fits and a subsequent feasible reset publishes again.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_reset_restarts_reference_clock">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_reset_restarts_reference_clock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_reset_restarts_reference_clock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_reset_restarts_reference_clock" title="Link to this definition"></a></dt>
+<dd><p>Sample the same trajectory relative to two reset epochs on both outputs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_search_requires_generated_grid">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_search_requires_generated_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failed_rebuild</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_search_requires_generated_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_search_requires_generated_grid" title="Link to this definition"></a></dt>
+<dd><p>A direct search requires a successful grid build and can recover after a failed build.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_shadow_start_with_identity_waypoint">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_shadow_start_with_identity_waypoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_shadow_start_with_identity_waypoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_shadow_start_with_identity_waypoint" title="Link to this definition"></a></dt>
+<dd><p>Equivalent starts must yield the same finite reference at and around identity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_shortest_path_option_does_not_change_effort_search">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_shortest_path_option_does_not_change_effort_search</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_shortest_path_option_does_not_change_effort_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_shortest_path_option_does_not_change_effort_search" title="Link to this definition"></a></dt>
+<dd><p>Keep effort-based planning independent of the distance-search option.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_shortest_path_reset">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_shortest_path_reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_shortest_path_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_shortest_path_reset" title="Link to this definition"></a></dt>
+<dd><p>Fit and publish the optional path, with a read-only expansion diagnostic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_signed_roll_through_mrp_pole">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_signed_roll_through_mrp_pole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_signed_roll_through_mrp_pole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_signed_roll_through_mrp_pole" title="Link to this definition"></a></dt>
+<dd><p>Verify signed and cumulative rotation on every fitted leg of the split maneuver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_sort_only_invalidates_reordered_planner_path">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_sort_only_invalidates_reordered_planner_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_sort_only_invalidates_reordered_planner_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_sort_only_invalidates_reordered_planner_path" title="Link to this definition"></a></dt>
+<dd><p>Sorting a copy preserves the fit, while reordering the planner’s own path clears it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_spline_error_clears_trial_path">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_spline_error_clears_trial_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_spline_error_clears_trial_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_spline_error_clears_trial_path" title="Link to this definition"></a></dt>
+<dd><p>Discard the effort-search candidate on a spline error and allow a retry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_spline_optional_waypoint_arrays">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_spline_optional_waypoint_arrays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_spline_optional_waypoint_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_spline_optional_waypoint_arrays" title="Link to this definition"></a></dt>
+<dd><p>Use generated times when requested and require one weight per waypoint for approximation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_spline_requires_current_waypoints">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_spline_requires_current_waypoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_spline_requires_current_waypoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_spline_requires_current_waypoints" title="Link to this definition"></a></dt>
+<dd><p>Fit the new goal only after the waypoints for the rebuilt path have been prepared.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_spline_waypoint_array_lengths">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_spline_waypoint_array_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_spline_waypoint_array_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_spline_waypoint_array_lengths" title="Link to this definition"></a></dt>
+<dd><p>Reject short and long waypoint arrays and recover after the original values are restored.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_stale_cone_activation_on_grid_rebuild">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_stale_cone_activation_on_grid_rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_stale_cone_activation_on_grid_rebuild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_stale_cone_activation_on_grid_rebuild" title="Link to this definition"></a></dt>
+<dd><p>Require fresh inputs after enabling a cone by count or disabling it by subscription.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_three_waypoint_approximation">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_three_waypoint_approximation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_three_waypoint_approximation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_three_waypoint_approximation" title="Link to this definition"></a></dt>
+<dd><p>Use a valid quartic approximation when there is one interior waypoint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_three_waypoint_approximation_control_point_limit">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_three_waypoint_approximation_control_point_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_three_waypoint_approximation_control_point_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_three_waypoint_approximation_control_point_limit" title="Link to this definition"></a></dt>
+<dd><p>Reject six endpoint conditions on five control points and accept exactly five.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_tied_peak_waypoint_norms">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_tied_peak_waypoint_norms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_tied_peak_waypoint_norms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_tied_peak_waypoint_norms" title="Link to this definition"></a></dt>
+<dd><p>Keep the same fitted waypoints when equivalent starts round tied peak norms differently.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_torque_and_effort_reject_mismatched_sample_lengths">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_torque_and_effort_reject_mismatched_sample_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_torque_and_effort_reject_mismatched_sample_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_torque_and_effort_reject_mismatched_sample_lengths" title="Link to this definition"></a></dt>
+<dd><p>Require every fitted component to have exactly one value per time sample.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_torque_norm_uses_supplied_inertia">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_torque_norm_uses_supplied_inertia</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_torque_norm_uses_supplied_inertia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_torque_norm_uses_supplied_inertia" title="Link to this definition"></a></dt>
+<dd><p>Check torque scaling at the midpoint, where the gyroscopic term is nonzero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_torque_sample_index_bounds">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_torque_sample_index_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_torque_sample_index_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_torque_sample_index_bounds" title="Link to this definition"></a></dt>
+<dd><p>Accept the last fitted torque sample and reject indices outside the time array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_two_waypoint_approximation_weight_lengths">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_two_waypoint_approximation_weight_lengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_two_waypoint_approximation_weight_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_two_waypoint_approximation_weight_lengths" title="Link to this definition"></a></dt>
+<dd><p>Require two supplied weights even though both endpoints are fixed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_two_waypoint_endpoint_accelerations">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_two_waypoint_endpoint_accelerations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_goal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_two_waypoint_endpoint_accelerations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_two_waypoint_endpoint_accelerations" title="Link to this definition"></a></dt>
+<dd><p>Refit a two-waypoint path with the prescribed MRP derivatives at either or both endpoints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_two_waypoint_reference">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_two_waypoint_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_start_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_goal_z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_two_waypoint_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_two_waypoint_reference" title="Link to this definition"></a></dt>
+<dd><p>Fit both endpoint attitudes and rates and publish finite references.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_unchanged_path_preserves_reference">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_unchanged_path_preserves_reference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_unchanged_path_preserves_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_unchanged_path_preserves_reference" title="Link to this definition"></a></dt>
+<dd><p>Self-assignment, an unchanged ordering, and rejected edits preserve an accepted fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_undefined_constraint_direction">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_undefined_constraint_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_undefined_constraint_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_undefined_constraint_direction" title="Link to this definition"></a></dt>
+<dd><p>Require a finite line of sight for each active celestial-body constraint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_undefined_inertial_axis_on_rebuild">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_undefined_inertial_axis_on_rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_undefined_inertial_axis_on_rebuild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_undefined_inertial_axis_on_rebuild" title="Link to this definition"></a></dt>
+<dd><p>Reject an undefined active inertial axis supplied directly to grid generation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_unset_cost_function">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_unset_cost_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_unset_cost_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_unset_cost_function" title="Link to this definition"></a></dt>
+<dd><p>Require an explicit cost function before searching a valid grid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_unset_maneuver_rate">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_unset_maneuver_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_unset_maneuver_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_unset_maneuver_rate" title="Link to this definition"></a></dt>
+<dd><p>Both constructors leave the maneuver rate at the invalid zero default.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_ConstrainedAttitudeManeuver.test_unset_spline_type">
+<span class="sig-prename descclassname"><span class="pre">test_ConstrainedAttitudeManeuver.</span></span><span class="sig-name descname"><span class="pre">test_unset_spline_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_ConstrainedAttitudeManeuver.html#test_unset_spline_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_ConstrainedAttitudeManeuver.test_unset_spline_type" title="Link to this definition"></a></dt>
+<dd><p>Require an explicit spline selection for either search method.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_constrainedShortestPath.html" class="btn btn-neutral float-right" title="test_constrainedShortestPath" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

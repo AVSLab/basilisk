@@ -1,0 +1,24 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.10 Known Issues
+=========================
+
+.. _bsk-known-issues-2-10-0:
+
+Version 2.10.0 (April 2, 2026)
+------------------------------
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+- The :ref:`simpleAntenna` module raises a warning for each of the following messages not being connected: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg``, even for ground based antennas.
+  These messages are not relevant for ground based antennas and the warning should therefore not be risen for an antenna on ground.
+- If you install Basilisk via ``pip``, note that the ``basilisk/supportData`` folder does not
+  exist in your folder.  Simulation script importing directly using a local file path to ``supportData``
+  will not work.  Rather, ``pooch`` is being used to manage data which puts the data files into a
+  cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
+- The method ``loadGravFromFile()`` was hard-coded to load a 2nd order gravity field.  This is fixed in current
+  version.
+- In :ref:`reactionWheelStateEffector`, mixed balanced and jitter wheel-model configurations could log ``theta`` to the wrong wheel output index. This is fixed in current version.
+- In :ref:`thrJointCompensation`, the sign convention for the computed compensation torque was incorrect. This is fixed in current version.
