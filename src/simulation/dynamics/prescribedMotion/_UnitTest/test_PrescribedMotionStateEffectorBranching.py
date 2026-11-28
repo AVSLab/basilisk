@@ -35,6 +35,7 @@ from Basilisk.simulation import prescribedMotionStateEffector
 from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.simulation import linearTranslationOneDOFStateEffector
+from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import spinningBodyOneDOFStateEffector
 from Basilisk.simulation import spinningBodyTwoDOFStateEffector
 from Basilisk.architecture import messaging
@@ -609,6 +610,151 @@ def test_prescribed_branching_linear_translation_one_dof(show_plots):
     unit_test_check_verification(orb_ang_mom_n, orb_energy, rot_ang_mom_n)
 
 
+@pytest.mark.parametrize("hub_omega_name", ["hubOmega", "customHubOmega"])
+def test_prescribed_branching_linear_spring_mass_damper(show_plots, hub_omega_name):
+    r"""
+    **Verification Test Description**
+
+    Connect a :ref:`linearSpringMassDamper` to a prescribed body undergoing simultaneous
+    translation and rotation. The spring axis is transverse to the rotation axis, its equilibrium
+    point is offset from that axis, and the mount attitude is nonzero, exercising rotational
+    coupling. Require both particle states to be registered and check conservation at every sample.
+
+    **Test Parameter Discussion**
+
+    ``hub_omega_name`` exercises both the default and a custom hub angular-velocity state name.
+    Run at 1 ms and 0.5 ms. Sampled profiler commands introduce first-order momentum errors at
+    the task boundaries: bound the relative rotational angular-momentum error by ``1e-4`` and
+    require it to decrease by at least 40 percent when halving the step. Orbital energy and
+    angular momentum must remain within ``1e-8`` throughout both runs.
+
+    **Description of Variables Being Tested**
+
+    Check orbital energy, orbital angular momentum, and rotational angular momentum. Rotational
+    energy need not be constant because the prescribed actuators do work. Independent spring
+    displacement/velocity and Newton/Euler checks are in
+    :ref:`test_linearSpringMassDamperPrescribed`.
+    """
+    coarse_step = 0.001  # [s]
+    coarse_error = run_prescribed_spring_branch(show_plots, hub_omega_name, coarse_step)
+    fine_error = run_prescribed_spring_branch(False, hub_omega_name, coarse_step / 2)
+    assert fine_error < 0.6 * coarse_error + 1e-10
+
+
+def run_prescribed_spring_branch(show_plots, hub_omega_name, time_step):
+    """Run the profiler-driven branching case and return its maximum relative momentum error."""
+    task_name = "unitTask"
+    process_name = "testProcess"
+    sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(time_step)  # [ns]
+    process = sim.CreateNewProcess(process_name)
+    process.addTask(sim.CreateNewTask(task_name, process_rate))
+
+    # Create the spacecraft
+    sc_object = create_spacecraft_hub()
+    sc_object.hub.nameOfHubOmega = hub_omega_name
+    sim.AddModelToTask(task_name, sc_object)
+
+    # Create prescribed motion object
+    prescribed_platform = create_prescribed_body(r_P0M_M, sigma_P0M)
+    prescribed_platform.setSigma_MB([0.1, -0.2, 0.15])  # [-] MRPs
+    sim.AddModelToTask(task_name, prescribed_platform)
+    sc_object.addStateEffector(prescribed_platform)
+
+    # Create rotational motion profiler
+    one_dof_rotation_profiler = prescribedRotation1DOF.PrescribedRotation1DOF()
+    one_dof_rotation_profiler.ModelTag = "prescribedRotation1DOF"
+    one_dof_rotation_profiler.setRotHat_M(prescribed_rot_axis_M)
+    one_dof_rotation_profiler.setThetaDDotMax(prescribed_ang_accel_max)
+    one_dof_rotation_profiler.setThetaInit(prescribed_theta_init)
+    one_dof_rotation_profiler.setCoastOptionBangDuration(1.0)  # [s]
+    one_dof_rotation_profiler.setSmoothingDuration(1.0)  # [s]
+    sim.AddModelToTask(task_name, one_dof_rotation_profiler)
+
+    prescribed_rotation_msg_data = messaging.HingedRigidBodyMsgPayload()
+    prescribed_rotation_msg_data.theta = prescribed_theta_ref
+    prescribed_rotation_msg_data.thetaDot = 0.0  # [rad/s]
+    prescribed_rotation_msg = messaging.HingedRigidBodyMsg().write(prescribed_rotation_msg_data)
+    one_dof_rotation_profiler.spinningBodyInMsg.subscribeTo(prescribed_rotation_msg)
+    prescribed_platform.prescribedRotationInMsg.subscribeTo(one_dof_rotation_profiler.prescribedRotationOutMsg)
+
+    # Create translational motion profiler
+    one_dof_translation_profiler = prescribedLinearTranslation.PrescribedLinearTranslation()
+    one_dof_translation_profiler.ModelTag = "prescribedLinearTranslation"
+    one_dof_translation_profiler.setTransHat_M(prescribed_trans_axis_M)
+    one_dof_translation_profiler.setTransAccelMax(prescribed_trans_accel_max)
+    one_dof_translation_profiler.setTransPosInit(prescribed_pos_init)
+    one_dof_translation_profiler.setCoastOptionBangDuration(1.0)  # [s]
+    one_dof_translation_profiler.setSmoothingDuration(1.0)  # [s]
+    sim.AddModelToTask(task_name, one_dof_translation_profiler)
+
+    prescribed_translation_msg_data = messaging.LinearTranslationRigidBodyMsgPayload()
+    prescribed_translation_msg_data.rho = prescribed_pos_ref
+    prescribed_translation_msg_data.rhoDot = 0.0  # [m/s]
+    prescribed_translation_msg = messaging.LinearTranslationRigidBodyMsg().write(prescribed_translation_msg_data)
+    one_dof_translation_profiler.linearTranslationRigidBodyInMsg.subscribeTo(prescribed_translation_msg)
+    prescribed_platform.prescribedTranslationInMsg.subscribeTo(one_dof_translation_profiler.prescribedTranslationOutMsg)
+
+    # Create the spring-mass-damper particle
+    smd = linearSpringMassDamper.LinearSpringMassDamper()
+    smd.ModelTag = "springMassDamper"
+    smd.massInit = 20.0                       # [kg]
+    smd.k = 100.0                             # [N/m]
+    smd.c = 0.0                               # [N s/m] undamped
+    smd.rhoInit = 0.5                         # [m]
+    smd.rhoDotInit = 0.0                      # [m/s]
+    smd.pHat_B = [[0.0], [1.0], [0.0]]        # [-] Axis transverse to prescribed rotation
+    smd.r_PB_B = [[0.4], [-0.2], [0.6]]        # [m]
+    sim.AddModelToTask(task_name, smd)
+
+    # Attach the particle to the prescribed motion platform
+    prescribed_platform.addStateEffector(smd)
+
+    # Add Earth gravity to the simulation
+    earth_gravity = gravityEffector.GravBodyData()
+    earth_gravity.planetName = "earth_planet_data"
+    earth_gravity.mu = 0.3986004415E+15  # [m^3/s^2]
+    earth_gravity.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_gravity])
+
+    # Set up data logging
+    conservation_data_log = sc_object.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    prescribed_rotation_data_log = prescribed_platform.prescribedRotationOutMsg.recorder()
+    sim.AddModelToTask(task_name, conservation_data_log)
+    sim.AddModelToTask(task_name, prescribed_rotation_data_log)
+
+    # Run the simulation
+    sim.InitializeSimulation()
+    assert sc_object.dynManager.getStateObject(smd.nameOfRhoState) is not None
+    assert sc_object.dynManager.getStateObject(smd.nameOfRhoDotState) is not None
+    sim.ConfigureStopTime(macros.sec2nano(sim_time))
+    sim.ExecuteSimulation()
+
+    # Extract the logged variables
+    orb_energy = conservation_data_log.totOrbEnergy
+    orb_ang_mom_n = conservation_data_log.totOrbAngMomPntN_N
+    rot_ang_mom_n = conservation_data_log.totRotAngMomPntC_N
+    rot_energy = conservation_data_log.totRotEnergy
+    timespan = prescribed_rotation_data_log.times() * macros.NANO2SEC  # [s]
+
+    # Plot results
+    plot_conservation(timespan, orb_ang_mom_n, orb_energy, rot_ang_mom_n, rot_energy)
+
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    # Check conservation at every sample.
+    max_errors = []
+    for history in (orb_ang_mom_n, orb_energy, rot_ang_mom_n):
+        relative_error = (history - history[0]) / np.linalg.norm(history[0])
+        max_errors.append(np.max(np.abs(relative_error)))
+    assert np.all(np.isfinite(max_errors))
+    np.testing.assert_array_less(max_errors[:2], 1e-8)
+    assert max_errors[2] < 1e-4
+    return max_errors[2]
+
+
 def create_spacecraft_hub():
     mass_hub = 800  # [kg]
     length_hub = 1.0  # [m]
@@ -788,3 +934,4 @@ if __name__ == "__main__":
     test_prescribed_branching_spinning_body_one_dof(True)
     test_prescribed_branching_spinning_body_two_dof(True)
     test_prescribed_branching_linear_translation_one_dof(True)
+    test_prescribed_branching_linear_spring_mass_damper(True, "customHubOmega")
